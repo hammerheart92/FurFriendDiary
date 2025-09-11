@@ -1,0 +1,13 @@
+{
+  "@@locale": "en",
+  "appTitle": "FurFriendDiary",
+  "navFeedings": "Feedings",
+  "navWalks": "Walks",
+  "navMeds": "Medications",
+  "navAppointments": "Appointments",
+  "navReports": "Reports",
+  "navSettings": "Settings",
+  "goPremium": "Go Premium",
+  "premiumUnlocked": "Premium unlocked",
+  "scheduleReminder": "Schedule reminder"
+}

@@ -1,0 +1,33 @@
+// android/app/build.gradle  (app module)
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+android {
+    namespace "com.furfrienddiary.app"
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.furfrienddiary.app"
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            // Keep default proguard settings if you sign later
+            // minifyEnabled false
+        }
+    }
+}
+
+flutter {
+    // points Gradle to your Flutter project root
+    source "../.."
+}
+
+// No extra dependencies needed for a basic Flutter app

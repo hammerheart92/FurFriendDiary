@@ -1,0 +1,62 @@
+name: fur_friend_diary
+description: FurFriendDiary - a friendly diary for your pet's feedings, walks, meds, and appointments.
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+
+  # Routing and state
+  go_router: 14.2.7
+  flutter_riverpod: 2.5.1
+
+  # Storage & security
+  hive: 2.2.3
+  hive_flutter: 1.1.0
+  path_provider: 2.1.4
+  flutter_secure_storage: 9.2.2
+  shared_preferences: 2.3.3
+
+  # Time, permissions
+  timezone: 0.9.4
+  permission_handler: 11.3.1
+
+  # Notifications
+  flutter_local_notifications: 17.2.3
+
+  # Purchases
+  in_app_purchase: 3.2.1
+
+  # Media & location
+  image_picker: 1.1.2
+  geolocator: 13.0.2
+
+  # Misc
+  url_launcher: 6.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  flutter_lints: 4.0.0
+  mocktail: 1.0.4
+
+flutter:
+  uses-material-design: true
+  generate: true
+  assets:
+    - assets/images/
+    - assets/i18n/
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+        - asset: assets/fonts/Inter-Bold.ttf

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+ERROR: Build failed due to use of deleted Android v1 embedding.
+This suggests there may be old plugin configurations or cached build files.
+Try: flutter clean && flutter pub get && flutter build apk
+If issue persists, may need to regenerate Android project or check for old plugin files.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="${applicationId}">
+    <application
+        android:label="FurFriendDiary"
+        android:icon="@mipmap/ic_launcher">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboard|keyboardHidden|navigation|screenLayout|screenSize|smallestScreenSize|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <meta-data android:name="io.flutter.embedding.android.NormalTheme" android:resource="@style/NormalTheme"/>
+    </application>
+    <uses-permission android:name="android.permission.INTERNET"/>
+</manifest>

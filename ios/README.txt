@@ -1,0 +1,1 @@
+Run `flutter create .` to generate iOS platform code, or keep this file as a placeholder.
