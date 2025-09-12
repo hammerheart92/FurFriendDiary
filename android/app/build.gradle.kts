@@ -1,13 +1,13 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-aandroid {
+android {
     namespace = "com.furfrienddiary.app"
-    compileSdk = 34
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -21,16 +21,15 @@ aandroid {
 
     defaultConfig {
         applicationId = "com.furfrienddiary.app"
-        minSdk = 21
-        targetSdk = 34
+        minSdk = 24
+        targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
+            // Signing with debug for now so release runs. Replace with a real config later.
             signingConfig = signingConfigs.getByName("debug")
         }
     }
