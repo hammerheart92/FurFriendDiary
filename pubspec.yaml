@@ -12,6 +12,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: any
+  dynamic_color: ^1.7.0
 
   # Routing and state
   go_router: 14.2.7
@@ -40,7 +41,6 @@ dependencies:
 
   # Misc
   url_launcher: 6.3.0
-  dynamic_color: ^1.8.1
 
 dev_dependencies:
   flutter_test:
