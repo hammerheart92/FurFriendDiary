@@ -6,39 +6,36 @@ import 'l10n/app_localizations.dart';
 import 'src/app_router.dart';
 import 'src/services/init_service.dart';
 
+import 'theme/theme.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Initialize services that must be ready before runApp.
   await InitService.bootstrap(); // Sets up Hive, timezone, boxes, etc.
-  runApp(const ProviderScope(child: PetCareApp()));
+  runApp(const MyApp());
 }
 
-class PetCareApp extends StatelessWidget {
-  const PetCareApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      onGenerateTitle: (ctx) => AppLocalizations.of(ctx).appTitle,
-      routerConfig: createRouter(),
-      themeMode: ThemeMode.system,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: Colors.teal,
+    return ProviderScope(
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        onGenerateTitle: (ctx) => AppLocalizations.of(ctx).appTitle,
+        routerConfig: createRouter(),
+        theme: lightTheme(),
+        darkTheme: darkTheme(),
+        themeMode: ThemeMode.system,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [Locale('en'), Locale('ro')],
       ),
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: Colors.teal,
-        brightness: Brightness.dark,
-      ),
-      localizationsDelegates: [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: [Locale('en'), Locale('ro')],
     );
   }
 }

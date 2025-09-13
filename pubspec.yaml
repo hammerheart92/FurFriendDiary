@@ -40,6 +40,7 @@ dependencies:
 
   # Misc
   url_launcher: 6.3.0
+  dynamic_color: ^1.8.1
 
 dev_dependencies:
   flutter_test:
