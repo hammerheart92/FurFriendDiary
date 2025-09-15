@@ -37,17 +37,63 @@ class _FeedingTile extends StatelessWidget {
 class _FeedingsScreenState extends State<FeedingsScreen> {
   final List<_Feeding> _items = [];
 
-  void _addFeeding() {
-    final item = _Feeding(type: 'Dry food', time: TimeOfDay.now());
+  void _addFeeding(String foodType) {
+    final item = _Feeding(type: foodType, time: TimeOfDay.now());
     setState(() => _items.add(item));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Feeding added'),
+        content: Text('Feeding "$foodType" added'),
         action: SnackBarAction(
           label: 'UNDO',
           onPressed: () => setState(() => _items.remove(item)),
         ),
       ),
+    );
+  }
+
+  Future<void> _showAddFeedingDialog() async {
+    final foodTypeController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Add a new feeding'),
+          content: Form(
+            key: formKey,
+            child: TextFormField(
+              controller: foodTypeController,
+              decoration: const InputDecoration(
+                labelText: 'Food type',
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a food type';
+                }
+                return null;
+              },
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Add'),
+              onPressed: () {
+                if (formKey.currentState!.validate()) {
+                  _addFeeding(foodTypeController.text);
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -70,7 +116,7 @@ class _FeedingsScreenState extends State<FeedingsScreen> {
                   ),
                   const SizedBox(height: AppSpacing.s5), // 20
                   FilledButton(
-                    onPressed: _addFeeding,
+                    onPressed: _showAddFeedingDialog,
                     child: const Text('Add feeding'),
                   ),
                 ],
@@ -83,7 +129,7 @@ class _FeedingsScreenState extends State<FeedingsScreen> {
               itemBuilder: (_, i) => _FeedingTile(_items[i]),
             ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _addFeeding,
+        onPressed: _showAddFeedingDialog,
         child: const Icon(Icons.add),
       ),
     );

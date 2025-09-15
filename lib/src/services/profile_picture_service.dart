@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
-//Errors occured in this file:
+//Errors occured in this file: import not found
 
 class ProfilePictureService {
   final ImagePicker _picker = ImagePicker();

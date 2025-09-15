@@ -8,10 +8,15 @@ import 'ui/screens/appointments_screen.dart';
 import 'ui/screens/reports_screen.dart';
 import 'ui/screens/settings_screen.dart';
 import 'ui/screens/premium_screen.dart';
+import 'ui/screens/profile_setup_screen.dart';
 
 GoRouter createRouter() => GoRouter(
-  initialLocation: '/',
+  initialLocation: '/profile-setup',
   routes: [
+    GoRoute(
+      path: '/profile-setup',
+      builder: (context, state) => const ProfileSetupScreen(),
+    ),
     ShellRoute(
       builder: (context, state, child) => AppShell(child: child),
       routes: [
