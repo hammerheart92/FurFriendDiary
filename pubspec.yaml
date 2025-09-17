@@ -42,6 +42,9 @@ dependencies:
   # Misc
   url_launcher: 6.3.0
   path: ^1.9.1
+  json_serializable: ^6.7.1
+  uuid: ^4.3.3
+  json_annotation: ^4.8.1
 
 dev_dependencies:
   flutter_test:
@@ -53,6 +56,7 @@ dev_dependencies:
   flutter_launcher_icons: ^0.14.4
   hive_generator: ^2.0.1
   build_runner: ^2.4.11
+  analyzer: ^6.4.1
 
 flutter_launcher_icons:
   android: true
