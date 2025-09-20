@@ -61,8 +61,8 @@ class WalksRepository {
 
   // Get active walk for a pet
   Walk? getActiveWalk(String petId) {
-    return _box.values.firstWhere(
-      (walk) => walk.petId == petId && walk.isActive,
+    return _box.values.cast<Walk?>().firstWhere(
+      (walk) => walk != null && walk.petId == petId && walk.isActive,
       orElse: () => null,
     );
   }
@@ -100,7 +100,7 @@ class WalksRepository {
     final totalWalks = walks.length;
     final totalDuration = walks.fold<Duration>(
       Duration.zero, 
-      (total, walk) => total + walk.actualDuration,
+      (total, walk) => total + (walk.actualDuration ?? Duration.zero),
     );
     final totalDistance = walks.fold<double>(
       0.0, 

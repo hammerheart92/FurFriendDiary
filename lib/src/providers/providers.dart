@@ -94,9 +94,9 @@ class WalksNotifier extends StateNotifier<AsyncValue<List<Walk>>> {
       final walk = Walk(
         id: _uuid.v4(),
         petId: petId,
-        startTime: DateTime.now(),
+        start: DateTime.now(),
+        durationMinutes: 0,
         walkType: walkType,
-        createdAt: DateTime.now(),
       );
 
       await _repository.startWalk(walk);

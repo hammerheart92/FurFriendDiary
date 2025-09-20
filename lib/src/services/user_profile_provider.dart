@@ -1,6 +1,6 @@
 // lib/src/providers/user_profile_provider.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fur_friend_diary/src/models/user_profile.dart';
+import '../domain/models/user_profile.dart';
 import 'package:fur_friend_diary/src/services/profile_picture_service.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -23,8 +23,8 @@ class UserProfileNotifier extends StateNotifier<UserProfile?> {
     
     final updatedProfile = UserProfile(
       id: state!.id,
-      displayName: displayName,
-      photoPath: state!.photoPath,
+      name: displayName,
+      profilePicturePath: state!.profilePicturePath,
     );
     
     await _box.put('current_user', updatedProfile);
@@ -35,14 +35,14 @@ class UserProfileNotifier extends StateNotifier<UserProfile?> {
     if (state == null) return;
 
     // Delete old profile picture if it exists
-    if (state!.photoPath != null && state!.photoPath != photoPath) {
-      await _profilePictureService.deleteProfilePicture(state!.photoPath);
+    if (state!.profilePicturePath != null && state!.profilePicturePath != photoPath) {
+      await _profilePictureService.deleteProfilePicture(state!.profilePicturePath);
     }
 
     final updatedProfile = UserProfile(
       id: state!.id,
-      displayName: state!.displayName,
-      photoPath: photoPath,
+      name: state!.name,
+      profilePicturePath: photoPath,
     );
     
     await _box.put('current_user', updatedProfile);
@@ -52,8 +52,8 @@ class UserProfileNotifier extends StateNotifier<UserProfile?> {
   Future<void> createProfile(String displayName, {String? photoPath}) async {
     final profile = UserProfile(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
-      displayName: displayName,
-      photoPath: photoPath,
+      name: displayName,
+      profilePicturePath: photoPath,
     );
     
     await _box.put('current_user', profile);
@@ -61,8 +61,8 @@ class UserProfileNotifier extends StateNotifier<UserProfile?> {
   }
 
   Future<void> deleteProfilePicture() async {
-    if (state?.photoPath != null) {
-      await _profilePictureService.deleteProfilePicture(state!.photoPath);
+    if (state?.profilePicturePath != null) {
+      await _profilePictureService.deleteProfilePicture(state!.profilePicturePath);
       await updateProfilePicture(null);
     }
   }

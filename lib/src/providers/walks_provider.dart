@@ -32,9 +32,10 @@ class WalksNotifier extends StateNotifier<AsyncValue<List<Walk>>> {
     final walk = Walk(
       id: _uuid.v4(),
       petId: petId,
-      startTime: DateTime.now(),
+      start: DateTime.now(),
+      durationMinutes: 0,
       walkType: walkType,
-      createdAt: DateTime.now(),
+      isActive: true,
     );
 
     await _repo.put(walk.id, walk.toJson());
@@ -120,7 +121,7 @@ final walkStatsProvider = Provider.family<Map<String, dynamic>, String>((ref, pe
       
       final totalDuration = recentWalks.fold<Duration>(
         Duration.zero, 
-        (prev, walk) => prev + walk.actualDuration,
+        (prev, walk) => prev + (walk.actualDuration ?? Duration.zero),
       );
       
       final totalDistance = recentWalks.fold<double>(

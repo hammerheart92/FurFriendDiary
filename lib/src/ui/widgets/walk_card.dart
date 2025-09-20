@@ -237,6 +237,14 @@ class WalkCard extends StatelessWidget {
 
   Color _getWalkTypeColor(WalkType walkType) {
     switch (walkType) {
+      case WalkType.walk:
+        return Colors.green;
+      case WalkType.run:
+        return Colors.red;
+      case WalkType.hike:
+        return Colors.brown;
+      case WalkType.play:
+        return Colors.pink;
       case WalkType.regular:
         return Colors.blue;
       case WalkType.short:
