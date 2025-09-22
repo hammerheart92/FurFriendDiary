@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../src/domain/models/walk.dart';
+import '../../src/data/local/hive_manager.dart';
 
 /// Model for walk entries - keep in this file for easy integration
 class WalkEntry {
@@ -17,38 +19,88 @@ class WalkEntry {
   final String? note;
   final String? surface;
   final double? paceMinPerKm;
+
+  /// Convert WalkEntry to the full Walk model for Hive persistence
+  Walk toWalk({required String petId}) {
+    return Walk(
+      petId: petId,
+      start: start,
+      startTime: start,
+      durationMinutes: durationMin,
+      distance: distanceKm,
+      notes: note,
+      walkType: _mapSurfaceToWalkType(),
+      isActive: false,
+      isComplete: true,
+    );
+  }
+
+  /// Convert full Walk model to WalkEntry for UI display
+  static WalkEntry fromWalk(Walk walk) {
+    return WalkEntry(
+      start: walk.startTime,
+      durationMin: walk.durationMinutes,
+      distanceKm: walk.distance ?? 0.0,
+      note: walk.notes,
+      surface: _mapWalkTypeToSurface(walk.walkType),
+      paceMinPerKm: walk.distance != null && walk.durationMinutes > 0 
+          ? walk.durationMinutes / walk.distance!
+          : null,
+    );
+  }
+
+  WalkType _mapSurfaceToWalkType() {
+    switch (surface) {
+      case 'paved':
+        return WalkType.regular;
+      case 'gravel':
+        return WalkType.hike;
+      case 'mixed':
+        return WalkType.walk;
+      default:
+        return WalkType.regular;
+    }
+  }
+
+  static String? _mapWalkTypeToSurface(WalkType walkType) {
+    switch (walkType) {
+      case WalkType.regular:
+        return 'paved';
+      case WalkType.hike:
+        return 'gravel';
+      case WalkType.walk:
+        return 'mixed';
+      default:
+        return 'paved';
+    }
+  }
 }
 
-/// In-memory controller for walks that survives widget rebuilds
+/// Enhanced controller that bridges ChangeNotifier UI with Hive persistence
 class WalksController extends ChangeNotifier {
-  WalksController() {
-    // Initialize with mock data
-    _items.addAll([
-      WalkEntry(
-        start: DateTime.now().subtract(const Duration(hours: 1, minutes: 10)),
-        durationMin: 32,
-        distanceKm: 2.4,
-        note: 'City Park loop',
-        surface: 'paved',
-        paceMinPerKm: 13,
-      ),
-      WalkEntry(
-        start: DateTime.now().subtract(const Duration(days: 1, hours: 3)),
-        durationMin: 45,
-        distanceKm: 3.1,
-        note: 'Evening stroll by the river',
-        surface: 'mixed',
-        paceMinPerKm: 14,
-      ),
-      WalkEntry(
-        start: DateTime.now().subtract(const Duration(days: 5, hours: 2)),
-        durationMin: 28,
-        distanceKm: 1.9,
-        note: 'Quick break between showers',
-        surface: 'gravel',
-        paceMinPerKm: 15,
-      ),
-    ]);
+  final String _defaultPetId;
+  
+  WalksController(this._defaultPetId) {
+    _initializeWalks();
+  }
+
+  /// Initialize walks with immediate mock data, then try to load from storage
+  Future<void> _initializeWalks() async {
+    print('🚀 INITIALIZING WalksController...');
+    
+    try {
+      // First, add mock data immediately for UI responsiveness
+      _addMockData();
+      
+      // Then try to load real data from storage
+      await _loadWalksFromHive();
+    } catch (e) {
+      print('❌ Error during initialization: $e');
+      // Ensure we have at least mock data for UI testing
+      if (_items.isEmpty) {
+        _addMockData();
+      }
+    }
   }
 
   final List<WalkEntry> _items = [];
@@ -56,10 +108,114 @@ class WalksController extends ChangeNotifier {
   /// Read-only access to walks list
   List<WalkEntry> get items => List.unmodifiable(_items);
   
-  /// Add a new walk and notify listeners (inserts at top for newest-first)
-  void add(WalkEntry entry) {
-    _items.insert(0, entry);
+  /// Load walks from Hive storage and convert to WalkEntry
+  Future<void> _loadWalksFromHive() async {
+    print('🔄 ATTEMPTING to load walks from Hive...');
+    try {
+      // Get the properly typed walks box
+      final walkBox = HiveManager.instance.walkBox;
+      final walks = walkBox.values.toList();
+      
+      print('📚 DIRECT HIVE: Found ${walks.length} walks in storage');
+      
+      if (walks.isNotEmpty) {
+        _items.clear();
+        // Convert Walk objects to WalkEntry objects
+        for (var walk in walks) {
+          try {
+            _items.add(WalkEntry.fromWalk(walk));
+          } catch (e) {
+            print('⚠️  Failed to convert walk: $e');
+          }
+        }
+        print('✅ LOADED ${_items.length} walks from storage');
+        notifyListeners();
+      } else {
+        print('📝 No walks in storage, keeping mock data');
+      }
+    } catch (e) {
+      print('❌ Error loading from storage: $e');
+      print('📝 Keeping mock data as fallback');
+    }
+  }
+  
+  /// Add mock data as fallback
+  void _addMockData() {
+    print('📝 Adding mock data as fallback');
+    final now = DateTime.now();
+    _items.clear();
+    _items.addAll([
+      WalkEntry(
+        start: now.subtract(const Duration(minutes: 30)), // 30 minutes ago
+        durationMin: 32,
+        distanceKm: 2.4,
+        note: 'City Park loop',
+        surface: 'paved',
+        paceMinPerKm: 13,
+      ),
+      WalkEntry(
+        start: now.subtract(const Duration(hours: 2)), // 2 hours ago (today)
+        durationMin: 45,
+        distanceKm: 3.1,
+        note: 'Evening stroll by the river',
+        surface: 'mixed',
+        paceMinPerKm: 14,
+      ),
+      WalkEntry(
+        start: now.subtract(const Duration(days: 2)), // 2 days ago (this week)
+        durationMin: 28,
+        distanceKm: 1.9,
+        note: 'Quick break between showers',
+        surface: 'gravel',
+        paceMinPerKm: 15,
+      ),
+    ]);
+    print('📝 Mock data added: ${_items.length} walks with dates:');
+    for (var item in _items) {
+      print('   - "${item.note}" at ${item.start}');
+    }
     notifyListeners();
+  }
+  
+  /// Add a new walk and save to both UI state and Hive persistence
+  Future<void> add(WalkEntry entry) async {
+    print('🚶 ADDING walk: ${entry.note} at ${entry.start}');
+    
+    try {
+      // 1. Add to UI state immediately for instant feedback
+      _items.insert(0, entry);
+      notifyListeners();
+      print('✅ Walk added to UI state');
+      
+      // 2. Save to Hive storage for persistence
+      final walk = entry.toWalk(petId: _defaultPetId);
+      
+      // Save directly to Hive storage
+      await _saveToHive(walk);
+      print('💾 Walk saved to Hive storage');
+      
+    } catch (e) {
+      print('❌ Error saving walk: $e');
+      // Keep the UI state since user sees the confirmation
+    }
+  }
+  
+  /// Save walk directly to Hive
+  Future<void> _saveToHive(Walk walk) async {
+    try {
+      final walkBox = HiveManager.instance.walkBox;
+      await walkBox.put(walk.id, walk);
+      print('💽 Walk ${walk.id} saved to Hive');
+    } catch (e) {
+      print('❌ Error saving to Hive: $e');
+      rethrow;
+    }
+  }
+  
+  /// Refresh walks from storage (useful after app restart)
+  Future<void> refresh() async {
+    print('🔄 REFRESHING walks from storage...');
+    await _loadWalksFromHive();
   }
   
   /// Clear all walks (for testing)

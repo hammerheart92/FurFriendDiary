@@ -24,11 +24,25 @@ class _WalksScreenState extends State<WalksScreen> with AutomaticKeepAliveClient
     super.build(context); // Required for AutomaticKeepAliveClientMixin
     final controller = WalksScope.of(context);
     
-    return AnimatedBuilder(
+        return AnimatedBuilder(
       animation: controller,
       builder: (context, _) {
-        final filtered = _filteredWalks(controller.items);
+        final allWalks = controller.items;
+        final filtered = _filteredWalks(allWalks);
         final isEmpty = filtered.isEmpty;
+        
+        print('📱 UI REBUILD: Rendering ${allWalks.length} total walks, ${filtered.length} filtered');
+        print('📱 UI FILTER: Current filter: $_filter');
+        print('📱 UI EMPTY CHECK: isEmpty = $isEmpty');
+        
+        if (filtered.isNotEmpty) {
+          print('📱 UI WALKS LIST:');
+          for (int i = 0; i < filtered.length; i++) {
+            print('   ${i + 1}. ${filtered[i].note} at ${filtered[i].start}');
+          }
+        } else if (allWalks.isNotEmpty) {
+          print('📱 UI NOTE: ${allWalks.length} walks exist but filtered to 0 for $_filter');
+        }
 
         return Scaffold(
       appBar: AppBar(
@@ -68,20 +82,35 @@ class _WalksScreenState extends State<WalksScreen> with AutomaticKeepAliveClient
     final now = DateTime.now();
     DateTime startBoundary;
 
+    print('🔍 FILTERING: Input ${source.length} walks, filter: $_filter');
+    
     switch (_filter) {
       case WalkFilter.today:
         startBoundary = DateTime(now.year, now.month, now.day);
+        print('🔍 TODAY filter: Looking for walks after $startBoundary');
         break;
       case WalkFilter.thisWeek:
         final weekday = now.weekday; // 1 Mon, 7 Sun
         startBoundary = DateTime(now.year, now.month, now.day).subtract(Duration(days: weekday - 1));
+        print('🔍 THIS WEEK filter: Looking for walks after $startBoundary');
         break;
       case WalkFilter.all:
-        return List.of(source)..sort((a, b) => b.start.compareTo(a.start));
+        print('🔍 ALL filter: Showing all ${source.length} walks');
+        final sorted = List.of(source)..sort((a, b) => b.start.compareTo(a.start));
+        for (int i = 0; i < sorted.length; i++) {
+          print('   Walk ${i + 1}: ${sorted[i].note} at ${sorted[i].start}');
+        }
+        return sorted;
     }
 
-    final list = source.where((w) => w.start.isAfter(startBoundary)).toList();
+    final list = source.where((w) {
+      final isAfter = w.start.isAfter(startBoundary);
+      print('   Walk "${w.note}" at ${w.start} - isAfter($startBoundary): $isAfter');
+      return isAfter;
+    }).toList();
+    
     list.sort((a, b) => b.start.compareTo(a.start));
+    print('🔍 FILTER RESULT: ${list.length} walks match $_filter filter');
     return list;
   }
 
@@ -93,12 +122,20 @@ class _WalksScreenState extends State<WalksScreen> with AutomaticKeepAliveClient
       showDragHandle: true,
       isScrollControlled: true,
       builder: (context) => _AddWalkSheet(
-        onSubmit: (entry) {
-          controller.add(entry);
-          Navigator.of(context).pop();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Walk added')),
-          );
+        onSubmit: (entry) async {
+          print('📝 FORM SUBMITTED - Walk Data: ${entry.note} at ${entry.start}');
+          print('📅 Walk Date: ${entry.start}');
+          print('💾 SAVING TO REPOSITORY...');
+          
+          await controller.add(entry);
+          if (context.mounted) {
+            Navigator.of(context).pop();
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Walk added successfully!')),
+            );
+          }
+          
+          print('🔙 NAVIGATION: Returned to walks screen, data refreshed');
         },
       ),
     );
@@ -167,12 +204,16 @@ class _ResponsiveWalkList extends StatelessWidget {
             itemBuilder: (context, i) => WalkCard(entry: entries[i]),
           );
         }
+        print('📋 BUILDING ListView with ${entries.length} entries');
         return ListView.separated(
           key: const PageStorageKey('walks_list'),
           padding: const EdgeInsets.all(12),
           itemCount: entries.length,
           separatorBuilder: (_, __) => const SizedBox(height: 12),
-          itemBuilder: (context, i) => WalkCard(entry: entries[i]),
+          itemBuilder: (context, i) {
+            print('📋 ListView building item $i: ${entries[i].note}');
+            return WalkCard(entry: entries[i]);
+          },
         );
       },
     );
@@ -185,6 +226,7 @@ class WalkCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('🃏 RENDERING WalkCard: ${entry.note} at ${entry.start}');
     final theme = Theme.of(context);
     final time = DateFormat.Hm().format(entry.start);
     final primaryLine = '$time • ${entry.durationMin} min • ${entry.distanceKm.toStringAsFixed(1)} km';
@@ -212,6 +254,7 @@ class WalkCard extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 // Primary row: stats only (no icon)
                 Text(
@@ -228,7 +271,7 @@ class WalkCard extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const Spacer(),
+                const SizedBox(height: 8),
                 // Meta row: simple text with dots
                 Text(
                   'Surface: ${entry.surface ?? 'n/a'} • Pace: ${entry.paceMinPerKm?.toStringAsFixed(0) ?? '—'}\'/km',
@@ -370,9 +413,10 @@ class _AddWalkSheetState extends State<_AddWalkSheet> {
       ),
       child: Form(
         key: _form,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
             Text('Add walk', style: theme.textTheme.titleLarge),
             const SizedBox(height: 12),
             _RowField(
@@ -416,7 +460,7 @@ class _AddWalkSheetState extends State<_AddWalkSheet> {
             _RowField(
               label: 'Surface',
               child: DropdownButtonFormField<String>(
-                value: _surface,
+                initialValue: _surface,
                 items: const [
                   DropdownMenuItem(value: 'paved', child: Text('paved')),
                   DropdownMenuItem(value: 'gravel', child: Text('gravel')),
@@ -458,7 +502,8 @@ class _AddWalkSheetState extends State<_AddWalkSheet> {
           ],
         ),
       ),
-    );
+    ),
+  );
   }
 
   String? _positiveInt(String? v) {

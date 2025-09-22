@@ -1,19 +1,20 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Package import (preferred)
 import 'package:fur_friend_diary/features/walks/walks_screen.dart' as walks;
 // Relative import fallback: import '../../../features/walks/walks_screen.dart' as walks;
 import 'package:fur_friend_diary/features/walks/walks_state.dart';
 // Relative import fallback: import '../../../features/walks/walks_state.dart';
 
-class WalksScreen extends StatefulWidget {
+class WalksScreen extends ConsumerStatefulWidget {
   const WalksScreen({super.key});
 
   @override
-  State<WalksScreen> createState() => _WalksScreenState();
+  ConsumerState<WalksScreen> createState() => _WalksScreenState();
 }
 
-class _WalksScreenState extends State<WalksScreen> with AutomaticKeepAliveClientMixin {
+class _WalksScreenState extends ConsumerState<WalksScreen> with AutomaticKeepAliveClientMixin {
   late final WalksController _controller;
 
   @override
@@ -22,7 +23,8 @@ class _WalksScreenState extends State<WalksScreen> with AutomaticKeepAliveClient
   @override
   void initState() {
     super.initState();
-    _controller = WalksController();
+    // Initialize controller with default pet ID
+    _controller = WalksController('default-pet-id');
   }
 
   @override
