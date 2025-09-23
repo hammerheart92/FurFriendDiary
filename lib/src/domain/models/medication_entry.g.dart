@@ -19,35 +19,47 @@ class MedicationEntryAdapter extends TypeAdapter<MedicationEntry> {
     return MedicationEntry(
       id: fields[0] as String?,
       petId: fields[1] as String,
-      dateTime: fields[2] as DateTime,
-      medicationName: fields[3] as String,
-      dosage: fields[4] as String,
-      notes: fields[5] as String?,
-      nextDose: fields[6] as DateTime?,
-      isCompleted: fields[7] as bool,
+      medicationName: fields[2] as String,
+      dosage: fields[3] as String,
+      frequency: fields[4] as String,
+      startDate: fields[5] as DateTime,
+      endDate: fields[6] as DateTime?,
+      administrationMethod: fields[7] as String,
+      notes: fields[8] as String?,
+      isActive: fields[9] as bool,
+      createdAt: fields[10] as DateTime?,
+      administrationTimes: (fields[11] as List?)?.cast<DateTime>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, MedicationEntry obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
       ..write(obj.petId)
       ..writeByte(2)
-      ..write(obj.dateTime)
-      ..writeByte(3)
       ..write(obj.medicationName)
-      ..writeByte(4)
+      ..writeByte(3)
       ..write(obj.dosage)
+      ..writeByte(4)
+      ..write(obj.frequency)
       ..writeByte(5)
-      ..write(obj.notes)
+      ..write(obj.startDate)
       ..writeByte(6)
-      ..write(obj.nextDose)
+      ..write(obj.endDate)
       ..writeByte(7)
-      ..write(obj.isCompleted);
+      ..write(obj.administrationMethod)
+      ..writeByte(8)
+      ..write(obj.notes)
+      ..writeByte(9)
+      ..write(obj.isActive)
+      ..writeByte(10)
+      ..write(obj.createdAt)
+      ..writeByte(11)
+      ..write(obj.administrationTimes);
   }
 
   @override

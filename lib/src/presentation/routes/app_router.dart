@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../ui/shell.dart';
 import '../../ui/screens/feedings_screen.dart';
 import '../../ui/screens/walks_screen.dart';
-import '../../ui/screens/meds_screen.dart';
+import '../../ui/screens/medications_screen.dart';
+import '../../ui/screens/add_medication_screen.dart';
+import '../../ui/screens/medication_detail_screen.dart';
 import '../../ui/screens/appointments_screen.dart';
 import '../../ui/screens/reports_screen.dart';
 import '../../ui/screens/settings_screen.dart';
@@ -58,12 +60,24 @@ GoRouter createRouter() => GoRouter(
       routes: [
         GoRoute(path: '/', builder: (_, __) => const FeedingsScreen()),
         GoRoute(path: '/walks', builder: (_, __) => const WalksScreen()),
-        GoRoute(path: '/meds', builder: (_, __) => const MedsScreen()),
+        GoRoute(path: '/meds', builder: (_, __) => const MedicationsScreen()),
         GoRoute(path: '/appointments', builder: (_, __) => const AppointmentsScreen()),
         GoRoute(path: '/reports', builder: (_, __) => const ReportsScreen()),
         GoRoute(path: '/settings', builder: (_, __) => const SettingsScreen()),
         GoRoute(path: '/premium', builder: (_, __) => const PremiumScreen()),
       ],
+    ),
+    // Medication routes
+    GoRoute(
+      path: '/meds/add',
+      builder: (context, state) => const AddMedicationScreen(),
+    ),
+    GoRoute(
+      path: '/meds/detail/:medicationId',
+      builder: (context, state) {
+        final medicationId = state.pathParameters['medicationId']!;
+        return MedicationDetailScreen(medicationId: medicationId);
+      },
     ),
   ],
 );

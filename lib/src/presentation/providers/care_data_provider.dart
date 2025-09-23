@@ -83,15 +83,15 @@ Future<List<MedicationEntry>> medicationsByPetId(MedicationsByPetIdRef ref, Stri
 }
 
 @riverpod
-Future<List<MedicationEntry>> upcomingMedications(UpcomingMedicationsRef ref, String petId) async {
+Future<List<MedicationEntry>> activeMedicationsByPetId(ActiveMedicationsByPetIdRef ref, String petId) async {
   final repository = ref.watch(medicationRepositoryProvider);
-  return await repository.getUpcomingMedications(petId);
+  return await repository.getActiveMedicationsByPetId(petId);
 }
 
 @riverpod
-Future<List<MedicationEntry>> overdueMedications(OverdueMedicationsRef ref, String petId) async {
+Future<List<MedicationEntry>> inactiveMedicationsByPetId(InactiveMedicationsByPetIdRef ref, String petId) async {
   final repository = ref.watch(medicationRepositoryProvider);
-  return await repository.getOverdueMedications(petId);
+  return await repository.getInactiveMedicationsByPetId(petId);
 }
 
 // Appointment Providers

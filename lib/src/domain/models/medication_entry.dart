@@ -12,75 +12,111 @@ class MedicationEntry extends HiveObject {
   String petId;
   
   @HiveField(2)
-  DateTime dateTime;
-  
-  @HiveField(3)
   String medicationName;
   
-  @HiveField(4)
+  @HiveField(3)
   String dosage;
   
+  @HiveField(4)
+  String frequency; // "Once daily", "Twice daily", etc.
+  
   @HiveField(5)
-  String? notes;
+  DateTime startDate;
   
   @HiveField(6)
-  DateTime? nextDose;
+  DateTime? endDate;
   
   @HiveField(7)
-  bool isCompleted;
+  String administrationMethod; // "Oral", "Topical", "Injection"
+  
+  @HiveField(8)
+  String? notes;
+  
+  @HiveField(9)
+  bool isActive;
+  
+  @HiveField(10)
+  DateTime createdAt;
+  
+  @HiveField(11)
+  List<DateTime> administrationTimes; // Specific times of day
   
   MedicationEntry({
     String? id,
     required this.petId,
-    required this.dateTime,
     required this.medicationName,
     required this.dosage,
+    required this.frequency,
+    required this.startDate,
+    this.endDate,
+    required this.administrationMethod,
     this.notes,
-    this.nextDose,
-    this.isCompleted = false,
-  }) : id = id ?? const Uuid().v4();
+    this.isActive = true,
+    DateTime? createdAt,
+    List<DateTime>? administrationTimes,
+  }) : id = id ?? const Uuid().v4(),
+       createdAt = createdAt ?? DateTime.now(),
+       administrationTimes = administrationTimes ?? [];
 
   Map<String, dynamic> toJson() => {
     'id': id,
     'petId': petId,
-    'dateTime': dateTime.toIso8601String(),
     'medicationName': medicationName,
     'dosage': dosage,
+    'frequency': frequency,
+    'startDate': startDate.toIso8601String(),
+    'endDate': endDate?.toIso8601String(),
+    'administrationMethod': administrationMethod,
     'notes': notes,
-    'nextDose': nextDose?.toIso8601String(),
-    'isCompleted': isCompleted,
+    'isActive': isActive,
+    'createdAt': createdAt.toIso8601String(),
+    'administrationTimes': administrationTimes.map((time) => time.toIso8601String()).toList(),
   };
 
   factory MedicationEntry.fromJson(Map<String, dynamic> json) => MedicationEntry(
     id: json['id'],
     petId: json['petId'],
-    dateTime: DateTime.parse(json['dateTime']),
     medicationName: json['medicationName'],
     dosage: json['dosage'],
+    frequency: json['frequency'],
+    startDate: DateTime.parse(json['startDate']),
+    endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
+    administrationMethod: json['administrationMethod'],
     notes: json['notes'],
-    nextDose: json['nextDose'] != null ? DateTime.parse(json['nextDose']) : null,
-    isCompleted: json['isCompleted'] ?? false,
+    isActive: json['isActive'] ?? true,
+    createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : DateTime.now(),
+    administrationTimes: (json['administrationTimes'] as List<dynamic>?)
+        ?.map((timeStr) => DateTime.parse(timeStr as String))
+        .toList() ?? [],
   );
 
   MedicationEntry copyWith({
     String? id,
     String? petId,
-    DateTime? dateTime,
     String? medicationName,
     String? dosage,
+    String? frequency,
+    DateTime? startDate,
+    DateTime? endDate,
+    String? administrationMethod,
     String? notes,
-    DateTime? nextDose,
-    bool? isCompleted,
+    bool? isActive,
+    DateTime? createdAt,
+    List<DateTime>? administrationTimes,
   }) {
     return MedicationEntry(
       id: id ?? this.id,
       petId: petId ?? this.petId,
-      dateTime: dateTime ?? this.dateTime,
       medicationName: medicationName ?? this.medicationName,
       dosage: dosage ?? this.dosage,
+      frequency: frequency ?? this.frequency,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
+      administrationMethod: administrationMethod ?? this.administrationMethod,
       notes: notes ?? this.notes,
-      nextDose: nextDose ?? this.nextDose,
-      isCompleted: isCompleted ?? this.isCompleted,
+      isActive: isActive ?? this.isActive,
+      createdAt: createdAt ?? this.createdAt,
+      administrationTimes: administrationTimes ?? this.administrationTimes,
     );
   }
 }

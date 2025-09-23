@@ -457,31 +457,31 @@ class _MedicationsByPetIdProviderElement
   String get petId => (origin as MedicationsByPetIdProvider).petId;
 }
 
-String _$upcomingMedicationsHash() =>
-    r'df4cd532ea4f9bf5035bd3f02ea3f4dbc8b649f5';
+String _$activeMedicationsByPetIdHash() =>
+    r'ac17960ffcea930e06adfc6a4d6965002a80dfe7';
 
-/// See also [upcomingMedications].
-@ProviderFor(upcomingMedications)
-const upcomingMedicationsProvider = UpcomingMedicationsFamily();
+/// See also [activeMedicationsByPetId].
+@ProviderFor(activeMedicationsByPetId)
+const activeMedicationsByPetIdProvider = ActiveMedicationsByPetIdFamily();
 
-/// See also [upcomingMedications].
-class UpcomingMedicationsFamily
+/// See also [activeMedicationsByPetId].
+class ActiveMedicationsByPetIdFamily
     extends Family<AsyncValue<List<MedicationEntry>>> {
-  /// See also [upcomingMedications].
-  const UpcomingMedicationsFamily();
+  /// See also [activeMedicationsByPetId].
+  const ActiveMedicationsByPetIdFamily();
 
-  /// See also [upcomingMedications].
-  UpcomingMedicationsProvider call(
+  /// See also [activeMedicationsByPetId].
+  ActiveMedicationsByPetIdProvider call(
     String petId,
   ) {
-    return UpcomingMedicationsProvider(
+    return ActiveMedicationsByPetIdProvider(
       petId,
     );
   }
 
   @override
-  UpcomingMedicationsProvider getProviderOverride(
-    covariant UpcomingMedicationsProvider provider,
+  ActiveMedicationsByPetIdProvider getProviderOverride(
+    covariant ActiveMedicationsByPetIdProvider provider,
   ) {
     return call(
       provider.petId,
@@ -500,33 +500,33 @@ class UpcomingMedicationsFamily
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'upcomingMedicationsProvider';
+  String? get name => r'activeMedicationsByPetIdProvider';
 }
 
-/// See also [upcomingMedications].
-class UpcomingMedicationsProvider
+/// See also [activeMedicationsByPetId].
+class ActiveMedicationsByPetIdProvider
     extends AutoDisposeFutureProvider<List<MedicationEntry>> {
-  /// See also [upcomingMedications].
-  UpcomingMedicationsProvider(
+  /// See also [activeMedicationsByPetId].
+  ActiveMedicationsByPetIdProvider(
     String petId,
   ) : this._internal(
-          (ref) => upcomingMedications(
-            ref as UpcomingMedicationsRef,
+          (ref) => activeMedicationsByPetId(
+            ref as ActiveMedicationsByPetIdRef,
             petId,
           ),
-          from: upcomingMedicationsProvider,
-          name: r'upcomingMedicationsProvider',
+          from: activeMedicationsByPetIdProvider,
+          name: r'activeMedicationsByPetIdProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$upcomingMedicationsHash,
-          dependencies: UpcomingMedicationsFamily._dependencies,
+                  : _$activeMedicationsByPetIdHash,
+          dependencies: ActiveMedicationsByPetIdFamily._dependencies,
           allTransitiveDependencies:
-              UpcomingMedicationsFamily._allTransitiveDependencies,
+              ActiveMedicationsByPetIdFamily._allTransitiveDependencies,
           petId: petId,
         );
 
-  UpcomingMedicationsProvider._internal(
+  ActiveMedicationsByPetIdProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -540,13 +540,14 @@ class UpcomingMedicationsProvider
 
   @override
   Override overrideWith(
-    FutureOr<List<MedicationEntry>> Function(UpcomingMedicationsRef provider)
+    FutureOr<List<MedicationEntry>> Function(
+            ActiveMedicationsByPetIdRef provider)
         create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: UpcomingMedicationsProvider._internal(
-        (ref) => create(ref as UpcomingMedicationsRef),
+      override: ActiveMedicationsByPetIdProvider._internal(
+        (ref) => create(ref as ActiveMedicationsByPetIdRef),
         from: from,
         name: null,
         dependencies: null,
@@ -559,12 +560,12 @@ class UpcomingMedicationsProvider
 
   @override
   AutoDisposeFutureProviderElement<List<MedicationEntry>> createElement() {
-    return _UpcomingMedicationsProviderElement(this);
+    return _ActiveMedicationsByPetIdProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is UpcomingMedicationsProvider && other.petId == petId;
+    return other is ActiveMedicationsByPetIdProvider && other.petId == petId;
   }
 
   @override
@@ -576,46 +577,46 @@ class UpcomingMedicationsProvider
   }
 }
 
-mixin UpcomingMedicationsRef
+mixin ActiveMedicationsByPetIdRef
     on AutoDisposeFutureProviderRef<List<MedicationEntry>> {
   /// The parameter `petId` of this provider.
   String get petId;
 }
 
-class _UpcomingMedicationsProviderElement
+class _ActiveMedicationsByPetIdProviderElement
     extends AutoDisposeFutureProviderElement<List<MedicationEntry>>
-    with UpcomingMedicationsRef {
-  _UpcomingMedicationsProviderElement(super.provider);
+    with ActiveMedicationsByPetIdRef {
+  _ActiveMedicationsByPetIdProviderElement(super.provider);
 
   @override
-  String get petId => (origin as UpcomingMedicationsProvider).petId;
+  String get petId => (origin as ActiveMedicationsByPetIdProvider).petId;
 }
 
-String _$overdueMedicationsHash() =>
-    r'a287cb3017388f57fb2436008c5a4fc869b0aaae';
+String _$inactiveMedicationsByPetIdHash() =>
+    r'd88770620be7f6d253e59cdce82d976cc1b67180';
 
-/// See also [overdueMedications].
-@ProviderFor(overdueMedications)
-const overdueMedicationsProvider = OverdueMedicationsFamily();
+/// See also [inactiveMedicationsByPetId].
+@ProviderFor(inactiveMedicationsByPetId)
+const inactiveMedicationsByPetIdProvider = InactiveMedicationsByPetIdFamily();
 
-/// See also [overdueMedications].
-class OverdueMedicationsFamily
+/// See also [inactiveMedicationsByPetId].
+class InactiveMedicationsByPetIdFamily
     extends Family<AsyncValue<List<MedicationEntry>>> {
-  /// See also [overdueMedications].
-  const OverdueMedicationsFamily();
+  /// See also [inactiveMedicationsByPetId].
+  const InactiveMedicationsByPetIdFamily();
 
-  /// See also [overdueMedications].
-  OverdueMedicationsProvider call(
+  /// See also [inactiveMedicationsByPetId].
+  InactiveMedicationsByPetIdProvider call(
     String petId,
   ) {
-    return OverdueMedicationsProvider(
+    return InactiveMedicationsByPetIdProvider(
       petId,
     );
   }
 
   @override
-  OverdueMedicationsProvider getProviderOverride(
-    covariant OverdueMedicationsProvider provider,
+  InactiveMedicationsByPetIdProvider getProviderOverride(
+    covariant InactiveMedicationsByPetIdProvider provider,
   ) {
     return call(
       provider.petId,
@@ -634,33 +635,33 @@ class OverdueMedicationsFamily
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'overdueMedicationsProvider';
+  String? get name => r'inactiveMedicationsByPetIdProvider';
 }
 
-/// See also [overdueMedications].
-class OverdueMedicationsProvider
+/// See also [inactiveMedicationsByPetId].
+class InactiveMedicationsByPetIdProvider
     extends AutoDisposeFutureProvider<List<MedicationEntry>> {
-  /// See also [overdueMedications].
-  OverdueMedicationsProvider(
+  /// See also [inactiveMedicationsByPetId].
+  InactiveMedicationsByPetIdProvider(
     String petId,
   ) : this._internal(
-          (ref) => overdueMedications(
-            ref as OverdueMedicationsRef,
+          (ref) => inactiveMedicationsByPetId(
+            ref as InactiveMedicationsByPetIdRef,
             petId,
           ),
-          from: overdueMedicationsProvider,
-          name: r'overdueMedicationsProvider',
+          from: inactiveMedicationsByPetIdProvider,
+          name: r'inactiveMedicationsByPetIdProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$overdueMedicationsHash,
-          dependencies: OverdueMedicationsFamily._dependencies,
+                  : _$inactiveMedicationsByPetIdHash,
+          dependencies: InactiveMedicationsByPetIdFamily._dependencies,
           allTransitiveDependencies:
-              OverdueMedicationsFamily._allTransitiveDependencies,
+              InactiveMedicationsByPetIdFamily._allTransitiveDependencies,
           petId: petId,
         );
 
-  OverdueMedicationsProvider._internal(
+  InactiveMedicationsByPetIdProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -674,13 +675,14 @@ class OverdueMedicationsProvider
 
   @override
   Override overrideWith(
-    FutureOr<List<MedicationEntry>> Function(OverdueMedicationsRef provider)
+    FutureOr<List<MedicationEntry>> Function(
+            InactiveMedicationsByPetIdRef provider)
         create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: OverdueMedicationsProvider._internal(
-        (ref) => create(ref as OverdueMedicationsRef),
+      override: InactiveMedicationsByPetIdProvider._internal(
+        (ref) => create(ref as InactiveMedicationsByPetIdRef),
         from: from,
         name: null,
         dependencies: null,
@@ -693,12 +695,12 @@ class OverdueMedicationsProvider
 
   @override
   AutoDisposeFutureProviderElement<List<MedicationEntry>> createElement() {
-    return _OverdueMedicationsProviderElement(this);
+    return _InactiveMedicationsByPetIdProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is OverdueMedicationsProvider && other.petId == petId;
+    return other is InactiveMedicationsByPetIdProvider && other.petId == petId;
   }
 
   @override
@@ -710,19 +712,19 @@ class OverdueMedicationsProvider
   }
 }
 
-mixin OverdueMedicationsRef
+mixin InactiveMedicationsByPetIdRef
     on AutoDisposeFutureProviderRef<List<MedicationEntry>> {
   /// The parameter `petId` of this provider.
   String get petId;
 }
 
-class _OverdueMedicationsProviderElement
+class _InactiveMedicationsByPetIdProviderElement
     extends AutoDisposeFutureProviderElement<List<MedicationEntry>>
-    with OverdueMedicationsRef {
-  _OverdueMedicationsProviderElement(super.provider);
+    with InactiveMedicationsByPetIdRef {
+  _InactiveMedicationsByPetIdProviderElement(super.provider);
 
   @override
-  String get petId => (origin as OverdueMedicationsProvider).petId;
+  String get petId => (origin as InactiveMedicationsByPetIdProvider).petId;
 }
 
 String _$appointmentsByPetIdHash() =>
