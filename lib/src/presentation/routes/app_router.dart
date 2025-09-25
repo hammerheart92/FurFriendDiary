@@ -1,6 +1,7 @@
 
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
 import '../../ui/shell.dart';
 import '../../ui/screens/feedings_screen.dart';
 import '../../ui/screens/walks_screen.dart';
@@ -14,10 +15,12 @@ import '../../ui/screens/premium_screen.dart';
 import '../screens/pet_profile_setup_screen.dart';
 import '../providers/pet_profile_provider.dart';
 
+final logger = Logger();
+
 GoRouter createRouter() => GoRouter(
   initialLocation: '/',
   redirect: (context, state) async {
-    print("🔍 DEBUG: Router redirect called, location: ${state.matchedLocation}");
+    logger.d("🔍 DEBUG: Router redirect called, location: ${state.matchedLocation}");
     
     // Check if we need to create a ProviderContainer to access the provider
     try {
@@ -26,22 +29,22 @@ GoRouter createRouter() => GoRouter(
       final hasSetupAsync = await container.read(hasCompletedSetupProvider.future);
       container.dispose();
       
-      print("🔍 DEBUG: Setup completed: $hasSetupAsync");
+      logger.d("🔍 DEBUG: Setup completed: $hasSetupAsync");
       
       // If setup is not completed and not already on profile-setup, redirect there
       if (!hasSetupAsync && state.matchedLocation != '/profile-setup') {
-        print("🔍 DEBUG: Redirecting to profile setup");
+        logger.d("🔍 DEBUG: Redirecting to profile setup");
         return '/profile-setup';
       }
       
       // If setup is completed and on profile-setup, redirect to main app
       if (hasSetupAsync && state.matchedLocation == '/profile-setup') {
-        print("🔍 DEBUG: Setup completed, redirecting to main app");
+        logger.d("🔍 DEBUG: Setup completed, redirecting to main app");
         return '/';
       }
       
     } catch (e) {
-      print("🚨 ERROR: Router redirect failed: $e");
+      logger.e("🚨 ERROR: Router redirect failed: $e");
       // If there's an error, assume setup is needed
       if (state.matchedLocation != '/profile-setup') {
         return '/profile-setup';

@@ -7,80 +7,97 @@ part 'appointment_entry.g.dart';
 class AppointmentEntry extends HiveObject {
   @HiveField(0)
   String id;
-  
+
   @HiveField(1)
   String petId;
-  
+
   @HiveField(2)
-  DateTime dateTime;
-  
-  @HiveField(3)
-  String appointmentType;
-  
-  @HiveField(4)
   String veterinarian;
-  
+
+  @HiveField(3)
+  String clinic;
+
+  @HiveField(4)
+  DateTime appointmentDate;
+
   @HiveField(5)
-  String? notes;
-  
+  DateTime appointmentTime;
+
   @HiveField(6)
-  bool isCompleted;
-  
+  String reason;
+
   @HiveField(7)
-  String? location;
-  
+  String? notes;
+
+  @HiveField(8)
+  bool isCompleted;
+
+  @HiveField(9)
+  DateTime createdAt;
+
   AppointmentEntry({
     String? id,
     required this.petId,
-    required this.dateTime,
-    required this.appointmentType,
     required this.veterinarian,
+    required this.clinic,
+    required this.appointmentDate,
+    required this.appointmentTime,
+    required this.reason,
     this.notes,
     this.isCompleted = false,
-    this.location,
-  }) : id = id ?? const Uuid().v4();
+    DateTime? createdAt,
+  }) : id = id ?? const Uuid().v4(),
+       createdAt = createdAt ?? DateTime.now();
 
   Map<String, dynamic> toJson() => {
     'id': id,
     'petId': petId,
-    'dateTime': dateTime.toIso8601String(),
-    'appointmentType': appointmentType,
     'veterinarian': veterinarian,
+    'clinic': clinic,
+    'appointmentDate': appointmentDate.toIso8601String(),
+    'appointmentTime': appointmentTime.toIso8601String(),
+    'reason': reason,
     'notes': notes,
     'isCompleted': isCompleted,
-    'location': location,
+    'createdAt': createdAt.toIso8601String(),
   };
 
   factory AppointmentEntry.fromJson(Map<String, dynamic> json) => AppointmentEntry(
     id: json['id'],
     petId: json['petId'],
-    dateTime: DateTime.parse(json['dateTime']),
-    appointmentType: json['appointmentType'],
     veterinarian: json['veterinarian'],
+    clinic: json['clinic'],
+    appointmentDate: DateTime.parse(json['appointmentDate']),
+    appointmentTime: DateTime.parse(json['appointmentTime']),
+    reason: json['reason'],
     notes: json['notes'],
     isCompleted: json['isCompleted'] ?? false,
-    location: json['location'],
+    createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : DateTime.now(),
   );
 
   AppointmentEntry copyWith({
     String? id,
     String? petId,
-    DateTime? dateTime,
-    String? appointmentType,
     String? veterinarian,
+    String? clinic,
+    DateTime? appointmentDate,
+    DateTime? appointmentTime,
+    String? reason,
     String? notes,
     bool? isCompleted,
-    String? location,
+    DateTime? createdAt,
   }) {
     return AppointmentEntry(
       id: id ?? this.id,
       petId: petId ?? this.petId,
-      dateTime: dateTime ?? this.dateTime,
-      appointmentType: appointmentType ?? this.appointmentType,
       veterinarian: veterinarian ?? this.veterinarian,
+      clinic: clinic ?? this.clinic,
+      appointmentDate: appointmentDate ?? this.appointmentDate,
+      appointmentTime: appointmentTime ?? this.appointmentTime,
+      reason: reason ?? this.reason,
       notes: notes ?? this.notes,
       isCompleted: isCompleted ?? this.isCompleted,
-      location: location ?? this.location,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 }

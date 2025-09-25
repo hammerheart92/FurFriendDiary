@@ -19,35 +19,41 @@ class AppointmentEntryAdapter extends TypeAdapter<AppointmentEntry> {
     return AppointmentEntry(
       id: fields[0] as String?,
       petId: fields[1] as String,
-      dateTime: fields[2] as DateTime,
-      appointmentType: fields[3] as String,
-      veterinarian: fields[4] as String,
-      notes: fields[5] as String?,
-      isCompleted: fields[6] as bool,
-      location: fields[7] as String?,
+      veterinarian: fields[2] as String,
+      clinic: fields[3] as String,
+      appointmentDate: fields[4] as DateTime,
+      appointmentTime: fields[5] as DateTime,
+      reason: fields[6] as String,
+      notes: fields[7] as String?,
+      isCompleted: fields[8] as bool,
+      createdAt: fields[9] as DateTime?,
     );
   }
 
   @override
   void write(BinaryWriter writer, AppointmentEntry obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
       ..write(obj.petId)
       ..writeByte(2)
-      ..write(obj.dateTime)
-      ..writeByte(3)
-      ..write(obj.appointmentType)
-      ..writeByte(4)
       ..write(obj.veterinarian)
+      ..writeByte(3)
+      ..write(obj.clinic)
+      ..writeByte(4)
+      ..write(obj.appointmentDate)
       ..writeByte(5)
-      ..write(obj.notes)
+      ..write(obj.appointmentTime)
       ..writeByte(6)
-      ..write(obj.isCompleted)
+      ..write(obj.reason)
       ..writeByte(7)
-      ..write(obj.location);
+      ..write(obj.notes)
+      ..writeByte(8)
+      ..write(obj.isCompleted)
+      ..writeByte(9)
+      ..write(obj.createdAt);
   }
 
   @override

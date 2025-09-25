@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
 import 'package:fur_friend_diary/src/data/repositories/pet_profile_repository.dart';
 import 'package:fur_friend_diary/src/domain/models/pet_profile.dart';
 
@@ -34,6 +35,7 @@ final hasCompletedSetupProvider = FutureProvider<bool>((ref) async {
 });
 
 class PetProfilesNotifier extends StateNotifier<AsyncValue<List<PetProfile>>> {
+  final logger = Logger();
   final PetProfileRepository _repository;
   PetProfilesNotifier(this._repository) : super(const AsyncValue.loading()) {
     _initialize();
@@ -44,7 +46,7 @@ class PetProfilesNotifier extends StateNotifier<AsyncValue<List<PetProfile>>> {
       await _repository.init();
       await load();
     } catch (error) {
-      print("🚨 ERROR in PetProfileProvider._initialize: $error");
+      logger.e("🚨 ERROR in PetProfileProvider._initialize: $error");
       // Initialize with empty state if there's an error
       state = AsyncValue.data([]);
     }
@@ -55,34 +57,34 @@ class PetProfilesNotifier extends StateNotifier<AsyncValue<List<PetProfile>>> {
       final profiles = _repository.getAll();
       state = AsyncValue.data(profiles);
     } catch (error) {
-      print("🚨 ERROR in PetProfileProvider.load: $error");
+      logger.e("🚨 ERROR in PetProfileProvider.load: $error");
       // Return empty list if there's an error instead of crashing
       state = AsyncValue.data([]);
     }
   }
 
   Future<void> createOrUpdate(PetProfile profile) async {
-    print("🔍 DEBUG: PetProfilesNotifier.createOrUpdate called with profile: ${profile.name}");
+    logger.d("🔍 DEBUG: PetProfilesNotifier.createOrUpdate called with profile: ${profile.name}");
     
     try {
       final existing = _repository.getAll();
       final idx = existing.indexWhere((p) => p.id == profile.id);
-      print("🔍 DEBUG: Existing profiles count: ${existing.length}, profile index: $idx");
+      logger.d("🔍 DEBUG: Existing profiles count: ${existing.length}, profile index: $idx");
 
       if (idx >= 0) {
-        print("🔍 DEBUG: Updating existing profile");
+        logger.d("🔍 DEBUG: Updating existing profile");
         await _repository.update(profile);
       } else {
-        print("🔍 DEBUG: Adding new profile");
+        logger.d("🔍 DEBUG: Adding new profile");
         await _repository.add(profile);
       }
 
-      print("🔍 DEBUG: Profile operation completed, reloading state");
+      logger.d("🔍 DEBUG: Profile operation completed, reloading state");
       await load();
-      print("🔍 DEBUG: State reloaded successfully");
+      logger.d("🔍 DEBUG: State reloaded successfully");
       
     } catch (error, stackTrace) {
-      print("🚨 ERROR: Failed in createOrUpdate: $error");
+      logger.e("🚨 ERROR: Failed in createOrUpdate: $error");
       state = AsyncValue.error(error, stackTrace);
       rethrow;
     }

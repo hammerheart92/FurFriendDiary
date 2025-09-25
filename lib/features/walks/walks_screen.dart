@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'walks_state.dart';
 
 /// Drop-in Walks screen with mock data, quick filters, responsive layout,
@@ -14,6 +15,7 @@ class WalksScreen extends StatefulWidget {
 }
 
 class _WalksScreenState extends State<WalksScreen> with AutomaticKeepAliveClientMixin {
+  final logger = Logger();
   WalkFilter _filter = WalkFilter.all; // Default to "All" so new items are visible
 
   @override
@@ -31,17 +33,17 @@ class _WalksScreenState extends State<WalksScreen> with AutomaticKeepAliveClient
         final filtered = _filteredWalks(allWalks);
         final isEmpty = filtered.isEmpty;
         
-        print('📱 UI REBUILD: Rendering ${allWalks.length} total walks, ${filtered.length} filtered');
-        print('📱 UI FILTER: Current filter: $_filter');
-        print('📱 UI EMPTY CHECK: isEmpty = $isEmpty');
+        logger.d('📱 UI REBUILD: Rendering ${allWalks.length} total walks, ${filtered.length} filtered');
+        logger.d('📱 UI FILTER: Current filter: $_filter');
+        logger.d('📱 UI EMPTY CHECK: isEmpty = $isEmpty');
         
         if (filtered.isNotEmpty) {
-          print('📱 UI WALKS LIST:');
+          logger.d('📱 UI WALKS LIST:');
           for (int i = 0; i < filtered.length; i++) {
-            print('   ${i + 1}. ${filtered[i].note} at ${filtered[i].start}');
+            logger.d('   ${i + 1}. ${filtered[i].note} at ${filtered[i].start}');
           }
         } else if (allWalks.isNotEmpty) {
-          print('📱 UI NOTE: ${allWalks.length} walks exist but filtered to 0 for $_filter');
+          logger.d('📱 UI NOTE: ${allWalks.length} walks exist but filtered to 0 for $_filter');
         }
 
         return Scaffold(
@@ -82,35 +84,35 @@ class _WalksScreenState extends State<WalksScreen> with AutomaticKeepAliveClient
     final now = DateTime.now();
     DateTime startBoundary;
 
-    print('🔍 FILTERING: Input ${source.length} walks, filter: $_filter');
+    logger.d('🔍 FILTERING: Input ${source.length} walks, filter: $_filter');
     
     switch (_filter) {
       case WalkFilter.today:
         startBoundary = DateTime(now.year, now.month, now.day);
-        print('🔍 TODAY filter: Looking for walks after $startBoundary');
+        logger.d('🔍 TODAY filter: Looking for walks after $startBoundary');
         break;
       case WalkFilter.thisWeek:
         final weekday = now.weekday; // 1 Mon, 7 Sun
         startBoundary = DateTime(now.year, now.month, now.day).subtract(Duration(days: weekday - 1));
-        print('🔍 THIS WEEK filter: Looking for walks after $startBoundary');
+        logger.d('🔍 THIS WEEK filter: Looking for walks after $startBoundary');
         break;
       case WalkFilter.all:
-        print('🔍 ALL filter: Showing all ${source.length} walks');
+        logger.d('🔍 ALL filter: Showing all ${source.length} walks');
         final sorted = List.of(source)..sort((a, b) => b.start.compareTo(a.start));
         for (int i = 0; i < sorted.length; i++) {
-          print('   Walk ${i + 1}: ${sorted[i].note} at ${sorted[i].start}');
+          logger.d('   Walk ${i + 1}: ${sorted[i].note} at ${sorted[i].start}');
         }
         return sorted;
     }
 
     final list = source.where((w) {
       final isAfter = w.start.isAfter(startBoundary);
-      print('   Walk "${w.note}" at ${w.start} - isAfter($startBoundary): $isAfter');
+      logger.d('   Walk "${w.note}" at ${w.start} - isAfter($startBoundary): $isAfter');
       return isAfter;
     }).toList();
     
     list.sort((a, b) => b.start.compareTo(a.start));
-    print('🔍 FILTER RESULT: ${list.length} walks match $_filter filter');
+    logger.d('🔍 FILTER RESULT: ${list.length} walks match $_filter filter');
     return list;
   }
 
@@ -123,9 +125,9 @@ class _WalksScreenState extends State<WalksScreen> with AutomaticKeepAliveClient
       isScrollControlled: true,
       builder: (context) => _AddWalkSheet(
         onSubmit: (entry) async {
-          print('📝 FORM SUBMITTED - Walk Data: ${entry.note} at ${entry.start}');
-          print('📅 Walk Date: ${entry.start}');
-          print('💾 SAVING TO REPOSITORY...');
+          logger.i('📝 FORM SUBMITTED - Walk Data: ${entry.note} at ${entry.start}');
+          logger.i('📅 Walk Date: ${entry.start}');
+          logger.i('💾 SAVING TO REPOSITORY...');
           
           await controller.add(entry);
           if (context.mounted) {
@@ -135,7 +137,7 @@ class _WalksScreenState extends State<WalksScreen> with AutomaticKeepAliveClient
             );
           }
           
-          print('🔙 NAVIGATION: Returned to walks screen, data refreshed');
+          logger.i('🔙 NAVIGATION: Returned to walks screen, data refreshed');
         },
       ),
     );
@@ -183,6 +185,7 @@ class _FilterBar extends StatelessWidget {
 class _ResponsiveWalkList extends StatelessWidget {
   const _ResponsiveWalkList({super.key, required this.entries});
   final List<WalkEntry> entries;
+  static final logger = Logger();
 
   @override
   Widget build(BuildContext context) {
@@ -204,14 +207,14 @@ class _ResponsiveWalkList extends StatelessWidget {
             itemBuilder: (context, i) => WalkCard(entry: entries[i]),
           );
         }
-        print('📋 BUILDING ListView with ${entries.length} entries');
+        logger.d('📋 BUILDING ListView with ${entries.length} entries');
         return ListView.separated(
           key: const PageStorageKey('walks_list'),
           padding: const EdgeInsets.all(12),
           itemCount: entries.length,
           separatorBuilder: (_, __) => const SizedBox(height: 12),
           itemBuilder: (context, i) {
-            print('📋 ListView building item $i: ${entries[i].note}');
+            logger.d('📋 ListView building item $i: ${entries[i].note}');
             return WalkCard(entry: entries[i]);
           },
         );
@@ -223,10 +226,11 @@ class _ResponsiveWalkList extends StatelessWidget {
 class WalkCard extends StatelessWidget {
   const WalkCard({super.key, required this.entry});
   final WalkEntry entry;
+  static final logger = Logger();
 
   @override
   Widget build(BuildContext context) {
-    print('🃏 RENDERING WalkCard: ${entry.note} at ${entry.start}');
+    logger.d('🃏 RENDERING WalkCard: ${entry.note} at ${entry.start}');
     final theme = Theme.of(context);
     final time = DateFormat.Hm().format(entry.start);
     final primaryLine = '$time • ${entry.durationMin} min • ${entry.distanceKm.toStringAsFixed(1)} km';

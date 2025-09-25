@@ -80,7 +80,7 @@ class _MedicationDetailScreenState extends ConsumerState<MedicationDetailScreen>
     _endDate = medication.endDate;
     _hasEndDate = medication.endDate != null;
     _administrationTimes = medication.administrationTimes
-        .map((dateTime) => TimeOfDay.fromDateTime(dateTime))
+        .map((timeModel) => timeModel.toTimeOfDay())
         .toList();
   }
 
@@ -363,7 +363,7 @@ class _MedicationDetailScreenState extends ConsumerState<MedicationDetailScreen>
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                DateFormat('HH:mm').format(time),
+                                time.format24Hour(),
                                 style: TextStyle(
                                   color: theme.colorScheme.primary,
                                   fontWeight: FontWeight.bold,

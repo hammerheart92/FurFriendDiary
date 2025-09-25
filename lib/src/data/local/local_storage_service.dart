@@ -1,21 +1,24 @@
 import 'package:timezone/data/latest.dart' as tz;
+import 'package:logger/logger.dart';
 import 'hive_manager.dart';
 
 class LocalStorageService {
+  static final logger = Logger();
+
   static Future<void> initialize() async {
-    print("🔍 DEBUG: LocalStorageService.initialize() called");
+    logger.i("🔍 DEBUG: LocalStorageService.initialize() called");
     
     // Initialize timezone data
     tz.initializeTimeZones();
-    print("✅ DEBUG: Timezone data initialized");
+    logger.i("✅ DEBUG: Timezone data initialized");
     
     // HiveManager should already be initialized in main.dart
     if (!HiveManager.instance.isInitialized) {
-      print("⚠️ WARNING: HiveManager not initialized, initializing now");
+      logger.w("⚠️ WARNING: HiveManager not initialized, initializing now");
       await HiveManager.instance.initialize();
     }
     
-    print("✅ DEBUG: LocalStorageService initialization completed");
+    logger.i("✅ DEBUG: LocalStorageService initialization completed");
   }
   
   static Future<void> close() async {

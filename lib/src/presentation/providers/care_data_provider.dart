@@ -129,13 +129,7 @@ Future<List<AppointmentEntry>> appointmentsByPetId(AppointmentsByPetIdRef ref, S
 }
 
 @riverpod
-Future<List<AppointmentEntry>> upcomingAppointments(UpcomingAppointmentsRef ref, String petId) async {
+Future<List<AppointmentEntry>> appointmentsByDateRange(AppointmentsByDateRangeRef ref, String petId, DateTime start, DateTime end) async {
   final repository = ref.watch(appointmentRepositoryProvider);
-  return await repository.getUpcomingAppointments(petId);
-}
-
-@riverpod
-Future<List<AppointmentEntry>> completedAppointments(CompletedAppointmentsRef ref, String petId) async {
-  final repository = ref.watch(appointmentRepositoryProvider);
-  return await repository.getCompletedAppointments(petId);
+  return await repository.getAppointmentsByDateRange(petId, start, end);
 }

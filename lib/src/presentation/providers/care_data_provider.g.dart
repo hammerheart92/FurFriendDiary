@@ -861,34 +861,40 @@ class _AppointmentsByPetIdProviderElement
   String get petId => (origin as AppointmentsByPetIdProvider).petId;
 }
 
-String _$upcomingAppointmentsHash() =>
-    r'77e08e0c327164060ed6ed37f4548feec014c332';
+String _$appointmentsByDateRangeHash() =>
+    r'0011dd699a0d00cc6f00f214546e3de996494f91';
 
-/// See also [upcomingAppointments].
-@ProviderFor(upcomingAppointments)
-const upcomingAppointmentsProvider = UpcomingAppointmentsFamily();
+/// See also [appointmentsByDateRange].
+@ProviderFor(appointmentsByDateRange)
+const appointmentsByDateRangeProvider = AppointmentsByDateRangeFamily();
 
-/// See also [upcomingAppointments].
-class UpcomingAppointmentsFamily
+/// See also [appointmentsByDateRange].
+class AppointmentsByDateRangeFamily
     extends Family<AsyncValue<List<AppointmentEntry>>> {
-  /// See also [upcomingAppointments].
-  const UpcomingAppointmentsFamily();
+  /// See also [appointmentsByDateRange].
+  const AppointmentsByDateRangeFamily();
 
-  /// See also [upcomingAppointments].
-  UpcomingAppointmentsProvider call(
+  /// See also [appointmentsByDateRange].
+  AppointmentsByDateRangeProvider call(
     String petId,
+    DateTime start,
+    DateTime end,
   ) {
-    return UpcomingAppointmentsProvider(
+    return AppointmentsByDateRangeProvider(
       petId,
+      start,
+      end,
     );
   }
 
   @override
-  UpcomingAppointmentsProvider getProviderOverride(
-    covariant UpcomingAppointmentsProvider provider,
+  AppointmentsByDateRangeProvider getProviderOverride(
+    covariant AppointmentsByDateRangeProvider provider,
   ) {
     return call(
       provider.petId,
+      provider.start,
+      provider.end,
     );
   }
 
@@ -904,33 +910,39 @@ class UpcomingAppointmentsFamily
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'upcomingAppointmentsProvider';
+  String? get name => r'appointmentsByDateRangeProvider';
 }
 
-/// See also [upcomingAppointments].
-class UpcomingAppointmentsProvider
+/// See also [appointmentsByDateRange].
+class AppointmentsByDateRangeProvider
     extends AutoDisposeFutureProvider<List<AppointmentEntry>> {
-  /// See also [upcomingAppointments].
-  UpcomingAppointmentsProvider(
+  /// See also [appointmentsByDateRange].
+  AppointmentsByDateRangeProvider(
     String petId,
+    DateTime start,
+    DateTime end,
   ) : this._internal(
-          (ref) => upcomingAppointments(
-            ref as UpcomingAppointmentsRef,
+          (ref) => appointmentsByDateRange(
+            ref as AppointmentsByDateRangeRef,
             petId,
+            start,
+            end,
           ),
-          from: upcomingAppointmentsProvider,
-          name: r'upcomingAppointmentsProvider',
+          from: appointmentsByDateRangeProvider,
+          name: r'appointmentsByDateRangeProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$upcomingAppointmentsHash,
-          dependencies: UpcomingAppointmentsFamily._dependencies,
+                  : _$appointmentsByDateRangeHash,
+          dependencies: AppointmentsByDateRangeFamily._dependencies,
           allTransitiveDependencies:
-              UpcomingAppointmentsFamily._allTransitiveDependencies,
+              AppointmentsByDateRangeFamily._allTransitiveDependencies,
           petId: petId,
+          start: start,
+          end: end,
         );
 
-  UpcomingAppointmentsProvider._internal(
+  AppointmentsByDateRangeProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -938,195 +950,83 @@ class UpcomingAppointmentsProvider
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.petId,
+    required this.start,
+    required this.end,
   }) : super.internal();
 
   final String petId;
+  final DateTime start;
+  final DateTime end;
 
   @override
   Override overrideWith(
-    FutureOr<List<AppointmentEntry>> Function(UpcomingAppointmentsRef provider)
+    FutureOr<List<AppointmentEntry>> Function(
+            AppointmentsByDateRangeRef provider)
         create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: UpcomingAppointmentsProvider._internal(
-        (ref) => create(ref as UpcomingAppointmentsRef),
+      override: AppointmentsByDateRangeProvider._internal(
+        (ref) => create(ref as AppointmentsByDateRangeRef),
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         petId: petId,
+        start: start,
+        end: end,
       ),
     );
   }
 
   @override
   AutoDisposeFutureProviderElement<List<AppointmentEntry>> createElement() {
-    return _UpcomingAppointmentsProviderElement(this);
+    return _AppointmentsByDateRangeProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is UpcomingAppointmentsProvider && other.petId == petId;
+    return other is AppointmentsByDateRangeProvider &&
+        other.petId == petId &&
+        other.start == start &&
+        other.end == end;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, petId.hashCode);
+    hash = _SystemHash.combine(hash, start.hashCode);
+    hash = _SystemHash.combine(hash, end.hashCode);
 
     return _SystemHash.finish(hash);
   }
 }
 
-mixin UpcomingAppointmentsRef
+mixin AppointmentsByDateRangeRef
     on AutoDisposeFutureProviderRef<List<AppointmentEntry>> {
   /// The parameter `petId` of this provider.
   String get petId;
+
+  /// The parameter `start` of this provider.
+  DateTime get start;
+
+  /// The parameter `end` of this provider.
+  DateTime get end;
 }
 
-class _UpcomingAppointmentsProviderElement
+class _AppointmentsByDateRangeProviderElement
     extends AutoDisposeFutureProviderElement<List<AppointmentEntry>>
-    with UpcomingAppointmentsRef {
-  _UpcomingAppointmentsProviderElement(super.provider);
+    with AppointmentsByDateRangeRef {
+  _AppointmentsByDateRangeProviderElement(super.provider);
 
   @override
-  String get petId => (origin as UpcomingAppointmentsProvider).petId;
-}
-
-String _$completedAppointmentsHash() =>
-    r'3d50911a6bffee3be16c018c1a1274fd604bff0f';
-
-/// See also [completedAppointments].
-@ProviderFor(completedAppointments)
-const completedAppointmentsProvider = CompletedAppointmentsFamily();
-
-/// See also [completedAppointments].
-class CompletedAppointmentsFamily
-    extends Family<AsyncValue<List<AppointmentEntry>>> {
-  /// See also [completedAppointments].
-  const CompletedAppointmentsFamily();
-
-  /// See also [completedAppointments].
-  CompletedAppointmentsProvider call(
-    String petId,
-  ) {
-    return CompletedAppointmentsProvider(
-      petId,
-    );
-  }
-
+  String get petId => (origin as AppointmentsByDateRangeProvider).petId;
   @override
-  CompletedAppointmentsProvider getProviderOverride(
-    covariant CompletedAppointmentsProvider provider,
-  ) {
-    return call(
-      provider.petId,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
+  DateTime get start => (origin as AppointmentsByDateRangeProvider).start;
   @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'completedAppointmentsProvider';
-}
-
-/// See also [completedAppointments].
-class CompletedAppointmentsProvider
-    extends AutoDisposeFutureProvider<List<AppointmentEntry>> {
-  /// See also [completedAppointments].
-  CompletedAppointmentsProvider(
-    String petId,
-  ) : this._internal(
-          (ref) => completedAppointments(
-            ref as CompletedAppointmentsRef,
-            petId,
-          ),
-          from: completedAppointmentsProvider,
-          name: r'completedAppointmentsProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$completedAppointmentsHash,
-          dependencies: CompletedAppointmentsFamily._dependencies,
-          allTransitiveDependencies:
-              CompletedAppointmentsFamily._allTransitiveDependencies,
-          petId: petId,
-        );
-
-  CompletedAppointmentsProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.petId,
-  }) : super.internal();
-
-  final String petId;
-
-  @override
-  Override overrideWith(
-    FutureOr<List<AppointmentEntry>> Function(CompletedAppointmentsRef provider)
-        create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: CompletedAppointmentsProvider._internal(
-        (ref) => create(ref as CompletedAppointmentsRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        petId: petId,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeFutureProviderElement<List<AppointmentEntry>> createElement() {
-    return _CompletedAppointmentsProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is CompletedAppointmentsProvider && other.petId == petId;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, petId.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
-
-mixin CompletedAppointmentsRef
-    on AutoDisposeFutureProviderRef<List<AppointmentEntry>> {
-  /// The parameter `petId` of this provider.
-  String get petId;
-}
-
-class _CompletedAppointmentsProviderElement
-    extends AutoDisposeFutureProviderElement<List<AppointmentEntry>>
-    with CompletedAppointmentsRef {
-  _CompletedAppointmentsProviderElement(super.provider);
-
-  @override
-  String get petId => (origin as CompletedAppointmentsProvider).petId;
+  DateTime get end => (origin as AppointmentsByDateRangeProvider).end;
 }
 
 String _$feedingProviderHash() => r'943cc51ee106ccdad560573be3d9b0c9042a5b06';

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../providers/medications_provider.dart';
 import '../../presentation/providers/pet_profile_provider.dart';
+import '../../domain/models/time_of_day_model.dart';
 
 class AddMedicationScreen extends ConsumerStatefulWidget {
   const AddMedicationScreen({super.key});
@@ -473,11 +474,10 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
     });
 
     try {
-      // Convert TimeOfDay to DateTime for today
-      final today = DateTime.now();
-      final administrationDateTimes = _administrationTimes.map((time) {
-        return DateTime(today.year, today.month, today.day, time.hour, time.minute);
-      }).toList();
+      // Convert TimeOfDay to TimeOfDayModel
+      final administrationTimeModels = _administrationTimes
+          .map((time) => TimeOfDayModel.fromTimeOfDay(time))
+          .toList();
 
       await ref.read(medicationsProvider.notifier).addMedication(
         petId: activePet.id,
@@ -488,7 +488,7 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
         endDate: _endDate,
         administrationMethod: _selectedAdministrationMethod,
         notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
-        administrationTimes: administrationDateTimes,
+        administrationTimes: administrationTimeModels,
       );
 
       if (mounted) {

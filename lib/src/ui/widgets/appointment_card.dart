@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../domain/models/medication_entry.dart';
+import '../../domain/models/appointment_entry.dart';
 
-class MedicationCard extends StatelessWidget {
-  final MedicationEntry medication;
+class AppointmentCard extends StatelessWidget {
+  final AppointmentEntry appointment;
   final VoidCallback? onTap;
   final VoidCallback? onToggleStatus;
   final VoidCallback? onDelete;
 
-  const MedicationCard({
+  const AppointmentCard({
     super.key,
-    required this.medication,
+    required this.appointment,
     this.onTap,
     this.onToggleStatus,
     this.onDelete,
@@ -37,19 +37,19 @@ class MedicationCard extends StatelessWidget {
               // Header row
               Row(
                 children: [
-                  // Medication icon and name
+                  // Appointment icon and veterinarian
                   Expanded(
                     child: Row(
                       children: [
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: _getMedicationColor().withOpacity(0.1),
+                            color: _getAppointmentColor().withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Icon(
-                            _getMedicationIcon(),
-                            color: _getMedicationColor(),
+                            _getAppointmentIcon(),
+                            color: _getAppointmentColor(),
                             size: 20,
                           ),
                         ),
@@ -59,7 +59,7 @@ class MedicationCard extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                medication.medicationName,
+                                appointment.veterinarian,
                                 style: theme.textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -68,7 +68,7 @@ class MedicationCard extends StatelessWidget {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                '${medication.dosage} • ${medication.frequency}',
+                                '${appointment.clinic} • ${appointment.reason}',
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: theme.colorScheme.onSurface.withOpacity(0.7),
                                 ),
@@ -89,11 +89,13 @@ class MedicationCard extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: medication.isActive ? Colors.green : Colors.grey,
+                      color: appointment.isCompleted ? Colors.green : _getStatusColor(),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      medication.isActive ? 'Active' : 'Inactive',
+                      appointment.isCompleted
+                          ? 'Completed'
+                          : _getStatusText(),
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 10,
@@ -120,11 +122,11 @@ class MedicationCard extends StatelessWidget {
                         child: Row(
                           children: [
                             Icon(
-                              medication.isActive ? Icons.pause : Icons.play_arrow,
-                              color: medication.isActive ? Colors.orange : Colors.green,
+                              appointment.isCompleted ? Icons.undo : Icons.check,
+                              color: appointment.isCompleted ? Colors.orange : Colors.green,
                             ),
                             const SizedBox(width: 8),
-                            Text(medication.isActive ? 'Mark Inactive' : 'Mark Active'),
+                            Text(appointment.isCompleted ? 'Mark Pending' : 'Mark Completed'),
                           ],
                         ),
                       ),
@@ -146,111 +148,43 @@ class MedicationCard extends StatelessWidget {
 
               const SizedBox(height: 16),
 
-              // Medication details row
+              // Appointment details row
               Row(
                 children: [
-                  // Administration method
+                  // Date
                   Expanded(
                     child: _buildDetailItem(
-                      icon: Icons.medical_services,
-                      label: 'Method',
-                      value: medication.administrationMethod,
+                      icon: Icons.calendar_today,
+                      label: 'Date',
+                      value: DateFormat('MMM dd').format(appointment.appointmentDate),
                       color: Colors.blue,
                     ),
                   ),
 
-                  // Start date
+                  // Time
                   Expanded(
                     child: _buildDetailItem(
-                      icon: Icons.calendar_today,
-                      label: 'Started',
-                      value: DateFormat('MMM dd').format(medication.startDate),
+                      icon: Icons.access_time,
+                      label: 'Time',
+                      value: DateFormat('HH:mm').format(appointment.appointmentTime),
                       color: Colors.green,
                     ),
                   ),
 
-                  // End date or duration
+                  // Days until/since
                   Expanded(
                     child: _buildDetailItem(
-                      icon: medication.endDate != null ? Icons.event_available : Icons.all_inclusive,
-                      label: medication.endDate != null ? 'Ends' : 'Duration',
-                      value: medication.endDate != null
-                          ? DateFormat('MMM dd').format(medication.endDate!)
-                          : 'Ongoing',
-                      color: medication.endDate != null ? Colors.orange : Colors.purple,
+                      icon: _getDaysIcon(),
+                      label: _getDaysLabel(),
+                      value: _getDaysValue(),
+                      color: _getDaysColor(),
                     ),
                   ),
                 ],
               ),
 
-              // Administration times
-              if (medication.administrationTimes.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surface,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: theme.colorScheme.outline.withOpacity(0.2),
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.schedule,
-                            size: 16,
-                            color: theme.colorScheme.onSurface.withOpacity(0.7),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            'Administration Times',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: theme.colorScheme.onSurface.withOpacity(0.7),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 4,
-                        children: medication.administrationTimes.map((time) {
-                          return Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: theme.colorScheme.primary.withOpacity(0.3),
-                              ),
-                            ),
-                            child: Text(
-                              time.format24Hour(),
-                              style: TextStyle(
-                                color: theme.colorScheme.primary,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-
               // Notes section
-              if (medication.notes != null && medication.notes!.isNotEmpty) ...[
+              if (appointment.notes != null && appointment.notes!.isNotEmpty) ...[
                 const SizedBox(height: 16),
                 Container(
                   width: double.infinity,
@@ -284,7 +218,7 @@ class MedicationCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        medication.notes!,
+                        appointment.notes!,
                         style: theme.textTheme.bodySmall,
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
@@ -335,29 +269,141 @@ class MedicationCard extends StatelessWidget {
     );
   }
 
-  IconData _getMedicationIcon() {
-    switch (medication.administrationMethod.toLowerCase()) {
-      case 'oral':
-        return Icons.medication;
-      case 'topical':
-        return Icons.touch_app;
-      case 'injection':
-        return Icons.vaccines;
-      default:
-        return Icons.medical_services;
+  IconData _getAppointmentIcon() {
+    final reason = appointment.reason.toLowerCase();
+    if (reason.contains('vaccine') || reason.contains('vaccination')) {
+      return Icons.vaccines;
+    } else if (reason.contains('surgery') || reason.contains('operation')) {
+      return Icons.medical_services;
+    } else if (reason.contains('checkup') || reason.contains('exam')) {
+      return Icons.health_and_safety;
+    } else if (reason.contains('dental') || reason.contains('teeth')) {
+      return Icons.medication;
+    } else if (reason.contains('emergency') || reason.contains('urgent')) {
+      return Icons.emergency;
+    } else {
+      return Icons.local_hospital;
     }
   }
 
-  Color _getMedicationColor() {
-    switch (medication.administrationMethod.toLowerCase()) {
-      case 'oral':
-        return Colors.blue;
-      case 'topical':
-        return Colors.green;
-      case 'injection':
-        return Colors.red;
-      default:
-        return Colors.purple;
+  Color _getAppointmentColor() {
+    final reason = appointment.reason.toLowerCase();
+    if (reason.contains('vaccine') || reason.contains('vaccination')) {
+      return Colors.green;
+    } else if (reason.contains('surgery') || reason.contains('operation')) {
+      return Colors.red;
+    } else if (reason.contains('checkup') || reason.contains('exam')) {
+      return Colors.blue;
+    } else if (reason.contains('dental') || reason.contains('teeth')) {
+      return Colors.purple;
+    } else if (reason.contains('emergency') || reason.contains('urgent')) {
+      return Colors.orange;
+    } else {
+      return Colors.teal;
+    }
+  }
+
+  Color _getStatusColor() {
+    if (appointment.isCompleted) {
+      return Colors.green;
+    }
+
+    final now = DateTime.now();
+    final appointmentDateTime = appointment.appointmentDate;
+
+    if (appointmentDateTime.isBefore(now)) {
+      return Colors.red; // Overdue
+    } else if (appointmentDateTime.difference(now).inDays <= 1) {
+      return Colors.orange; // Tomorrow or today
+    } else {
+      return Colors.blue; // Upcoming
+    }
+  }
+
+  String _getStatusText() {
+    if (appointment.isCompleted) {
+      return 'Completed';
+    }
+
+    final now = DateTime.now();
+    final appointmentDate = appointment.appointmentDate;
+
+    if (appointmentDate.isBefore(now)) {
+      return 'Overdue';
+    } else if (appointmentDate.difference(now).inDays == 0) {
+      return 'Today';
+    } else if (appointmentDate.difference(now).inDays == 1) {
+      return 'Tomorrow';
+    } else {
+      return 'Upcoming';
+    }
+  }
+
+  IconData _getDaysIcon() {
+    if (appointment.isCompleted) {
+      return Icons.check_circle;
+    }
+
+    final now = DateTime.now();
+    final appointmentDate = appointment.appointmentDate;
+
+    if (appointmentDate.isBefore(now)) {
+      return Icons.warning;
+    } else {
+      return Icons.schedule;
+    }
+  }
+
+  String _getDaysLabel() {
+    if (appointment.isCompleted) {
+      return 'Status';
+    }
+
+    final now = DateTime.now();
+    final appointmentDate = appointment.appointmentDate;
+
+    if (appointmentDate.isBefore(now)) {
+      return 'Overdue';
+    } else {
+      return 'In';
+    }
+  }
+
+  String _getDaysValue() {
+    if (appointment.isCompleted) {
+      return 'Done';
+    }
+
+    final now = DateTime.now();
+    final appointmentDate = appointment.appointmentDate;
+    final difference = appointmentDate.difference(now).inDays;
+
+    if (difference < 0) {
+      final overdueDays = -difference;
+      return '${overdueDays}d';
+    } else if (difference == 0) {
+      return 'Today';
+    } else if (difference == 1) {
+      return '1 day';
+    } else {
+      return '${difference}d';
+    }
+  }
+
+  Color _getDaysColor() {
+    if (appointment.isCompleted) {
+      return Colors.green;
+    }
+
+    final now = DateTime.now();
+    final appointmentDate = appointment.appointmentDate;
+
+    if (appointmentDate.isBefore(now)) {
+      return Colors.red; // Overdue
+    } else if (appointmentDate.difference(now).inDays <= 1) {
+      return Colors.orange; // Soon
+    } else {
+      return Colors.purple; // Future
     }
   }
 }

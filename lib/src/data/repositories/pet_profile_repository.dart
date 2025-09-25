@@ -1,8 +1,10 @@
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:logger/logger.dart';
 import 'package:fur_friend_diary/src/domain/models/pet_profile.dart';
 import '../local/hive_boxes.dart';
 
 class PetProfileRepository {
+  final logger = Logger();
   static const String _settingsBoxName = 'app_prefs';
   
   Box<PetProfile>? _profileBox;
@@ -13,19 +15,19 @@ class PetProfileRepository {
 
   // Initialize boxes - called from InitService
   Future<void> init() async {
-    print("🔍 DEBUG: PetProfileRepository.init() called");
+    logger.i("🔍 DEBUG: PetProfileRepository.init() called");
     
     try {
       // Use HiveBoxes to get already opened boxes
       _profileBox = HiveBoxes.getPetProfiles();
-      print("🔍 DEBUG: Got pet profiles box successfully");
+      logger.i("🔍 DEBUG: Got pet profiles box successfully");
       
       _settingsBox = HiveBoxes.getAppPrefs();
-      print("🔍 DEBUG: Got app prefs box successfully");
+      logger.i("🔍 DEBUG: Got app prefs box successfully");
       
-      print("🔍 DEBUG: PetProfileRepository initialization completed");
+      logger.i("🔍 DEBUG: PetProfileRepository initialization completed");
     } catch (e) {
-      print("🚨 ERROR: PetProfileRepository.init() failed: $e");
+      logger.e("🚨 ERROR: PetProfileRepository.init() failed: $e");
       rethrow;
     }
   }
@@ -35,7 +37,7 @@ class PetProfileRepository {
     try {
       return _profiles.values.toList();
     } catch (e) {
-      print("🚨 ERROR in getAll: $e");
+      logger.e("🚨 ERROR in getAll: $e");
       return [];
     }
   }
@@ -45,7 +47,7 @@ class PetProfileRepository {
     try {
       return _profiles.values.where((p) => p.isActive).toList();
     } catch (e) {
-      print("🚨 ERROR in getActive: $e");
+      logger.e("🚨 ERROR in getActive: $e");
       return [];
     }
   }
@@ -69,50 +71,50 @@ class PetProfileRepository {
         await _settings.put('hasCompletedSetup', true);
       }
     } catch (e) {
-      print("🚨 ERROR in setActive: $e");
+      logger.e("🚨 ERROR in setActive: $e");
       rethrow;
     }
   }
 
   // Add new profile
   Future<void> add(PetProfile profile) async {
-    print("🔍 DEBUG: PetProfileRepository.add() called for: ${profile.name}");
+    logger.i("🔍 DEBUG: PetProfileRepository.add() called for: ${profile.name}");
     
     try {
-      print("🔍 DEBUG: Attempting to get pet_profiles box");
+      logger.d("🔍 DEBUG: Attempting to get pet_profiles box");
       final box = _profiles; // This will call HiveBoxes.getPetProfiles() with defensive checks
       
-      print("🔍 DEBUG: Box retrieved successfully. IsOpen: ${box.isOpen}");
-      print("🔍 DEBUG: Current box length: ${box.length}");
+      logger.d("🔍 DEBUG: Box retrieved successfully. IsOpen: ${box.isOpen}");
+      logger.d("🔍 DEBUG: Current box length: ${box.length}");
       
       // If this is the first profile, make it active
       final isFirstProfile = box.isEmpty;
-      print("🔍 DEBUG: Is first profile: $isFirstProfile");
+      logger.d("🔍 DEBUG: Is first profile: $isFirstProfile");
       
       final profileToSave = isFirstProfile 
           ? profile.copyWith(isActive: true) 
           : profile;
       
-      print("🔍 DEBUG: About to save profile with ID: ${profile.id}");
-      print("🔍 DEBUG: Profile to save - Name: ${profileToSave.name}, Active: ${profileToSave.isActive}");
+      logger.d("🔍 DEBUG: About to save profile with ID: ${profile.id}");
+      logger.d("🔍 DEBUG: Profile to save - Name: ${profileToSave.name}, Active: ${profileToSave.isActive}");
       
       await box.put(profile.id, profileToSave);
       
-      print("🔍 DEBUG: Profile saved successfully!");
-      print("🔍 DEBUG: Box now contains ${box.length} profiles");
+      logger.i("🔍 DEBUG: Profile saved successfully!");
+      logger.d("🔍 DEBUG: Box now contains ${box.length} profiles");
       
       // Verify the save
       final savedProfile = box.get(profile.id);
-      print("🔍 DEBUG: Verification - saved profile: ${savedProfile?.name}");
+      logger.d("🔍 DEBUG: Verification - saved profile: ${savedProfile?.name}");
       
       if (isFirstProfile) {
         await _settings.put('hasCompletedSetup', true);
-        print("🔍 DEBUG: Setup completion flag set to true");
+        logger.i("🔍 DEBUG: Setup completion flag set to true");
       }
       
     } catch (e) {
-      print("🚨 ERROR: addPetProfile failed: $e");
-      print("🚨 ERROR: Error type: ${e.runtimeType}");
+      logger.e("🚨 ERROR: addPetProfile failed: $e");
+      logger.e("🚨 ERROR: Error type: ${e.runtimeType}");
       rethrow;
     }
   }
@@ -140,7 +142,7 @@ class PetProfileRepository {
         await _settings.put('hasCompletedSetup', false);
       }
     } catch (e) {
-      print("🚨 ERROR in delete: $e");
+      logger.e("🚨 ERROR in delete: $e");
       rethrow;
     }
   }

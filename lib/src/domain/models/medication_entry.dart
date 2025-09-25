@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
+import 'time_of_day_model.dart';
 
 part 'medication_entry.g.dart';
 
@@ -39,7 +40,7 @@ class MedicationEntry extends HiveObject {
   DateTime createdAt;
   
   @HiveField(11)
-  List<DateTime> administrationTimes; // Specific times of day
+  List<TimeOfDayModel> administrationTimes; // Specific times of day
   
   MedicationEntry({
     String? id,
@@ -53,7 +54,7 @@ class MedicationEntry extends HiveObject {
     this.notes,
     this.isActive = true,
     DateTime? createdAt,
-    List<DateTime>? administrationTimes,
+    List<TimeOfDayModel>? administrationTimes,
   }) : id = id ?? const Uuid().v4(),
        createdAt = createdAt ?? DateTime.now(),
        administrationTimes = administrationTimes ?? [];
@@ -70,7 +71,7 @@ class MedicationEntry extends HiveObject {
     'notes': notes,
     'isActive': isActive,
     'createdAt': createdAt.toIso8601String(),
-    'administrationTimes': administrationTimes.map((time) => time.toIso8601String()).toList(),
+    'administrationTimes': administrationTimes.map((time) => time.toJson()).toList(),
   };
 
   factory MedicationEntry.fromJson(Map<String, dynamic> json) => MedicationEntry(
@@ -85,11 +86,31 @@ class MedicationEntry extends HiveObject {
     notes: json['notes'],
     isActive: json['isActive'] ?? true,
     createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : DateTime.now(),
-    administrationTimes: (json['administrationTimes'] as List<dynamic>?)
-        ?.map((timeStr) => DateTime.parse(timeStr as String))
-        .toList() ?? [],
+    administrationTimes: _parseAdministrationTimes(json['administrationTimes']),
   );
 
+  static List<TimeOfDayModel> _parseAdministrationTimes(dynamic timesData) {
+    if (timesData == null) return [];
+
+    final timesList = timesData as List<dynamic>;
+    return timesList.map((timeItem) {
+      if (timeItem is Map<String, dynamic>) {
+        // New format: TimeOfDayModel JSON
+        return TimeOfDayModel.fromJson(timeItem);
+      } else if (timeItem is String) {
+        // Legacy format: DateTime ISO string
+        final dateTime = DateTime.parse(timeItem);
+        return TimeOfDayModel(hour: dateTime.hour, minute: dateTime.minute);
+      } else {
+        // Fallback: validate it's a TimeOfDayModel
+        if (timeItem is TimeOfDayModel) {
+          return timeItem;
+        } else {
+          throw ArgumentError('Unsupported administration time format: ${timeItem.runtimeType}');
+        }
+      }
+    }).toList();
+  }
   MedicationEntry copyWith({
     String? id,
     String? petId,
@@ -102,7 +123,7 @@ class MedicationEntry extends HiveObject {
     String? notes,
     bool? isActive,
     DateTime? createdAt,
-    List<DateTime>? administrationTimes,
+    List<TimeOfDayModel>? administrationTimes,
   }) {
     return MedicationEntry(
       id: id ?? this.id,

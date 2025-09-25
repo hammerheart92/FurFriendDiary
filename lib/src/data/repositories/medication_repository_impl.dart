@@ -1,28 +1,77 @@
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import
+'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:logger/logger.dart';
 import '../../domain/models/medication_entry.dart';
+import '../../domain/models/time_of_day_model.dart';
 import '../../domain/repositories/medication_repository.dart';
 import '../local/hive_boxes.dart';
+
 
 part 'medication_repository_impl.g.dart';
 
 class MedicationRepositoryImpl implements MedicationRepository {
+  final logger = Logger();
+  static bool _migrationRun = false;
+
+  Future<void> _runMigrationIfNeeded() async {
+    if (_migrationRun) return;
+
+    try {
+      final box = HiveBoxes.getMedications();
+
+      // Check if we have any medications that need migration
+      final needsMigration = box.values.any((medication) {
+        try {
+          // Try to access administrationTimes - if this throws, we need migration
+          final _ = medication.administrationTimes;
+          return false;
+        } catch (e) {
+          return true;
+        }
+      });
+
+      if (needsMigration) {
+        logger.i("🔧 DEBUG: Running medication migration for TimeOfDayModel");
+
+        // For now, clear the box since this is a breaking change
+        // In a production app, you would migrate the data properly
+        await box.clear();
+        logger.i("✅ DEBUG: Medication box cleared due to schema change");
+      }
+
+      _migrationRun = true;
+    } catch (e) {
+      logger.e("🚨 ERROR: Migration failed: $e");
+      // Clear the box as fallback
+      try {
+        final box = HiveBoxes.getMedications();
+        await box.clear();
+        logger.i("✅ DEBUG: Medication box cleared as migration fallback");
+        _migrationRun = true;
+      } catch (clearError) {
+        logger.e("🚨 ERROR: Failed to clear medication box: $clearError");
+      }
+    }
+  }
   @override
   Future<List<MedicationEntry>> getAllMedications() async {
+    await _runMigrationIfNeeded();
     try {
       final box = HiveBoxes.getMedications();
       final medications = box.values.toList();
       // Sort by creation date, newest first
       medications.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-      print("🔍 DEBUG: Retrieved ${medications.length} medications from Hive");
+      logger.i("🔍 DEBUG: Retrieved ${medications.length} medications from Hive");
       return medications;
     } catch (e) {
-      print("🚨 ERROR: Failed to get all medications: $e");
+      logger.e("🚨 ERROR: Failed to get all medications: $e");
       rethrow;
     }
   }
 
   @override
   Future<List<MedicationEntry>> getMedicationsByPetId(String petId) async {
+    await _runMigrationIfNeeded();
     try {
       final box = HiveBoxes.getMedications();
       final medications = box.values
@@ -30,10 +79,10 @@ class MedicationRepositoryImpl implements MedicationRepository {
           .toList();
       // Sort by creation date, newest first
       medications.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-      print("🔍 DEBUG: Retrieved ${medications.length} medications for pet $petId");
+      logger.i("🔍 DEBUG: Retrieved ${medications.length} medications for pet $petId");
       return medications;
     } catch (e) {
-      print("🚨 ERROR: Failed to get medications for pet $petId: $e");
+      logger.e("🚨 ERROR: Failed to get medications for pet $petId: $e");
       rethrow;
     }
   }
@@ -47,10 +96,10 @@ class MedicationRepositoryImpl implements MedicationRepository {
           .toList();
       // Sort by creation date, newest first
       medications.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-      print("🔍 DEBUG: Retrieved ${medications.length} active medications for pet $petId");
+      logger.i("🔍 DEBUG: Retrieved ${medications.length} active medications for pet $petId");
       return medications;
     } catch (e) {
-      print("🚨 ERROR: Failed to get active medications for pet $petId: $e");
+      logger.e("🚨 ERROR: Failed to get active medications for pet $petId: $e");
       rethrow;
     }
   }
@@ -64,10 +113,10 @@ class MedicationRepositoryImpl implements MedicationRepository {
           .toList();
       // Sort by creation date, newest first
       medications.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-      print("🔍 DEBUG: Retrieved ${medications.length} inactive medications for pet $petId");
+      logger.i("🔍 DEBUG: Retrieved ${medications.length} inactive medications for pet $petId");
       return medications;
     } catch (e) {
-      print("🚨 ERROR: Failed to get inactive medications for pet $petId: $e");
+      logger.e("🚨 ERROR: Failed to get inactive medications for pet $petId: $e");
       rethrow;
     }
   }
@@ -77,9 +126,9 @@ class MedicationRepositoryImpl implements MedicationRepository {
     try {
       final box = HiveBoxes.getMedications();
       await box.put(medication.id, medication);
-      print("✅ DEBUG: Added medication '${medication.medicationName}' with ID ${medication.id}");
+      logger.i("✅ DEBUG: Added medication '${medication.medicationName}' with ID ${medication.id}");
     } catch (e) {
-      print("🚨 ERROR: Failed to add medication '${medication.medicationName}': $e");
+      logger.e("🚨 ERROR: Failed to add medication '${medication.medicationName}': $e");
       rethrow;
     }
   }
@@ -89,9 +138,9 @@ class MedicationRepositoryImpl implements MedicationRepository {
     try {
       final box = HiveBoxes.getMedications();
       await box.put(medication.id, medication);
-      print("✅ DEBUG: Updated medication '${medication.medicationName}' with ID ${medication.id}");
+      logger.i("✅ DEBUG: Updated medication '${medication.medicationName}' with ID ${medication.id}");
     } catch (e) {
-      print("🚨 ERROR: Failed to update medication '${medication.medicationName}': $e");
+      logger.e("🚨 ERROR: Failed to update medication '${medication.medicationName}': $e");
       rethrow;
     }
   }
@@ -102,9 +151,9 @@ class MedicationRepositoryImpl implements MedicationRepository {
       final box = HiveBoxes.getMedications();
       final medication = box.get(id);
       await box.delete(id);
-      print("✅ DEBUG: Deleted medication with ID $id${medication != null ? " ('${medication.medicationName}')" : ""}");
+      logger.i("✅ DEBUG: Deleted medication with ID $id${medication != null ? " ('${medication.medicationName}')" : ""}");
     } catch (e) {
-      print("🚨 ERROR: Failed to delete medication with ID $id: $e");
+      logger.e("🚨 ERROR: Failed to delete medication with ID $id: $e");
       rethrow;
     }
   }
@@ -115,13 +164,13 @@ class MedicationRepositoryImpl implements MedicationRepository {
       final box = HiveBoxes.getMedications();
       final medication = box.get(id);
       if (medication != null) {
-        print("🔍 DEBUG: Found medication '${medication.medicationName}' with ID $id");
+        logger.i("🔍 DEBUG: Found medication '${medication.medicationName}' with ID $id");
       } else {
-        print("⚠️ DEBUG: No medication found with ID $id");
+        logger.w("⚠️ DEBUG: No medication found with ID $id");
       }
       return medication;
     } catch (e) {
-      print("🚨 ERROR: Failed to get medication by ID $id: $e");
+      logger.e("🚨 ERROR: Failed to get medication by ID $id: $e");
       rethrow;
     }
   }
@@ -138,10 +187,10 @@ class MedicationRepositoryImpl implements MedicationRepository {
           .toList();
       // Sort by start date, newest first
       medications.sort((a, b) => b.startDate.compareTo(a.startDate));
-      print("🔍 DEBUG: Retrieved ${medications.length} medications for pet $petId in date range");
+      logger.i("🔍 DEBUG: Retrieved ${medications.length} medications for pet $petId in date range");
       return medications;
     } catch (e) {
-      print("🚨 ERROR: Failed to get medications by date range for pet $petId: $e");
+      logger.e("🚨 ERROR: Failed to get medications by date range for pet $petId: $e");
       rethrow;
     }
   }

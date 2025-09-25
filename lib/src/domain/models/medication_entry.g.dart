@@ -28,7 +28,7 @@ class MedicationEntryAdapter extends TypeAdapter<MedicationEntry> {
       notes: fields[8] as String?,
       isActive: fields[9] as bool,
       createdAt: fields[10] as DateTime?,
-      administrationTimes: (fields[11] as List?)?.cast<DateTime>(),
+      administrationTimes: (fields[11] as List?)?.cast<TimeOfDayModel>(),
     );
   }
 

@@ -2,23 +2,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
 import 'l10n/app_localizations.dart';
 import 'src/presentation/routes/app_router.dart';
 import 'src/data/local/hive_manager.dart';
 import 'theme/theme.dart';
 
+final logger = Logger();
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  print("🚀 DEBUG: Starting FurFriendDiary app initialization");
+  logger.i("🚀 DEBUG: Starting FurFriendDiary app initialization");
   
   try {
     // Clear any potentially corrupted data first
-    print("🔧 DEBUG: Clearing potentially corrupted Hive data");
+    logger.i("🔧 DEBUG: Clearing potentially corrupted Hive data");
     await HiveManager.instance.clearAllData();
     
     // Initialize HiveManager (this handles everything)
-    print("🔍 DEBUG: Initializing HiveManager");
+    logger.i("🔍 DEBUG: Initializing HiveManager");
     await HiveManager.instance.initialize();
     
     // Verify initialization
@@ -26,7 +29,7 @@ Future<void> main() async {
       throw Exception("HiveManager failed to initialize properly");
     }
     
-    print("✅ DEBUG: HiveManager initialized successfully");
+    logger.i("✅ DEBUG: HiveManager initialized successfully");
     
     // Verify boxes are accessible
     final petBox = HiveManager.instance.petProfileBox;
@@ -34,15 +37,15 @@ Future<void> main() async {
     final settingsBox = HiveManager.instance.settingsBox;
     final appPrefsBox = HiveManager.instance.appPrefsBox;
     
-    print("✅ DEBUG: All boxes verified accessible:");
-    print("   - Pet profiles: ${petBox.length} items");
-    print("   - Walks: ${walkBox.length} items"); 
-    print("   - Settings: ${settingsBox.length} items");
-    print("   - App prefs: ${appPrefsBox.length} items");
+    logger.i("✅ DEBUG: All boxes verified accessible:");
+    logger.d("   - Pet profiles: ${petBox.length} items");
+    logger.d("   - Walks: ${walkBox.length} items"); 
+    logger.d("   - Settings: ${settingsBox.length} items");
+    logger.d("   - App prefs: ${appPrefsBox.length} items");
     
   } catch (e, stackTrace) {
-    print("🚨 FATAL ERROR: App initialization failed: $e");
-    print("🚨 STACK TRACE: $stackTrace");
+    logger.e("🚨 FATAL ERROR: App initialization failed: $e");
+    logger.e("🚨 STACK TRACE: $stackTrace");
     
     // Show error dialog and exit
     runApp(MaterialApp(
@@ -70,7 +73,7 @@ Future<void> main() async {
     return;
   }
   
-  print("🚀 DEBUG: Starting app with properly initialized Hive");
+  logger.i("🚀 DEBUG: Starting app with properly initialized Hive");
   
   runApp(
     ProviderScope(

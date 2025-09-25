@@ -1,12 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
 import 'package:uuid/uuid.dart';
 import '../domain/models/medication_entry.dart';
+import '../domain/models/time_of_day_model.dart';
+import '../domain/repositories/medication_repository.dart';
 import '../data/repositories/medication_repository_impl.dart';
 
 const _uuid = Uuid();
 
-// Repository provider
-final medicationsRepositoryProvider = Provider((ref) {
+// Repository provider with proper interface typing for better testability
+final medicationsRepositoryProvider = Provider<MedicationRepository>((ref) {
   return MedicationRepositoryImpl();
 });
 
@@ -53,8 +56,7 @@ final todaysMedicationsProvider = Provider.family<List<MedicationEntry>, String>
           .where((medication) => 
               medication.petId == petId &&
               medication.isActive &&
-              medication.administrationTimes.any((time) =>
-                  time.isAfter(startOfDay) && time.isBefore(endOfDay)))
+              medication.administrationTimes.isNotEmpty)
           .toList();
     },
     loading: () => [],
@@ -63,7 +65,8 @@ final todaysMedicationsProvider = Provider.family<List<MedicationEntry>, String>
 });
 
 class MedicationsNotifier extends StateNotifier<AsyncValue<List<MedicationEntry>>> {
-  final MedicationRepositoryImpl _repository;
+  final logger = Logger();
+  final MedicationRepository _repository;
 
   MedicationsNotifier(this._repository) : super(const AsyncValue.loading()) {
     _loadMedications();
@@ -73,9 +76,9 @@ class MedicationsNotifier extends StateNotifier<AsyncValue<List<MedicationEntry>
     try {
       final medications = await _repository.getAllMedications();
       state = AsyncValue.data(medications);
-      print("✅ DEBUG: Loaded ${medications.length} medications in provider");
+      logger.i("✅ DEBUG: Loaded ${medications.length} medications in provider");
     } catch (error, stackTrace) {
-      print("🚨 ERROR: Failed to load medications in provider: $error");
+      logger.e("🚨 ERROR: Failed to load medications in provider: $error");
       state = AsyncValue.error(error, stackTrace);
     }
   }
@@ -90,7 +93,7 @@ class MedicationsNotifier extends StateNotifier<AsyncValue<List<MedicationEntry>
     DateTime? endDate,
     required String administrationMethod,
     String? notes,
-    List<DateTime>? administrationTimes,
+    List<TimeOfDayModel>? administrationTimes,
   }) async {
     try {
       final medication = MedicationEntry(
@@ -108,9 +111,9 @@ class MedicationsNotifier extends StateNotifier<AsyncValue<List<MedicationEntry>
 
       await _repository.addMedication(medication);
       await _loadMedications(); // Reload to get updated list
-      print("✅ DEBUG: Added medication '${medication.medicationName}' for pet $petId");
+      logger.i("✅ DEBUG: Added medication '${medication.medicationName}' for pet $petId");
     } catch (error, stackTrace) {
-      print("🚨 ERROR: Failed to add medication: $error");
+      logger.e("🚨 ERROR: Failed to add medication: $error");
       state = AsyncValue.error(error, stackTrace);
     }
   }
@@ -120,9 +123,9 @@ class MedicationsNotifier extends StateNotifier<AsyncValue<List<MedicationEntry>
     try {
       await _repository.updateMedication(updatedMedication);
       await _loadMedications(); // Reload to get updated list
-      print("✅ DEBUG: Updated medication '${updatedMedication.medicationName}'");
+      logger.i("✅ DEBUG: Updated medication '${updatedMedication.medicationName}'");
     } catch (error, stackTrace) {
-      print("🚨 ERROR: Failed to update medication: $error");
+      logger.e("🚨 ERROR: Failed to update medication: $error");
       state = AsyncValue.error(error, stackTrace);
     }
   }
@@ -132,9 +135,9 @@ class MedicationsNotifier extends StateNotifier<AsyncValue<List<MedicationEntry>
     try {
       await _repository.deleteMedication(medicationId);
       await _loadMedications(); // Reload to get updated list
-      print("✅ DEBUG: Deleted medication with ID $medicationId");
+      logger.i("✅ DEBUG: Deleted medication with ID $medicationId");
     } catch (error, stackTrace) {
-      print("🚨 ERROR: Failed to delete medication: $error");
+      logger.e("🚨 ERROR: Failed to delete medication: $error");
       state = AsyncValue.error(error, stackTrace);
     }
   }
@@ -154,9 +157,9 @@ class MedicationsNotifier extends StateNotifier<AsyncValue<List<MedicationEntry>
       
       await _repository.updateMedication(updatedMedication);
       await _loadMedications(); // Reload to get updated list
-      print("✅ DEBUG: Toggled medication status for '${medication.medicationName}' to ${updatedMedication.isActive ? 'active' : 'inactive'}");
+      logger.i("✅ DEBUG: Toggled medication status for '${medication.medicationName}' to ${updatedMedication.isActive ? 'active' : 'inactive'}");
     } catch (error, stackTrace) {
-      print("🚨 ERROR: Failed to toggle medication status: $error");
+      logger.e("🚨 ERROR: Failed to toggle medication status: $error");
       state = AsyncValue.error(error, stackTrace);
     }
   }
@@ -166,7 +169,7 @@ class MedicationsNotifier extends StateNotifier<AsyncValue<List<MedicationEntry>
     try {
       return await _repository.getMedicationsByPetId(petId);
     } catch (error) {
-      print("🚨 ERROR: Failed to get medications for pet $petId: $error");
+      logger.e("🚨 ERROR: Failed to get medications for pet $petId: $error");
       return [];
     }
   }
@@ -176,7 +179,7 @@ class MedicationsNotifier extends StateNotifier<AsyncValue<List<MedicationEntry>
     try {
       return await _repository.getActiveMedicationsByPetId(petId);
     } catch (error) {
-      print("🚨 ERROR: Failed to get active medications for pet $petId: $error");
+      logger.e("🚨 ERROR: Failed to get active medications for pet $petId: $error");
       return [];
     }
   }

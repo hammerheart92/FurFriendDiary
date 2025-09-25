@@ -43,24 +43,13 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
   }
 
   @override
-  Future<List<AppointmentEntry>> getUpcomingAppointments(String petId) async {
-    final box = HiveBoxes.getAppointments();
-    final now = DateTime.now();
-    return box.values
-        .where((appointment) => 
-            appointment.petId == petId &&
-            !appointment.isCompleted &&
-            appointment.dateTime.isAfter(now))
-        .toList();
-  }
-
-  @override
-  Future<List<AppointmentEntry>> getCompletedAppointments(String petId) async {
+  Future<List<AppointmentEntry>> getAppointmentsByDateRange(String petId, DateTime start, DateTime end) async {
     final box = HiveBoxes.getAppointments();
     return box.values
-        .where((appointment) => 
+        .where((appointment) =>
             appointment.petId == petId &&
-            appointment.isCompleted)
+            appointment.appointmentDate.isAfter(start) &&
+            appointment.appointmentDate.isBefore(end))
         .toList();
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:logger/logger.dart';
 import 'package:fur_friend_diary/src/domain/models/pet_profile.dart';
 import 'package:fur_friend_diary/src/presentation/providers/pet_profile_provider.dart';
 
@@ -14,6 +15,7 @@ class PetProfileSetupScreen extends ConsumerStatefulWidget {
 }
 
 class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
+  final logger = Logger();
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _speciesController = TextEditingController();
@@ -72,14 +74,14 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
   }
 
   Future<void> _saveProfile() async {
-    print("🔍 DEBUG: Save button pressed in setup screen");
+    logger.d("🔍 DEBUG: Save button pressed in setup screen");
     
     if (!_formKey.currentState!.validate()) {
-      print("🔍 DEBUG: Form validation failed");
+      logger.d("🔍 DEBUG: Form validation failed");
       return;
     }
 
-    print("🔍 DEBUG: Form validation passed");
+    logger.d("🔍 DEBUG: Form validation passed");
     
     setState(() {
       _isLoading = true;
@@ -95,20 +97,20 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
         notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
       );
 
-      print("🔍 DEBUG: Created profile object - Name: ${profile.name}, Species: ${profile.species}, ID: ${profile.id}");
+      logger.d("🔍 DEBUG: Created profile object - Name: ${profile.name}, Species: ${profile.species}, ID: ${profile.id}");
 
-      print("🔍 DEBUG: Calling provider to save profile");
+      logger.d("🔍 DEBUG: Calling provider to save profile");
       await ref.read(petProfilesProvider.notifier).createOrUpdate(profile);
-      print("🔍 DEBUG: Provider save completed successfully");
+      logger.d("🔍 DEBUG: Provider save completed successfully");
 
       if (mounted) {
-        print("🔍 DEBUG: Attempting navigation to home screen");
+        logger.d("🔍 DEBUG: Attempting navigation to home screen");
         // Navigate to main screen after successful save
         context.go('/');
-        print("🔍 DEBUG: Navigation initiated");
+        logger.d("🔍 DEBUG: Navigation initiated");
       }
     } catch (e) {
-      print("🚨 ERROR: Save operation failed: $e");
+      logger.e("🚨 ERROR: Save operation failed: $e");
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to save profile: $e')),
