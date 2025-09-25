@@ -1,0 +1,9 @@
+targets:
+  $default:
+    builders:
+      riverpod_generator|riverpod_generator:
+        generate_for:
+          - lib/**
+      hive_generator|hive_generator:
+        generate_for:
+          - lib/**

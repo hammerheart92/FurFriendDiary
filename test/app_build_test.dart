@@ -4,7 +4,8 @@ import 'package:fur_friend_diary/main.dart';
 
 void main() {
   testWidgets('App builds and has nav bar', (tester) async {
-    await tester.pumpWidget(const PetCareApp());
+    await tester.pumpWidget(const MyApp());
     expect(find.text('Feedings'), findsWidgets);
   });
 }
+
