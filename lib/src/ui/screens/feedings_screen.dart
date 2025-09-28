@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fur_friend_diary/layout/app_page.dart';
 import 'package:fur_friend_diary/theme/spacing.dart';
 import '../../presentation/providers/pet_profile_provider.dart';
+import '../../presentation/providers/feeding_form_state_provider.dart';
 
 class FeedingsScreen extends ConsumerStatefulWidget {
   const FeedingsScreen({super.key});
@@ -36,12 +37,16 @@ class _FeedingTile extends StatelessWidget {
   }
 }
 
-class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
+class _FeedingsScreenState extends ConsumerState<FeedingsScreen> with AutomaticKeepAliveClientMixin {
   final List<_Feeding> _items = [];
+
+  @override
+  bool get wantKeepAlive => true;
 
   void _addFeeding(String foodType) {
     final item = _Feeding(type: foodType, time: TimeOfDay.now());
     setState(() => _items.add(item));
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Feeding "$foodType" added'),
@@ -54,53 +59,23 @@ class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
   }
 
   Future<void> _showAddFeedingDialog() async {
-    final foodTypeController = TextEditingController();
-    final formKey = GlobalKey<FormState>();
-
-    return showDialog<void>(
+    return showModalBottomSheet<void>(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Add a new feeding'),
-          content: Form(
-            key: formKey,
-            child: TextFormField(
-              controller: foodTypeController,
-              decoration: const InputDecoration(
-                labelText: 'Food type',
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a food type';
-                }
-                return null;
-              },
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Add'),
-              onPressed: () {
-                if (formKey.currentState!.validate()) {
-                  _addFeeding(foodTypeController.text);
-                  Navigator.of(context).pop();
-                }
-              },
-            ),
-          ],
-        );
-      },
+      useSafeArea: true,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (context) => _AddFeedingSheet(
+        onSubmit: (foodType) {
+          _addFeeding(foodType);
+        },
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     final scheme = Theme.of(context).colorScheme;
     final currentPet = ref.watch(currentPetProfileProvider);
 
@@ -204,6 +179,127 @@ class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddFeedingDialog,
         child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+class _AddFeedingSheet extends ConsumerStatefulWidget {
+  const _AddFeedingSheet({required this.onSubmit});
+  final ValueChanged<String> onSubmit;
+
+  @override
+  ConsumerState<_AddFeedingSheet> createState() => _AddFeedingSheetState();
+}
+
+class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
+  final _form = GlobalKey<FormState>();
+  final _foodTypeController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize with draft state from provider if available
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadDraftState();
+    });
+  }
+
+  void _loadDraftState() {
+    // Try to load draft state from the provider
+    final formState = ref.read(feedingFormStateNotifierProvider);
+    print('🍽️ FEEDING FORM: Loading draft state - foodType: "${formState.foodType}"');
+    if (formState.foodType.isNotEmpty) {
+      _foodTypeController.text = formState.foodType;
+      print('🍽️ FEEDING FORM: Controller loaded with: "${_foodTypeController.text}"');
+    }
+  }
+
+  void _saveDraftState() {
+    // Save current state to provider
+    print('🍽️ FEEDING FORM: Saving draft state - foodType: "${_foodTypeController.text}"');
+    ref.read(feedingFormStateNotifierProvider.notifier)
+        .updateFoodType(_foodTypeController.text);
+  }
+
+  void _clearDraftState() {
+    // Clear draft state
+    print('🍽️ FEEDING FORM: Clearing draft state');
+    ref.read(feedingFormStateNotifierProvider.notifier).clearForm();
+    _foodTypeController.clear();
+  }
+
+  @override
+  void dispose() {
+    // Save draft state when disposing (user navigated away without submitting)
+    print('🍽️ FEEDING FORM: Disposing form, saving draft state');
+    _saveDraftState();
+    _foodTypeController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+        top: 8,
+      ),
+      child: Form(
+        key: _form,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Add a new feeding', style: theme.textTheme.titleLarge),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _foodTypeController,
+              decoration: const InputDecoration(
+                labelText: 'Food type',
+                hintText: 'e.g., Dry Food, Wet Food, Treats',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a food type';
+                }
+                return null;
+              },
+              onChanged: (_) => _saveDraftState(), // Save draft on every change
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () {
+                      _clearDraftState();
+                    },
+                    child: const Text('Clear'),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: FilledButton(
+                    onPressed: () {
+                      if (_form.currentState!.validate()) {
+                        final foodType = _foodTypeController.text;
+                        widget.onSubmit(foodType);
+                        _clearDraftState(); // Clear draft after successful submission
+                        Navigator.of(context).pop();
+                      }
+                    },
+                    child: const Text('Add'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

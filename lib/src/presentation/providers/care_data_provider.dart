@@ -2,9 +2,11 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../domain/models/feeding_entry.dart';
 import '../../domain/models/medication_entry.dart';
 import '../../domain/models/appointment_entry.dart';
+import '../../domain/models/report_entry.dart';
 import '../../data/repositories/feeding_repository_impl.dart';
 import '../../data/repositories/medication_repository_impl.dart';
 import '../../data/repositories/appointment_repository_impl.dart';
+import '../../data/repositories/report_repository_impl.dart';
 
 part 'care_data_provider.g.dart';
 
@@ -132,4 +134,50 @@ Future<List<AppointmentEntry>> appointmentsByPetId(AppointmentsByPetIdRef ref, S
 Future<List<AppointmentEntry>> appointmentsByDateRange(AppointmentsByDateRangeRef ref, String petId, DateTime start, DateTime end) async {
   final repository = ref.watch(appointmentRepositoryProvider);
   return await repository.getAppointmentsByDateRange(petId, start, end);
+}
+
+// Report Providers
+@riverpod
+class ReportProvider extends _$ReportProvider {
+  @override
+  Future<List<ReportEntry>> build() async {
+    final repository = ref.watch(reportRepositoryProvider);
+    return await repository.getAllReports();
+  }
+
+  Future<void> addReport(ReportEntry report) async {
+    final repository = ref.read(reportRepositoryProvider);
+    await repository.addReport(report);
+    ref.invalidateSelf();
+  }
+
+  Future<void> updateReport(ReportEntry report) async {
+    final repository = ref.read(reportRepositoryProvider);
+    await repository.updateReport(report);
+    ref.invalidateSelf();
+  }
+
+  Future<void> deleteReport(String id) async {
+    final repository = ref.read(reportRepositoryProvider);
+    await repository.deleteReport(id);
+    ref.invalidateSelf();
+  }
+}
+
+@riverpod
+Future<List<ReportEntry>> reportsByPetId(ReportsByPetIdRef ref, String petId) async {
+  final repository = ref.watch(reportRepositoryProvider);
+  return await repository.getReportsByPetId(petId);
+}
+
+@riverpod
+Future<List<ReportEntry>> reportsByDateRange(ReportsByDateRangeRef ref, String petId, DateTime start, DateTime end) async {
+  final repository = ref.watch(reportRepositoryProvider);
+  return await repository.getReportsByDateRange(petId, start, end);
+}
+
+@riverpod
+Future<List<ReportEntry>> reportsByType(ReportsByTypeRef ref, String petId, String reportType) async {
+  final repository = ref.watch(reportRepositoryProvider);
+  return await repository.getReportsByType(petId, reportType);
 }

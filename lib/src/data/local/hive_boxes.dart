@@ -4,6 +4,7 @@ import '../../domain/models/pet_profile.dart';
 import '../../domain/models/feeding_entry.dart';
 import '../../domain/models/medication_entry.dart';
 import '../../domain/models/appointment_entry.dart';
+import '../../domain/models/report_entry.dart';
 import '../../domain/models/walk.dart';
 import 'hive_manager.dart';
 
@@ -13,6 +14,7 @@ class HiveBoxes {
   static const String feedingBox = 'feedings';
   static const String medicationBox = 'medications';
   static const String appointmentBox = 'appointments';
+  static const String reportBox = 'reports';
   static const String walkBox = 'walks';
   static const String settingsBox = 'settings';
 
@@ -51,7 +53,16 @@ class HiveBoxes {
       rethrow;
     }
   }
-  
+
+  static Box<ReportEntry> getReports() {
+    try {
+      return HiveManager.instance.reportBox;
+    } catch (e) {
+      logger.e("🚨 ERROR: getReports() failed: $e");
+      rethrow;
+    }
+  }
+
   static Box<Walk> getWalks() {
     try {
       return HiveManager.instance.walkBox;

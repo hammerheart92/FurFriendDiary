@@ -4,6 +4,7 @@ import '../../domain/models/pet_profile.dart';
 import '../../domain/models/feeding_entry.dart';
 import '../../domain/models/medication_entry.dart';
 import '../../domain/models/appointment_entry.dart';
+import '../../domain/models/report_entry.dart';
 import '../../domain/models/walk.dart';
 import '../../domain/models/user_profile.dart';
 import '../../domain/models/time_of_day_model.dart';
@@ -22,6 +23,7 @@ class HiveManager {
   static const String feedingBoxName = 'feedings';
   static const String medicationBoxName = 'medications';
   static const String appointmentBoxName = 'appointments';
+  static const String reportBoxName = 'reports';
   static const String walkBoxName = 'walks';
   static const String settingsBoxName = 'settings';
   static const String appPrefsBoxName = 'app_prefs';
@@ -31,6 +33,7 @@ class HiveManager {
   Box<FeedingEntry>? _feedingBox;
   Box<MedicationEntry>? _medicationBox;
   Box<AppointmentEntry>? _appointmentBox;
+  Box<ReportEntry>? _reportBox;
   Box<Walk>? _walkBox;
   Box? _settingsBox;
   Box? _appPrefsBox;
@@ -98,10 +101,15 @@ class HiveManager {
       Hive.registerAdapter(AppointmentEntryAdapter());
       logger.d("✅ DEBUG: AppointmentEntry adapter registered with typeId 6");
     }
-    
+
     if (!Hive.isAdapterRegistered(7)) {
       Hive.registerAdapter(WalkLocationAdapter());
       logger.d("✅ DEBUG: WalkLocation adapter registered with typeId 7");
+    }
+
+    if (!Hive.isAdapterRegistered(9)) {
+      Hive.registerAdapter(ReportEntryAdapter());
+      logger.d("✅ DEBUG: ReportEntry adapter registered with typeId 9");
     }
     
     if (!Hive.isAdapterRegistered(8)) {
@@ -129,6 +137,7 @@ class HiveManager {
     _feedingBox = await _openBox<FeedingEntry>(feedingBoxName);
     _medicationBox = await _openBox<MedicationEntry>(medicationBoxName);
     _appointmentBox = await _openBox<AppointmentEntry>(appointmentBoxName);
+    _reportBox = await _openBox<ReportEntry>(reportBoxName);
     
     // Open settings boxes
     _settingsBox = await _openBox(settingsBoxName);
@@ -210,7 +219,15 @@ class HiveManager {
     }
     return _appointmentBox!;
   }
-  
+
+  /// Get reports box
+  Box<ReportEntry> get reportBox {
+    if (_reportBox == null || !_reportBox!.isOpen) {
+      throw HiveError("Reports box is not initialized. Call HiveManager.initialize() first.");
+    }
+    return _reportBox!;
+  }
+
   /// Get settings box
   Box get settingsBox {
     if (_settingsBox == null || !_settingsBox!.isOpen) {
@@ -248,6 +265,7 @@ class HiveManager {
       await Hive.deleteBoxFromDisk(feedingBoxName);
       await Hive.deleteBoxFromDisk(medicationBoxName);
       await Hive.deleteBoxFromDisk(appointmentBoxName);
+      await Hive.deleteBoxFromDisk(reportBoxName);
       await Hive.deleteBoxFromDisk(settingsBoxName);
       await Hive.deleteBoxFromDisk(appPrefsBoxName);
       

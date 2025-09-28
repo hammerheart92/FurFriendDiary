@@ -1029,6 +1029,447 @@ class _AppointmentsByDateRangeProviderElement
   DateTime get end => (origin as AppointmentsByDateRangeProvider).end;
 }
 
+String _$reportsByPetIdHash() => r'a1cd96508a1f0a55bd6908d6614424bcc44b80ae';
+
+/// See also [reportsByPetId].
+@ProviderFor(reportsByPetId)
+const reportsByPetIdProvider = ReportsByPetIdFamily();
+
+/// See also [reportsByPetId].
+class ReportsByPetIdFamily extends Family<AsyncValue<List<ReportEntry>>> {
+  /// See also [reportsByPetId].
+  const ReportsByPetIdFamily();
+
+  /// See also [reportsByPetId].
+  ReportsByPetIdProvider call(
+    String petId,
+  ) {
+    return ReportsByPetIdProvider(
+      petId,
+    );
+  }
+
+  @override
+  ReportsByPetIdProvider getProviderOverride(
+    covariant ReportsByPetIdProvider provider,
+  ) {
+    return call(
+      provider.petId,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'reportsByPetIdProvider';
+}
+
+/// See also [reportsByPetId].
+class ReportsByPetIdProvider
+    extends AutoDisposeFutureProvider<List<ReportEntry>> {
+  /// See also [reportsByPetId].
+  ReportsByPetIdProvider(
+    String petId,
+  ) : this._internal(
+          (ref) => reportsByPetId(
+            ref as ReportsByPetIdRef,
+            petId,
+          ),
+          from: reportsByPetIdProvider,
+          name: r'reportsByPetIdProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$reportsByPetIdHash,
+          dependencies: ReportsByPetIdFamily._dependencies,
+          allTransitiveDependencies:
+              ReportsByPetIdFamily._allTransitiveDependencies,
+          petId: petId,
+        );
+
+  ReportsByPetIdProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.petId,
+  }) : super.internal();
+
+  final String petId;
+
+  @override
+  Override overrideWith(
+    FutureOr<List<ReportEntry>> Function(ReportsByPetIdRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: ReportsByPetIdProvider._internal(
+        (ref) => create(ref as ReportsByPetIdRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        petId: petId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<List<ReportEntry>> createElement() {
+    return _ReportsByPetIdProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ReportsByPetIdProvider && other.petId == petId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, petId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin ReportsByPetIdRef on AutoDisposeFutureProviderRef<List<ReportEntry>> {
+  /// The parameter `petId` of this provider.
+  String get petId;
+}
+
+class _ReportsByPetIdProviderElement
+    extends AutoDisposeFutureProviderElement<List<ReportEntry>>
+    with ReportsByPetIdRef {
+  _ReportsByPetIdProviderElement(super.provider);
+
+  @override
+  String get petId => (origin as ReportsByPetIdProvider).petId;
+}
+
+String _$reportsByDateRangeHash() =>
+    r'6191fdd866197470105b8e06032bfb1438dd1e5f';
+
+/// See also [reportsByDateRange].
+@ProviderFor(reportsByDateRange)
+const reportsByDateRangeProvider = ReportsByDateRangeFamily();
+
+/// See also [reportsByDateRange].
+class ReportsByDateRangeFamily extends Family<AsyncValue<List<ReportEntry>>> {
+  /// See also [reportsByDateRange].
+  const ReportsByDateRangeFamily();
+
+  /// See also [reportsByDateRange].
+  ReportsByDateRangeProvider call(
+    String petId,
+    DateTime start,
+    DateTime end,
+  ) {
+    return ReportsByDateRangeProvider(
+      petId,
+      start,
+      end,
+    );
+  }
+
+  @override
+  ReportsByDateRangeProvider getProviderOverride(
+    covariant ReportsByDateRangeProvider provider,
+  ) {
+    return call(
+      provider.petId,
+      provider.start,
+      provider.end,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'reportsByDateRangeProvider';
+}
+
+/// See also [reportsByDateRange].
+class ReportsByDateRangeProvider
+    extends AutoDisposeFutureProvider<List<ReportEntry>> {
+  /// See also [reportsByDateRange].
+  ReportsByDateRangeProvider(
+    String petId,
+    DateTime start,
+    DateTime end,
+  ) : this._internal(
+          (ref) => reportsByDateRange(
+            ref as ReportsByDateRangeRef,
+            petId,
+            start,
+            end,
+          ),
+          from: reportsByDateRangeProvider,
+          name: r'reportsByDateRangeProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$reportsByDateRangeHash,
+          dependencies: ReportsByDateRangeFamily._dependencies,
+          allTransitiveDependencies:
+              ReportsByDateRangeFamily._allTransitiveDependencies,
+          petId: petId,
+          start: start,
+          end: end,
+        );
+
+  ReportsByDateRangeProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.petId,
+    required this.start,
+    required this.end,
+  }) : super.internal();
+
+  final String petId;
+  final DateTime start;
+  final DateTime end;
+
+  @override
+  Override overrideWith(
+    FutureOr<List<ReportEntry>> Function(ReportsByDateRangeRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: ReportsByDateRangeProvider._internal(
+        (ref) => create(ref as ReportsByDateRangeRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        petId: petId,
+        start: start,
+        end: end,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<List<ReportEntry>> createElement() {
+    return _ReportsByDateRangeProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ReportsByDateRangeProvider &&
+        other.petId == petId &&
+        other.start == start &&
+        other.end == end;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, petId.hashCode);
+    hash = _SystemHash.combine(hash, start.hashCode);
+    hash = _SystemHash.combine(hash, end.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin ReportsByDateRangeRef on AutoDisposeFutureProviderRef<List<ReportEntry>> {
+  /// The parameter `petId` of this provider.
+  String get petId;
+
+  /// The parameter `start` of this provider.
+  DateTime get start;
+
+  /// The parameter `end` of this provider.
+  DateTime get end;
+}
+
+class _ReportsByDateRangeProviderElement
+    extends AutoDisposeFutureProviderElement<List<ReportEntry>>
+    with ReportsByDateRangeRef {
+  _ReportsByDateRangeProviderElement(super.provider);
+
+  @override
+  String get petId => (origin as ReportsByDateRangeProvider).petId;
+  @override
+  DateTime get start => (origin as ReportsByDateRangeProvider).start;
+  @override
+  DateTime get end => (origin as ReportsByDateRangeProvider).end;
+}
+
+String _$reportsByTypeHash() => r'7944c4543dea88f40e4d8fa0232ee7351cce7bc1';
+
+/// See also [reportsByType].
+@ProviderFor(reportsByType)
+const reportsByTypeProvider = ReportsByTypeFamily();
+
+/// See also [reportsByType].
+class ReportsByTypeFamily extends Family<AsyncValue<List<ReportEntry>>> {
+  /// See also [reportsByType].
+  const ReportsByTypeFamily();
+
+  /// See also [reportsByType].
+  ReportsByTypeProvider call(
+    String petId,
+    String reportType,
+  ) {
+    return ReportsByTypeProvider(
+      petId,
+      reportType,
+    );
+  }
+
+  @override
+  ReportsByTypeProvider getProviderOverride(
+    covariant ReportsByTypeProvider provider,
+  ) {
+    return call(
+      provider.petId,
+      provider.reportType,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'reportsByTypeProvider';
+}
+
+/// See also [reportsByType].
+class ReportsByTypeProvider
+    extends AutoDisposeFutureProvider<List<ReportEntry>> {
+  /// See also [reportsByType].
+  ReportsByTypeProvider(
+    String petId,
+    String reportType,
+  ) : this._internal(
+          (ref) => reportsByType(
+            ref as ReportsByTypeRef,
+            petId,
+            reportType,
+          ),
+          from: reportsByTypeProvider,
+          name: r'reportsByTypeProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$reportsByTypeHash,
+          dependencies: ReportsByTypeFamily._dependencies,
+          allTransitiveDependencies:
+              ReportsByTypeFamily._allTransitiveDependencies,
+          petId: petId,
+          reportType: reportType,
+        );
+
+  ReportsByTypeProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.petId,
+    required this.reportType,
+  }) : super.internal();
+
+  final String petId;
+  final String reportType;
+
+  @override
+  Override overrideWith(
+    FutureOr<List<ReportEntry>> Function(ReportsByTypeRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: ReportsByTypeProvider._internal(
+        (ref) => create(ref as ReportsByTypeRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        petId: petId,
+        reportType: reportType,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<List<ReportEntry>> createElement() {
+    return _ReportsByTypeProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ReportsByTypeProvider &&
+        other.petId == petId &&
+        other.reportType == reportType;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, petId.hashCode);
+    hash = _SystemHash.combine(hash, reportType.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin ReportsByTypeRef on AutoDisposeFutureProviderRef<List<ReportEntry>> {
+  /// The parameter `petId` of this provider.
+  String get petId;
+
+  /// The parameter `reportType` of this provider.
+  String get reportType;
+}
+
+class _ReportsByTypeProviderElement
+    extends AutoDisposeFutureProviderElement<List<ReportEntry>>
+    with ReportsByTypeRef {
+  _ReportsByTypeProviderElement(super.provider);
+
+  @override
+  String get petId => (origin as ReportsByTypeProvider).petId;
+  @override
+  String get reportType => (origin as ReportsByTypeProvider).reportType;
+}
+
 String _$feedingProviderHash() => r'943cc51ee106ccdad560573be3d9b0c9042a5b06';
 
 /// See also [FeedingProvider].
@@ -1080,5 +1521,21 @@ final appointmentProviderProvider = AutoDisposeAsyncNotifierProvider<
 
 typedef _$AppointmentProvider
     = AutoDisposeAsyncNotifier<List<AppointmentEntry>>;
+String _$reportProviderHash() => r'b422649e1dc565ccc5390483358777949a4bfe94';
+
+/// See also [ReportProvider].
+@ProviderFor(ReportProvider)
+final reportProviderProvider = AutoDisposeAsyncNotifierProvider<ReportProvider,
+    List<ReportEntry>>.internal(
+  ReportProvider.new,
+  name: r'reportProviderProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$reportProviderHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$ReportProvider = AutoDisposeAsyncNotifier<List<ReportEntry>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
