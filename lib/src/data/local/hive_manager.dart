@@ -256,10 +256,22 @@ class HiveManager {
   }
   
   /// Clear all data (for testing/debugging)
+  /// Note: Hive must be initialized before calling this method
   Future<void> clearAllData() async {
     logger.i("🔧 DEBUG: Clearing all Hive data");
-    
+
     try {
+      // Initialize Hive if not already initialized
+      if (!_isInitialized) {
+        logger.i("🔍 DEBUG: Hive not initialized, initializing for clearAllData");
+        await Hive.initFlutter();
+      }
+
+      // Close all boxes before deleting
+      if (_isInitialized) {
+        await close();
+      }
+
       await Hive.deleteBoxFromDisk(petProfileBoxName);
       await Hive.deleteBoxFromDisk(walkBoxName);
       await Hive.deleteBoxFromDisk(feedingBoxName);
@@ -268,7 +280,7 @@ class HiveManager {
       await Hive.deleteBoxFromDisk(reportBoxName);
       await Hive.deleteBoxFromDisk(settingsBoxName);
       await Hive.deleteBoxFromDisk(appPrefsBoxName);
-      
+
       logger.i("✅ DEBUG: All Hive data cleared");
     } catch (e) {
       logger.e("🚨 ERROR: Failed to clear some Hive data: $e");

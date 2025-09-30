@@ -16,10 +16,6 @@ Future<void> main() async {
   logger.i("🚀 DEBUG: Starting FurFriendDiary app initialization");
   
   try {
-    // Clear any potentially corrupted data first
-    logger.i("🔧 DEBUG: Clearing potentially corrupted Hive data");
-    await HiveManager.instance.clearAllData();
-    
     // Initialize HiveManager (this handles everything)
     logger.i("🔍 DEBUG: Initializing HiveManager");
     await HiveManager.instance.initialize();
