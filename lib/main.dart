@@ -6,6 +6,7 @@ import 'package:logger/logger.dart';
 import 'l10n/app_localizations.dart';
 import 'src/presentation/routes/app_router.dart';
 import 'src/data/local/hive_manager.dart';
+import 'src/presentation/providers/settings_provider.dart';
 import 'theme/theme.dart';
 
 final logger = Logger();
@@ -72,33 +73,35 @@ Future<void> main() async {
   logger.i("🚀 DEBUG: Starting app with properly initialized Hive");
   
   runApp(
-    ProviderScope(
-      child: const MyApp(),
+    const ProviderScope(
+      child: MyApp(),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return ProviderScope(
-      child: MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        onGenerateTitle: (ctx) => AppLocalizations.of(ctx).appTitle,
-        routerConfig: createRouter(),
-        theme: lightTheme(),
-        darkTheme: darkTheme(),
-        themeMode: ThemeMode.system,
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [Locale('en'), Locale('ro')],
-      ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider);
+    final locale = ref.watch(localeProvider);
+
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      onGenerateTitle: (ctx) => AppLocalizations.of(ctx).appTitle,
+      routerConfig: createRouter(),
+      theme: lightTheme(),
+      darkTheme: darkTheme(),
+      themeMode: themeMode,
+      locale: locale,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [Locale('en'), Locale('ro')],
     );
   }
 }

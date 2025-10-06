@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../domain/models/medication_entry.dart';
+import '../../../l10n/app_localizations.dart';
 
 class MedicationCard extends StatelessWidget {
   final MedicationEntry medication;
@@ -19,6 +20,7 @@ class MedicationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Card(
       elevation: 2,
@@ -68,7 +70,7 @@ class MedicationCard extends StatelessWidget {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                '${medication.dosage} • ${medication.frequency}',
+                                '${medication.dosage} • ${_getLocalizedFrequency(l10n, medication.frequency)}',
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: theme.colorScheme.onSurface.withOpacity(0.7),
                                 ),
@@ -154,7 +156,7 @@ class MedicationCard extends StatelessWidget {
                     child: _buildDetailItem(
                       icon: Icons.medical_services,
                       label: 'Method',
-                      value: medication.administrationMethod,
+                      value: _getLocalizedAdministrationMethod(l10n, medication.administrationMethod),
                       color: Colors.blue,
                     ),
                   ),
@@ -336,28 +338,84 @@ class MedicationCard extends StatelessWidget {
   }
 
   IconData _getMedicationIcon() {
-    switch (medication.administrationMethod.toLowerCase()) {
-      case 'oral':
+    switch (medication.administrationMethod) {
+      case 'administrationMethodOral':
         return Icons.medication;
-      case 'topical':
+      case 'administrationMethodTopical':
         return Icons.touch_app;
-      case 'injection':
+      case 'administrationMethodInjection':
         return Icons.vaccines;
+      case 'administrationMethodEyeDrops':
+        return Icons.remove_red_eye;
+      case 'administrationMethodEarDrops':
+        return Icons.hearing;
+      case 'administrationMethodInhaled':
+        return Icons.air;
       default:
         return Icons.medical_services;
     }
   }
 
   Color _getMedicationColor() {
-    switch (medication.administrationMethod.toLowerCase()) {
-      case 'oral':
+    switch (medication.administrationMethod) {
+      case 'administrationMethodOral':
         return Colors.blue;
-      case 'topical':
+      case 'administrationMethodTopical':
         return Colors.green;
-      case 'injection':
+      case 'administrationMethodInjection':
         return Colors.red;
+      case 'administrationMethodEyeDrops':
+        return Colors.cyan;
+      case 'administrationMethodEarDrops':
+        return Colors.orange;
+      case 'administrationMethodInhaled':
+        return Colors.teal;
       default:
         return Colors.purple;
+    }
+  }
+
+  String _getLocalizedFrequency(AppLocalizations l10n, String frequencyKey) {
+    switch (frequencyKey) {
+      case 'frequencyOnceDaily':
+        return l10n.frequencyOnceDaily;
+      case 'frequencyTwiceDaily':
+        return l10n.frequencyTwiceDaily;
+      case 'frequencyThreeTimesDaily':
+        return l10n.frequencyThreeTimesDaily;
+      case 'frequencyFourTimesDaily':
+        return l10n.frequencyFourTimesDaily;
+      case 'frequencyEveryOtherDay':
+        return l10n.frequencyEveryOtherDay;
+      case 'frequencyWeekly':
+        return l10n.frequencyWeekly;
+      case 'frequencyAsNeeded':
+        return l10n.frequencyAsNeeded;
+      case 'frequencyCustom':
+        return l10n.frequencyCustom;
+      default:
+        return frequencyKey;
+    }
+  }
+
+  String _getLocalizedAdministrationMethod(AppLocalizations l10n, String methodKey) {
+    switch (methodKey) {
+      case 'administrationMethodOral':
+        return l10n.administrationMethodOral;
+      case 'administrationMethodTopical':
+        return l10n.administrationMethodTopical;
+      case 'administrationMethodInjection':
+        return l10n.administrationMethodInjection;
+      case 'administrationMethodEyeDrops':
+        return l10n.administrationMethodEyeDrops;
+      case 'administrationMethodEarDrops':
+        return l10n.administrationMethodEarDrops;
+      case 'administrationMethodInhaled':
+        return l10n.administrationMethodInhaled;
+      case 'administrationMethodOther':
+        return l10n.administrationMethodOther;
+      default:
+        return methodKey;
     }
   }
 }

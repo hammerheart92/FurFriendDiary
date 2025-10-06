@@ -7,6 +7,7 @@ import '../../presentation/providers/care_data_provider.dart';
 import '../../presentation/providers/pet_profile_provider.dart';
 import '../widgets/appointment_list.dart';
 import '../widgets/appointment_form.dart';
+import '../../../l10n/app_localizations.dart';
 
 class AppointmentsScreen extends ConsumerStatefulWidget {
   const AppointmentsScreen({super.key});
@@ -57,9 +58,10 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
   }
 
   Widget _buildNoPetView(ThemeData theme) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Appointments'),
+        title: Text(l10n.appointments),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
       ),
@@ -74,14 +76,14 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
             ),
             const SizedBox(height: 16),
             Text(
-              'No pet selected',
+              l10n.noPetSelected,
               style: theme.textTheme.headlineSmall?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.7),
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              'Please set up a pet profile first',
+              l10n.pleaseSetupPetFirst,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.5),
               ),
@@ -93,9 +95,10 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
   }
 
   Widget _buildFormView(ThemeData theme, String petId) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(_editingAppointment != null ? 'Edit Appointment' : 'Add Appointment'),
+        title: Text(_editingAppointment != null ? l10n.editAppointment : l10n.addAppointment),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
         elevation: 0,
@@ -129,10 +132,11 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
 
   Widget _buildAppointmentsView(ThemeData theme, String petId) {
     final appointmentsAsync = ref.watch(appointmentsByPetIdProvider(petId));
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Appointments'),
+        title: Text(l10n.appointments),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
         elevation: 0,
@@ -141,10 +145,10 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
           indicatorColor: theme.colorScheme.onPrimary,
           labelColor: theme.colorScheme.onPrimary,
           unselectedLabelColor: theme.colorScheme.onPrimary.withOpacity(0.7),
-          tabs: const [
-            Tab(text: 'Upcoming'),
-            Tab(text: 'All'),
-            Tab(text: 'Completed'),
+          tabs: [
+            Tab(text: l10n.upcoming),
+            Tab(text: l10n.all),
+            Tab(text: l10n.completed),
           ],
         ),
       ),
@@ -171,7 +175,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
                 });
               },
               decoration: InputDecoration(
-                hintText: 'Search appointments...',
+                hintText: l10n.searchAppointments,
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
@@ -203,19 +207,19 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
                   children: [
                     _buildAppointmentsList(
                       appointments.where((apt) => !apt.isCompleted && apt.appointmentDate.isAfter(DateTime.now())).toList(),
-                      'No upcoming appointments',
+                      l10n.noUpcomingAppointments,
                       theme,
                       petId,
                     ),
                     _buildAppointmentsList(
                       appointments,
-                      'No appointments found',
+                      l10n.noAppointmentsFound,
                       theme,
                       petId,
                     ),
                     _buildAppointmentsList(
                       appointments.where((apt) => apt.isCompleted).toList(),
-                      'No completed appointments',
+                      l10n.noCompletedAppointments,
                       theme,
                       petId,
                     ),
@@ -229,11 +233,11 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
                   children: [
                     Icon(Icons.error, size: 64, color: Colors.red),
                     const SizedBox(height: 16),
-                    Text('Error loading appointments: $error'),
+                    Text('${l10n.errorLoadingAppointments}: $error'),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () => ref.invalidate(appointmentsByPetIdProvider(petId)),
-                      child: const Text('Retry'),
+                      child: Text(l10n.retry),
                     ),
                   ],
                 ),
@@ -252,7 +256,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
         icon: const Icon(Icons.add),
-        label: const Text('Add Appointment'),
+        label: Text(l10n.addAppointment),
       ),
     );
   }
@@ -263,6 +267,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
     ThemeData theme,
     String petId,
   ) {
+    final l10n = AppLocalizations.of(context);
     // Filter appointments based on search query
     final filteredAppointments = appointments.where((appointment) {
       if (_searchQuery.isEmpty) return true;
@@ -294,7 +299,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
             ),
             const SizedBox(height: 16),
             Text(
-              _searchQuery.isNotEmpty ? 'No appointments match your search' : emptyMessage,
+              _searchQuery.isNotEmpty ? l10n.noAppointmentsMatchSearch : emptyMessage,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.6),
               ),
@@ -303,7 +308,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
             if (_searchQuery.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(
-                'Try adjusting your search terms',
+                l10n.tryAdjustingSearchTerms,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurface.withOpacity(0.5),
                 ),

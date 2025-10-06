@@ -12,6 +12,8 @@ import '../../ui/screens/appointments_screen.dart';
 import '../../ui/screens/reports_screen.dart';
 import '../../ui/screens/settings_screen.dart';
 import '../../ui/screens/premium_screen.dart';
+import '../../ui/screens/profile_edit_screen.dart';
+import '../../ui/screens/terms_screen.dart';
 import '../screens/pet_profile_setup_screen.dart';
 import '../providers/pet_profile_provider.dart';
 
@@ -81,6 +83,15 @@ GoRouter createRouter() => GoRouter(
         final medicationId = state.pathParameters['medicationId']!;
         return MedicationDetailScreen(medicationId: medicationId);
       },
+    ),
+    // Settings routes
+    GoRoute(
+      path: '/profile-edit',
+      builder: (context, state) => const ProfileEditScreen(),
+    ),
+    GoRoute(
+      path: '/terms',
+      builder: (context, state) => const TermsScreen(),
     ),
   ],
 );

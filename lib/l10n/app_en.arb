@@ -1,5 +1,150 @@
 {
   "@@locale": "en",
   "appTitle": "FurFriendDiary",
-  "homeGreeting": "Hello, furry friend!"
+  "homeGreeting": "Hello, furry friend!",
+
+  "medications": "Medications",
+  "active": "Active",
+  "all": "All",
+  "inactive": "Inactive",
+  "searchMedications": "Search medications...",
+  "addMedication": "Add Medication",
+  "noPetSelected": "No pet selected",
+  "pleaseSetupPetFirst": "Please set up a pet profile first",
+  "noActiveMedications": "No active medications",
+  "noMedicationsFound": "No medications found",
+  "noInactiveMedications": "No inactive medications",
+  "noMedicationsMatchSearch": "No medications match your search",
+  "tryAdjustingSearchTerms": "Try adjusting your search terms",
+  "errorLoadingMedications": "Error loading medications",
+  "retry": "Retry",
+  "medicationMarkedInactive": "Medication marked as inactive",
+  "medicationMarkedActive": "Medication marked as active",
+  "failedToUpdateMedication": "Failed to update medication",
+  "deleteMedication": "Delete Medication",
+  "deleteMedicationConfirm": "Are you sure you want to delete \"{medicationName}\"? This action cannot be undone.",
+  "@deleteMedicationConfirm": {
+    "placeholders": {
+      "medicationName": {
+        "type": "String"
+      }
+    }
+  },
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "medicationDeletedSuccessfully": "Medication deleted successfully",
+  "failedToDeleteMedication": "Failed to delete medication",
+
+  "appointments": "Appointments",
+  "upcoming": "Upcoming",
+  "completed": "Completed",
+  "searchAppointments": "Search appointments...",
+  "addAppointment": "Add Appointment",
+  "editAppointment": "Edit Appointment",
+  "noUpcomingAppointments": "No upcoming appointments",
+  "noAppointmentsFound": "No appointments found",
+  "noCompletedAppointments": "No completed appointments",
+  "noAppointmentsMatchSearch": "No appointments match your search",
+  "errorLoadingAppointments": "Error loading appointments",
+
+  "feedings": "Feedings",
+  "petFeedings": "{petName} - Feedings",
+  "@petFeedings": {
+    "placeholders": {
+      "petName": {
+        "type": "String"
+      }
+    }
+  },
+  "noFeedingsRecorded": "No feedings recorded for {petName} yet",
+  "@noFeedingsRecorded": {
+    "placeholders": {
+      "petName": {
+        "type": "String"
+      }
+    }
+  },
+  "noFeedingsRecordedGeneric": "No feedings recorded yet",
+  "addFirstFeeding": "Add first feeding",
+  "errorLoadingFeedings": "Error loading feedings",
+  "addNewFeeding": "Add a new feeding",
+  "foodType": "Food type",
+  "foodTypeHint": "e.g., Dry Food, Wet Food, Treats",
+  "pleaseEnterFoodType": "Please enter a food type",
+  "clear": "Clear",
+  "add": "Add",
+  "feedingAdded": "Feeding \"{foodType}\" added",
+  "@feedingAdded": {
+    "placeholders": {
+      "foodType": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToSaveFeeding": "Failed to save feeding",
+  "mixed": "Mixed",
+
+  "save": "Save",
+  "medicationInformation": "Medication Information",
+  "medicationName": "Medication Name *",
+  "medicationNameHint": "e.g., Apoquel, Heartgard",
+  "pleaseEnterMedicationName": "Please enter medication name",
+  "dosage": "Dosage *",
+  "dosageHint": "e.g., 5mg, 1 tablet, 2ml",
+  "pleaseEnterDosage": "Please enter dosage",
+  "frequency": "Frequency *",
+  "frequencyOnceDaily": "Once daily",
+  "frequencyTwiceDaily": "Twice daily",
+  "frequencyThreeTimesDaily": "Three times daily",
+  "frequencyFourTimesDaily": "Four times daily",
+  "frequencyEveryOtherDay": "Every other day",
+  "frequencyWeekly": "Weekly",
+  "frequencyAsNeeded": "As needed",
+  "frequencyCustom": "Custom",
+  "administrationMethod": "Administration Method *",
+  "administrationMethodOral": "Oral",
+  "administrationMethodTopical": "Topical",
+  "administrationMethodInjection": "Injection",
+  "administrationMethodEyeDrops": "Eye drops",
+  "administrationMethodEarDrops": "Ear drops",
+  "administrationMethodInhaled": "Inhaled",
+  "administrationMethodOther": "Other",
+  "schedule": "Schedule",
+  "startDate": "Start Date",
+  "hasEndDate": "Has End Date",
+  "ongoingMedication": "Ongoing medication",
+  "endDate": "End Date",
+  "selectEndDate": "Select end date",
+  "administrationTimes": "Administration Times",
+  "addTime": "Add time",
+  "time": "Time {number}",
+  "@time": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "additionalNotes": "Additional Notes",
+  "additionalNotesHint": "Add any additional notes, instructions, or reminders...",
+  "saveMedication": "Save Medication",
+  "noActivePetFound": "No active pet found. Please select a pet first.",
+  "medicationAddedSuccessfully": "Medication added successfully!",
+  "failedToAddMedication": "Failed to add medication: {error}",
+  "@failedToAddMedication": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "medicationDetails": "Medication Details",
+  "basicInformation": "Basic Information",
+  "editMedication": "Edit Medication",
+  "ongoing": "Ongoing",
+  "duration": "Duration",
+  "notes": "Notes",
+  "saveChanges": "Save Changes",
+  "markInactive": "Mark Inactive",
+  "markActive": "Mark Active"
 }

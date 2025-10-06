@@ -10,6 +10,7 @@ import '../../presentation/providers/feeding_form_state_provider.dart';
 import '../../domain/models/feeding_entry.dart';
 import '../../data/repositories/feeding_repository_impl.dart';
 import '../../presentation/providers/care_data_provider.dart';
+import '../../../l10n/app_localizations.dart';
 
 
 final _logger = Logger();
@@ -63,9 +64,10 @@ class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
       _logger.i('Feeding "$foodType" saved to Hive successfully');
 
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Feeding "$foodType" added'),
+            content: Text(l10n.feedingAdded(foodType)),
             duration: const Duration(seconds: 2),
           ),
         );
@@ -73,9 +75,10 @@ class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
     } catch (e) {
       _logger.e('Failed to save feeding: $e');
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to save feeding: $e'),
+            content: Text('${l10n.failedToSaveFeeding}: $e'),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -103,12 +106,13 @@ class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
     final currentPet = ref.watch(currentPetProfileProvider);
     final feedingsAsync = ref.watch(feedingsByPetIdProvider(currentPet?.id ?? ''));
 
     return AppPage(
-      title: currentPet != null ? '${currentPet.name} - Feedings' : 'Feedings',
+      title: currentPet != null ? l10n.petFeedings(currentPet.name) : l10n.feedings,
       body: Column(
         children: [
           // Pet Profile Display
@@ -148,7 +152,7 @@ class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
                           ),
                         ),
                         Text(
-                          '${currentPet.species} • ${currentPet.breed ?? 'Mixed'}',
+                          '${currentPet.species} • ${currentPet.breed ?? l10n.mixed}',
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: scheme.onSurface.withOpacity(0.7),
                           ),
@@ -180,9 +184,9 @@ class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
                           ),
                           const SizedBox(height: AppSpacing.s5),
                           Text(
-                            currentPet != null 
-                                ? 'No feedings recorded for ${currentPet.name} yet'
-                                : 'No feedings recorded yet',
+                            currentPet != null
+                                ? l10n.noFeedingsRecorded(currentPet.name)
+                                : l10n.noFeedingsRecordedGeneric,
                             textAlign: TextAlign.center,
                             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                               color: scheme.onSurface.withOpacity(0.7),
@@ -191,7 +195,7 @@ class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
                           const SizedBox(height: 16),
                           FilledButton(
                             onPressed: _showAddFeedingDialog,
-                            child: const Text('Add first feeding'),
+                            child: Text(l10n.addFirstFeeding),
                           ),
                         ],
                       ),
@@ -209,7 +213,7 @@ class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
                     ),
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, stack) => Center(
-                child: Text('Error loading feedings: $error'),
+                child: Text('${l10n.errorLoadingFeedings}: $error'),
               ),
             ),
           ),
@@ -260,6 +264,7 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     ref.listen(feedingFormStateNotifierProvider, (previous, next) {
       _logger.i('🍽️ FEEDING FORM: Provider state changed - foodType: "${next.foodType}"');
@@ -281,18 +286,18 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Add a new feeding', style: theme.textTheme.titleLarge),
+            Text(l10n.addNewFeeding, style: theme.textTheme.titleLarge),
             const SizedBox(height: 16),
             TextFormField(
               controller: _foodTypeController,
-              decoration: const InputDecoration(
-                labelText: 'Food type',
-                hintText: 'e.g., Dry Food, Wet Food, Treats',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.foodType,
+                hintText: l10n.foodTypeHint,
+                border: const OutlineInputBorder(),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter a food type';
+                  return l10n.pleaseEnterFoodType;
                 }
                 return null;
               },
@@ -308,7 +313,7 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: _clearDraftState,
-                    child: const Text('Clear'),
+                    child: Text(l10n.clear),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -322,7 +327,7 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
                         Navigator.of(context).pop();
                       }
                     },
-                    child: const Text('Add'),
+                    child: Text(l10n.add),
                   ),
                 ),
               ],

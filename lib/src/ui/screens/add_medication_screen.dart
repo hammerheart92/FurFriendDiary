@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../providers/medications_provider.dart';
 import '../../presentation/providers/pet_profile_provider.dart';
 import '../../domain/models/time_of_day_model.dart';
+import '../../../l10n/app_localizations.dart';
 
 class AddMedicationScreen extends ConsumerStatefulWidget {
   const AddMedicationScreen({super.key});
@@ -19,32 +20,32 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
   final _dosageController = TextEditingController();
   final _notesController = TextEditingController();
 
-  String _selectedFrequency = 'Once daily';
-  String _selectedAdministrationMethod = 'Oral';
+  String _selectedFrequency = 'frequencyOnceDaily';
+  String _selectedAdministrationMethod = 'administrationMethodOral';
   DateTime _startDate = DateTime.now();
   DateTime? _endDate;
   bool _hasEndDate = false;
   List<TimeOfDay> _administrationTimes = [const TimeOfDay(hour: 8, minute: 0)];
 
   final List<String> _frequencies = [
-    'Once daily',
-    'Twice daily',
-    'Three times daily',
-    'Four times daily',
-    'Every other day',
-    'Weekly',
-    'As needed',
-    'Custom',
+    'frequencyOnceDaily',
+    'frequencyTwiceDaily',
+    'frequencyThreeTimesDaily',
+    'frequencyFourTimesDaily',
+    'frequencyEveryOtherDay',
+    'frequencyWeekly',
+    'frequencyAsNeeded',
+    'frequencyCustom',
   ];
 
   final List<String> _administrationMethods = [
-    'Oral',
-    'Topical',
-    'Injection',
-    'Eye drops',
-    'Ear drops',
-    'Inhaled',
-    'Other',
+    'administrationMethodOral',
+    'administrationMethodTopical',
+    'administrationMethodInjection',
+    'administrationMethodEyeDrops',
+    'administrationMethodEarDrops',
+    'administrationMethodInhaled',
+    'administrationMethodOther',
   ];
 
   bool _isLoading = false;
@@ -60,10 +61,11 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Medication'),
+        title: Text(l10n.addMedication),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
         elevation: 0,
@@ -71,7 +73,7 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
           TextButton(
             onPressed: _isLoading ? null : _saveMedication,
             child: Text(
-              'Save',
+              l10n.save,
               style: TextStyle(
                 color: theme.colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
@@ -95,7 +97,7 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Medication Information',
+                            l10n.medicationInformation,
                             style: theme.textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
@@ -105,15 +107,15 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                           // Medication name
                           TextFormField(
                             controller: _medicationNameController,
-                            decoration: const InputDecoration(
-                              labelText: 'Medication Name *',
-                              hintText: 'e.g., Apoquel, Heartgard',
-                              prefixIcon: Icon(Icons.medication),
-                              border: OutlineInputBorder(),
+                            decoration: InputDecoration(
+                              labelText: l10n.medicationName,
+                              hintText: l10n.medicationNameHint,
+                              prefixIcon: const Icon(Icons.medication),
+                              border: const OutlineInputBorder(),
                             ),
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
-                                return 'Please enter medication name';
+                                return l10n.pleaseEnterMedicationName;
                               }
                               return null;
                             },
@@ -124,15 +126,15 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                           // Dosage
                           TextFormField(
                             controller: _dosageController,
-                            decoration: const InputDecoration(
-                              labelText: 'Dosage *',
-                              hintText: 'e.g., 5mg, 1 tablet, 2ml',
-                              prefixIcon: Icon(Icons.straighten),
-                              border: OutlineInputBorder(),
+                            decoration: InputDecoration(
+                              labelText: l10n.dosage,
+                              hintText: l10n.dosageHint,
+                              prefixIcon: const Icon(Icons.straighten),
+                              border: const OutlineInputBorder(),
                             ),
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
-                                return 'Please enter dosage';
+                                return l10n.pleaseEnterDosage;
                               }
                               return null;
                             },
@@ -143,15 +145,15 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                           // Frequency dropdown
                           DropdownButtonFormField<String>(
                             value: _selectedFrequency,
-                            decoration: const InputDecoration(
-                              labelText: 'Frequency *',
-                              prefixIcon: Icon(Icons.schedule),
-                              border: OutlineInputBorder(),
+                            decoration: InputDecoration(
+                              labelText: l10n.frequency,
+                              prefixIcon: const Icon(Icons.schedule),
+                              border: const OutlineInputBorder(),
                             ),
                             items: _frequencies.map((frequency) {
                               return DropdownMenuItem(
                                 value: frequency,
-                                child: Text(frequency),
+                                child: Text(_getLocalizedFrequency(l10n, frequency)),
                               );
                             }).toList(),
                             onChanged: (value) {
@@ -167,15 +169,15 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                           // Administration method dropdown
                           DropdownButtonFormField<String>(
                             value: _selectedAdministrationMethod,
-                            decoration: const InputDecoration(
-                              labelText: 'Administration Method *',
-                              prefixIcon: Icon(Icons.medical_services),
-                              border: OutlineInputBorder(),
+                            decoration: InputDecoration(
+                              labelText: l10n.administrationMethod,
+                              prefixIcon: const Icon(Icons.medical_services),
+                              border: const OutlineInputBorder(),
                             ),
                             items: _administrationMethods.map((method) {
                               return DropdownMenuItem(
                                 value: method,
-                                child: Text(method),
+                                child: Text(_getLocalizedAdministrationMethod(l10n, method)),
                               );
                             }).toList(),
                             onChanged: (value) {
@@ -199,7 +201,7 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Schedule',
+                            l10n.schedule,
                             style: theme.textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
@@ -210,7 +212,7 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                           ListTile(
                             contentPadding: EdgeInsets.zero,
                             leading: const Icon(Icons.calendar_today),
-                            title: const Text('Start Date'),
+                            title: Text(l10n.startDate),
                             subtitle: Text(DateFormat('MMMM dd, yyyy').format(_startDate)),
                             onTap: () => _selectStartDate(),
                           ),
@@ -218,10 +220,10 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                           // End date toggle
                           SwitchListTile(
                             contentPadding: EdgeInsets.zero,
-                            title: const Text('Has End Date'),
+                            title: Text(l10n.hasEndDate),
                             subtitle: _hasEndDate && _endDate != null
                                 ? Text(DateFormat('MMMM dd, yyyy').format(_endDate!))
-                                : const Text('Ongoing medication'),
+                                : Text(l10n.ongoingMedication),
                             value: _hasEndDate,
                             onChanged: (value) {
                               setState(() {
@@ -240,10 +242,10 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                             ListTile(
                               contentPadding: EdgeInsets.zero,
                               leading: const Icon(Icons.event_available),
-                              title: const Text('End Date'),
+                              title: Text(l10n.endDate),
                               subtitle: _endDate != null
                                   ? Text(DateFormat('MMMM dd, yyyy').format(_endDate!))
-                                  : const Text('Select end date'),
+                                  : Text(l10n.selectEndDate),
                               onTap: () => _selectEndDate(),
                             ),
                         ],
@@ -263,17 +265,17 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                           Row(
                             children: [
                               Text(
-                                'Administration Times',
+                                l10n.administrationTimes,
                                 style: theme.textTheme.titleLarge?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               const Spacer(),
-                              if (_selectedFrequency == 'Custom')
+                              if (_selectedFrequency == 'frequencyCustom')
                                 IconButton(
                                   onPressed: _addAdministrationTime,
                                   icon: const Icon(Icons.add),
-                                  tooltip: 'Add time',
+                                  tooltip: l10n.addTime,
                                 ),
                             ],
                           ),
@@ -286,9 +288,9 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                             return ListTile(
                               contentPadding: EdgeInsets.zero,
                               leading: const Icon(Icons.access_time),
-                              title: Text('Time ${index + 1}'),
+                              title: Text(l10n.time(index + 1)),
                               subtitle: Text(time.format(context)),
-                              trailing: _selectedFrequency == 'Custom' && _administrationTimes.length > 1
+                              trailing: _selectedFrequency == 'frequencyCustom' && _administrationTimes.length > 1
                                   ? IconButton(
                                       onPressed: () => _removeAdministrationTime(index),
                                       icon: const Icon(Icons.remove_circle, color: Colors.red),
@@ -312,7 +314,7 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Additional Notes',
+                            l10n.additionalNotes,
                             style: theme.textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
@@ -322,9 +324,9 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                           TextFormField(
                             controller: _notesController,
                             maxLines: 4,
-                            decoration: const InputDecoration(
-                              hintText: 'Add any additional notes, instructions, or reminders...',
-                              border: OutlineInputBorder(),
+                            decoration: InputDecoration(
+                              hintText: l10n.additionalNotesHint,
+                              border: const OutlineInputBorder(),
                             ),
                           ),
                         ],
@@ -349,9 +351,9 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                       ),
                       child: _isLoading
                           ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text(
-                              'Save Medication',
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          : Text(
+                              l10n.saveMedication,
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                     ),
                   ),
@@ -364,23 +366,23 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
   void _updateAdministrationTimes() {
     setState(() {
       switch (_selectedFrequency) {
-        case 'Once daily':
+        case 'frequencyOnceDaily':
           _administrationTimes = [const TimeOfDay(hour: 8, minute: 0)];
           break;
-        case 'Twice daily':
+        case 'frequencyTwiceDaily':
           _administrationTimes = [
             const TimeOfDay(hour: 8, minute: 0),
             const TimeOfDay(hour: 20, minute: 0),
           ];
           break;
-        case 'Three times daily':
+        case 'frequencyThreeTimesDaily':
           _administrationTimes = [
             const TimeOfDay(hour: 8, minute: 0),
             const TimeOfDay(hour: 14, minute: 0),
             const TimeOfDay(hour: 20, minute: 0),
           ];
           break;
-        case 'Four times daily':
+        case 'frequencyFourTimesDaily':
           _administrationTimes = [
             const TimeOfDay(hour: 8, minute: 0),
             const TimeOfDay(hour: 12, minute: 0),
@@ -458,11 +460,12 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
     }
 
     final activePet = ref.read(currentPetProfileProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     if (activePet == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No active pet found. Please select a pet first.'),
+        SnackBar(
+          content: Text(l10n.noActivePetFound),
           backgroundColor: Colors.red,
         ),
       );
@@ -493,8 +496,8 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Medication added successfully!'),
+          SnackBar(
+            content: Text(l10n.medicationAddedSuccessfully),
             backgroundColor: Colors.green,
           ),
         );
@@ -504,7 +507,7 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to add medication: $error'),
+            content: Text(l10n.failedToAddMedication(error.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -515,6 +518,50 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
           _isLoading = false;
         });
       }
+    }
+  }
+
+  String _getLocalizedFrequency(AppLocalizations l10n, String key) {
+    switch (key) {
+      case 'frequencyOnceDaily':
+        return l10n.frequencyOnceDaily;
+      case 'frequencyTwiceDaily':
+        return l10n.frequencyTwiceDaily;
+      case 'frequencyThreeTimesDaily':
+        return l10n.frequencyThreeTimesDaily;
+      case 'frequencyFourTimesDaily':
+        return l10n.frequencyFourTimesDaily;
+      case 'frequencyEveryOtherDay':
+        return l10n.frequencyEveryOtherDay;
+      case 'frequencyWeekly':
+        return l10n.frequencyWeekly;
+      case 'frequencyAsNeeded':
+        return l10n.frequencyAsNeeded;
+      case 'frequencyCustom':
+        return l10n.frequencyCustom;
+      default:
+        return key;
+    }
+  }
+
+  String _getLocalizedAdministrationMethod(AppLocalizations l10n, String key) {
+    switch (key) {
+      case 'administrationMethodOral':
+        return l10n.administrationMethodOral;
+      case 'administrationMethodTopical':
+        return l10n.administrationMethodTopical;
+      case 'administrationMethodInjection':
+        return l10n.administrationMethodInjection;
+      case 'administrationMethodEyeDrops':
+        return l10n.administrationMethodEyeDrops;
+      case 'administrationMethodEarDrops':
+        return l10n.administrationMethodEarDrops;
+      case 'administrationMethodInhaled':
+        return l10n.administrationMethodInhaled;
+      case 'administrationMethodOther':
+        return l10n.administrationMethodOther;
+      default:
+        return key;
     }
   }
 }

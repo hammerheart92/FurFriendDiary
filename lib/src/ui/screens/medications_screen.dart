@@ -6,6 +6,7 @@ import '../../domain/models/medication_entry.dart';
 import '../../providers/medications_provider.dart';
 import '../../presentation/providers/pet_profile_provider.dart';
 import '../widgets/medication_card.dart';
+import '../../../l10n/app_localizations.dart';
 
 class MedicationsScreen extends ConsumerStatefulWidget {
   const MedicationsScreen({super.key});
@@ -49,9 +50,10 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
   }
 
   Widget _buildNoPetView(ThemeData theme) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Medications'),
+        title: Text(l10n.medications),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
       ),
@@ -66,14 +68,14 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
             ),
             const SizedBox(height: 16),
             Text(
-              'No pet selected',
+              l10n.noPetSelected,
               style: theme.textTheme.headlineSmall?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.7),
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              'Please set up a pet profile first',
+              l10n.pleaseSetupPetFirst,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.5),
               ),
@@ -86,10 +88,11 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
 
   Widget _buildMedicationsView(ThemeData theme, String petId) {
     final medicationsAsync = ref.watch(medicationsProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Medications'),
+        title: Text(l10n.medications),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
         elevation: 0,
@@ -98,10 +101,10 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
           indicatorColor: theme.colorScheme.onPrimary,
           labelColor: theme.colorScheme.onPrimary,
           unselectedLabelColor: theme.colorScheme.onPrimary.withOpacity(0.7),
-          tabs: const [
-            Tab(text: 'Active'),
-            Tab(text: 'All'),
-            Tab(text: 'Inactive'),
+          tabs: [
+            Tab(text: l10n.active),
+            Tab(text: l10n.all),
+            Tab(text: l10n.inactive),
           ],
         ),
       ),
@@ -128,7 +131,7 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
                 });
               },
               decoration: InputDecoration(
-                hintText: 'Search medications...',
+                hintText: l10n.searchMedications,
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
@@ -164,17 +167,17 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
                   children: [
                     _buildMedicationsList(
                       petMedications.where((med) => med.isActive).toList(),
-                      'No active medications',
+                      l10n.noActiveMedications,
                       theme,
                     ),
                     _buildMedicationsList(
                       petMedications,
-                      'No medications found',
+                      l10n.noMedicationsFound,
                       theme,
                     ),
                     _buildMedicationsList(
                       petMedications.where((med) => !med.isActive).toList(),
-                      'No inactive medications',
+                      l10n.noInactiveMedications,
                       theme,
                     ),
                   ],
@@ -187,11 +190,11 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
                   children: [
                     Icon(Icons.error, size: 64, color: Colors.red),
                     const SizedBox(height: 16),
-                    Text('Error loading medications: $error'),
+                    Text('${l10n.errorLoadingMedications}: $error'),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () => ref.refresh(medicationsProvider),
-                      child: const Text('Retry'),
+                      child: Text(l10n.retry),
                     ),
                   ],
                 ),
@@ -205,7 +208,7 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
         icon: const Icon(Icons.add),
-        label: const Text('Add Medication'),
+        label: Text(l10n.addMedication),
       ),
     );
   }
@@ -215,6 +218,7 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
     String emptyMessage,
     ThemeData theme,
   ) {
+    final l10n = AppLocalizations.of(context);
     // Filter medications based on search query
     final filteredMedications = medications.where((medication) {
       if (_searchQuery.isEmpty) return true;
@@ -239,7 +243,7 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
             ),
             const SizedBox(height: 16),
             Text(
-              _searchQuery.isNotEmpty ? 'No medications match your search' : emptyMessage,
+              _searchQuery.isNotEmpty ? l10n.noMedicationsMatchSearch : emptyMessage,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.6),
               ),
@@ -248,7 +252,7 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
             if (_searchQuery.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(
-                'Try adjusting your search terms',
+                l10n.tryAdjustingSearchTerms,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurface.withOpacity(0.5),
                 ),
@@ -280,6 +284,7 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
   }
 
   Future<void> _toggleMedicationStatus(MedicationEntry medication) async {
+    final l10n = AppLocalizations.of(context);
     try {
       await ref.read(medicationsProvider.notifier).toggleMedicationStatus(medication.id);
 
@@ -288,8 +293,8 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
           SnackBar(
             content: Text(
               medication.isActive
-                  ? 'Medication marked as inactive'
-                  : 'Medication marked as active'
+                  ? l10n.medicationMarkedInactive
+                  : l10n.medicationMarkedActive
             ),
             backgroundColor: Colors.green,
           ),
@@ -299,7 +304,7 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to update medication: $error'),
+            content: Text('${l10n.failedToUpdateMedication}: $error'),
             backgroundColor: Colors.red,
           ),
         );
@@ -308,22 +313,23 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
   }
 
   Future<void> _deleteMedication(MedicationEntry medication) async {
+    final l10n = AppLocalizations.of(context);
     final shouldDelete = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Medication'),
+        title: Text(l10n.deleteMedication),
         content: Text(
-          'Are you sure you want to delete "${medication.medicationName}"? This action cannot be undone.',
+          l10n.deleteMedicationConfirm(medication.medicationName),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Delete'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -335,8 +341,8 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Medication deleted successfully'),
+            SnackBar(
+              content: Text(l10n.medicationDeletedSuccessfully),
               backgroundColor: Colors.green,
             ),
           );
@@ -345,7 +351,7 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to delete medication: $error'),
+              content: Text('${l10n.failedToDeleteMedication}: $error'),
               backgroundColor: Colors.red,
             ),
           );
