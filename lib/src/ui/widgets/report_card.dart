@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../domain/models/report_entry.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../utils/date_helper.dart';
 
 class ReportCard extends StatelessWidget {
   final ReportEntry report;
@@ -17,6 +19,7 @@ class ReportCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Card(
       elevation: 2,
@@ -57,7 +60,7 @@ class ReportCard extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                report.reportType,
+                                _getLocalizedReportType(context),
                                 style: theme.textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -110,13 +113,13 @@ class ReportCard extends StatelessWidget {
                       }
                     },
                     itemBuilder: (context) => [
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 'delete',
                         child: Row(
                           children: [
-                            Icon(Icons.delete, color: Colors.red),
-                            SizedBox(width: 8),
-                            Text('Delete'),
+                            const Icon(Icons.delete, color: Colors.red),
+                            const SizedBox(width: 8),
+                            Text(l10n.delete),
                           ],
                         ),
                       ),
@@ -134,9 +137,10 @@ class ReportCard extends StatelessWidget {
                   // Generated date
                   Expanded(
                     child: _buildDetailItem(
+                      context: context,
                       icon: Icons.calendar_today,
-                      label: 'Generated',
-                      value: DateFormat('MMM dd').format(report.generatedDate),
+                      label: l10n.generated,
+                      value: localizedShortDate(context, report.generatedDate),
                       color: Colors.blue,
                     ),
                   ),
@@ -144,8 +148,9 @@ class ReportCard extends StatelessWidget {
                   // Date range duration
                   Expanded(
                     child: _buildDetailItem(
+                      context: context,
                       icon: Icons.date_range,
-                      label: 'Period',
+                      label: l10n.period,
                       value: _getPeriodDuration(),
                       color: Colors.green,
                     ),
@@ -154,9 +159,10 @@ class ReportCard extends StatelessWidget {
                   // Data summary
                   Expanded(
                     child: _buildDetailItem(
+                      context: context,
                       icon: Icons.data_usage,
-                      label: 'Data',
-                      value: _getDataSummary(),
+                      label: l10n.data,
+                      value: _getDataSummary(context),
                       color: Colors.purple,
                     ),
                   ),
@@ -188,7 +194,7 @@ class ReportCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            'Summary',
+                            l10n.summary,
                             style: theme.textTheme.bodySmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: theme.colorScheme.onSurface.withOpacity(0.7),
@@ -198,7 +204,7 @@ class ReportCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        _getSummaryText(),
+                        _getSummaryText(context),
                         style: theme.textTheme.bodySmall,
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
@@ -215,6 +221,7 @@ class ReportCard extends StatelessWidget {
   }
 
   Widget _buildDetailItem({
+    required BuildContext context,
     required IconData icon,
     required String label,
     required String value,
@@ -249,6 +256,20 @@ class ReportCard extends StatelessWidget {
     );
   }
 
+  String _getLocalizedReportType(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    switch (report.reportType) {
+      case 'Health Summary':
+        return l10n.healthSummary;
+      case 'Activity Report':
+        return l10n.activityReport;
+      case 'Veterinary Records':
+        return l10n.veterinaryRecords;
+      default:
+        return report.reportType;
+    }
+  }
+
   IconData _getReportIcon() {
     switch (report.reportType) {
       case 'Health Summary':
@@ -280,23 +301,26 @@ class ReportCard extends StatelessWidget {
   }
 
   String _getDateRange() {
+    // Use non-localized format for compact display
     final startFormatted = DateFormat('MMM dd').format(report.startDate);
     final endFormatted = DateFormat('MMM dd, yyyy').format(report.endDate);
     return '$startFormatted - $endFormatted';
   }
 
   String _getTimeAgo() {
+    // Use the shared helper for consistent time ago formatting across the app
+    // However, for compact display we'll use short format (d/h/m)
     final now = DateTime.now();
     final difference = now.difference(report.generatedDate);
 
     if (difference.inDays > 0) {
-      return '${difference.inDays}d ago';
+      return '${difference.inDays}d';
     } else if (difference.inHours > 0) {
-      return '${difference.inHours}h ago';
+      return '${difference.inHours}h';
     } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes}m ago';
+      return '${difference.inMinutes}m';
     } else {
-      return 'Just now';
+      return '<1m';
     }
   }
 
@@ -309,37 +333,49 @@ class ReportCard extends StatelessWidget {
     }
   }
 
-  String _getDataSummary() {
-    final summary = report.data['summary'] as Map<String, dynamic>?;
-    if (summary == null) return '-';
+  String _getDataSummary(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final summaryData = report.data['summary'];
+    if (summaryData == null) return '-';
+    final summary = summaryData is Map<String, dynamic>
+        ? summaryData
+        : Map<String, dynamic>.from(summaryData as Map);
 
     switch (report.reportType) {
       case 'Health Summary':
         final medications = summary['totalMedications'] ?? 0;
         final appointments = summary['totalAppointments'] ?? 0;
-        return '${medications + appointments} items';
+        return '${medications + appointments} ${l10n.items}';
       case 'Medication History':
         final medications = summary['totalMedications'] ?? 0;
         return '$medications meds';
       case 'Activity Report':
         final feedings = summary['totalFeedings'] ?? 0;
-        return '$feedings feeds';
+        return '$feedings ${l10n.feeds}';
       case 'Veterinary Records':
         final appointments = summary['totalAppointments'] ?? 0;
-        return '$appointments visits';
+        return '$appointments ${l10n.visits}';
       default:
         return '-';
     }
   }
 
   bool _hasSummaryData() {
-    final summary = report.data['summary'] as Map<String, dynamic>?;
-    return summary != null && summary.isNotEmpty;
+    final summaryData = report.data['summary'];
+    if (summaryData == null) return false;
+    final summary = summaryData is Map<String, dynamic>
+        ? summaryData
+        : Map<String, dynamic>.from(summaryData as Map);
+    return summary.isNotEmpty;
   }
 
-  String _getSummaryText() {
-    final summary = report.data['summary'] as Map<String, dynamic>?;
-    if (summary == null) return 'No summary available';
+  String _getSummaryText(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final summaryData = report.data['summary'];
+    if (summaryData == null) return 'No summary available';
+    final summary = summaryData is Map<String, dynamic>
+        ? summaryData
+        : Map<String, dynamic>.from(summaryData as Map);
 
     switch (report.reportType) {
       case 'Health Summary':
@@ -347,24 +383,24 @@ class ReportCard extends StatelessWidget {
         final activeMeds = summary['activeMedications'] ?? 0;
         final totalApts = summary['totalAppointments'] ?? 0;
         final completedApts = summary['completedAppointments'] ?? 0;
-        return 'Medications: $activeMeds active out of $totalMeds total. Appointments: $completedApts completed out of $totalApts total.';
+        return '${l10n.medications}: $activeMeds ${l10n.active} ${l10n.outOf} $totalMeds ${l10n.total}. ${l10n.appointments}: $completedApts ${l10n.completed} ${l10n.outOf} $totalApts ${l10n.total}.';
 
       case 'Medication History':
         final totalMeds = summary['totalMedications'] ?? 0;
         final activeMeds = summary['activeMedications'] ?? 0;
         final inactiveMeds = summary['inactiveMedications'] ?? 0;
-        return 'Total medications: $totalMeds ($activeMeds active, $inactiveMeds inactive)';
+        return '${l10n.total} ${l10n.medications.toLowerCase()}: $totalMeds ($activeMeds ${l10n.active}, $inactiveMeds ${l10n.inactive})';
 
       case 'Activity Report':
         final totalFeedings = summary['totalFeedings'] ?? 0;
         final avgPerDay = summary['averageFeedingsPerDay'] ?? 0.0;
-        return 'Total feedings: $totalFeedings (avg ${avgPerDay.toStringAsFixed(1)} per day)';
+        return '${l10n.total} ${l10n.feeds}: $totalFeedings (${l10n.avg} ${avgPerDay.toStringAsFixed(1)} ${l10n.perDay})';
 
       case 'Veterinary Records':
         final totalApts = summary['totalAppointments'] ?? 0;
         final completedApts = summary['completedAppointments'] ?? 0;
         final pendingApts = summary['pendingAppointments'] ?? 0;
-        return 'Total appointments: $totalApts ($completedApts completed, $pendingApts pending)';
+        return '${l10n.total} ${l10n.appointments.toLowerCase()}: $totalApts ($completedApts ${l10n.completed}, $pendingApts ${l10n.upcoming.toLowerCase()})';
 
       default:
         return 'Report data available';

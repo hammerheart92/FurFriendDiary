@@ -7,28 +7,56 @@ import 'report_card.dart';
 
 class ReportsList extends ConsumerWidget {
   final String petId;
+  final List<ReportEntry>? reports;
   final VoidCallback? onAddReport;
   final Function(ReportEntry)? onViewReport;
 
   const ReportsList({
     super.key,
     required this.petId,
+    this.reports,
     this.onAddReport,
     this.onViewReport,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // If reports are provided, use them directly (for filtered views)
+    // Otherwise, fetch all reports from provider
+    if (reports != null) {
+      if (reports!.isEmpty) {
+        return _buildEmptyState(context);
+      }
+
+      // Sort reports by generation date (newest first)
+      final sortedReports = [...reports!];
+      sortedReports.sort((a, b) => b.generatedDate.compareTo(a.generatedDate));
+
+      return ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: sortedReports.length,
+        itemBuilder: (context, index) {
+          final report = sortedReports[index];
+          return ReportCard(
+            report: report,
+            onTap: () => onViewReport?.call(report),
+            onDelete: () => _showDeleteDialog(context, ref, report),
+          );
+        },
+      );
+    }
+
+    // Fallback to fetching from provider if no reports provided
     final reportsAsync = ref.watch(reportsByPetIdProvider(petId));
 
     return reportsAsync.when(
-      data: (reports) {
-        if (reports.isEmpty) {
+      data: (fetchedReports) {
+        if (fetchedReports.isEmpty) {
           return _buildEmptyState(context);
         }
 
         // Sort reports by generation date (newest first)
-        final sortedReports = [...reports];
+        final sortedReports = [...fetchedReports];
         sortedReports.sort((a, b) => b.generatedDate.compareTo(a.generatedDate));
 
         return ListView.builder(

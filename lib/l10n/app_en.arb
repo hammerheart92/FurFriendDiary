@@ -146,5 +146,295 @@
   "notes": "Notes",
   "saveChanges": "Save Changes",
   "markInactive": "Mark Inactive",
-  "markActive": "Mark Active"
+  "markActive": "Mark Active",
+
+  "appointmentInformation": "Appointment Information",
+  "veterinarian": "Veterinarian",
+  "veterinarianHint": "e.g., Dr. Smith, Dr. Johnson",
+  "pleaseEnterVeterinarian": "Please enter veterinarian name",
+  "clinic": "Clinic",
+  "clinicHint": "e.g., Animal Hospital, Vet Clinic",
+  "pleaseEnterClinic": "Please enter clinic name",
+  "reason": "Reason",
+  "reasonHint": "e.g., Checkup, Vaccination, Surgery",
+  "pleaseEnterReason": "Please enter reason for appointment",
+  "appointmentDate": "Appointment Date",
+  "appointmentTime": "Appointment Time",
+  "status": "Status",
+  "markAsCompleted": "Mark as Completed",
+  "appointmentCompleted": "Appointment completed",
+  "appointmentPending": "Appointment pending",
+  "additionalNotes": "Additional Notes",
+  "additionalNotesHint": "Add any additional notes, special instructions, or reminders...",
+  "updateAppointment": "Update Appointment",
+  "saveAppointment": "Save Appointment",
+  "appointmentUpdatedSuccessfully": "Appointment updated successfully!",
+  "appointmentAddedSuccessfully": "Appointment added successfully!",
+  "failedToSaveAppointment": "Failed to save appointment: {error}",
+  "@failedToSaveAppointment": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+
+  "walks": "Walks",
+  "today": "Today",
+  "tomorrow": "Tomorrow",
+  "yesterday": "Yesterday",
+  "thisWeek": "This Week",
+  "addWalk": "Add walk",
+  "start": "Start",
+  "durationMin": "Duration",
+  "distance": "Distance",
+  "surfaceLabel": "Surface",
+  "surfacePaved": "paved",
+  "surfaceGravel": "gravel",
+  "surfaceMixed": "mixed",
+  "pace": "Pace",
+  "min": "min",
+  "km": "km",
+  "noWalksYet": "No walks yet",
+  "trackFirstWalk": "Track your first walk to see distance and duration here.",
+  "addFirstWalk": "Add first walk",
+  "walkDetails": "Walk details",
+  "close": "Close",
+  "noNotes": "No notes",
+  "optional": "Optional",
+  "required": "Required",
+  "enterPositiveNumber": "Enter a positive number",
+  "walkAddedSuccessfully": "Walk added successfully!",
+  "walkDetailsFor": "Walk details for {walkInfo}",
+  "@walkDetailsFor": {
+    "placeholders": {
+      "walkInfo": {
+        "type": "String"
+      }
+    }
+  },
+
+  "reports": "Reports",
+  "health": "Health",
+  "activity": "Activity",
+  "searchReports": "Search reports...",
+  "generateReport": "Generate Report",
+  "healthSummary": "Health Summary",
+  "activityReport": "Activity Report",
+  "veterinaryRecords": "Veterinary Records",
+  "generated": "Generated",
+  "period": "Period",
+  "data": "Data",
+  "summary": "Summary",
+  "items": "items",
+  "feeds": "feeds",
+  "visits": "visits",
+  "outOf": "out of",
+  "total": "total",
+  "avg": "avg",
+  "perDay": "per day",
+  "generatedOn": "Generated on",
+  "at": "at",
+  "days": "days",
+  "totalFeedings": "Total Feedings",
+  "dailyAverage": "Daily Average",
+  "inPeriod": "In period",
+  "feedingHistory": "Feeding History",
+  "date": "Date",
+  "type": "Type",
+  "amount": "Amount",
+  "dryFood": "Dry Food",
+  "wetFood": "Wet Food",
+  "treats": "Treats",
+  "timeLabel": "Time",
+  "name": "Name",
+  "dosage": "Dosage",
+  "method": "Method",
+  "veterinarian": "Veterinarian",
+  "clinic": "Clinic",
+  "reason": "Reason",
+  "medicationDetails": "Medication Details",
+  "appointmentHistory": "Appointment History",
+  "pending": "Pending",
+  "finished": "Finished",
+  "appointments": "Appointments",
+  "completedTotal": "Completed/Total",
+  "activeTotal": "Active/Total",
+  "ongoing": "Ongoing",
+  "noMedicationsFoundPeriod": "No medications found for this period",
+  "noFeedingDataFoundPeriod": "No feeding data found for this period",
+  "noVeterinaryAppointmentsFoundPeriod": "No veterinary appointments found for this period",
+  "shareFunctionalityPlaceholder": "Share functionality would be implemented here",
+  "reportConfiguration": "Report Configuration",
+  "reportType": "Report Type",
+  "pleaseSelectReportType": "Please select a report type",
+  "dateRange": "Date Range",
+  "quickRanges": "Quick Ranges",
+  "healthSummaryDescription": "Comprehensive overview including recent medications, appointments, and activities for the selected period.",
+  "medicationHistoryDescription": "Detailed list of all medications with dates, dosages, and completion status for the selected period.",
+  "activityReportDescription": "Analysis of walks, exercise patterns, and activity trends over the selected time frame.",
+  "veterinaryRecordsDescription": "Complete record of all veterinary appointments with outcomes and notes for the selected period.",
+  "selectReportTypeDescription": "Select a report type to see its description.",
+  "endDateMustBeAfterStartDate": "End date must be after start date",
+  "last7Days": "Last 7 days",
+  "last30Days": "Last 30 days",
+  "last3Months": "Last 3 months",
+  "last6Months": "Last 6 months",
+  "lastYear": "Last year",
+  "reportGeneratedSuccessfully": "Report generated successfully!",
+  "failedToGenerateReport": "Failed to generate report: {error}",
+  "@failedToGenerateReport": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "medicationHistory": "Medication History",
+  "edit": "Edit",
+  "confirmDelete": "Confirm Delete",
+  "deleteConfirmationMessage": "Are you sure you want to delete this feeding?",
+  "feedingDeleted": "Feeding deleted successfully",
+  "pet": "Pet",
+  "pleaseSelectPet": "Please select a pet",
+  "pleaseEnterAmount": "Please enter amount",
+  "addNotesOptional": "Add notes (optional)",
+  "feedingTime": "Feeding Time",
+  "editFeeding": "Edit Feeding",
+
+  "petProfiles": "Pet Profiles",
+  "addPet": "Add Pet",
+  "allProfiles": "All Profiles",
+  "activeProfile": "ACTIVE",
+  "noPetsYet": "No pets yet!",
+  "addYourFirstPet": "Add your first pet to get started",
+  "makeActive": "Make Active",
+  "deleteProfile": "Delete Profile",
+  "deleteProfileConfirm": "Are you sure you want to delete {petName}'s profile? This action cannot be undone.",
+  "@deleteProfileConfirm": {
+    "placeholders": {
+      "petName": {
+        "type": "String"
+      }
+    }
+  },
+  "profileDeleted": "{petName}'s profile deleted",
+  "@profileDeleted": {
+    "placeholders": {
+      "petName": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToDeleteProfile": "Failed to delete profile",
+  "nowActive": "{petName} is now your active pet",
+  "@nowActive": {
+    "placeholders": {
+      "petName": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToActivateProfile": "Failed to activate profile: {error}",
+  "@failedToActivateProfile": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorLoadingProfiles": "Error loading profiles",
+  "yearsOld": "{age} year{plural} old",
+  "@yearsOld": {
+    "placeholders": {
+      "age": {
+        "type": "int"
+      },
+      "plural": {
+        "type": "String"
+      }
+    }
+  },
+
+  "settings": "Settings",
+  "premium": "Premium",
+  "upgradeToUnlock": "Upgrade to unlock advanced features",
+  "accountSettings": "Account Settings",
+  "language": "Language",
+  "english": "English",
+  "romanian": "Română",
+  "appPreferences": "App Preferences",
+  "theme": "Theme",
+  "light": "Light",
+  "dark": "Dark",
+  "system": "System",
+  "notifications": "Notifications",
+  "enableNotifications": "Enable app notifications",
+  "enableAnalytics": "Enable analytics",
+  "helpImproveApp": "Help improve the app",
+  "dataManagement": "Data Management",
+  "exportData": "Export data",
+  "downloadYourData": "Download your data",
+  "clearCache": "Clear cache",
+  "freeUpSpace": "Free up storage space",
+  "deleteAccount": "Delete account",
+  "deleteAccountPermanently": "Permanently delete your account",
+  "privacyAndLegal": "Privacy & Legal",
+  "privacyPolicy": "Privacy policy",
+  "termsOfService": "Terms of Service",
+  "openSourceLicenses": "Open source licenses",
+  "about": "About",
+  "appVersion": "App version",
+  "petOwner": "Pet Owner",
+  "selectLanguage": "Select Language",
+  "selectTheme": "Select Theme",
+  "clearCacheConfirm": "Are you sure you want to clear the cache? This action cannot be undone.",
+  "cacheCleared": "Cache cleared successfully",
+  "deleteAccountConfirm": "Are you sure you want to delete your account? This action is permanent and cannot be undone. All your data will be lost.",
+  "featureComingSoon": "Feature coming soon",
+
+  "noReportsFound": "No reports found",
+  "noHealthReportsFound": "No health reports found",
+  "noMedicationReportsFound": "No medication reports found",
+  "noActivityReportsFound": "No activity reports found",
+  "noReportsMatchSearch": "No reports match your search",
+  "errorLoadingReports": "Error loading reports",
+
+  "overdue": "Overdue",
+  "justNow": "Just now",
+  "daysAgo": "{count, plural, =1{1 day ago} other{{count} days ago}}",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursAgo": "{count, plural, =1{1 hour ago} other{{count} hours ago}}",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "minutesAgo": "{count, plural, =1{1 minute ago} other{{count} minutes ago}}",
+  "@minutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "status": "Status",
+  "done": "Done",
+  "date": "Date",
+  "timeLabel": "Time",
+  "notes": "Notes",
+  "markPending": "Mark Pending",
+  "markCompleted": "Mark Completed",
+  "daysUntil": "In",
+
+  "started": "Started",
+  "ends": "Ends"
 }

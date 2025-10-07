@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import '../../domain/models/appointment_entry.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../utils/date_helper.dart';
 
 class AppointmentCard extends StatelessWidget {
   final AppointmentEntry appointment;
@@ -19,6 +20,7 @@ class AppointmentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Card(
       elevation: 2,
@@ -94,8 +96,8 @@ class AppointmentCard extends StatelessWidget {
                     ),
                     child: Text(
                       appointment.isCompleted
-                          ? 'Completed'
-                          : _getStatusText(),
+                          ? l10n.completed
+                          : _getStatusText(context),
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 10,
@@ -126,17 +128,17 @@ class AppointmentCard extends StatelessWidget {
                               color: appointment.isCompleted ? Colors.orange : Colors.green,
                             ),
                             const SizedBox(width: 8),
-                            Text(appointment.isCompleted ? 'Mark Pending' : 'Mark Completed'),
+                            Text(appointment.isCompleted ? l10n.markPending : l10n.markCompleted),
                           ],
                         ),
                       ),
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 'delete',
                         child: Row(
                           children: [
-                            Icon(Icons.delete, color: Colors.red),
-                            SizedBox(width: 8),
-                            Text('Delete'),
+                            const Icon(Icons.delete, color: Colors.red),
+                            const SizedBox(width: 8),
+                            Text(l10n.delete),
                           ],
                         ),
                       ),
@@ -154,9 +156,10 @@ class AppointmentCard extends StatelessWidget {
                   // Date
                   Expanded(
                     child: _buildDetailItem(
+                      context: context,
                       icon: Icons.calendar_today,
-                      label: 'Date',
-                      value: DateFormat('MMM dd').format(appointment.appointmentDate),
+                      label: l10n.date,
+                      value: localizedShortDate(context, appointment.appointmentDate),
                       color: Colors.blue,
                     ),
                   ),
@@ -164,9 +167,10 @@ class AppointmentCard extends StatelessWidget {
                   // Time
                   Expanded(
                     child: _buildDetailItem(
+                      context: context,
                       icon: Icons.access_time,
-                      label: 'Time',
-                      value: DateFormat('HH:mm').format(appointment.appointmentTime),
+                      label: l10n.timeLabel,
+                      value: localizedTime(context, appointment.appointmentTime),
                       color: Colors.green,
                     ),
                   ),
@@ -174,9 +178,10 @@ class AppointmentCard extends StatelessWidget {
                   // Days until/since
                   Expanded(
                     child: _buildDetailItem(
+                      context: context,
                       icon: _getDaysIcon(),
-                      label: _getDaysLabel(),
-                      value: _getDaysValue(),
+                      label: _getDaysLabel(context),
+                      value: _getDaysValue(context),
                       color: _getDaysColor(),
                     ),
                   ),
@@ -208,7 +213,7 @@ class AppointmentCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            'Notes',
+                            l10n.notes,
                             style: theme.textTheme.bodySmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: theme.colorScheme.onSurface.withOpacity(0.7),
@@ -235,6 +240,7 @@ class AppointmentCard extends StatelessWidget {
   }
 
   Widget _buildDetailItem({
+    required BuildContext context,
     required IconData icon,
     required String label,
     required String value,
@@ -320,22 +326,23 @@ class AppointmentCard extends StatelessWidget {
     }
   }
 
-  String _getStatusText() {
+  String _getStatusText(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    
     if (appointment.isCompleted) {
-      return 'Completed';
+      return l10n.completed;
     }
 
-    final now = DateTime.now();
-    final appointmentDate = appointment.appointmentDate;
+    final diff = daysUntil(appointment.appointmentDate);
 
-    if (appointmentDate.isBefore(now)) {
-      return 'Overdue';
-    } else if (appointmentDate.difference(now).inDays == 0) {
-      return 'Today';
-    } else if (appointmentDate.difference(now).inDays == 1) {
-      return 'Tomorrow';
+    if (diff < 0) {
+      return l10n.overdue;
+    } else if (diff == 0) {
+      return l10n.today;
+    } else if (diff == 1) {
+      return l10n.tomorrow;
     } else {
-      return 'Upcoming';
+      return l10n.upcoming;
     }
   }
 
@@ -354,39 +361,40 @@ class AppointmentCard extends StatelessWidget {
     }
   }
 
-  String _getDaysLabel() {
+  String _getDaysLabel(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    
     if (appointment.isCompleted) {
-      return 'Status';
+      return l10n.status;
     }
 
-    final now = DateTime.now();
-    final appointmentDate = appointment.appointmentDate;
+    final diff = daysUntil(appointment.appointmentDate);
 
-    if (appointmentDate.isBefore(now)) {
-      return 'Overdue';
+    if (diff < 0) {
+      return l10n.overdue;
     } else {
-      return 'In';
+      return l10n.daysUntil;
     }
   }
 
-  String _getDaysValue() {
+  String _getDaysValue(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    
     if (appointment.isCompleted) {
-      return 'Done';
+      return l10n.done;
     }
 
-    final now = DateTime.now();
-    final appointmentDate = appointment.appointmentDate;
-    final difference = appointmentDate.difference(now).inDays;
+    final diff = daysUntil(appointment.appointmentDate);
 
-    if (difference < 0) {
-      final overdueDays = -difference;
+    if (diff < 0) {
+      final overdueDays = -diff;
       return '${overdueDays}d';
-    } else if (difference == 0) {
-      return 'Today';
-    } else if (difference == 1) {
-      return '1 day';
+    } else if (diff == 0) {
+      return l10n.today;
+    } else if (diff == 1) {
+      return l10n.tomorrow;
     } else {
-      return '${difference}d';
+      return '${diff}d';
     }
   }
 

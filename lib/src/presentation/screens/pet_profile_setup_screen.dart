@@ -2,10 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:fur_friend_diary/src/domain/models/pet_profile.dart';
 import 'package:fur_friend_diary/src/presentation/providers/pet_profile_provider.dart';
+import 'package:fur_friend_diary/src/services/profile_picture_service.dart';
 
 class PetProfileSetupScreen extends ConsumerStatefulWidget {
   const PetProfileSetupScreen({super.key});
@@ -21,9 +21,10 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
   final _speciesController = TextEditingController();
   final _breedController = TextEditingController();
   final _notesController = TextEditingController();
-  
+  final _profilePictureService = ProfilePictureService();
+
   DateTime? _selectedBirthday;
-  XFile? _imageFile;
+  String? _savedImagePath;
   bool _isLoading = false;
 
   @override
@@ -37,19 +38,15 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
 
   Future<void> _pickImage() async {
     try {
-      final imagePicker = ImagePicker();
-      final pickedFile = await imagePicker.pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 800,
-        maxHeight: 800,
-        imageQuality: 85,
-      );
-      if (pickedFile != null) {
+      final imagePath = await _profilePictureService.selectProfilePicture(context);
+      if (imagePath != null) {
         setState(() {
-          _imageFile = pickedFile;
+          _savedImagePath = imagePath;
         });
+        logger.d('[PROFILE_PIC] Image saved to permanent location: $imagePath');
       }
     } catch (e) {
+      logger.e('[PROFILE_PIC] ERROR: Failed to pick image: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to pick image: $e')),
@@ -74,43 +71,59 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
   }
 
   Future<void> _saveProfile() async {
-    logger.d("🔍 DEBUG: Save button pressed in setup screen");
-    
+    logger.d("[PROFILE_SETUP] Save button pressed in setup screen");
+
     if (!_formKey.currentState!.validate()) {
-      logger.d("🔍 DEBUG: Form validation failed");
+      logger.d("[PROFILE_SETUP] Form validation failed");
       return;
     }
 
-    logger.d("🔍 DEBUG: Form validation passed");
+    logger.d("[PROFILE_SETUP] Form validation passed");
     
     setState(() {
       _isLoading = true;
     });
 
     try {
+      logger.d("[PROFILE_PIC] Starting profile save");
+      logger.d("[PROFILE_PIC] _savedImagePath value: $_savedImagePath");
+
+      if (_savedImagePath != null) {
+        final imageFile = File(_savedImagePath!);
+        logger.d("[PROFILE_PIC] Checking if saved image file exists: ${await imageFile.exists()}");
+        if (await imageFile.exists()) {
+          logger.d("[PROFILE_PIC] Image file confirmed at path: $_savedImagePath");
+        } else {
+          logger.e("[PROFILE_PIC] ERROR: Image file does NOT exist at path: $_savedImagePath");
+        }
+      } else {
+        logger.d("[PROFILE_PIC] No image path to save (null)");
+      }
+
       final profile = PetProfile(
         name: _nameController.text.trim(),
         species: _speciesController.text.trim(),
         breed: _breedController.text.trim().isEmpty ? null : _breedController.text.trim(),
         birthday: _selectedBirthday,
-        photoPath: _imageFile?.path,
+        photoPath: _savedImagePath,
         notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
       );
 
-      logger.d("🔍 DEBUG: Created profile object - Name: ${profile.name}, Species: ${profile.species}, ID: ${profile.id}");
+      logger.d("[PROFILE_SETUP] Created profile object - Name: ${profile.name}, Species: ${profile.species}, ID: ${profile.id}");
+      logger.d("[PROFILE_SETUP] Profile photoPath: ${profile.photoPath}");
 
-      logger.d("🔍 DEBUG: Calling provider to save profile");
+      logger.d("[PROFILE_SETUP] Calling provider to save profile");
       await ref.read(petProfilesProvider.notifier).createOrUpdate(profile);
-      logger.d("🔍 DEBUG: Provider save completed successfully");
+      logger.d("[PROFILE_SETUP] Provider save completed successfully");
 
       if (mounted) {
-        logger.d("🔍 DEBUG: Attempting navigation to home screen");
+        logger.d("[PROFILE_SETUP] Attempting navigation to home screen");
         // Navigate to main screen after successful save
         context.go('/');
-        logger.d("🔍 DEBUG: Navigation initiated");
+        logger.d("[PROFILE_SETUP] Navigation initiated");
       }
     } catch (e) {
-      logger.e("🚨 ERROR: Save operation failed: $e");
+      logger.e("[PROFILE_SETUP] ERROR: Save operation failed: $e");
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to save profile: $e')),
@@ -156,10 +169,10 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
                         width: 2,
                       ),
                     ),
-                    child: _imageFile != null
+                    child: _savedImagePath != null
                         ? ClipOval(
                             child: Image.file(
-                              File(_imageFile!.path),
+                              File(_savedImagePath!),
                               fit: BoxFit.cover,
                               width: 120,
                               height: 120,
@@ -178,7 +191,7 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
                 child: TextButton.icon(
                   onPressed: _pickImage,
                   icon: const Icon(Icons.camera_alt),
-                  label: Text(_imageFile != null ? 'Change Photo' : 'Add Photo'),
+                  label: Text(_savedImagePath != null ? 'Change Photo' : 'Add Photo'),
                 ),
               ),
               const SizedBox(height: 24),

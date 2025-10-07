@@ -65,8 +65,8 @@ class ReportEntry extends HiveObject {
     startDate: DateTime.parse(json['startDate']),
     endDate: DateTime.parse(json['endDate']),
     generatedDate: json['generatedDate'] != null ? DateTime.parse(json['generatedDate']) : DateTime.now(),
-    data: json['data'] ?? {},
-    filters: json['filters'],
+    data: json['data'] != null ? Map<String, dynamic>.from(json['data'] as Map) : {},
+    filters: json['filters'] != null ? Map<String, dynamic>.from(json['filters'] as Map) : null,
     createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : DateTime.now(),
   );
 

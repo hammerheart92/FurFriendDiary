@@ -7,6 +7,7 @@ import '../../presentation/providers/pet_profile_provider.dart';
 import '../widgets/reports_list.dart';
 import '../widgets/report_generation_form.dart';
 import '../widgets/report_viewer.dart';
+import '../../../l10n/app_localizations.dart';
 
 class ReportsScreen extends ConsumerStatefulWidget {
   const ReportsScreen({super.key});
@@ -61,9 +62,10 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
   }
 
   Widget _buildNoPetView(ThemeData theme) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reports'),
+        title: Text(l10n.reports),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
       ),
@@ -78,14 +80,14 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
             ),
             const SizedBox(height: 16),
             Text(
-              'No pet selected',
+              l10n.noPetSelected,
               style: theme.textTheme.headlineSmall?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.7),
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              'Please set up a pet profile first',
+              l10n.pleaseSetupPetFirst,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.5),
               ),
@@ -97,9 +99,10 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
   }
 
   Widget _buildFormView(ThemeData theme, String petId) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Generate Report'),
+        title: Text(l10n.generateReport),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
         elevation: 0,
@@ -139,11 +142,12 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
   }
 
   Widget _buildReportsView(ThemeData theme, String petId) {
+    final l10n = AppLocalizations.of(context);
     final reportsAsync = ref.watch(reportsByPetIdProvider(petId));
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reports'),
+        title: Text(l10n.reports),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
         elevation: 0,
@@ -153,11 +157,11 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
           labelColor: theme.colorScheme.onPrimary,
           unselectedLabelColor: theme.colorScheme.onPrimary.withOpacity(0.7),
           isScrollable: true,
-          tabs: const [
-            Tab(text: 'All'),
-            Tab(text: 'Health'),
-            Tab(text: 'Medications'),
-            Tab(text: 'Activity'),
+          tabs: [
+            Tab(text: l10n.all),
+            Tab(text: l10n.health),
+            Tab(text: l10n.medications),
+            Tab(text: l10n.activity),
           ],
         ),
       ),
@@ -184,7 +188,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
                 });
               },
               decoration: InputDecoration(
-                hintText: 'Search reports...',
+                hintText: l10n.searchReports,
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
@@ -216,25 +220,27 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
                   children: [
                     _buildReportsList(
                       reports,
-                      'No reports found',
+                      l10n.noReportsFound,
                       theme,
                       petId,
                     ),
                     _buildReportsList(
-                      reports.where((report) => report.reportType == 'Health Summary').toList(),
-                      'No health reports found',
+                      reports.where((report) =>
+                        report.reportType == l10n.healthSummary ||
+                        report.reportType == l10n.veterinaryRecords).toList(),
+                      l10n.noHealthReportsFound,
                       theme,
                       petId,
                     ),
                     _buildReportsList(
-                      reports.where((report) => report.reportType == 'Medication History').toList(),
-                      'No medication reports found',
+                      reports.where((report) => report.reportType == l10n.medicationHistory).toList(),
+                      l10n.noMedicationReportsFound,
                       theme,
                       petId,
                     ),
                     _buildReportsList(
-                      reports.where((report) => report.reportType == 'Activity Report').toList(),
-                      'No activity reports found',
+                      reports.where((report) => report.reportType == l10n.activityReport).toList(),
+                      l10n.noActivityReportsFound,
                       theme,
                       petId,
                     ),
@@ -248,11 +254,11 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
                   children: [
                     Icon(Icons.error, size: 64, color: Colors.red),
                     const SizedBox(height: 16),
-                    Text('Error loading reports: $error'),
+                    Text('${l10n.errorLoadingReports}: $error'),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () => ref.invalidate(reportsByPetIdProvider(petId)),
-                      child: const Text('Retry'),
+                      child: Text(l10n.retry),
                     ),
                   ],
                 ),
@@ -270,7 +276,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
         icon: const Icon(Icons.add),
-        label: const Text('Generate Report'),
+        label: Text(l10n.generateReport),
       ),
     );
   }
@@ -281,6 +287,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
     ThemeData theme,
     String petId,
   ) {
+    final l10n = AppLocalizations.of(context);
+    
     // Filter reports based on search query
     final filteredReports = reports.where((report) {
       if (_searchQuery.isEmpty) return true;
@@ -302,7 +310,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
             ),
             const SizedBox(height: 16),
             Text(
-              _searchQuery.isNotEmpty ? 'No reports match your search' : emptyMessage,
+              _searchQuery.isNotEmpty ? l10n.noReportsMatchSearch : emptyMessage,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.6),
               ),
@@ -311,7 +319,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
             if (_searchQuery.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(
-                'Try adjusting your search terms',
+                l10n.tryAdjustingSearchTerms,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurface.withOpacity(0.5),
                 ),
@@ -328,6 +336,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
       },
       child: ReportsList(
         petId: petId,
+        reports: filteredReports,
         onAddReport: () {
           setState(() {
             _showForm = true;

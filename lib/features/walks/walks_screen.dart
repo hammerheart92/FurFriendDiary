@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'walks_state.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Drop-in Walks screen with mock data, quick filters, responsive layout,
 /// empty state, semantics, and a local-only "Add walk" sheet.
@@ -46,9 +47,11 @@ class _WalksScreenState extends State<WalksScreen> with AutomaticKeepAliveClient
           logger.d('📱 UI NOTE: ${allWalks.length} walks exist but filtered to 0 for $_filter');
         }
 
+        final l10n = AppLocalizations.of(context);
+
         return Scaffold(
       appBar: AppBar(
-        title: const Text('Walks'),
+        title: Text(l10n.walks),
       ),
       body: SafeArea(
         child: Column(
@@ -68,7 +71,7 @@ class _WalksScreenState extends State<WalksScreen> with AutomaticKeepAliveClient
       ),
       floatingActionButton: Semantics(
         button: true,
-        label: 'Add walk',
+        label: l10n.addWalk,
         child: FloatingActionButton(
           onPressed: _showAddWalkSheet,
           child: const Icon(Icons.add),
@@ -118,6 +121,7 @@ class _WalksScreenState extends State<WalksScreen> with AutomaticKeepAliveClient
 
   void _showAddWalkSheet() {
     final controller = WalksScope.of(context);
+    final l10n = AppLocalizations.of(context);
     showModalBottomSheet<void>(
       context: context,
       useSafeArea: true,
@@ -128,15 +132,15 @@ class _WalksScreenState extends State<WalksScreen> with AutomaticKeepAliveClient
           logger.i('📝 FORM SUBMITTED - Walk Data: ${entry.note} at ${entry.start}');
           logger.i('📅 Walk Date: ${entry.start}');
           logger.i('💾 SAVING TO REPOSITORY...');
-          
+
           await controller.add(entry);
           if (context.mounted) {
             Navigator.of(context).pop();
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Walk added successfully!')),
+              SnackBar(content: Text(l10n.walkAddedSuccessfully)),
             );
           }
-          
+
           logger.i('🔙 NAVIGATION: Returned to walks screen, data refreshed');
         },
       ),
@@ -155,10 +159,11 @@ class _FilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const labels = {
-      WalkFilter.today: 'Today',
-      WalkFilter.thisWeek: 'This Week',
-      WalkFilter.all: 'All',
+    final l10n = AppLocalizations.of(context);
+    final labels = {
+      WalkFilter.today: l10n.today,
+      WalkFilter.thisWeek: l10n.thisWeek,
+      WalkFilter.all: l10n.all,
     };
 
     return Container(
@@ -228,16 +233,32 @@ class WalkCard extends StatelessWidget {
   final WalkEntry entry;
   static final logger = Logger();
 
+  String _getLocalizedSurface(BuildContext context, String? surface) {
+    if (surface == null) return 'n/a';
+    final l10n = AppLocalizations.of(context);
+    switch (surface) {
+      case 'paved':
+        return l10n.surfacePaved;
+      case 'gravel':
+        return l10n.surfaceGravel;
+      case 'mixed':
+        return l10n.surfaceMixed;
+      default:
+        return surface;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     logger.d('🃏 RENDERING WalkCard: ${entry.note} at ${entry.start}');
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final time = DateFormat.Hm().format(entry.start);
-    final primaryLine = '$time • ${entry.durationMin} min • ${entry.distanceKm.toStringAsFixed(1)} km';
+    final primaryLine = '$time • ${entry.durationMin} ${l10n.min} • ${entry.distanceKm.toStringAsFixed(1)} ${l10n.km}';
 
     return Semantics(
       container: true,
-      label: 'Walk details for $primaryLine',
+      label: l10n.walkDetailsFor(primaryLine),
       child: Card(
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -246,10 +267,10 @@ class WalkCard extends StatelessWidget {
             showDialog<void>(
               context: context,
               builder: (_) => AlertDialog(
-                title: const Text('Walk details'),
+                title: Text(l10n.walkDetails),
                 content: _WalkDetails(entry: entry),
                 actions: [
-                  TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
+                  TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.close)),
                 ],
               ),
             );
@@ -270,7 +291,7 @@ class WalkCard extends StatelessWidget {
                 const SizedBox(height: 6),
                 // Note/title
                 Text(
-                  entry.note ?? 'No notes',
+                  entry.note ?? l10n.noNotes,
                   style: theme.textTheme.bodyLarge,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -278,7 +299,7 @@ class WalkCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 // Meta row: simple text with dots
                 Text(
-                  'Surface: ${entry.surface ?? 'n/a'} • Pace: ${entry.paceMinPerKm?.toStringAsFixed(0) ?? '—'}\'/km',
+                  '${l10n.surfaceLabel}: ${_getLocalizedSurface(context, entry.surface)} • ${l10n.pace}: ${entry.paceMinPerKm?.toStringAsFixed(0) ?? '—'}\'/km',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
@@ -302,6 +323,7 @@ class _EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -310,21 +332,21 @@ class _EmptyState extends StatelessWidget {
           children: [
             Icon(Icons.pets, size: 72, color: theme.colorScheme.primary),
             const SizedBox(height: 12),
-            Text('No walks yet', style: theme.textTheme.headlineSmall),
+            Text(l10n.noWalksYet, style: theme.textTheme.headlineSmall),
             const SizedBox(height: 8),
             Text(
-              'Track your first walk to see distance and duration here.',
+              l10n.trackFirstWalk,
               style: theme.textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
             Semantics(
               button: true,
-              label: 'Add first walk',
+              label: l10n.addFirstWalk,
               child: FilledButton.icon(
                 onPressed: onAdd,
                 icon: const Icon(Icons.add),
-                label: const Text('Add first walk'),
+                label: Text(l10n.addFirstWalk),
               ),
             ),
           ],
@@ -338,19 +360,35 @@ class _WalkDetails extends StatelessWidget {
   const _WalkDetails({required this.entry});
   final WalkEntry entry;
 
+  String _getLocalizedSurface(BuildContext context, String? surface) {
+    if (surface == null) return 'n/a';
+    final l10n = AppLocalizations.of(context);
+    switch (surface) {
+      case 'paved':
+        return l10n.surfacePaved;
+      case 'gravel':
+        return l10n.surfaceGravel;
+      case 'mixed':
+        return l10n.surfaceMixed;
+      default:
+        return surface;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final df = DateFormat('EEE, MMM d • HH:mm');
+    final l10n = AppLocalizations.of(context);
+    final df = DateFormat('EEE, MMM d • HH:mm', Localizations.localeOf(context).toString());
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _DetailRow('Start', df.format(entry.start)),
-        _DetailRow('Duration', '${entry.durationMin} min'),
-        _DetailRow('Distance', '${entry.distanceKm.toStringAsFixed(2)} km'),
-        if (entry.paceMinPerKm != null) _DetailRow('Pace', "${entry.paceMinPerKm!.toStringAsFixed(0)}'/km"),
-        if (entry.surface != null) _DetailRow('Surface', entry.surface!),
-        if (entry.note?.isNotEmpty == true) _DetailRow('Notes', entry.note!),
+        _DetailRow(l10n.start, df.format(entry.start)),
+        _DetailRow(l10n.durationMin, '${entry.durationMin} ${l10n.min}'),
+        _DetailRow(l10n.distance, '${entry.distanceKm.toStringAsFixed(2)} ${l10n.km}'),
+        if (entry.paceMinPerKm != null) _DetailRow(l10n.pace, "${entry.paceMinPerKm!.toStringAsFixed(0)}'/km"),
+        if (entry.surface != null) _DetailRow(l10n.surfaceLabel, _getLocalizedSurface(context, entry.surface)),
+        if (entry.note?.isNotEmpty == true) _DetailRow(l10n.notes, entry.note!),
       ],
     );
   }
@@ -406,7 +444,8 @@ class _AddWalkSheetState extends State<_AddWalkSheet> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final df = DateFormat('EEE, MMM d • HH:mm');
+    final l10n = AppLocalizations.of(context);
+    final df = DateFormat('EEE, MMM d • HH:mm', Localizations.localeOf(context).toString());
 
     return Padding(
       padding: EdgeInsets.only(
@@ -421,10 +460,10 @@ class _AddWalkSheetState extends State<_AddWalkSheet> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-            Text('Add walk', style: theme.textTheme.titleLarge),
+            Text(l10n.addWalk, style: theme.textTheme.titleLarge),
             const SizedBox(height: 12),
             _RowField(
-              label: 'Start',
+              label: l10n.start,
               child: OutlinedButton.icon(
                 onPressed: () async {
                   final date = await showDatePicker(
@@ -444,41 +483,41 @@ class _AddWalkSheetState extends State<_AddWalkSheet> {
               ),
             ),
             _RowField(
-              label: 'Duration',
+              label: l10n.durationMin,
               child: TextFormField(
                 controller: _durationCtrl,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(suffixText: 'min', hintText: '30'),
+                decoration: InputDecoration(suffixText: l10n.min, hintText: '30'),
                 validator: _positiveInt,
               ),
             ),
             _RowField(
-              label: 'Distance',
+              label: l10n.distance,
               child: TextFormField(
                 controller: _distanceCtrl,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(suffixText: 'km', hintText: '2.0'),
+                decoration: InputDecoration(suffixText: l10n.km, hintText: '2.0'),
                 validator: _positiveDouble,
               ),
             ),
             _RowField(
-              label: 'Surface',
+              label: l10n.surfaceLabel,
               child: DropdownButtonFormField<String>(
                 initialValue: _surface,
-                items: const [
-                  DropdownMenuItem(value: 'paved', child: Text('paved')),
-                  DropdownMenuItem(value: 'gravel', child: Text('gravel')),
-                  DropdownMenuItem(value: 'mixed', child: Text('mixed')),
+                items: [
+                  DropdownMenuItem(value: 'paved', child: Text(l10n.surfacePaved)),
+                  DropdownMenuItem(value: 'gravel', child: Text(l10n.surfaceGravel)),
+                  DropdownMenuItem(value: 'mixed', child: Text(l10n.surfaceMixed)),
                 ],
                 onChanged: (v) => setState(() => _surface = v),
               ),
             ),
             _RowField(
-              label: 'Notes',
+              label: l10n.notes,
               child: TextFormField(
                 controller: _noteCtrl,
                 maxLines: 2,
-                decoration: const InputDecoration(hintText: 'Optional'),
+                decoration: InputDecoration(hintText: l10n.optional),
               ),
             ),
             const SizedBox(height: 12),
@@ -498,7 +537,7 @@ class _AddWalkSheetState extends State<_AddWalkSheet> {
                       );
                       widget.onSubmit(entry);
                     },
-                    child: const Text('Add'),
+                    child: Text(l10n.add),
                   ),
                 ),
               ],
@@ -511,16 +550,18 @@ class _AddWalkSheetState extends State<_AddWalkSheet> {
   }
 
   String? _positiveInt(String? v) {
-    if (v == null || v.trim().isEmpty) return 'Required';
+    final l10n = AppLocalizations.of(context);
+    if (v == null || v.trim().isEmpty) return l10n.required;
     final n = int.tryParse(v);
-    if (n == null || n <= 0) return 'Enter a positive number';
+    if (n == null || n <= 0) return l10n.enterPositiveNumber;
     return null;
   }
 
   String? _positiveDouble(String? v) {
-    if (v == null || v.trim().isEmpty) return 'Required';
+    final l10n = AppLocalizations.of(context);
+    if (v == null || v.trim().isEmpty) return l10n.required;
     final n = double.tryParse(v);
-    if (n == null || n <= 0) return 'Enter a positive number';
+    if (n == null || n <= 0) return l10n.enterPositiveNumber;
     return null;
   }
 }

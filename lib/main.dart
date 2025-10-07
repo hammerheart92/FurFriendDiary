@@ -7,14 +7,19 @@ import 'l10n/app_localizations.dart';
 import 'src/presentation/routes/app_router.dart';
 import 'src/data/local/hive_manager.dart';
 import 'src/presentation/providers/settings_provider.dart';
+import 'src/utils/file_logger.dart';
 import 'theme/theme.dart';
 
-final logger = Logger();
+late final Logger logger;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
+  // Initialize file logger
+  logger = await FileLogger.getInstance();
+
   logger.i("🚀 DEBUG: Starting FurFriendDiary app initialization");
+  logger.i("📝 DEBUG: Logs are being saved to: ${FileLogger.logFile?.path}");
   
   try {
     // Initialize HiveManager (this handles everything)

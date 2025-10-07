@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../domain/models/appointment_entry.dart';
 import '../../presentation/providers/care_data_provider.dart';
 import '../../presentation/providers/pet_profile_provider.dart';
+import '../../../l10n/app_localizations.dart';
 
 class AppointmentForm extends ConsumerStatefulWidget {
   final AppointmentEntry? appointment;
@@ -64,6 +65,7 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Form(
       key: _formKey,
@@ -78,7 +80,7 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Appointment Information',
+                    l10n.appointmentInformation,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -88,15 +90,15 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                   // Veterinarian name
                   TextFormField(
                     controller: _veterinarianController,
-                    decoration: const InputDecoration(
-                      labelText: 'Veterinarian *',
-                      hintText: 'e.g., Dr. Smith, Dr. Johnson',
-                      prefixIcon: Icon(Icons.person),
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: '${l10n.veterinarian} *',
+                      hintText: l10n.veterinarianHint,
+                      prefixIcon: const Icon(Icons.person),
+                      border: const OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Please enter veterinarian name';
+                        return l10n.pleaseEnterVeterinarian;
                       }
                       return null;
                     },
@@ -107,15 +109,15 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                   // Clinic name
                   TextFormField(
                     controller: _clinicController,
-                    decoration: const InputDecoration(
-                      labelText: 'Clinic *',
-                      hintText: 'e.g., Animal Hospital, Vet Clinic',
-                      prefixIcon: Icon(Icons.local_hospital),
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: '${l10n.clinic} *',
+                      hintText: l10n.clinicHint,
+                      prefixIcon: const Icon(Icons.local_hospital),
+                      border: const OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Please enter clinic name';
+                        return l10n.pleaseEnterClinic;
                       }
                       return null;
                     },
@@ -126,15 +128,15 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                   // Reason
                   TextFormField(
                     controller: _reasonController,
-                    decoration: const InputDecoration(
-                      labelText: 'Reason *',
-                      hintText: 'e.g., Checkup, Vaccination, Surgery',
-                      prefixIcon: Icon(Icons.medical_services),
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: '${l10n.reason} *',
+                      hintText: l10n.reasonHint,
+                      prefixIcon: const Icon(Icons.medical_services),
+                      border: const OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Please enter reason for appointment';
+                        return l10n.pleaseEnterReason;
                       }
                       return null;
                     },
@@ -154,7 +156,7 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Schedule',
+                    l10n.schedule,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -165,8 +167,8 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     leading: const Icon(Icons.calendar_today),
-                    title: const Text('Appointment Date'),
-                    subtitle: Text(DateFormat('MMMM dd, yyyy').format(_appointmentDate)),
+                    title: Text(l10n.appointmentDate),
+                    subtitle: Text(DateFormat('MMMM dd, yyyy', Localizations.localeOf(context).toString()).format(_appointmentDate)),
                     onTap: () => _selectAppointmentDate(),
                   ),
 
@@ -174,7 +176,7 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     leading: const Icon(Icons.access_time),
-                    title: const Text('Appointment Time'),
+                    title: Text(l10n.appointmentTime),
                     subtitle: Text(_appointmentTime.format(context)),
                     onTap: () => _selectAppointmentTime(),
                   ),
@@ -194,7 +196,7 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Status',
+                      l10n.status,
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -204,8 +206,8 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                     // Completed toggle
                     SwitchListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('Mark as Completed'),
-                      subtitle: Text(_isCompleted ? 'Appointment completed' : 'Appointment pending'),
+                      title: Text(l10n.markAsCompleted),
+                      subtitle: Text(_isCompleted ? l10n.appointmentCompleted : l10n.appointmentPending),
                       value: _isCompleted,
                       onChanged: (value) {
                         setState(() {
@@ -228,7 +230,7 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Additional Notes',
+                    l10n.additionalNotes,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -238,9 +240,9 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                   TextFormField(
                     controller: _notesController,
                     maxLines: 4,
-                    decoration: const InputDecoration(
-                      hintText: 'Add any additional notes, special instructions, or reminders...',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      hintText: l10n.additionalNotesHint,
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                 ],
@@ -267,9 +269,9 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    child: Text(
+                      l10n.cancel,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -294,7 +296,7 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                     child: _isLoading
                         ? const CircularProgressIndicator(color: Colors.white)
                         : Text(
-                            widget.appointment != null ? 'Update Appointment' : 'Save Appointment',
+                            widget.appointment != null ? l10n.updateAppointment : l10n.saveAppointment,
                             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                   ),
@@ -341,11 +343,12 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
     }
 
     final activePet = ref.read(currentPetProfileProvider);
+    final l10n = AppLocalizations.of(context);
 
     if (activePet == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No active pet found. Please select a pet first.'),
+        SnackBar(
+          content: Text(l10n.noActivePetFound),
           backgroundColor: Colors.red,
         ),
       );
@@ -384,8 +387,8 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
         await ref.read(appointmentProviderProvider.notifier).updateAppointment(appointment);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Appointment updated successfully!'),
+            SnackBar(
+              content: Text(l10n.appointmentUpdatedSuccessfully),
               backgroundColor: Colors.green,
             ),
           );
@@ -395,8 +398,8 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
         await ref.read(appointmentProviderProvider.notifier).addAppointment(appointment);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Appointment added successfully!'),
+            SnackBar(
+              content: Text(l10n.appointmentAddedSuccessfully),
               backgroundColor: Colors.green,
             ),
           );
@@ -410,7 +413,7 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to save appointment: $error'),
+            content: Text(l10n.failedToSaveAppointment(error.toString())),
             backgroundColor: Colors.red,
           ),
         );

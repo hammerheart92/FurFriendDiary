@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../domain/models/report_entry.dart';
 import '../../presentation/providers/care_data_provider.dart';
 import '../../presentation/providers/pet_profile_provider.dart';
+import '../../../l10n/app_localizations.dart';
 
 class ReportGenerationForm extends ConsumerStatefulWidget {
   final VoidCallback? onGenerated;
@@ -37,6 +38,7 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Form(
       key: _formKey,
@@ -51,7 +53,7 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Report Configuration',
+                    l10n.reportConfiguration,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -61,15 +63,15 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
                   // Report type dropdown
                   DropdownButtonFormField<String>(
                     value: _reportType,
-                    decoration: const InputDecoration(
-                      labelText: 'Report Type *',
-                      prefixIcon: Icon(Icons.assessment),
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: '${l10n.reportType} *',
+                      prefixIcon: const Icon(Icons.assessment),
+                      border: const OutlineInputBorder(),
                     ),
                     items: _reportTypes.map((type) {
                       return DropdownMenuItem(
                         value: type,
-                        child: Text(type),
+                        child: Text(_getLocalizedReportType(type, l10n)),
                       );
                     }).toList(),
                     onChanged: (value) {
@@ -81,7 +83,7 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
                     },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please select a report type';
+                        return l10n.pleaseSelectReportType;
                       }
                       return null;
                     },
@@ -109,7 +111,7 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            _getReportTypeDescription(_reportType),
+                            _getReportTypeDescription(_reportType, l10n),
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurface.withOpacity(0.7),
                             ),
@@ -133,7 +135,7 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Date Range',
+                    l10n.dateRange,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -144,7 +146,7 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     leading: const Icon(Icons.date_range),
-                    title: const Text('Start Date'),
+                    title: Text(l10n.startDate),
                     subtitle: Text(DateFormat('MMMM dd, yyyy').format(_startDate)),
                     onTap: () => _selectStartDate(),
                   ),
@@ -153,7 +155,7 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     leading: const Icon(Icons.event),
-                    title: const Text('End Date'),
+                    title: Text(l10n.endDate),
                     subtitle: Text(DateFormat('MMMM dd, yyyy').format(_endDate)),
                     onTap: () => _selectEndDate(),
                   ),
@@ -177,7 +179,7 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'End date must be after start date',
+                            l10n.endDateMustBeAfterStartDate,
                             style: TextStyle(
                               color: Colors.red[700],
                               fontSize: 12,
@@ -201,7 +203,7 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Quick Ranges',
+                    l10n.quickRanges,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -211,11 +213,11 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      _buildQuickRangeChip('Last 7 days', 7),
-                      _buildQuickRangeChip('Last 30 days', 30),
-                      _buildQuickRangeChip('Last 3 months', 90),
-                      _buildQuickRangeChip('Last 6 months', 180),
-                      _buildQuickRangeChip('Last year', 365),
+                      _buildQuickRangeChip(l10n.last7Days, 7),
+                      _buildQuickRangeChip(l10n.last30Days, 30),
+                      _buildQuickRangeChip(l10n.last3Months, 90),
+                      _buildQuickRangeChip(l10n.last6Months, 180),
+                      _buildQuickRangeChip(l10n.lastYear, 365),
                     ],
                   ),
                 ],
@@ -242,9 +244,9 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    child: Text(
+                      l10n.cancel,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -268,9 +270,9 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
                     ),
                     child: _isLoading
                         ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text(
-                            'Generate Report',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        : Text(
+                            l10n.generateReport,
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                   ),
                 ),
@@ -303,18 +305,33 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
     );
   }
 
-  String _getReportTypeDescription(String type) {
+  String _getLocalizedReportType(String type, AppLocalizations l10n) {
     switch (type) {
       case 'Health Summary':
-        return 'Comprehensive overview including recent medications, appointments, and activities for the selected period.';
+        return l10n.healthSummary;
       case 'Medication History':
-        return 'Detailed list of all medications with dates, dosages, and completion status for the selected period.';
+        return l10n.medicationHistory;
       case 'Activity Report':
-        return 'Analysis of walks, exercise patterns, and activity trends over the selected time frame.';
+        return l10n.activityReport;
       case 'Veterinary Records':
-        return 'Complete record of all veterinary appointments with outcomes and notes for the selected period.';
+        return l10n.veterinaryRecords;
       default:
-        return 'Select a report type to see its description.';
+        return type;
+    }
+  }
+
+  String _getReportTypeDescription(String type, AppLocalizations l10n) {
+    switch (type) {
+      case 'Health Summary':
+        return l10n.healthSummaryDescription;
+      case 'Medication History':
+        return l10n.medicationHistoryDescription;
+      case 'Activity Report':
+        return l10n.activityReportDescription;
+      case 'Veterinary Records':
+        return l10n.veterinaryRecordsDescription;
+      default:
+        return l10n.selectReportTypeDescription;
     }
   }
 
@@ -358,11 +375,12 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
     }
 
     final activePet = ref.read(currentPetProfileProvider);
+    final l10n = AppLocalizations.of(context);
 
     if (activePet == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No active pet found. Please select a pet first.'),
+        SnackBar(
+          content: Text(l10n.noActivePetFound),
           backgroundColor: Colors.red,
         ),
       );
@@ -393,9 +411,10 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
       await ref.read(reportProviderProvider.notifier).addReport(report);
 
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Report generated successfully!'),
+          SnackBar(
+            content: Text(l10n.reportGeneratedSuccessfully),
             backgroundColor: Colors.green,
           ),
         );
@@ -403,9 +422,10 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
       }
     } catch (error) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to generate report: $error'),
+            content: Text(l10n.failedToGenerateReport(error.toString())),
             backgroundColor: Colors.red,
           ),
         );

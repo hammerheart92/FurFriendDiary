@@ -155,7 +155,7 @@ class MedicationCard extends StatelessWidget {
                   Expanded(
                     child: _buildDetailItem(
                       icon: Icons.medical_services,
-                      label: 'Method',
+                      label: l10n.method,
                       value: _getLocalizedAdministrationMethod(l10n, medication.administrationMethod),
                       color: Colors.blue,
                     ),
@@ -165,7 +165,7 @@ class MedicationCard extends StatelessWidget {
                   Expanded(
                     child: _buildDetailItem(
                       icon: Icons.calendar_today,
-                      label: 'Started',
+                      label: l10n.started,
                       value: DateFormat('MMM dd').format(medication.startDate),
                       color: Colors.green,
                     ),
@@ -175,10 +175,10 @@ class MedicationCard extends StatelessWidget {
                   Expanded(
                     child: _buildDetailItem(
                       icon: medication.endDate != null ? Icons.event_available : Icons.all_inclusive,
-                      label: medication.endDate != null ? 'Ends' : 'Duration',
+                      label: medication.endDate != null ? l10n.ends : l10n.duration,
                       value: medication.endDate != null
                           ? DateFormat('MMM dd').format(medication.endDate!)
-                          : 'Ongoing',
+                          : l10n.ongoing,
                       color: medication.endDate != null ? Colors.orange : Colors.purple,
                     ),
                   ),
@@ -210,7 +210,7 @@ class MedicationCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            'Administration Times',
+                            l10n.administrationTimes,
                             style: theme.textTheme.bodySmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: theme.colorScheme.onSurface.withOpacity(0.7),

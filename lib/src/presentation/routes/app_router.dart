@@ -15,6 +15,7 @@ import '../../ui/screens/premium_screen.dart';
 import '../../ui/screens/profile_edit_screen.dart';
 import '../../ui/screens/terms_screen.dart';
 import '../screens/pet_profile_setup_screen.dart';
+import '../screens/pet_profile_screen.dart';
 import '../providers/pet_profile_provider.dart';
 
 final logger = Logger();
@@ -70,6 +71,7 @@ GoRouter createRouter() => GoRouter(
         GoRoute(path: '/reports', builder: (_, __) => const ReportsScreen()),
         GoRoute(path: '/settings', builder: (_, __) => const SettingsScreen()),
         GoRoute(path: '/premium', builder: (_, __) => const PremiumScreen()),
+        GoRoute(path: '/profiles', builder: (_, __) => const PetProfileScreen()),
       ],
     ),
     // Medication routes

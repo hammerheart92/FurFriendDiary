@@ -2,8 +2,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:logger/logger.dart';
 import 'package:fur_friend_diary/src/domain/models/pet_profile.dart';
 import 'package:fur_friend_diary/src/presentation/providers/pet_profile_provider.dart';
+import 'package:fur_friend_diary/l10n/app_localizations.dart';
+
+final _logger = Logger();
 
 class PetProfileScreen extends ConsumerWidget {
   const PetProfileScreen({super.key});
@@ -12,16 +16,17 @@ class PetProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profilesAsync = ref.watch(petProfilesProvider);
     final currentProfile = ref.watch(currentPetProfileProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pet Profiles'),
+        title: Text(l10n.petProfiles),
         centerTitle: true,
         actions: [
           IconButton(
             onPressed: () => context.push('/profile-setup'),
             icon: const Icon(Icons.add),
-            tooltip: 'Add new pet',
+            tooltip: l10n.addPet,
           ),
         ],
       ),
@@ -38,11 +43,11 @@ class PetProfileScreen extends ConsumerWidget {
                 color: Theme.of(context).colorScheme.error,
               ),
               const SizedBox(height: 16),
-              Text('Error loading profiles: $error'),
+              Text('${l10n.errorLoadingProfiles}: $error'),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => ref.refresh(petProfilesProvider),
-                child: const Text('Retry'),
+                child: Text(l10n.retry),
               ),
             ],
           ),
@@ -73,7 +78,7 @@ class PetProfileScreen extends ConsumerWidget {
             const SizedBox(height: 16),
           ],
           Text(
-            'All Profiles',
+            AppLocalizations.of(context).allProfiles,
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 16),
@@ -87,6 +92,8 @@ class PetProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildEmptyState(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -98,12 +105,12 @@ class PetProfileScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 24),
           Text(
-            'No pets yet!',
+            l10n.noPetsYet,
             style: Theme.of(context).textTheme.headlineSmall,
           ),
           const SizedBox(height: 8),
           Text(
-            'Add your first pet to get started',
+            l10n.addYourFirstPet,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 255*0.6),
                 ),
@@ -112,7 +119,7 @@ class PetProfileScreen extends ConsumerWidget {
           ElevatedButton.icon(
             onPressed: () => context.push('/profile-setup'),
             icon: const Icon(Icons.add),
-            label: const Text('Add Pet'),
+            label: Text(l10n.addPet),
           ),
         ],
       ),
@@ -121,6 +128,7 @@ class PetProfileScreen extends ConsumerWidget {
 
   Widget _buildActiveProfileCard(BuildContext context, WidgetRef ref, PetProfile profile) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     
     return Card(
       elevation: 4,
@@ -164,7 +172,7 @@ class PetProfileScreen extends ConsumerWidget {
                         ),
                         if (profile.age > 0)
                           Text(
-                            '${profile.age} year${profile.age != 1 ? 's' : ''} old',
+                            l10n.yearsOld(profile.age, profile.age != 1 ? 's' : ''),
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: theme.colorScheme.onPrimaryContainer.withValues(alpha: 255*0.7),
                             ),
@@ -179,7 +187,7 @@ class PetProfileScreen extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Text(
-                      'ACTIVE',
+                      l10n.activeProfile,
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: theme.colorScheme.onPrimary,
                         fontWeight: FontWeight.bold,
@@ -206,6 +214,7 @@ class PetProfileScreen extends ConsumerWidget {
 
   Widget _buildProfileCard(BuildContext context, WidgetRef ref, PetProfile profile, bool isActive) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     
     return Card(
       child: ListTile(
@@ -221,7 +230,7 @@ class PetProfileScreen extends ConsumerWidget {
           children: [
             Text('${profile.species}${profile.breed != null ? ' • ${profile.breed}' : ''}'),
             if (profile.age > 0)
-              Text('${profile.age} year${profile.age != 1 ? 's' : ''} old'),
+              Text(l10n.yearsOld(profile.age, profile.age != 1 ? 's' : '')),
           ],
         ),
         trailing: isActive
@@ -232,27 +241,27 @@ class PetProfileScreen extends ConsumerWidget {
             : PopupMenuButton<String>(
                 onSelected: (value) => _handleMenuAction(context, ref, profile, value),
                 itemBuilder: (context) => [
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'activate',
                     child: ListTile(
-                      leading: Icon(Icons.check_circle_outline),
-                      title: Text('Make Active'),
+                      leading: const Icon(Icons.check_circle_outline),
+                      title: Text(l10n.makeActive),
                       contentPadding: EdgeInsets.zero,
                     ),
                   ),
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'edit',
                     child: ListTile(
-                      leading: Icon(Icons.edit),
-                      title: Text('Edit'),
+                      leading: const Icon(Icons.edit),
+                      title: Text(l10n.edit),
                       contentPadding: EdgeInsets.zero,
                     ),
                   ),
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'delete',
                     child: ListTile(
-                      leading: Icon(Icons.delete, color: Colors.red),
-                      title: Text('Delete', style: TextStyle(color: Colors.red)),
+                      leading: const Icon(Icons.delete, color: Colors.red),
+                      title: Text(l10n.delete, style: const TextStyle(color: Colors.red)),
                       contentPadding: EdgeInsets.zero,
                     ),
                   ),
@@ -264,13 +273,40 @@ class PetProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildProfileAvatar(BuildContext context, PetProfile profile, double radius) {
-    if (profile.photoPath != null && File(profile.photoPath!).existsSync()) {
-      return CircleAvatar(
-        radius: radius / 2,
-        backgroundImage: FileImage(File(profile.photoPath!)),
-      );
+    _logger.d('[PROFILE_PIC] Building avatar for pet: ${profile.name}');
+    _logger.d('[PROFILE_PIC] photoPath from profile: ${profile.photoPath}');
+
+    if (profile.photoPath != null && profile.photoPath!.isNotEmpty) {
+      final imageFile = File(profile.photoPath!);
+      final exists = imageFile.existsSync();
+
+      _logger.d('[PROFILE_PIC] Checking file existence...');
+      _logger.d('[PROFILE_PIC] - Path: ${profile.photoPath}');
+      _logger.d('[PROFILE_PIC] - Absolute path: ${imageFile.absolute.path}');
+      _logger.d('[PROFILE_PIC] - File exists: $exists');
+
+      if (exists) {
+        try {
+          final fileSize = imageFile.lengthSync();
+          _logger.d('[PROFILE_PIC] SUCCESS: File verified! Size: $fileSize bytes');
+          _logger.d('[PROFILE_PIC] Creating CircleAvatar with FileImage');
+
+          return CircleAvatar(
+            radius: radius / 2,
+            backgroundImage: FileImage(imageFile),
+          );
+        } catch (e) {
+          _logger.e('[PROFILE_PIC] ERROR: Failed to read file: $e');
+        }
+      } else {
+        _logger.e('[PROFILE_PIC] ERROR: photoPath is set but file does NOT exist!');
+        _logger.e('[PROFILE_PIC] ERROR: Expected at: ${imageFile.absolute.path}');
+      }
+    } else {
+      _logger.d('[PROFILE_PIC] photoPath is null or empty, showing default icon');
     }
-    
+
+    _logger.d('[PROFILE_PIC] Falling back to default pet icon');
     return CircleAvatar(
       radius: radius / 2,
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
@@ -295,7 +331,7 @@ class PetProfileScreen extends ConsumerWidget {
       case 'edit':
         // TODO: Navigate to edit screen (could reuse setup screen with profile data)
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Edit feature coming soon!')),
+          SnackBar(content: Text('${AppLocalizations.of(context).edit} feature coming soon!')),
         );
         break;
       case 'delete':
@@ -308,34 +344,37 @@ class PetProfileScreen extends ConsumerWidget {
     try {
       await ref.read(petProfilesProvider.notifier).setActive(profile.id);
       if (context.mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${profile.name} is now your active pet')),
+          SnackBar(content: Text(l10n.nowActive(profile.name))),
         );
       }
     } catch (e) {
       if (context.mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to activate profile: $e')),
+          SnackBar(content: Text(l10n.failedToActivateProfile(e.toString()))),
         );
       }
     }
   }
 
   Future<void> _deleteProfile(BuildContext context, WidgetRef ref, PetProfile profile) async {
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Profile'),
-        content: Text('Are you sure you want to delete ${profile.name}\'s profile? This action cannot be undone.'),
+        title: Text(l10n.deleteProfile),
+        content: Text(l10n.deleteProfileConfirm(profile.name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Delete'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -345,14 +384,16 @@ class PetProfileScreen extends ConsumerWidget {
       try {
         await ref.read(petProfilesProvider.notifier).remove(profile.id);
         if (context.mounted) {
+          final l10n = AppLocalizations.of(context);
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${profile.name}\'s profile deleted')),
+            SnackBar(content: Text(l10n.profileDeleted(profile.name))),
           );
         }
       } catch (e) {
         if (context.mounted) {
+          final l10n = AppLocalizations.of(context);
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to delete profile: $e')),
+            SnackBar(content: Text('${l10n.failedToDeleteProfile}: $e')),
           );
         }
       }

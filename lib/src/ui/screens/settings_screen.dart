@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../presentation/providers/settings_provider.dart';
+import '../../../l10n/app_localizations.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -14,9 +14,10 @@ class SettingsScreen extends ConsumerWidget {
     final locale = ref.watch(localeProvider);
     final notificationsEnabled = ref.watch(notificationsEnabledProvider);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(l10n.settings)),
       body: ListView(
         children: [
           // Profile Section
@@ -26,37 +27,37 @@ class SettingsScreen extends ConsumerWidget {
           // Premium (existing)
           ListTile(
             leading: const Icon(Icons.workspace_premium),
-            title: const Text('Premium'),
-            subtitle: const Text('Upgrade to unlock advanced features'),
+            title: Text(l10n.premium),
+            subtitle: Text(l10n.upgradeToUnlock),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push('/premium'),
           ),
           const Divider(),
 
           // Account Settings Group
-          _buildSectionHeader(context, 'Account Settings'),
+          _buildSectionHeader(context, l10n.accountSettings),
           ListTile(
             leading: const Icon(Icons.language),
-            title: const Text('Language'),
-            subtitle: Text(_getLanguageName(locale.languageCode)),
+            title: Text(l10n.language),
+            subtitle: Text(_getLanguageName(context, locale.languageCode)),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => _showLanguageDialog(context, ref, locale),
           ),
 
           // App Preferences Group
           const Divider(height: 32),
-          _buildSectionHeader(context, 'App Preferences'),
+          _buildSectionHeader(context, l10n.appPreferences),
           ListTile(
             leading: const Icon(Icons.palette_outlined),
-            title: const Text('Theme'),
-            subtitle: Text(_getThemeName(themeMode)),
+            title: Text(l10n.theme),
+            subtitle: Text(_getThemeName(context, themeMode)),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => _showThemeDialog(context, ref, themeMode),
           ),
           SwitchListTile(
             secondary: const Icon(Icons.notifications_outlined),
-            title: const Text('Notifications'),
-            subtitle: const Text('Enable app notifications'),
+            title: Text(l10n.notifications),
+            subtitle: Text(l10n.enableNotifications),
             value: notificationsEnabled,
             onChanged: (value) {
               ref.read(notificationsEnabledProvider.notifier).setNotificationsEnabled(value);
@@ -64,66 +65,66 @@ class SettingsScreen extends ConsumerWidget {
           ),
           SwitchListTile(
             secondary: const Icon(Icons.analytics_outlined),
-            title: const Text('Enable analytics'),
-            subtitle: const Text('Help improve the app'),
+            title: Text(l10n.enableAnalytics),
+            subtitle: Text(l10n.helpImproveApp),
             value: false,
             onChanged: (_) {},
           ),
 
           // Data Management Group
           const Divider(height: 32),
-          _buildSectionHeader(context, 'Data Management'),
+          _buildSectionHeader(context, l10n.dataManagement),
           ListTile(
             leading: const Icon(Icons.upload_file),
-            title: const Text('Export data'),
-            subtitle: const Text('Download your data'),
+            title: Text(l10n.exportData),
+            subtitle: Text(l10n.downloadYourData),
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Feature coming soon')),
+                SnackBar(content: Text(l10n.featureComingSoon)),
               );
             },
           ),
           ListTile(
             leading: const Icon(Icons.cleaning_services),
-            title: const Text('Clear cache'),
-            subtitle: const Text('Free up storage space'),
+            title: Text(l10n.clearCache),
+            subtitle: Text(l10n.freeUpSpace),
             onTap: () => _showClearCacheDialog(context),
           ),
           ListTile(
             leading: Icon(Icons.delete_forever, color: theme.colorScheme.error),
-            title: Text('Delete account', style: TextStyle(color: theme.colorScheme.error)),
-            subtitle: const Text('Permanently delete your account'),
+            title: Text(l10n.deleteAccount, style: TextStyle(color: theme.colorScheme.error)),
+            subtitle: Text(l10n.deleteAccountPermanently),
             onTap: () => _showDeleteAccountDialog(context),
           ),
 
           // Privacy & Legal
           const Divider(height: 32),
-          _buildSectionHeader(context, 'Privacy & Legal'),
+          _buildSectionHeader(context, l10n.privacyAndLegal),
           ListTile(
             leading: const Icon(Icons.privacy_tip_outlined),
-            title: const Text('Privacy policy'),
+            title: Text(l10n.privacyPolicy),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {},
           ),
           ListTile(
             leading: const Icon(Icons.description_outlined),
-            title: const Text('Terms of Service'),
+            title: Text(l10n.termsOfService),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push('/terms'),
           ),
           ListTile(
             leading: const Icon(Icons.code),
-            title: const Text('Open source licenses'),
+            title: Text(l10n.openSourceLicenses),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => _showLicensePage(context),
           ),
 
           // About Section
           const Divider(height: 32),
-          _buildSectionHeader(context, 'About'),
+          _buildSectionHeader(context, l10n.about),
           ListTile(
             leading: const Icon(Icons.info_outline),
-            title: const Text('App version'),
+            title: Text(l10n.appVersion),
             subtitle: const Text('1.0.0'),
           ),
           const SizedBox(height: 16),
@@ -133,6 +134,8 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   Widget _buildProfileSection(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
@@ -155,7 +158,7 @@ class SettingsScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Pet Owner',
+                  l10n.petOwner,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 4),
@@ -190,38 +193,41 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  String _getLanguageName(String code) {
+  String _getLanguageName(BuildContext context, String code) {
+    final l10n = AppLocalizations.of(context);
     switch (code) {
       case 'en':
-        return 'English';
+        return l10n.english;
       case 'ro':
-        return 'Română';
+        return l10n.romanian;
       default:
-        return 'English';
+        return l10n.english;
     }
   }
 
-  String _getThemeName(ThemeMode mode) {
+  String _getThemeName(BuildContext context, ThemeMode mode) {
+    final l10n = AppLocalizations.of(context);
     switch (mode) {
       case ThemeMode.light:
-        return 'Light';
+        return l10n.light;
       case ThemeMode.dark:
-        return 'Dark';
+        return l10n.dark;
       case ThemeMode.system:
-        return 'System';
+        return l10n.system;
     }
   }
 
   void _showLanguageDialog(BuildContext context, WidgetRef ref, Locale currentLocale) {
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Select Language'),
+        title: Text(l10n.selectLanguage),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             RadioListTile<String>(
-              title: const Text('English'),
+              title: Text(l10n.english),
               value: 'en',
               groupValue: currentLocale.languageCode,
               onChanged: (value) {
@@ -232,7 +238,7 @@ class SettingsScreen extends ConsumerWidget {
               },
             ),
             RadioListTile<String>(
-              title: const Text('Română'),
+              title: Text(l10n.romanian),
               value: 'ro',
               groupValue: currentLocale.languageCode,
               onChanged: (value) {
@@ -247,7 +253,7 @@ class SettingsScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
         ],
       ),
@@ -255,15 +261,16 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   void _showThemeDialog(BuildContext context, WidgetRef ref, ThemeMode currentMode) {
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Select Theme'),
+        title: Text(l10n.selectTheme),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             RadioListTile<ThemeMode>(
-              title: const Text('Light'),
+              title: Text(l10n.light),
               value: ThemeMode.light,
               groupValue: currentMode,
               onChanged: (value) {
@@ -274,7 +281,7 @@ class SettingsScreen extends ConsumerWidget {
               },
             ),
             RadioListTile<ThemeMode>(
-              title: const Text('Dark'),
+              title: Text(l10n.dark),
               value: ThemeMode.dark,
               groupValue: currentMode,
               onChanged: (value) {
@@ -285,7 +292,7 @@ class SettingsScreen extends ConsumerWidget {
               },
             ),
             RadioListTile<ThemeMode>(
-              title: const Text('System'),
+              title: Text(l10n.system),
               value: ThemeMode.system,
               groupValue: currentMode,
               onChanged: (value) {
@@ -300,7 +307,7 @@ class SettingsScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
         ],
       ),
@@ -308,15 +315,16 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   void _showClearCacheDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Clear cache'),
-        content: const Text('Are you sure you want to clear the cache? This action cannot be undone.'),
+        title: Text(l10n.clearCache),
+        content: Text(l10n.clearCacheConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () async {
@@ -324,12 +332,13 @@ class SettingsScreen extends ConsumerWidget {
               // Simulate cache clearing
               await Future.delayed(const Duration(milliseconds: 500));
               if (context.mounted) {
+                final l10n = AppLocalizations.of(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Cache cleared successfully')),
+                  SnackBar(content: Text(l10n.cacheCleared)),
                 );
               }
             },
-            child: const Text('Clear'),
+            child: Text(l10n.clear),
           ),
         ],
       ),
@@ -337,17 +346,16 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   void _showDeleteAccountDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete account'),
-        content: const Text(
-          'Are you sure you want to delete your account? This action is permanent and cannot be undone. All your data will be lost.',
-        ),
+        title: Text(l10n.deleteAccount),
+        content: Text(l10n.deleteAccountConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
@@ -355,11 +363,12 @@ class SettingsScreen extends ConsumerWidget {
             ),
             onPressed: () {
               Navigator.pop(context);
+              final l10n = AppLocalizations.of(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Feature coming soon')),
+                SnackBar(content: Text(l10n.featureComingSoon)),
               );
             },
-            child: const Text('Delete'),
+            child: Text(l10n.delete),
           ),
         ],
       ),

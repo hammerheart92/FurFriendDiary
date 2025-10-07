@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import '../../domain/models/appointment_entry.dart';
 import '../../presentation/providers/care_data_provider.dart';
 import 'appointment_card.dart';

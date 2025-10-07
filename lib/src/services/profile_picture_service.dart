@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
-//Errors occured in this file: import not found
+import 'package:logger/logger.dart';
 
 class ProfilePictureService {
   final ImagePicker _picker = ImagePicker();
+  final Logger _logger = Logger();
 
   /// Shows a dialog to choose between camera and gallery
   Future<String?> selectProfilePicture(BuildContext context) async {
@@ -54,12 +55,22 @@ class ProfilePictureService {
 
   /// Saves the picked image to local app directory
   Future<String> _saveImageLocally(XFile pickedFile) async {
+    _logger.d('[PROFILE_PIC] Starting _saveImageLocally');
+    _logger.d('[PROFILE_PIC] Picked image path: ${pickedFile.path}');
+
     final appDir = await getApplicationDocumentsDirectory();
+    _logger.d('[PROFILE_PIC] App documents directory: ${appDir.path}');
+
     final profilePicsDir = Directory('${appDir.path}/profile_pictures');
-    
+    _logger.d('[PROFILE_PIC] Profile pictures directory: ${profilePicsDir.path}');
+
     // Create directory if it doesn't exist
     if (!await profilePicsDir.exists()) {
+      _logger.d('[PROFILE_PIC] Creating profile_pictures directory');
       await profilePicsDir.create(recursive: true);
+      _logger.d('[PROFILE_PIC] Directory created successfully');
+    } else {
+      _logger.d('[PROFILE_PIC] Directory already exists');
     }
 
     // Generate unique filename
@@ -67,9 +78,14 @@ class ProfilePictureService {
     final extension = path.extension(pickedFile.path);
     final fileName = 'profile_$timestamp$extension';
     final localPath = '${profilePicsDir.path}/$fileName';
+    _logger.d('[PROFILE_PIC] Target local path: $localPath');
 
     // Copy file to local directory
     final File localFile = await File(pickedFile.path).copy(localPath);
+    _logger.d('[PROFILE_PIC] File copied successfully');
+    _logger.d('[PROFILE_PIC] Final saved path: ${localFile.path}');
+    _logger.d('[PROFILE_PIC] File exists: ${await localFile.exists()}');
+
     return localFile.path;
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../domain/models/report_entry.dart';
+import '../../../l10n/app_localizations.dart';
 
 class ReportViewer extends StatelessWidget {
   final ReportEntry report;
@@ -15,10 +16,11 @@ class ReportViewer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(report.reportType),
+        title: Text(_getLocalizedReportType(l10n)),
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: onClose ?? () => Navigator.of(context).pop(),
@@ -60,14 +62,14 @@ class ReportViewer extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              report.reportType,
+                              _getLocalizedReportType(l10n),
                               style: theme.textTheme.headlineSmall?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Generated on ${DateFormat('MMMM dd, yyyy \'at\' HH:mm').format(report.generatedDate)}',
+                              '${l10n.generatedOn} ${DateFormat('MMMM dd, yyyy').format(report.generatedDate)} ${l10n.at} ${DateFormat('HH:mm').format(report.generatedDate)}',
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: theme.colorScheme.onSurface.withOpacity(0.7),
                               ),
@@ -82,7 +84,7 @@ class ReportViewer extends StatelessWidget {
                     children: [
                       Expanded(
                         child: _buildHeaderDetail(
-                          'Start Date',
+                          l10n.startDate,
                           DateFormat('MMM dd, yyyy').format(report.startDate),
                           Icons.date_range,
                           Colors.blue,
@@ -90,7 +92,7 @@ class ReportViewer extends StatelessWidget {
                       ),
                       Expanded(
                         child: _buildHeaderDetail(
-                          'End Date',
+                          l10n.endDate,
                           DateFormat('MMM dd, yyyy').format(report.endDate),
                           Icons.event,
                           Colors.green,
@@ -98,8 +100,8 @@ class ReportViewer extends StatelessWidget {
                       ),
                       Expanded(
                         child: _buildHeaderDetail(
-                          'Period',
-                          '${report.endDate.difference(report.startDate).inDays + 1} days',
+                          l10n.period,
+                          '${report.endDate.difference(report.startDate).inDays + 1} ${l10n.days}',
                           Icons.schedule,
                           Colors.purple,
                         ),
@@ -122,13 +124,13 @@ class ReportViewer extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Summary',
+                      l10n.summary,
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 16),
-                    _buildSummaryContent(),
+                    _buildSummaryContent(l10n),
                   ],
                 ),
               ),
@@ -137,7 +139,7 @@ class ReportViewer extends StatelessWidget {
           ],
 
           // Report content based on type
-          ..._buildReportContent(theme),
+          ..._buildReportContent(theme, l10n),
         ],
       ),
     );
@@ -174,37 +176,44 @@ class ReportViewer extends StatelessWidget {
   }
 
   bool _hasSummaryData() {
-    final summary = report.data['summary'] as Map<String, dynamic>?;
-    return summary != null && summary.isNotEmpty;
+    final summaryData = report.data['summary'];
+    if (summaryData == null) return false;
+    final summary = summaryData is Map<String, dynamic>
+        ? summaryData
+        : Map<String, dynamic>.from(summaryData as Map);
+    return summary.isNotEmpty;
   }
 
-  Widget _buildSummaryContent() {
-    final summary = report.data['summary'] as Map<String, dynamic>;
+  Widget _buildSummaryContent(AppLocalizations l10n) {
+    final summaryData = report.data['summary'];
+    final summary = summaryData is Map<String, dynamic>
+        ? summaryData
+        : Map<String, dynamic>.from(summaryData as Map);
 
     switch (report.reportType) {
       case 'Health Summary':
-        return _buildHealthSummary(summary);
+        return _buildHealthSummary(summary, l10n);
       case 'Medication History':
-        return _buildMedicationSummary(summary);
+        return _buildMedicationSummary(summary, l10n);
       case 'Activity Report':
-        return _buildActivitySummary(summary);
+        return _buildActivitySummary(summary, l10n);
       case 'Veterinary Records':
-        return _buildVeterinarySummary(summary);
+        return _buildVeterinarySummary(summary, l10n);
       default:
         return const Text('No summary available');
     }
   }
 
-  Widget _buildHealthSummary(Map<String, dynamic> summary) {
+  Widget _buildHealthSummary(Map<String, dynamic> summary, AppLocalizations l10n) {
     return Column(
       children: [
         Row(
           children: [
             Expanded(
               child: _buildSummaryCard(
-                'Medications',
+                l10n.medications,
                 '${summary['activeMedications'] ?? 0}/${summary['totalMedications'] ?? 0}',
-                'Active/Total',
+                l10n.activeTotal,
                 Icons.medication,
                 Colors.green,
               ),
@@ -212,9 +221,9 @@ class ReportViewer extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: _buildSummaryCard(
-                'Appointments',
+                l10n.appointments,
                 '${summary['completedAppointments'] ?? 0}/${summary['totalAppointments'] ?? 0}',
-                'Completed/Total',
+                l10n.completedTotal,
                 Icons.local_hospital,
                 Colors.blue,
               ),
@@ -226,9 +235,9 @@ class ReportViewer extends StatelessWidget {
           children: [
             Expanded(
               child: _buildSummaryCard(
-                'Feedings',
+                l10n.feedings,
                 '${summary['totalFeedings'] ?? 0}',
-                'Total',
+                l10n.total,
                 Icons.restaurant,
                 Colors.orange,
               ),
@@ -243,16 +252,16 @@ class ReportViewer extends StatelessWidget {
     );
   }
 
-  Widget _buildMedicationSummary(Map<String, dynamic> summary) {
+  Widget _buildMedicationSummary(Map<String, dynamic> summary, AppLocalizations l10n) {
     return Column(
       children: [
         Row(
           children: [
             Expanded(
               child: _buildSummaryCard(
-                'Total',
+                l10n.total,
                 '${summary['totalMedications'] ?? 0}',
-                'Medications',
+                l10n.medications,
                 Icons.medication,
                 Colors.blue,
               ),
@@ -260,9 +269,9 @@ class ReportViewer extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: _buildSummaryCard(
-                'Active',
+                l10n.active,
                 '${summary['activeMedications'] ?? 0}',
-                'Ongoing',
+                l10n.ongoing,
                 Icons.play_circle,
                 Colors.green,
               ),
@@ -274,9 +283,9 @@ class ReportViewer extends StatelessWidget {
           children: [
             Expanded(
               child: _buildSummaryCard(
-                'Inactive',
+                l10n.inactive,
                 '${summary['inactiveMedications'] ?? 0}',
-                'Completed',
+                l10n.completed,
                 Icons.stop_circle,
                 Colors.grey,
               ),
@@ -291,7 +300,7 @@ class ReportViewer extends StatelessWidget {
     );
   }
 
-  Widget _buildActivitySummary(Map<String, dynamic> summary) {
+  Widget _buildActivitySummary(Map<String, dynamic> summary, AppLocalizations l10n) {
     final avgPerDay = summary['averageFeedingsPerDay'] ?? 0.0;
     return Column(
       children: [
@@ -299,9 +308,9 @@ class ReportViewer extends StatelessWidget {
           children: [
             Expanded(
               child: _buildSummaryCard(
-                'Total Feedings',
+                l10n.totalFeedings,
                 '${summary['totalFeedings'] ?? 0}',
-                'In period',
+                l10n.inPeriod,
                 Icons.restaurant,
                 Colors.orange,
               ),
@@ -309,9 +318,9 @@ class ReportViewer extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: _buildSummaryCard(
-                'Daily Average',
+                l10n.dailyAverage,
                 avgPerDay.toStringAsFixed(1),
-                'Per day',
+                l10n.perDay,
                 Icons.timeline,
                 Colors.purple,
               ),
@@ -322,16 +331,16 @@ class ReportViewer extends StatelessWidget {
     );
   }
 
-  Widget _buildVeterinarySummary(Map<String, dynamic> summary) {
+  Widget _buildVeterinarySummary(Map<String, dynamic> summary, AppLocalizations l10n) {
     return Column(
       children: [
         Row(
           children: [
             Expanded(
               child: _buildSummaryCard(
-                'Total',
+                l10n.total,
                 '${summary['totalAppointments'] ?? 0}',
-                'Appointments',
+                l10n.appointments,
                 Icons.local_hospital,
                 Colors.blue,
               ),
@@ -339,9 +348,9 @@ class ReportViewer extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: _buildSummaryCard(
-                'Completed',
+                l10n.completed,
                 '${summary['completedAppointments'] ?? 0}',
-                'Finished',
+                l10n.finished,
                 Icons.check_circle,
                 Colors.green,
               ),
@@ -353,9 +362,9 @@ class ReportViewer extends StatelessWidget {
           children: [
             Expanded(
               child: _buildSummaryCard(
-                'Pending',
+                l10n.pending,
                 '${summary['pendingAppointments'] ?? 0}',
-                'Upcoming',
+                l10n.upcoming,
                 Icons.schedule,
                 Colors.orange,
               ),
@@ -410,40 +419,40 @@ class ReportViewer extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildReportContent(ThemeData theme) {
+  List<Widget> _buildReportContent(ThemeData theme, AppLocalizations l10n) {
     final List<Widget> content = [];
 
     switch (report.reportType) {
       case 'Health Summary':
-        content.addAll(_buildHealthContent(theme));
+        content.addAll(_buildHealthContent(theme, l10n));
         break;
       case 'Medication History':
-        content.addAll(_buildMedicationContent(theme));
+        content.addAll(_buildMedicationContent(theme, l10n));
         break;
       case 'Activity Report':
-        content.addAll(_buildActivityContent(theme));
+        content.addAll(_buildActivityContent(theme, l10n));
         break;
       case 'Veterinary Records':
-        content.addAll(_buildVeterinaryContent(theme));
+        content.addAll(_buildVeterinaryContent(theme, l10n));
         break;
     }
 
     return content;
   }
 
-  List<Widget> _buildHealthContent(ThemeData theme) {
+  List<Widget> _buildHealthContent(ThemeData theme, AppLocalizations l10n) {
     final List<Widget> content = [];
 
     // Medications section
     final medications = report.data['medications'] as List<dynamic>? ?? [];
     if (medications.isNotEmpty) {
-      content.add(_buildSectionHeader(theme, 'Medications', Icons.medication, Colors.green));
+      content.add(_buildSectionHeader(theme, l10n.medications, Icons.medication, Colors.green));
       content.add(_buildDataTable(
-        ['Name', 'Dosage', 'Status'],
+        [l10n.name, l10n.dosage, l10n.status],
         medications.map((med) => [
           med['medicationName']?.toString() ?? '',
           med['dosage']?.toString() ?? '',
-          (med['isActive'] == true) ? 'Active' : 'Inactive',
+          (med['isActive'] == true) ? l10n.active : l10n.inactive,
         ]).toList(),
       ));
       content.add(const SizedBox(height: 16));
@@ -452,9 +461,9 @@ class ReportViewer extends StatelessWidget {
     // Appointments section
     final appointments = report.data['appointments'] as List<dynamic>? ?? [];
     if (appointments.isNotEmpty) {
-      content.add(_buildSectionHeader(theme, 'Appointments', Icons.local_hospital, Colors.blue));
+      content.add(_buildSectionHeader(theme, l10n.appointments, Icons.local_hospital, Colors.blue));
       content.add(_buildDataTable(
-        ['Date', 'Veterinarian', 'Reason'],
+        [l10n.date, l10n.veterinarian, l10n.reason],
         appointments.map((apt) => [
           DateFormat('MMM dd').format(DateTime.parse(apt['appointmentDate'])),
           apt['veterinarian']?.toString() ?? '',
@@ -467,7 +476,7 @@ class ReportViewer extends StatelessWidget {
     return content;
   }
 
-  List<Widget> _buildMedicationContent(ThemeData theme) {
+  List<Widget> _buildMedicationContent(ThemeData theme, AppLocalizations l10n) {
     final medications = report.data['medications'] as List<dynamic>? ?? [];
     if (medications.isEmpty) {
       return [
@@ -476,7 +485,7 @@ class ReportViewer extends StatelessWidget {
             padding: const EdgeInsets.all(32),
             child: Center(
               child: Text(
-                'No medications found for this period',
+                l10n.noMedicationsFoundPeriod,
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: theme.colorScheme.onSurface.withOpacity(0.6),
                 ),
@@ -488,21 +497,21 @@ class ReportViewer extends StatelessWidget {
     }
 
     return [
-      _buildSectionHeader(theme, 'Medication Details', Icons.medication, Colors.green),
+      _buildSectionHeader(theme, l10n.medicationDetails, Icons.medication, Colors.green),
       _buildDataTable(
-        ['Name', 'Dosage', 'Method', 'Start Date', 'Status'],
+        [l10n.name, l10n.dosage, l10n.method, l10n.startDate, l10n.status],
         medications.map((med) => [
           med['medicationName']?.toString() ?? '',
           med['dosage']?.toString() ?? '',
           med['administrationMethod']?.toString() ?? '',
           DateFormat('MMM dd').format(DateTime.parse(med['startDate'])),
-          (med['isActive'] == true) ? 'Active' : 'Inactive',
+          (med['isActive'] == true) ? l10n.active : l10n.inactive,
         ]).toList(),
       ),
     ];
   }
 
-  List<Widget> _buildActivityContent(ThemeData theme) {
+  List<Widget> _buildActivityContent(ThemeData theme, AppLocalizations l10n) {
     final feedings = report.data['feedings'] as List<dynamic>? ?? [];
     if (feedings.isEmpty) {
       return [
@@ -511,7 +520,7 @@ class ReportViewer extends StatelessWidget {
             padding: const EdgeInsets.all(32),
             child: Center(
               child: Text(
-                'No feeding data found for this period',
+                l10n.noFeedingDataFoundPeriod,
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: theme.colorScheme.onSurface.withOpacity(0.6),
                 ),
@@ -523,9 +532,9 @@ class ReportViewer extends StatelessWidget {
     }
 
     return [
-      _buildSectionHeader(theme, 'Feeding History', Icons.restaurant, Colors.orange),
+      _buildSectionHeader(theme, l10n.feedingHistory, Icons.restaurant, Colors.orange),
       _buildDataTable(
-        ['Date', 'Type', 'Amount', 'Time'],
+        [l10n.date, l10n.type, l10n.amount, l10n.timeLabel],
         feedings.map((feed) => [
           DateFormat('MMM dd').format(DateTime.parse(feed['dateTime'])),
           feed['foodType']?.toString() ?? '',
@@ -536,7 +545,7 @@ class ReportViewer extends StatelessWidget {
     ];
   }
 
-  List<Widget> _buildVeterinaryContent(ThemeData theme) {
+  List<Widget> _buildVeterinaryContent(ThemeData theme, AppLocalizations l10n) {
     final appointments = report.data['appointments'] as List<dynamic>? ?? [];
     if (appointments.isEmpty) {
       return [
@@ -545,7 +554,7 @@ class ReportViewer extends StatelessWidget {
             padding: const EdgeInsets.all(32),
             child: Center(
               child: Text(
-                'No veterinary appointments found for this period',
+                l10n.noVeterinaryAppointmentsFoundPeriod,
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: theme.colorScheme.onSurface.withOpacity(0.6),
                 ),
@@ -557,15 +566,15 @@ class ReportViewer extends StatelessWidget {
     }
 
     return [
-      _buildSectionHeader(theme, 'Appointment History', Icons.local_hospital, Colors.blue),
+      _buildSectionHeader(theme, l10n.appointmentHistory, Icons.local_hospital, Colors.blue),
       _buildDataTable(
-        ['Date', 'Veterinarian', 'Clinic', 'Reason', 'Status'],
+        [l10n.date, l10n.veterinarian, l10n.clinic, l10n.reason, l10n.status],
         appointments.map((apt) => [
           DateFormat('MMM dd').format(DateTime.parse(apt['appointmentDate'])),
           apt['veterinarian']?.toString() ?? '',
           apt['clinic']?.toString() ?? '',
           apt['reason']?.toString() ?? '',
-          (apt['isCompleted'] == true) ? 'Completed' : 'Pending',
+          (apt['isCompleted'] == true) ? l10n.completed : l10n.pending,
         ]).toList(),
       ),
     ];
@@ -651,12 +660,26 @@ class ReportViewer extends StatelessWidget {
   }
 
   void _shareReport(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     // For now, just show a message that sharing functionality could be implemented
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Share functionality would be implemented here'),
+      SnackBar(
+        content: Text(l10n.shareFunctionalityPlaceholder),
         backgroundColor: Colors.blue,
       ),
     );
+  }
+
+  String _getLocalizedReportType(AppLocalizations l10n) {
+    switch (report.reportType) {
+      case 'Health Summary':
+        return l10n.healthSummary;
+      case 'Activity Report':
+        return l10n.activityReport;
+      case 'Veterinary Records':
+        return l10n.veterinaryRecords;
+      default:
+        return report.reportType;
+    }
   }
 }

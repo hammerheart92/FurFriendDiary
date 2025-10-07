@@ -188,7 +188,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pleaseEnterMedicationName => 'Please enter medication name';
 
   @override
-  String get dosage => 'Dosage *';
+  String get dosage => 'Dosage';
 
   @override
   String get dosageHint => 'e.g., 5mg, 1 tablet, 2ml';
@@ -281,7 +281,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get additionalNotesHint =>
-      'Add any additional notes, instructions, or reminders...';
+      'Add any additional notes, special instructions, or reminders...';
 
   @override
   String get saveMedication => 'Save Medication';
@@ -324,4 +324,624 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get markActive => 'Mark Active';
+
+  @override
+  String get appointmentInformation => 'Appointment Information';
+
+  @override
+  String get veterinarian => 'Veterinarian';
+
+  @override
+  String get veterinarianHint => 'e.g., Dr. Smith, Dr. Johnson';
+
+  @override
+  String get pleaseEnterVeterinarian => 'Please enter veterinarian name';
+
+  @override
+  String get clinic => 'Clinic';
+
+  @override
+  String get clinicHint => 'e.g., Animal Hospital, Vet Clinic';
+
+  @override
+  String get pleaseEnterClinic => 'Please enter clinic name';
+
+  @override
+  String get reason => 'Reason';
+
+  @override
+  String get reasonHint => 'e.g., Checkup, Vaccination, Surgery';
+
+  @override
+  String get pleaseEnterReason => 'Please enter reason for appointment';
+
+  @override
+  String get appointmentDate => 'Appointment Date';
+
+  @override
+  String get appointmentTime => 'Appointment Time';
+
+  @override
+  String get status => 'Status';
+
+  @override
+  String get markAsCompleted => 'Mark as Completed';
+
+  @override
+  String get appointmentCompleted => 'Appointment completed';
+
+  @override
+  String get appointmentPending => 'Appointment pending';
+
+  @override
+  String get updateAppointment => 'Update Appointment';
+
+  @override
+  String get saveAppointment => 'Save Appointment';
+
+  @override
+  String get appointmentUpdatedSuccessfully =>
+      'Appointment updated successfully!';
+
+  @override
+  String get appointmentAddedSuccessfully => 'Appointment added successfully!';
+
+  @override
+  String failedToSaveAppointment(String error) {
+    return 'Failed to save appointment: $error';
+  }
+
+  @override
+  String get walks => 'Walks';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get tomorrow => 'Tomorrow';
+
+  @override
+  String get yesterday => 'Yesterday';
+
+  @override
+  String get thisWeek => 'This Week';
+
+  @override
+  String get addWalk => 'Add walk';
+
+  @override
+  String get start => 'Start';
+
+  @override
+  String get durationMin => 'Duration';
+
+  @override
+  String get distance => 'Distance';
+
+  @override
+  String get surfaceLabel => 'Surface';
+
+  @override
+  String get surfacePaved => 'paved';
+
+  @override
+  String get surfaceGravel => 'gravel';
+
+  @override
+  String get surfaceMixed => 'mixed';
+
+  @override
+  String get pace => 'Pace';
+
+  @override
+  String get min => 'min';
+
+  @override
+  String get km => 'km';
+
+  @override
+  String get noWalksYet => 'No walks yet';
+
+  @override
+  String get trackFirstWalk =>
+      'Track your first walk to see distance and duration here.';
+
+  @override
+  String get addFirstWalk => 'Add first walk';
+
+  @override
+  String get walkDetails => 'Walk details';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get noNotes => 'No notes';
+
+  @override
+  String get optional => 'Optional';
+
+  @override
+  String get required => 'Required';
+
+  @override
+  String get enterPositiveNumber => 'Enter a positive number';
+
+  @override
+  String get walkAddedSuccessfully => 'Walk added successfully!';
+
+  @override
+  String walkDetailsFor(String walkInfo) {
+    return 'Walk details for $walkInfo';
+  }
+
+  @override
+  String get reports => 'Reports';
+
+  @override
+  String get health => 'Health';
+
+  @override
+  String get activity => 'Activity';
+
+  @override
+  String get searchReports => 'Search reports...';
+
+  @override
+  String get generateReport => 'Generate Report';
+
+  @override
+  String get healthSummary => 'Health Summary';
+
+  @override
+  String get activityReport => 'Activity Report';
+
+  @override
+  String get veterinaryRecords => 'Veterinary Records';
+
+  @override
+  String get generated => 'Generated';
+
+  @override
+  String get period => 'Period';
+
+  @override
+  String get data => 'Data';
+
+  @override
+  String get summary => 'Summary';
+
+  @override
+  String get items => 'items';
+
+  @override
+  String get feeds => 'feeds';
+
+  @override
+  String get visits => 'visits';
+
+  @override
+  String get outOf => 'out of';
+
+  @override
+  String get total => 'total';
+
+  @override
+  String get avg => 'avg';
+
+  @override
+  String get perDay => 'per day';
+
+  @override
+  String get generatedOn => 'Generated on';
+
+  @override
+  String get at => 'at';
+
+  @override
+  String get days => 'days';
+
+  @override
+  String get totalFeedings => 'Total Feedings';
+
+  @override
+  String get dailyAverage => 'Daily Average';
+
+  @override
+  String get inPeriod => 'In period';
+
+  @override
+  String get feedingHistory => 'Feeding History';
+
+  @override
+  String get date => 'Date';
+
+  @override
+  String get type => 'Type';
+
+  @override
+  String get amount => 'Amount';
+
+  @override
+  String get dryFood => 'Dry Food';
+
+  @override
+  String get wetFood => 'Wet Food';
+
+  @override
+  String get treats => 'Treats';
+
+  @override
+  String get timeLabel => 'Time';
+
+  @override
+  String get name => 'Name';
+
+  @override
+  String get method => 'Method';
+
+  @override
+  String get appointmentHistory => 'Appointment History';
+
+  @override
+  String get pending => 'Pending';
+
+  @override
+  String get finished => 'Finished';
+
+  @override
+  String get completedTotal => 'Completed/Total';
+
+  @override
+  String get activeTotal => 'Active/Total';
+
+  @override
+  String get noMedicationsFoundPeriod => 'No medications found for this period';
+
+  @override
+  String get noFeedingDataFoundPeriod =>
+      'No feeding data found for this period';
+
+  @override
+  String get noVeterinaryAppointmentsFoundPeriod =>
+      'No veterinary appointments found for this period';
+
+  @override
+  String get shareFunctionalityPlaceholder =>
+      'Share functionality would be implemented here';
+
+  @override
+  String get reportConfiguration => 'Report Configuration';
+
+  @override
+  String get reportType => 'Report Type';
+
+  @override
+  String get pleaseSelectReportType => 'Please select a report type';
+
+  @override
+  String get dateRange => 'Date Range';
+
+  @override
+  String get quickRanges => 'Quick Ranges';
+
+  @override
+  String get healthSummaryDescription =>
+      'Comprehensive overview including recent medications, appointments, and activities for the selected period.';
+
+  @override
+  String get medicationHistoryDescription =>
+      'Detailed list of all medications with dates, dosages, and completion status for the selected period.';
+
+  @override
+  String get activityReportDescription =>
+      'Analysis of walks, exercise patterns, and activity trends over the selected time frame.';
+
+  @override
+  String get veterinaryRecordsDescription =>
+      'Complete record of all veterinary appointments with outcomes and notes for the selected period.';
+
+  @override
+  String get selectReportTypeDescription =>
+      'Select a report type to see its description.';
+
+  @override
+  String get endDateMustBeAfterStartDate => 'End date must be after start date';
+
+  @override
+  String get last7Days => 'Last 7 days';
+
+  @override
+  String get last30Days => 'Last 30 days';
+
+  @override
+  String get last3Months => 'Last 3 months';
+
+  @override
+  String get last6Months => 'Last 6 months';
+
+  @override
+  String get lastYear => 'Last year';
+
+  @override
+  String get reportGeneratedSuccessfully => 'Report generated successfully!';
+
+  @override
+  String failedToGenerateReport(String error) {
+    return 'Failed to generate report: $error';
+  }
+
+  @override
+  String get medicationHistory => 'Medication History';
+
+  @override
+  String get edit => 'Edit';
+
+  @override
+  String get confirmDelete => 'Confirm Delete';
+
+  @override
+  String get deleteConfirmationMessage =>
+      'Are you sure you want to delete this feeding?';
+
+  @override
+  String get feedingDeleted => 'Feeding deleted successfully';
+
+  @override
+  String get pet => 'Pet';
+
+  @override
+  String get pleaseSelectPet => 'Please select a pet';
+
+  @override
+  String get pleaseEnterAmount => 'Please enter amount';
+
+  @override
+  String get addNotesOptional => 'Add notes (optional)';
+
+  @override
+  String get feedingTime => 'Feeding Time';
+
+  @override
+  String get editFeeding => 'Edit Feeding';
+
+  @override
+  String get petProfiles => 'Pet Profiles';
+
+  @override
+  String get addPet => 'Add Pet';
+
+  @override
+  String get allProfiles => 'All Profiles';
+
+  @override
+  String get activeProfile => 'ACTIVE';
+
+  @override
+  String get noPetsYet => 'No pets yet!';
+
+  @override
+  String get addYourFirstPet => 'Add your first pet to get started';
+
+  @override
+  String get makeActive => 'Make Active';
+
+  @override
+  String get deleteProfile => 'Delete Profile';
+
+  @override
+  String deleteProfileConfirm(String petName) {
+    return 'Are you sure you want to delete $petName\'s profile? This action cannot be undone.';
+  }
+
+  @override
+  String profileDeleted(String petName) {
+    return '$petName\'s profile deleted';
+  }
+
+  @override
+  String get failedToDeleteProfile => 'Failed to delete profile';
+
+  @override
+  String nowActive(String petName) {
+    return '$petName is now your active pet';
+  }
+
+  @override
+  String failedToActivateProfile(String error) {
+    return 'Failed to activate profile: $error';
+  }
+
+  @override
+  String get errorLoadingProfiles => 'Error loading profiles';
+
+  @override
+  String yearsOld(int age, String plural) {
+    return '$age year$plural old';
+  }
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get premium => 'Premium';
+
+  @override
+  String get upgradeToUnlock => 'Upgrade to unlock advanced features';
+
+  @override
+  String get accountSettings => 'Account Settings';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get romanian => 'Română';
+
+  @override
+  String get appPreferences => 'App Preferences';
+
+  @override
+  String get theme => 'Theme';
+
+  @override
+  String get light => 'Light';
+
+  @override
+  String get dark => 'Dark';
+
+  @override
+  String get system => 'System';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get enableNotifications => 'Enable app notifications';
+
+  @override
+  String get enableAnalytics => 'Enable analytics';
+
+  @override
+  String get helpImproveApp => 'Help improve the app';
+
+  @override
+  String get dataManagement => 'Data Management';
+
+  @override
+  String get exportData => 'Export data';
+
+  @override
+  String get downloadYourData => 'Download your data';
+
+  @override
+  String get clearCache => 'Clear cache';
+
+  @override
+  String get freeUpSpace => 'Free up storage space';
+
+  @override
+  String get deleteAccount => 'Delete account';
+
+  @override
+  String get deleteAccountPermanently => 'Permanently delete your account';
+
+  @override
+  String get privacyAndLegal => 'Privacy & Legal';
+
+  @override
+  String get privacyPolicy => 'Privacy policy';
+
+  @override
+  String get termsOfService => 'Terms of Service';
+
+  @override
+  String get openSourceLicenses => 'Open source licenses';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String get appVersion => 'App version';
+
+  @override
+  String get petOwner => 'Pet Owner';
+
+  @override
+  String get selectLanguage => 'Select Language';
+
+  @override
+  String get selectTheme => 'Select Theme';
+
+  @override
+  String get clearCacheConfirm =>
+      'Are you sure you want to clear the cache? This action cannot be undone.';
+
+  @override
+  String get cacheCleared => 'Cache cleared successfully';
+
+  @override
+  String get deleteAccountConfirm =>
+      'Are you sure you want to delete your account? This action is permanent and cannot be undone. All your data will be lost.';
+
+  @override
+  String get featureComingSoon => 'Feature coming soon';
+
+  @override
+  String get noReportsFound => 'No reports found';
+
+  @override
+  String get noHealthReportsFound => 'No health reports found';
+
+  @override
+  String get noMedicationReportsFound => 'No medication reports found';
+
+  @override
+  String get noActivityReportsFound => 'No activity reports found';
+
+  @override
+  String get noReportsMatchSearch => 'No reports match your search';
+
+  @override
+  String get errorLoadingReports => 'Error loading reports';
+
+  @override
+  String get overdue => 'Overdue';
+
+  @override
+  String get justNow => 'Just now';
+
+  @override
+  String daysAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days ago',
+      one: '1 day ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String hoursAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count hours ago',
+      one: '1 hour ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String minutesAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count minutes ago',
+      one: '1 minute ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get done => 'Done';
+
+  @override
+  String get markPending => 'Mark Pending';
+
+  @override
+  String get markCompleted => 'Mark Completed';
+
+  @override
+  String get daysUntil => 'In';
+
+  @override
+  String get started => 'Started';
+
+  @override
+  String get ends => 'Ends';
 }

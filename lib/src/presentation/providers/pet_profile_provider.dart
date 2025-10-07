@@ -54,7 +54,14 @@ class PetProfilesNotifier extends StateNotifier<AsyncValue<List<PetProfile>>> {
 
   Future<void> load() async {
     try {
+      logger.d("📥 DEBUG: Loading profiles from Hive");
       final profiles = _repository.getAll();
+      logger.d("📥 DEBUG: Loaded ${profiles.length} profiles");
+
+      for (var profile in profiles) {
+        logger.d("📥 DEBUG: - ${profile.name}: photoPath = ${profile.photoPath}");
+      }
+
       state = AsyncValue.data(profiles);
     } catch (error) {
       logger.e("🚨 ERROR in PetProfileProvider.load: $error");
@@ -65,7 +72,8 @@ class PetProfilesNotifier extends StateNotifier<AsyncValue<List<PetProfile>>> {
 
   Future<void> createOrUpdate(PetProfile profile) async {
     logger.d("🔍 DEBUG: PetProfilesNotifier.createOrUpdate called with profile: ${profile.name}");
-    
+    logger.d("🔍 DEBUG: Profile photoPath being saved: ${profile.photoPath}");
+
     try {
       final existing = _repository.getAll();
       final idx = existing.indexWhere((p) => p.id == profile.id);
@@ -74,15 +82,24 @@ class PetProfilesNotifier extends StateNotifier<AsyncValue<List<PetProfile>>> {
       if (idx >= 0) {
         logger.d("🔍 DEBUG: Updating existing profile");
         await _repository.update(profile);
+        logger.d("🔍 DEBUG: Profile updated in repository");
       } else {
         logger.d("🔍 DEBUG: Adding new profile");
         await _repository.add(profile);
+        logger.d("🔍 DEBUG: Profile added to repository");
       }
+
+      // Verify the save
+      final allProfiles = _repository.getAll();
+      final savedProfile = allProfiles.firstWhere((p) => p.id == profile.id, orElse: () => profile);
+      logger.d("🗂️ DEBUG: Verifying saved profile from Hive:");
+      logger.d("🗂️ DEBUG: - Name: ${savedProfile.name}");
+      logger.d("🗂️ DEBUG: - photoPath: ${savedProfile.photoPath}");
 
       logger.d("🔍 DEBUG: Profile operation completed, reloading state");
       await load();
       logger.d("🔍 DEBUG: State reloaded successfully");
-      
+
     } catch (error, stackTrace) {
       logger.e("🚨 ERROR: Failed in createOrUpdate: $error");
       state = AsyncValue.error(error, stackTrace);

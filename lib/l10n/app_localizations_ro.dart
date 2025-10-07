@@ -194,7 +194,7 @@ class AppLocalizationsRo extends AppLocalizations {
       'Vă rugăm să introduceți numele medicamentului';
 
   @override
-  String get dosage => 'Dozaj *';
+  String get dosage => 'Dozaj';
 
   @override
   String get dosageHint => 'de ex., 5mg, 1 tabletă, 2ml';
@@ -272,7 +272,7 @@ class AppLocalizationsRo extends AppLocalizations {
   String get selectEndDate => 'Selectați data de încheiere';
 
   @override
-  String get administrationTimes => 'Orele de Administrare';
+  String get administrationTimes => 'Timp de administrare';
 
   @override
   String get addTime => 'Adaugă oră';
@@ -287,7 +287,7 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get additionalNotesHint =>
-      'Adăugați notițe, instrucțiuni sau mementouri suplimentare...';
+      'Adăugați notițe, instrucțiuni speciale sau mementouri...';
 
   @override
   String get saveMedication => 'Salvează Medicament';
@@ -330,4 +330,628 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get markActive => 'Marchează ca Activ';
+
+  @override
+  String get appointmentInformation => 'Informații despre Programare';
+
+  @override
+  String get veterinarian => 'Veterinar';
+
+  @override
+  String get veterinarianHint => 'de ex., Dr. Popescu, Dr. Ionescu';
+
+  @override
+  String get pleaseEnterVeterinarian =>
+      'Vă rugăm să introduceți numele veterinarului';
+
+  @override
+  String get clinic => 'Clinică';
+
+  @override
+  String get clinicHint => 'de ex., Spital Veterinar, Clinică Veterinară';
+
+  @override
+  String get pleaseEnterClinic => 'Vă rugăm să introduceți numele clinicii';
+
+  @override
+  String get reason => 'Motiv';
+
+  @override
+  String get reasonHint => 'de ex., Control, Vaccinare, Operație';
+
+  @override
+  String get pleaseEnterReason => 'Vă rugăm să introduceți motivul programării';
+
+  @override
+  String get appointmentDate => 'Data Programării';
+
+  @override
+  String get appointmentTime => 'Ora Programării';
+
+  @override
+  String get status => 'Stare';
+
+  @override
+  String get markAsCompleted => 'Marchează ca Finalizat';
+
+  @override
+  String get appointmentCompleted => 'Programare finalizată';
+
+  @override
+  String get appointmentPending => 'Programare în așteptare';
+
+  @override
+  String get updateAppointment => 'Actualizează Programare';
+
+  @override
+  String get saveAppointment => 'Salvează Programare';
+
+  @override
+  String get appointmentUpdatedSuccessfully =>
+      'Programare actualizată cu succes!';
+
+  @override
+  String get appointmentAddedSuccessfully => 'Programare adăugată cu succes!';
+
+  @override
+  String failedToSaveAppointment(String error) {
+    return 'Salvarea programării a eșuat: $error';
+  }
+
+  @override
+  String get walks => 'Plimbări';
+
+  @override
+  String get today => 'Astăzi';
+
+  @override
+  String get tomorrow => 'Mâine';
+
+  @override
+  String get yesterday => 'Ieri';
+
+  @override
+  String get thisWeek => 'Săptămâna Aceasta';
+
+  @override
+  String get addWalk => 'Adaugă plimbare';
+
+  @override
+  String get start => 'Început';
+
+  @override
+  String get durationMin => 'Durată';
+
+  @override
+  String get distance => 'Distanță';
+
+  @override
+  String get surfaceLabel => 'Suprafață';
+
+  @override
+  String get surfacePaved => 'pavat';
+
+  @override
+  String get surfaceGravel => 'pietriș';
+
+  @override
+  String get surfaceMixed => 'mixt';
+
+  @override
+  String get pace => 'Ritm';
+
+  @override
+  String get min => 'min';
+
+  @override
+  String get km => 'km';
+
+  @override
+  String get noWalksYet => 'Nicio plimbare încă';
+
+  @override
+  String get trackFirstWalk =>
+      'Înregistrați prima plimbare pentru a vedea distanța și durata aici.';
+
+  @override
+  String get addFirstWalk => 'Adaugă prima plimbare';
+
+  @override
+  String get walkDetails => 'Detalii plimbare';
+
+  @override
+  String get close => 'Închide';
+
+  @override
+  String get noNotes => 'Nicio notiță';
+
+  @override
+  String get optional => 'Opțional';
+
+  @override
+  String get required => 'Obligatoriu';
+
+  @override
+  String get enterPositiveNumber => 'Introduceți un număr pozitiv';
+
+  @override
+  String get walkAddedSuccessfully => 'Plimbare adăugată cu succes!';
+
+  @override
+  String walkDetailsFor(String walkInfo) {
+    return 'Detalii plimbare pentru $walkInfo';
+  }
+
+  @override
+  String get reports => 'Rapoarte';
+
+  @override
+  String get health => 'Sănătate';
+
+  @override
+  String get activity => 'Activitate';
+
+  @override
+  String get searchReports => 'Caută rapoarte...';
+
+  @override
+  String get generateReport => 'Generează Raport';
+
+  @override
+  String get healthSummary => 'Rezumat Sănătate';
+
+  @override
+  String get activityReport => 'Raport Activitate';
+
+  @override
+  String get veterinaryRecords => 'Înregistrări Veterinare';
+
+  @override
+  String get generated => 'Generat';
+
+  @override
+  String get period => 'Perioadă';
+
+  @override
+  String get data => 'Date';
+
+  @override
+  String get summary => 'Rezumat';
+
+  @override
+  String get items => 'articole';
+
+  @override
+  String get feeds => 'hrăniri';
+
+  @override
+  String get visits => 'vizite';
+
+  @override
+  String get outOf => 'din';
+
+  @override
+  String get total => 'total';
+
+  @override
+  String get avg => 'medie';
+
+  @override
+  String get perDay => 'pe zi';
+
+  @override
+  String get generatedOn => 'Generat pe';
+
+  @override
+  String get at => 'la';
+
+  @override
+  String get days => 'zile';
+
+  @override
+  String get totalFeedings => 'Total Hrăniri';
+
+  @override
+  String get dailyAverage => 'Medie Zilnică';
+
+  @override
+  String get inPeriod => 'În perioadă';
+
+  @override
+  String get feedingHistory => 'Istoric Hrănire';
+
+  @override
+  String get date => 'Data';
+
+  @override
+  String get type => 'Tip';
+
+  @override
+  String get amount => 'Cantitate';
+
+  @override
+  String get dryFood => 'Mâncare Uscată';
+
+  @override
+  String get wetFood => 'Mâncare Umedă';
+
+  @override
+  String get treats => 'Recompense';
+
+  @override
+  String get timeLabel => 'Ora';
+
+  @override
+  String get name => 'Nume';
+
+  @override
+  String get method => 'Metoda';
+
+  @override
+  String get appointmentHistory => 'Istoric Programări';
+
+  @override
+  String get pending => 'În așteptare';
+
+  @override
+  String get finished => 'Finalizat';
+
+  @override
+  String get completedTotal => 'Finalizate/Total';
+
+  @override
+  String get activeTotal => 'Active/Total';
+
+  @override
+  String get noMedicationsFoundPeriod =>
+      'Nu s-au găsit medicamente pentru această perioadă';
+
+  @override
+  String get noFeedingDataFoundPeriod =>
+      'Nu s-au găsit date de hrănire pentru această perioadă';
+
+  @override
+  String get noVeterinaryAppointmentsFoundPeriod =>
+      'Nu s-au găsit programări veterinare pentru această perioadă';
+
+  @override
+  String get shareFunctionalityPlaceholder =>
+      'Funcționalitatea de partajare ar fi implementată aici';
+
+  @override
+  String get reportConfiguration => 'Configurare Raport';
+
+  @override
+  String get reportType => 'Tip Raport';
+
+  @override
+  String get pleaseSelectReportType => 'Vă rugăm să selectați un tip de raport';
+
+  @override
+  String get dateRange => 'Interval de Date';
+
+  @override
+  String get quickRanges => 'Intervale Rapide';
+
+  @override
+  String get healthSummaryDescription =>
+      'Prezentare generală cuprinzătoare incluzând medicamente recente, programări și activități pentru perioada selectată.';
+
+  @override
+  String get medicationHistoryDescription =>
+      'Lista detaliată a tuturor medicamentelor cu date, dozaje și stare de finalizare pentru perioada selectată.';
+
+  @override
+  String get activityReportDescription =>
+      'Analiză a plimbărilor, tiparelor de exerciții și tendințelor de activitate pe parcursul perioadei selectate.';
+
+  @override
+  String get veterinaryRecordsDescription =>
+      'Înregistrare completă a tuturor programărilor veterinare cu rezultate și notițe pentru perioada selectată.';
+
+  @override
+  String get selectReportTypeDescription =>
+      'Selectați un tip de raport pentru a vedea descrierea acestuia.';
+
+  @override
+  String get endDateMustBeAfterStartDate =>
+      'Data de încheiere trebuie să fie după data de început';
+
+  @override
+  String get last7Days => 'Ultimele 7 zile';
+
+  @override
+  String get last30Days => 'Ultimele 30 zile';
+
+  @override
+  String get last3Months => 'Ultimele 3 luni';
+
+  @override
+  String get last6Months => 'Ultimele 6 luni';
+
+  @override
+  String get lastYear => 'Anul trecut';
+
+  @override
+  String get reportGeneratedSuccessfully => 'Raport generat cu succes!';
+
+  @override
+  String failedToGenerateReport(String error) {
+    return 'Generarea raportului a eșuat: $error';
+  }
+
+  @override
+  String get medicationHistory => 'Istoric Medicamente';
+
+  @override
+  String get edit => 'Editează';
+
+  @override
+  String get confirmDelete => 'Confirmă Ștergerea';
+
+  @override
+  String get deleteConfirmationMessage =>
+      'Sigur doriți să ștergeți această hrănire?';
+
+  @override
+  String get feedingDeleted => 'Hrănire ștearsă cu succes';
+
+  @override
+  String get pet => 'Animal';
+
+  @override
+  String get pleaseSelectPet => 'Selectați un animal';
+
+  @override
+  String get pleaseEnterAmount => 'Introduceți cantitatea';
+
+  @override
+  String get addNotesOptional => 'Adăugați notițe (opțional)';
+
+  @override
+  String get feedingTime => 'Ora Hrănirii';
+
+  @override
+  String get editFeeding => 'Editează Hrănire';
+
+  @override
+  String get petProfiles => 'Profile Animale';
+
+  @override
+  String get addPet => 'Adaugă Animal';
+
+  @override
+  String get allProfiles => 'Toate Profilele';
+
+  @override
+  String get activeProfile => 'ACTIV';
+
+  @override
+  String get noPetsYet => 'Niciun animal încă!';
+
+  @override
+  String get addYourFirstPet => 'Adaugă primul tău animal pentru a începe';
+
+  @override
+  String get makeActive => 'Marchează ca Activ';
+
+  @override
+  String get deleteProfile => 'Șterge Profil';
+
+  @override
+  String deleteProfileConfirm(String petName) {
+    return 'Sigur doriți să ștergeți profilul lui $petName? Această acțiune nu poate fi anulată.';
+  }
+
+  @override
+  String profileDeleted(String petName) {
+    return 'Profilul lui $petName a fost șters';
+  }
+
+  @override
+  String get failedToDeleteProfile => 'Ștergerea profilului a eșuat';
+
+  @override
+  String nowActive(String petName) {
+    return '$petName este acum animalul tău activ';
+  }
+
+  @override
+  String failedToActivateProfile(String error) {
+    return 'Activarea profilului a eșuat: $error';
+  }
+
+  @override
+  String get errorLoadingProfiles => 'Eroare la încărcarea profilelelor';
+
+  @override
+  String yearsOld(int age, String plural) {
+    return '$age an$plural';
+  }
+
+  @override
+  String get settings => 'Setări';
+
+  @override
+  String get premium => 'Premium';
+
+  @override
+  String get upgradeToUnlock =>
+      'Actualizează pentru a debloca funcțiile avansate';
+
+  @override
+  String get accountSettings => 'Setări Cont';
+
+  @override
+  String get language => 'Limbă';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get romanian => 'Română';
+
+  @override
+  String get appPreferences => 'Preferințe Aplicație';
+
+  @override
+  String get theme => 'Temă';
+
+  @override
+  String get light => 'Luminos';
+
+  @override
+  String get dark => 'Întunecat';
+
+  @override
+  String get system => 'Sistem';
+
+  @override
+  String get notifications => 'Notificări';
+
+  @override
+  String get enableNotifications => 'Activează notificările aplicației';
+
+  @override
+  String get enableAnalytics => 'Activează analiza';
+
+  @override
+  String get helpImproveApp => 'Ajută la îmbunătățirea aplicației';
+
+  @override
+  String get dataManagement => 'Gestionare Date';
+
+  @override
+  String get exportData => 'Exportă datele';
+
+  @override
+  String get downloadYourData => 'Descarcă datele tale';
+
+  @override
+  String get clearCache => 'Șterge memoria cache';
+
+  @override
+  String get freeUpSpace => 'Eliberează spațiu de stocare';
+
+  @override
+  String get deleteAccount => 'Șterge contul';
+
+  @override
+  String get deleteAccountPermanently => 'Șterge definitiv contul tău';
+
+  @override
+  String get privacyAndLegal => 'Confidențialitate și Legal';
+
+  @override
+  String get privacyPolicy => 'Politica de confidențialitate';
+
+  @override
+  String get termsOfService => 'Termeni și condiții';
+
+  @override
+  String get openSourceLicenses => 'Licențe open source';
+
+  @override
+  String get about => 'Despre';
+
+  @override
+  String get appVersion => 'Versiunea aplicației';
+
+  @override
+  String get petOwner => 'Proprietar Animal';
+
+  @override
+  String get selectLanguage => 'Selectează Limba';
+
+  @override
+  String get selectTheme => 'Selectează Tema';
+
+  @override
+  String get clearCacheConfirm =>
+      'Sigur doriți să ștergeți memoria cache? Această acțiune nu poate fi anulată.';
+
+  @override
+  String get cacheCleared => 'Memoria cache a fost ștearsă cu succes';
+
+  @override
+  String get deleteAccountConfirm =>
+      'Sigur doriți să ștergeți contul? Această acțiune este permanentă și nu poate fi anulată. Toate datele tale vor fi pierdute.';
+
+  @override
+  String get featureComingSoon => 'Funcționalitate în curând';
+
+  @override
+  String get noReportsFound => 'Niciun raport găsit';
+
+  @override
+  String get noHealthReportsFound => 'Niciun raport medical găsit';
+
+  @override
+  String get noMedicationReportsFound => 'Niciun raport de medicație găsit';
+
+  @override
+  String get noActivityReportsFound => 'Niciun raport de activitate găsit';
+
+  @override
+  String get noReportsMatchSearch => 'Niciun raport nu se potrivește căutării';
+
+  @override
+  String get errorLoadingReports => 'Eroare la încărcarea rapoartelor';
+
+  @override
+  String get overdue => 'Întârziat';
+
+  @override
+  String get justNow => 'Chiar acum';
+
+  @override
+  String daysAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count zile în urmă',
+      one: '1 zi în urmă',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String hoursAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ore în urmă',
+      one: '1 oră în urmă',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String minutesAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count minute în urmă',
+      one: '1 minut în urmă',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get done => 'Terminat';
+
+  @override
+  String get markPending => 'Marchează ca În așteptare';
+
+  @override
+  String get markCompleted => 'Marchează ca Finalizat';
+
+  @override
+  String get daysUntil => 'În';
+
+  @override
+  String get started => 'A început';
+
+  @override
+  String get ends => 'Se termină';
 }
