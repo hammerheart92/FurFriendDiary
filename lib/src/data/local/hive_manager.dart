@@ -8,6 +8,7 @@ import '../../domain/models/report_entry.dart';
 import '../../domain/models/walk.dart';
 import '../../domain/models/user_profile.dart';
 import '../../domain/models/time_of_day_model.dart';
+import '../../domain/models/reminder.dart';
 
 class HiveManager {
   final logger = Logger();
@@ -25,9 +26,10 @@ class HiveManager {
   static const String appointmentBoxName = 'appointments';
   static const String reportBoxName = 'reports';
   static const String walkBoxName = 'walks';
+  static const String reminderBoxName = 'reminders';
   static const String settingsBoxName = 'settings';
   static const String appPrefsBoxName = 'app_prefs';
-  
+
   // Box references
   Box<PetProfile>? _petProfileBox;
   Box<FeedingEntry>? _feedingBox;
@@ -35,6 +37,7 @@ class HiveManager {
   Box<AppointmentEntry>? _appointmentBox;
   Box<ReportEntry>? _reportBox;
   Box<Walk>? _walkBox;
+  Box<Reminder>? _reminderBox;
   Box? _settingsBox;
   Box? _appPrefsBox;
   
@@ -118,8 +121,23 @@ class HiveManager {
     }
 
     if (!Hive.isAdapterRegistered(10)) {
+      Hive.registerAdapter(ReminderTypeAdapter());
+      logger.d("✅ DEBUG: ReminderType adapter registered with typeId 10");
+    }
+
+    if (!Hive.isAdapterRegistered(11)) {
+      Hive.registerAdapter(ReminderFrequencyAdapter());
+      logger.d("✅ DEBUG: ReminderFrequency adapter registered with typeId 11");
+    }
+
+    if (!Hive.isAdapterRegistered(12)) {
+      Hive.registerAdapter(ReminderAdapter());
+      logger.d("✅ DEBUG: Reminder adapter registered with typeId 12");
+    }
+
+    if (!Hive.isAdapterRegistered(13)) {
       Hive.registerAdapter(TimeOfDayModelAdapter());
-      logger.d("✅ DEBUG: TimeOfDayModel adapter registered with typeId 10");
+      logger.d("✅ DEBUG: TimeOfDayModel adapter registered with typeId 13");
     }
   }
   
@@ -138,11 +156,12 @@ class HiveManager {
     _medicationBox = await _openBox<MedicationEntry>(medicationBoxName);
     _appointmentBox = await _openBox<AppointmentEntry>(appointmentBoxName);
     _reportBox = await _openBox<ReportEntry>(reportBoxName);
-    
+    _reminderBox = await _openBox<Reminder>(reminderBoxName);
+
     // Open settings boxes
     _settingsBox = await _openBox(settingsBoxName);
     _appPrefsBox = await _openBox(appPrefsBoxName);
-    
+
     logger.i("✅ DEBUG: All boxes opened successfully");
   }
   
@@ -228,6 +247,14 @@ class HiveManager {
     return _reportBox!;
   }
 
+  /// Get reminders box
+  Box<Reminder> get reminderBox {
+    if (_reminderBox == null || !_reminderBox!.isOpen) {
+      throw HiveError("Reminders box is not initialized. Call HiveManager.initialize() first.");
+    }
+    return _reminderBox!;
+  }
+
   /// Get settings box
   Box get settingsBox {
     if (_settingsBox == null || !_settingsBox!.isOpen) {
@@ -278,6 +305,7 @@ class HiveManager {
       await Hive.deleteBoxFromDisk(medicationBoxName);
       await Hive.deleteBoxFromDisk(appointmentBoxName);
       await Hive.deleteBoxFromDisk(reportBoxName);
+      await Hive.deleteBoxFromDisk(reminderBoxName);
       await Hive.deleteBoxFromDisk(settingsBoxName);
       await Hive.deleteBoxFromDisk(appPrefsBoxName);
 

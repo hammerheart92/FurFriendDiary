@@ -6,6 +6,7 @@ import 'package:logger/logger.dart';
 import 'l10n/app_localizations.dart';
 import 'src/presentation/routes/app_router.dart';
 import 'src/data/local/hive_manager.dart';
+import 'src/data/services/notification_service.dart';
 import 'src/presentation/providers/settings_provider.dart';
 import 'src/utils/file_logger.dart';
 import 'theme/theme.dart';
@@ -44,6 +45,11 @@ Future<void> main() async {
     logger.d("   - Walks: ${walkBox.length} items"); 
     logger.d("   - Settings: ${settingsBox.length} items");
     logger.d("   - App prefs: ${appPrefsBox.length} items");
+    
+    // Initialize NotificationService
+    logger.i("🔔 DEBUG: Initializing NotificationService");
+    await NotificationService().initialize();
+    logger.i("✅ DEBUG: NotificationService initialized");
     
   } catch (e, stackTrace) {
     logger.e("🚨 FATAL ERROR: App initialization failed: $e");

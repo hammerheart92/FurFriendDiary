@@ -197,7 +197,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pleaseEnterDosage => 'Please enter dosage';
 
   @override
-  String get frequency => 'Frequency *';
+  String get frequency => 'Frequency';
 
   @override
   String get frequencyOnceDaily => 'Once daily';
@@ -944,4 +944,166 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ends => 'Ends';
+
+  @override
+  String get reminders => 'Reminders';
+
+  @override
+  String get addReminder => 'Add Reminder';
+
+  @override
+  String get editReminder => 'Edit Reminder';
+
+  @override
+  String get reminderType => 'Reminder Type';
+
+  @override
+  String get reminderTitle => 'Title';
+
+  @override
+  String get reminderDescription => 'Description';
+
+  @override
+  String get scheduledTime => 'Scheduled Time';
+
+  @override
+  String get once => 'Once';
+
+  @override
+  String get daily => 'Daily';
+
+  @override
+  String get twiceDaily => 'Twice Daily';
+
+  @override
+  String get weekly => 'Weekly';
+
+  @override
+  String get custom => 'Custom';
+
+  @override
+  String get activeReminders => 'Active Reminders';
+
+  @override
+  String get noReminders => 'No reminders set';
+
+  @override
+  String get noRemindersDescription =>
+      'Add reminders to never forget important care tasks';
+
+  @override
+  String get setReminder => 'Set Reminder';
+
+  @override
+  String get reminderSet => 'Reminder set successfully';
+
+  @override
+  String remindersCreated(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Created $count reminders',
+      one: 'Created 1 reminder',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get view => 'View';
+
+  @override
+  String get reminderDeleted => 'Reminder deleted';
+
+  @override
+  String nextReminder(String time) {
+    return 'Next: $time';
+  }
+
+  @override
+  String get medicationReminder => 'Medication Reminder';
+
+  @override
+  String get appointmentReminder => 'Appointment Reminder';
+
+  @override
+  String get feedingReminder => 'Feeding Reminder';
+
+  @override
+  String get walkReminder => 'Walk Reminder';
+
+  @override
+  String get remindMeAt => 'Remind me at';
+
+  @override
+  String get remind1DayBefore => 'Remind 1 day before';
+
+  @override
+  String get remind1HourBefore => 'Remind 1 hour before';
+
+  @override
+  String get selectDays => 'Select Days';
+
+  @override
+  String get selectTime => 'Select Time';
+
+  @override
+  String get reminderUpdated => 'Reminder updated successfully';
+
+  @override
+  String get reminderAdded => 'Reminder added successfully';
+
+  @override
+  String get pleaseEnterTitle => 'Please enter a title';
+
+  @override
+  String get failedToCreateReminder => 'Failed to create reminder';
+
+  @override
+  String get failedToUpdateReminder => 'Failed to update reminder';
+
+  @override
+  String get failedToDeleteReminder => 'Failed to delete reminder';
+
+  @override
+  String get deleteReminder => 'Delete Reminder';
+
+  @override
+  String get deleteReminderConfirm =>
+      'Are you sure you want to delete this reminder?';
+
+  @override
+  String get noActiveReminders => 'No active reminders';
+
+  @override
+  String get noInactiveReminders => 'No inactive reminders';
+
+  @override
+  String get linkToEntity => 'Link to existing item';
+
+  @override
+  String get customSchedule => 'Custom Schedule';
+
+  @override
+  String get repeatOn => 'Repeat on';
+
+  @override
+  String get monday => 'Monday';
+
+  @override
+  String get tuesday => 'Tuesday';
+
+  @override
+  String get wednesday => 'Wednesday';
+
+  @override
+  String get thursday => 'Thursday';
+
+  @override
+  String get friday => 'Friday';
+
+  @override
+  String get saturday => 'Saturday';
+
+  @override
+  String get sunday => 'Sunday';
 }

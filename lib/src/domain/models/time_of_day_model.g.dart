@@ -8,7 +8,7 @@ part of 'time_of_day_model.dart';
 
 class TimeOfDayModelAdapter extends TypeAdapter<TimeOfDayModel> {
   @override
-  final int typeId = 10;
+  final int typeId = 13;
 
   @override
   TimeOfDayModel read(BinaryReader reader) {

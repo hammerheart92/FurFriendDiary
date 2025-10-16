@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 
 part 'time_of_day_model.g.dart';
 
-@HiveType(typeId: 10)
+@HiveType(typeId: 13)
 class TimeOfDayModel extends HiveObject {
   @HiveField(0)
   int hour;

@@ -22,8 +22,8 @@ class ReportEntryAdapter extends TypeAdapter<ReportEntry> {
       reportType: fields[2] as String,
       startDate: fields[3] as DateTime,
       endDate: fields[4] as DateTime,
-      data: Map<String, dynamic>.from(fields[6] as Map),
-      filters: fields[7] != null ? Map<String, dynamic>.from(fields[7] as Map) : null,
+      data: (fields[6] as Map).cast<String, dynamic>(),
+      filters: (fields[7] as Map?)?.cast<String, dynamic>(),
       generatedDate: fields[5] as DateTime?,
       createdAt: fields[8] as DateTime?,
     );

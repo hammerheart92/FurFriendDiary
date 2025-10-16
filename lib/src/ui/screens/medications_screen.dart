@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../domain/models/medication_entry.dart';
+import '../../domain/models/reminder.dart';
+import '../../domain/models/time_of_day_model.dart';
 import '../../providers/medications_provider.dart';
 import '../../presentation/providers/pet_profile_provider.dart';
+import '../../presentation/providers/reminder_provider.dart';
 import '../widgets/medication_card.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -276,6 +279,7 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
             onTap: () => context.push('/meds/detail/${medication.id}'),
             onToggleStatus: () => _toggleMedicationStatus(medication),
             onDelete: () => _deleteMedication(medication),
+            onSetReminder: () => _showReminderDialog(medication),
           );
         },
       ),
@@ -356,6 +360,198 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
           );
         }
       }
+    }
+  }
+
+  void _showReminderDialog(MedicationEntry medication) {
+    final l10n = AppLocalizations.of(context);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.6,
+        minChildSize: 0.4,
+        maxChildSize: 0.9,
+        expand: false,
+        builder: (context, scrollController) => Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              Text(
+                l10n.setReminder,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: ListView(
+                  controller: scrollController,
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.schedule),
+                      title: const Text('Remind Daily'),
+                      subtitle: medication.administrationTimes.isNotEmpty
+                          ? Text('First dose: ${medication.administrationTimes.first.format24Hour()}')
+                          : null,
+                      onTap: () async {
+                        Navigator.pop(context);
+                        await _createReminder(
+                          medication,
+                          ReminderFrequency.daily,
+                          medication.administrationTimes.isNotEmpty
+                              ? TimeOfDay(
+                                  hour: medication.administrationTimes.first.hour,
+                                  minute: medication.administrationTimes.first.minute,
+                                )
+                              : null,
+                        );
+                      },
+                    ),
+                    if (medication.administrationTimes.length > 1)
+                      ListTile(
+                        leading: const Icon(Icons.repeat),
+                        title: const Text('Remind All Doses'),
+                        subtitle: Text('${medication.administrationTimes.length} times daily'),
+                        onTap: () async {
+                          Navigator.pop(context);
+                          await _createMultipleReminders(medication);
+                        },
+                      ),
+                    ListTile(
+                      leading: const Icon(Icons.today),
+                      title: const Text('Remind Once'),
+                      subtitle: const Text('Custom time'),
+                      onTap: () async {
+                        Navigator.pop(context);
+                        await _selectCustomReminderTime(medication);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _createReminder(
+    MedicationEntry medication,
+    ReminderFrequency frequency,
+    TimeOfDay? time,
+  ) async {
+    // ✅ Capture messages BEFORE async operations
+    final l10n = AppLocalizations.of(context);
+    final successMsg = l10n.reminderSet;
+    final failedMsg = l10n.failedToCreateReminder;
+    final viewLabel = l10n.view;
+
+    try {
+      final now = DateTime.now();
+      final scheduledTime = time != null
+          ? DateTime(now.year, now.month, now.day, time.hour, time.minute)
+          : now.add(const Duration(hours: 1));
+
+      final reminder = Reminder(
+        petId: medication.petId,
+        type: ReminderType.medication,
+        title: medication.medicationName,
+        description: '${medication.dosage} - ${medication.frequency}',
+        scheduledTime: scheduledTime,
+        frequency: frequency,
+        linkedEntityId: medication.id,
+      );
+
+      await ref.read(reminderRepositoryProvider).addReminder(reminder);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(successMsg),
+            backgroundColor: Colors.green,
+            action: SnackBarAction(
+              label: viewLabel,
+              textColor: Colors.white,
+              onPressed: () => context.push('/settings'),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$failedMsg: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _createMultipleReminders(MedicationEntry medication) async {
+    // ✅ Capture messages BEFORE async operations
+    final l10n = AppLocalizations.of(context);
+    final failedMsg = l10n.failedToCreateReminder;
+    final count = medication.administrationTimes.length;
+
+    try {
+      final now = DateTime.now();
+
+      for (final time in medication.administrationTimes) {
+        final scheduledTime = DateTime(now.year, now.month, now.day, time.hour, time.minute);
+
+        final reminder = Reminder(
+          petId: medication.petId,
+          type: ReminderType.medication,
+          title: medication.medicationName,
+          description: '${medication.dosage} - ${time.format24Hour()}',
+          scheduledTime: scheduledTime,
+          frequency: ReminderFrequency.daily,
+          linkedEntityId: medication.id,
+        );
+
+        await ref.read(reminderRepositoryProvider).addReminder(reminder);
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.remindersCreated(count)),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$failedMsg: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _selectCustomReminderTime(MedicationEntry medication) async {
+    final selectedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (selectedTime != null) {
+      await _createReminder(medication, ReminderFrequency.once, selectedTime);
     }
   }
 }

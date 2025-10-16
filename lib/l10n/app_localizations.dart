@@ -461,7 +461,7 @@ abstract class AppLocalizations {
   /// No description provided for @frequency.
   ///
   /// In en, this message translates to:
-  /// **'Frequency *'**
+  /// **'Frequency'**
   String get frequency;
 
   /// No description provided for @frequencyOnceDaily.
@@ -1837,6 +1837,306 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ends'**
   String get ends;
+
+  /// No description provided for @reminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders'**
+  String get reminders;
+
+  /// No description provided for @addReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Reminder'**
+  String get addReminder;
+
+  /// No description provided for @editReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Reminder'**
+  String get editReminder;
+
+  /// No description provided for @reminderType.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder Type'**
+  String get reminderType;
+
+  /// No description provided for @reminderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get reminderTitle;
+
+  /// No description provided for @reminderDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get reminderDescription;
+
+  /// No description provided for @scheduledTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled Time'**
+  String get scheduledTime;
+
+  /// No description provided for @once.
+  ///
+  /// In en, this message translates to:
+  /// **'Once'**
+  String get once;
+
+  /// No description provided for @daily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get daily;
+
+  /// No description provided for @twiceDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Twice Daily'**
+  String get twiceDaily;
+
+  /// No description provided for @weekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get weekly;
+
+  /// No description provided for @custom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get custom;
+
+  /// No description provided for @activeReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Reminders'**
+  String get activeReminders;
+
+  /// No description provided for @noReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'No reminders set'**
+  String get noReminders;
+
+  /// No description provided for @noRemindersDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Add reminders to never forget important care tasks'**
+  String get noRemindersDescription;
+
+  /// No description provided for @setReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Set Reminder'**
+  String get setReminder;
+
+  /// No description provided for @reminderSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder set successfully'**
+  String get reminderSet;
+
+  /// No description provided for @remindersCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Created 1 reminder} other{Created {count} reminders}}'**
+  String remindersCreated(int count);
+
+  /// No description provided for @view.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get view;
+
+  /// No description provided for @reminderDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder deleted'**
+  String get reminderDeleted;
+
+  /// No description provided for @nextReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: {time}'**
+  String nextReminder(String time);
+
+  /// No description provided for @medicationReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Medication Reminder'**
+  String get medicationReminder;
+
+  /// No description provided for @appointmentReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment Reminder'**
+  String get appointmentReminder;
+
+  /// No description provided for @feedingReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Feeding Reminder'**
+  String get feedingReminder;
+
+  /// No description provided for @walkReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Walk Reminder'**
+  String get walkReminder;
+
+  /// No description provided for @remindMeAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind me at'**
+  String get remindMeAt;
+
+  /// No description provided for @remind1DayBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind 1 day before'**
+  String get remind1DayBefore;
+
+  /// No description provided for @remind1HourBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind 1 hour before'**
+  String get remind1HourBefore;
+
+  /// No description provided for @selectDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Days'**
+  String get selectDays;
+
+  /// No description provided for @selectTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Time'**
+  String get selectTime;
+
+  /// No description provided for @reminderUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder updated successfully'**
+  String get reminderUpdated;
+
+  /// No description provided for @reminderAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder added successfully'**
+  String get reminderAdded;
+
+  /// No description provided for @pleaseEnterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a title'**
+  String get pleaseEnterTitle;
+
+  /// No description provided for @failedToCreateReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to create reminder'**
+  String get failedToCreateReminder;
+
+  /// No description provided for @failedToUpdateReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update reminder'**
+  String get failedToUpdateReminder;
+
+  /// No description provided for @failedToDeleteReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete reminder'**
+  String get failedToDeleteReminder;
+
+  /// No description provided for @deleteReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Reminder'**
+  String get deleteReminder;
+
+  /// No description provided for @deleteReminderConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this reminder?'**
+  String get deleteReminderConfirm;
+
+  /// No description provided for @noActiveReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'No active reminders'**
+  String get noActiveReminders;
+
+  /// No description provided for @noInactiveReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'No inactive reminders'**
+  String get noInactiveReminders;
+
+  /// No description provided for @linkToEntity.
+  ///
+  /// In en, this message translates to:
+  /// **'Link to existing item'**
+  String get linkToEntity;
+
+  /// No description provided for @customSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Schedule'**
+  String get customSchedule;
+
+  /// No description provided for @repeatOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat on'**
+  String get repeatOn;
+
+  /// No description provided for @monday.
+  ///
+  /// In en, this message translates to:
+  /// **'Monday'**
+  String get monday;
+
+  /// No description provided for @tuesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Tuesday'**
+  String get tuesday;
+
+  /// No description provided for @wednesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Wednesday'**
+  String get wednesday;
+
+  /// No description provided for @thursday.
+  ///
+  /// In en, this message translates to:
+  /// **'Thursday'**
+  String get thursday;
+
+  /// No description provided for @friday.
+  ///
+  /// In en, this message translates to:
+  /// **'Friday'**
+  String get friday;
+
+  /// No description provided for @saturday.
+  ///
+  /// In en, this message translates to:
+  /// **'Saturday'**
+  String get saturday;
+
+  /// No description provided for @sunday.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunday'**
+  String get sunday;
 }
 
 class _AppLocalizationsDelegate

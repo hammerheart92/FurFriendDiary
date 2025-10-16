@@ -436,5 +436,71 @@
   "daysUntil": "In",
 
   "started": "Started",
-  "ends": "Ends"
+  "ends": "Ends",
+
+  "reminders": "Reminders",
+  "addReminder": "Add Reminder",
+  "editReminder": "Edit Reminder",
+  "reminderType": "Reminder Type",
+  "reminderTitle": "Title",
+  "reminderDescription": "Description",
+  "scheduledTime": "Scheduled Time",
+  "frequency": "Frequency",
+  "once": "Once",
+  "daily": "Daily",
+  "twiceDaily": "Twice Daily",
+  "weekly": "Weekly",
+  "custom": "Custom",
+  "activeReminders": "Active Reminders",
+  "noReminders": "No reminders set",
+  "noRemindersDescription": "Add reminders to never forget important care tasks",
+  "setReminder": "Set Reminder",
+  "reminderSet": "Reminder set successfully",
+  "remindersCreated": "{count, plural, =1{Created 1 reminder} other{Created {count} reminders}}",
+  "@remindersCreated": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "view": "View",
+  "reminderDeleted": "Reminder deleted",
+  "nextReminder": "Next: {time}",
+  "@nextReminder": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "medicationReminder": "Medication Reminder",
+  "appointmentReminder": "Appointment Reminder",
+  "feedingReminder": "Feeding Reminder",
+  "walkReminder": "Walk Reminder",
+  "remindMeAt": "Remind me at",
+  "remind1DayBefore": "Remind 1 day before",
+  "remind1HourBefore": "Remind 1 hour before",
+  "selectDays": "Select Days",
+  "selectTime": "Select Time",
+  "reminderUpdated": "Reminder updated successfully",
+  "reminderAdded": "Reminder added successfully",
+  "pleaseEnterTitle": "Please enter a title",
+  "failedToCreateReminder": "Failed to create reminder",
+  "failedToUpdateReminder": "Failed to update reminder",
+  "failedToDeleteReminder": "Failed to delete reminder",
+  "deleteReminder": "Delete Reminder",
+  "deleteReminderConfirm": "Are you sure you want to delete this reminder?",
+  "noActiveReminders": "No active reminders",
+  "noInactiveReminders": "No inactive reminders",
+  "linkToEntity": "Link to existing item",
+  "customSchedule": "Custom Schedule",
+  "repeatOn": "Repeat on",
+  "monday": "Monday",
+  "tuesday": "Tuesday",
+  "wednesday": "Wednesday",
+  "thursday": "Thursday",
+  "friday": "Friday",
+  "saturday": "Saturday",
+  "sunday": "Sunday"
 }

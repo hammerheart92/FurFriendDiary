@@ -9,6 +9,22 @@ import '../widgets/report_generation_form.dart';
 import '../widgets/report_viewer.dart';
 import '../../../l10n/app_localizations.dart';
 
+/// Internal tab keys for logic and filtering
+class ReportTab {
+  static const String all = 'all';
+  static const String health = 'health';
+  static const String medications = 'medications';
+  static const String activity = 'activity';
+}
+
+/// Report type constants - MUST match values in ReportEntry.reportType
+class ReportTypeConstants {
+  static const String healthSummary = 'Health Summary';
+  static const String medicationHistory = 'Medication History';
+  static const String activityReport = 'Activity Report';
+  static const String veterinaryRecords = 'Veterinary Records';
+}
+
 class ReportsScreen extends ConsumerStatefulWidget {
   const ReportsScreen({super.key});
 
@@ -226,20 +242,20 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
                     ),
                     _buildReportsList(
                       reports.where((report) =>
-                        report.reportType == l10n.healthSummary ||
-                        report.reportType == l10n.veterinaryRecords).toList(),
+                        report.reportType == ReportTypeConstants.healthSummary ||
+                        report.reportType == ReportTypeConstants.veterinaryRecords).toList(),
                       l10n.noHealthReportsFound,
                       theme,
                       petId,
                     ),
                     _buildReportsList(
-                      reports.where((report) => report.reportType == l10n.medicationHistory).toList(),
+                      reports.where((report) => report.reportType == ReportTypeConstants.medicationHistory).toList(),
                       l10n.noMedicationReportsFound,
                       theme,
                       petId,
                     ),
                     _buildReportsList(
-                      reports.where((report) => report.reportType == l10n.activityReport).toList(),
+                      reports.where((report) => report.reportType == ReportTypeConstants.activityReport).toList(),
                       l10n.noActivityReportsFound,
                       theme,
                       petId,

@@ -8,6 +8,7 @@ class MedicationCard extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onToggleStatus;
   final VoidCallback? onDelete;
+  final VoidCallback? onSetReminder;
 
   const MedicationCard({
     super.key,
@@ -15,6 +16,7 @@ class MedicationCard extends StatelessWidget {
     this.onTap,
     this.onToggleStatus,
     this.onDelete,
+    this.onSetReminder,
   });
 
   @override
@@ -102,6 +104,15 @@ class MedicationCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                  ),
+
+                  // Reminder button
+                  IconButton(
+                    icon: const Icon(Icons.notifications_outlined, size: 20),
+                    tooltip: l10n.setReminder,
+                    onPressed: onSetReminder,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
                   ),
 
                   // More options menu

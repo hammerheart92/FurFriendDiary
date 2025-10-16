@@ -203,7 +203,7 @@ class AppLocalizationsRo extends AppLocalizations {
   String get pleaseEnterDosage => 'Vă rugăm să introduceți dozajul';
 
   @override
-  String get frequency => 'Frecvență *';
+  String get frequency => 'Frecvență';
 
   @override
   String get frequencyOnceDaily => 'O dată pe zi';
@@ -954,4 +954,165 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get ends => 'Se termină';
+
+  @override
+  String get reminders => 'Memento-uri';
+
+  @override
+  String get addReminder => 'Adaugă Memento';
+
+  @override
+  String get editReminder => 'Editează Memento';
+
+  @override
+  String get reminderType => 'Tip Memento';
+
+  @override
+  String get reminderTitle => 'Titlu';
+
+  @override
+  String get reminderDescription => 'Descriere';
+
+  @override
+  String get scheduledTime => 'Ora Programată';
+
+  @override
+  String get once => 'O singură dată';
+
+  @override
+  String get daily => 'Zilnic';
+
+  @override
+  String get twiceDaily => 'De două ori pe zi';
+
+  @override
+  String get weekly => 'Săptămânal';
+
+  @override
+  String get custom => 'Personalizat';
+
+  @override
+  String get activeReminders => 'Memento-uri Active';
+
+  @override
+  String get noReminders => 'Niciun memento setat';
+
+  @override
+  String get noRemindersDescription =>
+      'Adaugă memento-uri pentru a nu uita sarcini importante de îngrijire';
+
+  @override
+  String get setReminder => 'Setează Memento';
+
+  @override
+  String get reminderSet => 'Memento setat cu succes';
+
+  @override
+  String remindersCreated(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'S-au creat $count memento-uri',
+      one: 'S-a creat 1 memento',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get view => 'Vizualizare';
+
+  @override
+  String get reminderDeleted => 'Memento șters';
+
+  @override
+  String nextReminder(String time) {
+    return 'Următor: $time';
+  }
+
+  @override
+  String get medicationReminder => 'Memento Medicație';
+
+  @override
+  String get appointmentReminder => 'Memento Programare';
+
+  @override
+  String get feedingReminder => 'Memento Hrănire';
+
+  @override
+  String get walkReminder => 'Memento Plimbare';
+
+  @override
+  String get remindMeAt => 'Amintește-mi la';
+
+  @override
+  String get remind1DayBefore => 'Amintește cu 1 zi înainte';
+
+  @override
+  String get remind1HourBefore => 'Amintește cu 1 oră înainte';
+
+  @override
+  String get selectDays => 'Selectează Zilele';
+
+  @override
+  String get selectTime => 'Selectează Ora';
+
+  @override
+  String get reminderUpdated => 'Memento actualizat cu succes';
+
+  @override
+  String get reminderAdded => 'Memento adăugat cu succes';
+
+  @override
+  String get pleaseEnterTitle => 'Introduceți un titlu';
+
+  @override
+  String get failedToCreateReminder => 'Eroare la crearea memento-ului';
+
+  @override
+  String get failedToUpdateReminder => 'Eroare la actualizarea memento-ului';
+
+  @override
+  String get failedToDeleteReminder => 'Eroare la ștergerea memento-ului';
+
+  @override
+  String get deleteReminder => 'Șterge Memento';
+
+  @override
+  String get deleteReminderConfirm => 'Sigur doriți să ștergeți acest memento?';
+
+  @override
+  String get noActiveReminders => 'Niciun memento activ';
+
+  @override
+  String get noInactiveReminders => 'Niciun memento inactiv';
+
+  @override
+  String get linkToEntity => 'Leagă la element existent';
+
+  @override
+  String get customSchedule => 'Program Personalizat';
+
+  @override
+  String get repeatOn => 'Repetă în';
+
+  @override
+  String get monday => 'Luni';
+
+  @override
+  String get tuesday => 'Marți';
+
+  @override
+  String get wednesday => 'Miercuri';
+
+  @override
+  String get thursday => 'Joi';
+
+  @override
+  String get friday => 'Vineri';
+
+  @override
+  String get saturday => 'Sâmbătă';
+
+  @override
+  String get sunday => 'Duminică';
 }

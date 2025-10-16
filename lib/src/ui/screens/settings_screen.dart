@@ -1,9 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../presentation/providers/settings_provider.dart';
 import '../../../l10n/app_localizations.dart';
+import 'reminders_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -48,6 +48,18 @@ class SettingsScreen extends ConsumerWidget {
           const Divider(height: 32),
           _buildSectionHeader(context, l10n.appPreferences),
           ListTile(
+            leading: const Icon(Icons.notifications_outlined),
+            title: Text(l10n.reminders),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const RemindersScreen(),
+                ),
+              );
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.palette_outlined),
             title: Text(l10n.theme),
             subtitle: Text(_getThemeName(context, themeMode)),
@@ -60,7 +72,9 @@ class SettingsScreen extends ConsumerWidget {
             subtitle: Text(l10n.enableNotifications),
             value: notificationsEnabled,
             onChanged: (value) {
-              ref.read(notificationsEnabledProvider.notifier).setNotificationsEnabled(value);
+              ref
+                  .read(notificationsEnabledProvider.notifier)
+                  .setNotificationsEnabled(value);
             },
           ),
           SwitchListTile(
@@ -92,7 +106,8 @@ class SettingsScreen extends ConsumerWidget {
           ),
           ListTile(
             leading: Icon(Icons.delete_forever, color: theme.colorScheme.error),
-            title: Text(l10n.deleteAccount, style: TextStyle(color: theme.colorScheme.error)),
+            title: Text(l10n.deleteAccount,
+                style: TextStyle(color: theme.colorScheme.error)),
             subtitle: Text(l10n.deleteAccountPermanently),
             onTap: () => _showDeleteAccountDialog(context),
           ),
@@ -135,7 +150,7 @@ class SettingsScreen extends ConsumerWidget {
 
   Widget _buildProfileSection(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
@@ -217,7 +232,8 @@ class SettingsScreen extends ConsumerWidget {
     }
   }
 
-  void _showLanguageDialog(BuildContext context, WidgetRef ref, Locale currentLocale) {
+  void _showLanguageDialog(
+      BuildContext context, WidgetRef ref, Locale currentLocale) {
     final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
@@ -260,7 +276,8 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  void _showThemeDialog(BuildContext context, WidgetRef ref, ThemeMode currentMode) {
+  void _showThemeDialog(
+      BuildContext context, WidgetRef ref, ThemeMode currentMode) {
     final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,

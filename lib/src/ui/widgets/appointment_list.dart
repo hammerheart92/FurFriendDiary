@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/models/appointment_entry.dart';
+import '../../domain/models/reminder.dart';
 import '../../presentation/providers/care_data_provider.dart';
+import '../../presentation/providers/reminder_provider.dart';
 import 'appointment_card.dart';
 
 class AppointmentList extends ConsumerWidget {
@@ -47,6 +49,7 @@ class AppointmentList extends ConsumerWidget {
               onTap: () => onEditAppointment?.call(appointment),
               onToggleStatus: () => _toggleAppointmentStatus(ref, appointment),
               onDelete: () => _showDeleteDialog(context, ref, appointment),
+              onSetReminder: () => _showReminderDialog(context, ref, appointment),
             );
           },
         );
@@ -199,6 +202,139 @@ class AppointmentList extends ConsumerWidget {
             ),
           );
         }
+      }
+    }
+  }
+
+  void _showReminderDialog(BuildContext context, WidgetRef ref, AppointmentEntry appointment) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.5,
+        minChildSize: 0.3,
+        maxChildSize: 0.8,
+        expand: false,
+        builder: (context, scrollController) => Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const Text(
+                'Set Reminder',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: ListView(
+                  controller: scrollController,
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.today, color: Colors.blue),
+                      title: const Text('1 Day Before'),
+                      subtitle: Text(_formatReminderTime(appointment.appointmentDate, const Duration(days: 1))),
+                      onTap: () {
+                        Navigator.pop(context);
+                        _createReminder(
+                          context,
+                          ref,
+                          appointment,
+                          appointment.appointmentDate.subtract(const Duration(days: 1)),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.access_time, color: Colors.orange),
+                      title: const Text('1 Hour Before'),
+                      subtitle: Text(_formatReminderTime(appointment.appointmentDate, const Duration(hours: 1))),
+                      onTap: () {
+                        Navigator.pop(context);
+                        _createReminder(
+                          context,
+                          ref,
+                          appointment,
+                          appointment.appointmentDate.subtract(const Duration(hours: 1)),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.notifications, color: Colors.green),
+                      title: const Text('30 Minutes Before'),
+                      subtitle: Text(_formatReminderTime(appointment.appointmentDate, const Duration(minutes: 30))),
+                      onTap: () {
+                        Navigator.pop(context);
+                        _createReminder(
+                          context,
+                          ref,
+                          appointment,
+                          appointment.appointmentDate.subtract(const Duration(minutes: 30)),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _formatReminderTime(DateTime appointmentDate, Duration before) {
+    final reminderTime = appointmentDate.subtract(before);
+    final day = reminderTime.day.toString().padLeft(2, '0');
+    final month = reminderTime.month.toString().padLeft(2, '0');
+    final hour = reminderTime.hour.toString().padLeft(2, '0');
+    final minute = reminderTime.minute.toString().padLeft(2, '0');
+    return '$day/$month at $hour:$minute';
+  }
+
+  Future<void> _createReminder(
+    BuildContext context,
+    WidgetRef ref,
+    AppointmentEntry appointment,
+    DateTime reminderTime,
+  ) async {
+    try {
+      final reminder = Reminder(
+        petId: appointment.petId,
+        type: ReminderType.appointment,
+        title: appointment.reason,
+        description: '${appointment.veterinarian} at ${appointment.clinic}',
+        scheduledTime: reminderTime,
+        frequency: ReminderFrequency.once,
+        linkedEntityId: appointment.id,
+      );
+
+      await ref.read(reminderRepositoryProvider).addReminder(reminder);
+
+      // ✅ Check context is still valid before accessing
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Reminder created successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      // ✅ Check context is still valid before accessing
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to create reminder: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }

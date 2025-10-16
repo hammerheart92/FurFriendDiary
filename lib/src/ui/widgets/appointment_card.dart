@@ -8,6 +8,7 @@ class AppointmentCard extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onToggleStatus;
   final VoidCallback? onDelete;
+  final VoidCallback? onSetReminder;
 
   const AppointmentCard({
     super.key,
@@ -15,6 +16,7 @@ class AppointmentCard extends StatelessWidget {
     this.onTap,
     this.onToggleStatus,
     this.onDelete,
+    this.onSetReminder,
   });
 
   @override
@@ -105,6 +107,16 @@ class AppointmentCard extends StatelessWidget {
                       ),
                     ),
                   ),
+
+                  // Reminder button
+                  if (!appointment.isCompleted)
+                    IconButton(
+                      icon: const Icon(Icons.notifications_outlined, size: 20),
+                      tooltip: l10n.setReminder,
+                      onPressed: onSetReminder,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
 
                   // More options menu
                   PopupMenuButton<String>(
