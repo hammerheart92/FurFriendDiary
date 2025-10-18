@@ -1115,4 +1115,69 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get sunday => 'Duminică';
+
+  @override
+  String get weightTracking => 'Urmărirea Greutății';
+
+  @override
+  String get addWeight => 'Adaugă Greutate';
+
+  @override
+  String get editWeight => 'Editează Greutatea';
+
+  @override
+  String get deleteWeight => 'Șterge Greutatea';
+
+  @override
+  String get deleteWeightConfirm =>
+      'Sigur doriți să ștergeți această înregistrare de greutate?';
+
+  @override
+  String get weightDeleted => 'Înregistrarea greutății a fost ștearsă';
+
+  @override
+  String get currentWeight => 'Greutatea Curentă';
+
+  @override
+  String get weight => 'Greutate';
+
+  @override
+  String get weightTrend => 'Tendința Greutății';
+
+  @override
+  String get history => 'Istoric';
+
+  @override
+  String get noWeightEntries => 'Nu există înregistrări de greutate';
+
+  @override
+  String get addWeightToTrack =>
+      'Începeți să urmăriți greutatea animalului pentru a monitoriza sănătatea în timp';
+
+  @override
+  String get pleaseEnterWeight => 'Vă rugăm să introduceți greutatea';
+
+  @override
+  String get pleaseEnterValidWeight =>
+      'Vă rugăm să introduceți o greutate validă';
+
+  @override
+  String get weightAdded => 'Înregistrarea greutății a fost adăugată';
+
+  @override
+  String get weightUpdated => 'Înregistrarea greutății a fost actualizată';
+
+  @override
+  String get aboutWeightTracking => 'Despre Urmărirea Greutății';
+
+  @override
+  String get weightTrackingInfo =>
+      'Monitorizarea regulată a greutății ajută la detectarea problemelor de sănătate timpuriu. Urmăriți greutatea animalului în momente consistente (cum ar fi cântăriri săptămânale) pentru cele mai precise tendințe.';
+
+  @override
+  String get optionalNotes =>
+      'Opțional: Adăugați notițe despre dietă, activitate sau sănătate';
+
+  @override
+  String get info => 'Info';
 }

@@ -2137,6 +2137,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sunday'**
   String get sunday;
+
+  /// No description provided for @weightTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight Tracking'**
+  String get weightTracking;
+
+  /// No description provided for @addWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Weight'**
+  String get addWeight;
+
+  /// No description provided for @editWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Weight'**
+  String get editWeight;
+
+  /// No description provided for @deleteWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Weight'**
+  String get deleteWeight;
+
+  /// No description provided for @deleteWeightConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this weight entry?'**
+  String get deleteWeightConfirm;
+
+  /// No description provided for @weightDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight entry deleted'**
+  String get weightDeleted;
+
+  /// No description provided for @currentWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Weight'**
+  String get currentWeight;
+
+  /// No description provided for @weight.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight'**
+  String get weight;
+
+  /// No description provided for @weightTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight Trend'**
+  String get weightTrend;
+
+  /// No description provided for @history.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get history;
+
+  /// No description provided for @noWeightEntries.
+  ///
+  /// In en, this message translates to:
+  /// **'No weight entries yet'**
+  String get noWeightEntries;
+
+  /// No description provided for @addWeightToTrack.
+  ///
+  /// In en, this message translates to:
+  /// **'Start tracking your pet\'s weight to monitor their health over time'**
+  String get addWeightToTrack;
+
+  /// No description provided for @pleaseEnterWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a weight'**
+  String get pleaseEnterWeight;
+
+  /// No description provided for @pleaseEnterValidWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid weight'**
+  String get pleaseEnterValidWeight;
+
+  /// No description provided for @weightAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight entry added'**
+  String get weightAdded;
+
+  /// No description provided for @weightUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight entry updated'**
+  String get weightUpdated;
+
+  /// No description provided for @aboutWeightTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'About Weight Tracking'**
+  String get aboutWeightTracking;
+
+  /// No description provided for @weightTrackingInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Regular weight monitoring helps detect health issues early. Track your pet\'s weight at consistent times (like weekly weigh-ins) for the most accurate trends.'**
+  String get weightTrackingInfo;
+
+  /// No description provided for @optionalNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional: Add notes about diet, activity, or health'**
+  String get optionalNotes;
+
+  /// No description provided for @info.
+  ///
+  /// In en, this message translates to:
+  /// **'Info'**
+  String get info;
 }
 
 class _AppLocalizationsDelegate

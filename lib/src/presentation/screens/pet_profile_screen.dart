@@ -6,6 +6,7 @@ import 'package:logger/logger.dart';
 import 'package:fur_friend_diary/src/domain/models/pet_profile.dart';
 import 'package:fur_friend_diary/src/presentation/providers/pet_profile_provider.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
+import 'package:fur_friend_diary/src/ui/screens/weight_history_screen.dart';
 
 final _logger = Logger();
 
@@ -205,9 +206,71 @@ class PetProfileScreen extends ConsumerWidget {
                   ),
                 ),
               ],
+              const SizedBox(height: 16),
+              const Divider(height: 1),
+              const SizedBox(height: 8),
+              // Quick Actions Section
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  _buildQuickActionChip(
+                    context,
+                    icon: Icons.monitor_weight_outlined,
+                    label: l10n.weightTracking,
+                    onTap: () => _navigateToWeightTracking(context),
+                  ),
+                  _buildQuickActionChip(
+                    context,
+                    icon: Icons.medical_services,
+                    label: l10n.medications,
+                    onTap: () => context.go('/meds'),
+                  ),
+                  _buildQuickActionChip(
+                    context,
+                    icon: Icons.event,
+                    label: l10n.appointments,
+                    onTap: () => context.go('/appointments'),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildQuickActionChip(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    final theme = Theme.of(context);
+    return ActionChip(
+      avatar: Icon(
+        icon,
+        size: 18,
+        color: theme.colorScheme.onPrimaryContainer,
+      ),
+      label: Text(label),
+      labelStyle: TextStyle(
+        color: theme.colorScheme.onPrimaryContainer,
+        fontSize: 12,
+      ),
+      backgroundColor: theme.colorScheme.primaryContainer.withValues(alpha: 200),
+      side: BorderSide(
+        color: theme.colorScheme.onPrimaryContainer.withValues(alpha: 100),
+      ),
+      onPressed: onTap,
+    );
+  }
+
+  void _navigateToWeightTracking(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const WeightHistoryScreen(),
       ),
     );
   }

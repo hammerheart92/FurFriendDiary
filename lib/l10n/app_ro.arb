@@ -366,5 +366,26 @@
   "thursday": "Joi",
   "friday": "Vineri",
   "saturday": "Sâmbătă",
-  "sunday": "Duminică"
+  "sunday": "Duminică",
+
+  "weightTracking": "Urmărirea Greutății",
+  "addWeight": "Adaugă Greutate",
+  "editWeight": "Editează Greutatea",
+  "deleteWeight": "Șterge Greutatea",
+  "deleteWeightConfirm": "Sigur doriți să ștergeți această înregistrare de greutate?",
+  "weightDeleted": "Înregistrarea greutății a fost ștearsă",
+  "currentWeight": "Greutatea Curentă",
+  "weight": "Greutate",
+  "weightTrend": "Tendința Greutății",
+  "history": "Istoric",
+  "noWeightEntries": "Nu există înregistrări de greutate",
+  "addWeightToTrack": "Începeți să urmăriți greutatea animalului pentru a monitoriza sănătatea în timp",
+  "pleaseEnterWeight": "Vă rugăm să introduceți greutatea",
+  "pleaseEnterValidWeight": "Vă rugăm să introduceți o greutate validă",
+  "weightAdded": "Înregistrarea greutății a fost adăugată",
+  "weightUpdated": "Înregistrarea greutății a fost actualizată",
+  "aboutWeightTracking": "Despre Urmărirea Greutății",
+  "weightTrackingInfo": "Monitorizarea regulată a greutății ajută la detectarea problemelor de sănătate timpuriu. Urmăriți greutatea animalului în momente consistente (cum ar fi cântăriri săptămânale) pentru cele mai precise tendințe.",
+  "optionalNotes": "Opțional: Adăugați notițe despre dietă, activitate sau sănătate",
+  "info": "Info"
 }

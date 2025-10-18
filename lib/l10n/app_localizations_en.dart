@@ -1106,4 +1106,68 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sunday => 'Sunday';
+
+  @override
+  String get weightTracking => 'Weight Tracking';
+
+  @override
+  String get addWeight => 'Add Weight';
+
+  @override
+  String get editWeight => 'Edit Weight';
+
+  @override
+  String get deleteWeight => 'Delete Weight';
+
+  @override
+  String get deleteWeightConfirm =>
+      'Are you sure you want to delete this weight entry?';
+
+  @override
+  String get weightDeleted => 'Weight entry deleted';
+
+  @override
+  String get currentWeight => 'Current Weight';
+
+  @override
+  String get weight => 'Weight';
+
+  @override
+  String get weightTrend => 'Weight Trend';
+
+  @override
+  String get history => 'History';
+
+  @override
+  String get noWeightEntries => 'No weight entries yet';
+
+  @override
+  String get addWeightToTrack =>
+      'Start tracking your pet\'s weight to monitor their health over time';
+
+  @override
+  String get pleaseEnterWeight => 'Please enter a weight';
+
+  @override
+  String get pleaseEnterValidWeight => 'Please enter a valid weight';
+
+  @override
+  String get weightAdded => 'Weight entry added';
+
+  @override
+  String get weightUpdated => 'Weight entry updated';
+
+  @override
+  String get aboutWeightTracking => 'About Weight Tracking';
+
+  @override
+  String get weightTrackingInfo =>
+      'Regular weight monitoring helps detect health issues early. Track your pet\'s weight at consistent times (like weekly weigh-ins) for the most accurate trends.';
+
+  @override
+  String get optionalNotes =>
+      'Optional: Add notes about diet, activity, or health';
+
+  @override
+  String get info => 'Info';
 }
