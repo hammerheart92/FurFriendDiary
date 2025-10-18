@@ -387,5 +387,42 @@
   "aboutWeightTracking": "Despre Urmărirea Greutății",
   "weightTrackingInfo": "Monitorizarea regulată a greutății ajută la detectarea problemelor de sănătate timpuriu. Urmăriți greutatea animalului în momente consistente (cum ar fi cântăriri săptămânale) pentru cele mai precise tendințe.",
   "optionalNotes": "Opțional: Adăugați notițe despre dietă, activitate sau sănătate",
-  "info": "Info"
+  "info": "Info",
+
+  "photoGallery": "Galerie Foto",
+  "addPhoto": "Adaugă Fotografie",
+  "takePhoto": "Fă o Poză",
+  "chooseFromGallery": "Alege din Galerie",
+  "chooseMultiplePhotos": "Selectează Mai Multe Fotografii",
+  "deletePhoto": "Șterge Fotografia",
+  "deletePhotoConfirm": "Sigur doriți să ștergeți această fotografie? Această acțiune nu poate fi anulată.",
+  "photoDeleted": "Fotografia a fost ștearsă",
+  "editCaption": "Editează Descrierea",
+  "caption": "Descriere",
+  "addCaption": "Adaugă o descriere...",
+  "noCaption": "Fără descriere",
+  "captionSaved": "Descrierea a fost salvată",
+  "noPhotos": "Nu există fotografii",
+  "addFirstPhoto": "Adaugă prima fotografie pentru a crea amintiri",
+  "photoAdded": "Fotografia a fost adăugată cu succes",
+  "photosAdded": "{count, plural, =1{1 fotografie adăugată} other{{count} fotografii adăugate}}",
+  "@photosAdded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "processingPhotos": "Se procesează fotografiile...",
+  "cameraPermissionDenied": "Permisiunea camerei este necesară pentru a face fotografii",
+  "storagePermissionDenied": "Permisiunea de stocare este necesară pentru a accesa fotografiile",
+  "galleryPermissionDenied": "Permisiunea galeriei este necesară pentru a selecta fotografii",
+  "permissionDenied": "Permisiune Refuzată",
+  "openSettings": "Deschide Setările",
+  "storageUsed": "Spațiu Utilizat",
+  "photos": "Fotografii",
+  "dateTaken": "Data Pozei",
+  "dateAdded": "Data Adăugării",
+  "fileSize": "Dimensiune Fișier",
+  "photoDetails": "Detalii Fotografie"
 }

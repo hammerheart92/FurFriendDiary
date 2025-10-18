@@ -1180,4 +1180,103 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get info => 'Info';
+
+  @override
+  String get photoGallery => 'Galerie Foto';
+
+  @override
+  String get addPhoto => 'Adaugă Fotografie';
+
+  @override
+  String get takePhoto => 'Fă o Poză';
+
+  @override
+  String get chooseFromGallery => 'Alege din Galerie';
+
+  @override
+  String get chooseMultiplePhotos => 'Selectează Mai Multe Fotografii';
+
+  @override
+  String get deletePhoto => 'Șterge Fotografia';
+
+  @override
+  String get deletePhotoConfirm =>
+      'Sigur doriți să ștergeți această fotografie? Această acțiune nu poate fi anulată.';
+
+  @override
+  String get photoDeleted => 'Fotografia a fost ștearsă';
+
+  @override
+  String get editCaption => 'Editează Descrierea';
+
+  @override
+  String get caption => 'Descriere';
+
+  @override
+  String get addCaption => 'Adaugă o descriere...';
+
+  @override
+  String get noCaption => 'Fără descriere';
+
+  @override
+  String get captionSaved => 'Descrierea a fost salvată';
+
+  @override
+  String get noPhotos => 'Nu există fotografii';
+
+  @override
+  String get addFirstPhoto => 'Adaugă prima fotografie pentru a crea amintiri';
+
+  @override
+  String get photoAdded => 'Fotografia a fost adăugată cu succes';
+
+  @override
+  String photosAdded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count fotografii adăugate',
+      one: '1 fotografie adăugată',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get processingPhotos => 'Se procesează fotografiile...';
+
+  @override
+  String get cameraPermissionDenied =>
+      'Permisiunea camerei este necesară pentru a face fotografii';
+
+  @override
+  String get storagePermissionDenied =>
+      'Permisiunea de stocare este necesară pentru a accesa fotografiile';
+
+  @override
+  String get galleryPermissionDenied =>
+      'Permisiunea galeriei este necesară pentru a selecta fotografii';
+
+  @override
+  String get permissionDenied => 'Permisiune Refuzată';
+
+  @override
+  String get openSettings => 'Deschide Setările';
+
+  @override
+  String get storageUsed => 'Spațiu Utilizat';
+
+  @override
+  String get photos => 'Fotografii';
+
+  @override
+  String get dateTaken => 'Data Pozei';
+
+  @override
+  String get dateAdded => 'Data Adăugării';
+
+  @override
+  String get fileSize => 'Dimensiune Fișier';
+
+  @override
+  String get photoDetails => 'Detalii Fotografie';
 }

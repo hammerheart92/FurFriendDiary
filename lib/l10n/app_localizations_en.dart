@@ -1170,4 +1170,103 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get info => 'Info';
+
+  @override
+  String get photoGallery => 'Photo Gallery';
+
+  @override
+  String get addPhoto => 'Add Photo';
+
+  @override
+  String get takePhoto => 'Take Photo';
+
+  @override
+  String get chooseFromGallery => 'Choose from Gallery';
+
+  @override
+  String get chooseMultiplePhotos => 'Choose Multiple Photos';
+
+  @override
+  String get deletePhoto => 'Delete Photo';
+
+  @override
+  String get deletePhotoConfirm =>
+      'Are you sure you want to delete this photo? This action cannot be undone.';
+
+  @override
+  String get photoDeleted => 'Photo deleted';
+
+  @override
+  String get editCaption => 'Edit Caption';
+
+  @override
+  String get caption => 'Caption';
+
+  @override
+  String get addCaption => 'Add a caption...';
+
+  @override
+  String get noCaption => 'No caption';
+
+  @override
+  String get captionSaved => 'Caption saved';
+
+  @override
+  String get noPhotos => 'No photos yet';
+
+  @override
+  String get addFirstPhoto => 'Add your first photo to create memories';
+
+  @override
+  String get photoAdded => 'Photo added successfully';
+
+  @override
+  String photosAdded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count photos added',
+      one: '1 photo added',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get processingPhotos => 'Processing photos...';
+
+  @override
+  String get cameraPermissionDenied =>
+      'Camera permission is required to take photos';
+
+  @override
+  String get storagePermissionDenied =>
+      'Storage permission is required to access photos';
+
+  @override
+  String get galleryPermissionDenied =>
+      'Gallery permission is required to select photos';
+
+  @override
+  String get permissionDenied => 'Permission Denied';
+
+  @override
+  String get openSettings => 'Open Settings';
+
+  @override
+  String get storageUsed => 'Storage Used';
+
+  @override
+  String get photos => 'Photos';
+
+  @override
+  String get dateTaken => 'Date Taken';
+
+  @override
+  String get dateAdded => 'Date Added';
+
+  @override
+  String get fileSize => 'File Size';
+
+  @override
+  String get photoDetails => 'Photo Details';
 }

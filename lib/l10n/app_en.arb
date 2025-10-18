@@ -523,5 +523,42 @@
   "aboutWeightTracking": "About Weight Tracking",
   "weightTrackingInfo": "Regular weight monitoring helps detect health issues early. Track your pet's weight at consistent times (like weekly weigh-ins) for the most accurate trends.",
   "optionalNotes": "Optional: Add notes about diet, activity, or health",
-  "info": "Info"
+  "info": "Info",
+
+  "photoGallery": "Photo Gallery",
+  "addPhoto": "Add Photo",
+  "takePhoto": "Take Photo",
+  "chooseFromGallery": "Choose from Gallery",
+  "chooseMultiplePhotos": "Choose Multiple Photos",
+  "deletePhoto": "Delete Photo",
+  "deletePhotoConfirm": "Are you sure you want to delete this photo? This action cannot be undone.",
+  "photoDeleted": "Photo deleted",
+  "editCaption": "Edit Caption",
+  "caption": "Caption",
+  "addCaption": "Add a caption...",
+  "noCaption": "No caption",
+  "captionSaved": "Caption saved",
+  "noPhotos": "No photos yet",
+  "addFirstPhoto": "Add your first photo to create memories",
+  "photoAdded": "Photo added successfully",
+  "photosAdded": "{count, plural, =1{1 photo added} other{{count} photos added}}",
+  "@photosAdded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "processingPhotos": "Processing photos...",
+  "cameraPermissionDenied": "Camera permission is required to take photos",
+  "storagePermissionDenied": "Storage permission is required to access photos",
+  "galleryPermissionDenied": "Gallery permission is required to select photos",
+  "permissionDenied": "Permission Denied",
+  "openSettings": "Open Settings",
+  "storageUsed": "Storage Used",
+  "photos": "Photos",
+  "dateTaken": "Date Taken",
+  "dateAdded": "Date Added",
+  "fileSize": "File Size",
+  "photoDetails": "Photo Details"
 }

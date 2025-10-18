@@ -2257,6 +2257,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Info'**
   String get info;
+
+  /// No description provided for @photoGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo Gallery'**
+  String get photoGallery;
+
+  /// No description provided for @addPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Photo'**
+  String get addPhoto;
+
+  /// No description provided for @takePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take Photo'**
+  String get takePhoto;
+
+  /// No description provided for @chooseFromGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from Gallery'**
+  String get chooseFromGallery;
+
+  /// No description provided for @chooseMultiplePhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Multiple Photos'**
+  String get chooseMultiplePhotos;
+
+  /// No description provided for @deletePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Photo'**
+  String get deletePhoto;
+
+  /// No description provided for @deletePhotoConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this photo? This action cannot be undone.'**
+  String get deletePhotoConfirm;
+
+  /// No description provided for @photoDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo deleted'**
+  String get photoDeleted;
+
+  /// No description provided for @editCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Caption'**
+  String get editCaption;
+
+  /// No description provided for @caption.
+  ///
+  /// In en, this message translates to:
+  /// **'Caption'**
+  String get caption;
+
+  /// No description provided for @addCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a caption...'**
+  String get addCaption;
+
+  /// No description provided for @noCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'No caption'**
+  String get noCaption;
+
+  /// No description provided for @captionSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Caption saved'**
+  String get captionSaved;
+
+  /// No description provided for @noPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'No photos yet'**
+  String get noPhotos;
+
+  /// No description provided for @addFirstPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first photo to create memories'**
+  String get addFirstPhoto;
+
+  /// No description provided for @photoAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo added successfully'**
+  String get photoAdded;
+
+  /// No description provided for @photosAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 photo added} other{{count} photos added}}'**
+  String photosAdded(int count);
+
+  /// No description provided for @processingPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing photos...'**
+  String get processingPhotos;
+
+  /// No description provided for @cameraPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera permission is required to take photos'**
+  String get cameraPermissionDenied;
+
+  /// No description provided for @storagePermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage permission is required to access photos'**
+  String get storagePermissionDenied;
+
+  /// No description provided for @galleryPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery permission is required to select photos'**
+  String get galleryPermissionDenied;
+
+  /// No description provided for @permissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Permission Denied'**
+  String get permissionDenied;
+
+  /// No description provided for @openSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get openSettings;
+
+  /// No description provided for @storageUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage Used'**
+  String get storageUsed;
+
+  /// No description provided for @photos.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get photos;
+
+  /// No description provided for @dateTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'Date Taken'**
+  String get dateTaken;
+
+  /// No description provided for @dateAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Date Added'**
+  String get dateAdded;
+
+  /// No description provided for @fileSize.
+  ///
+  /// In en, this message translates to:
+  /// **'File Size'**
+  String get fileSize;
+
+  /// No description provided for @photoDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo Details'**
+  String get photoDetails;
 }
 
 class _AppLocalizationsDelegate

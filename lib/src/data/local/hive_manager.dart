@@ -10,6 +10,7 @@ import '../../domain/models/user_profile.dart';
 import '../../domain/models/time_of_day_model.dart';
 import '../../domain/models/reminder.dart';
 import '../../domain/models/weight_entry.dart';
+import '../../domain/models/pet_photo.dart';
 
 class HiveManager {
   final logger = Logger();
@@ -29,6 +30,7 @@ class HiveManager {
   static const String walkBoxName = 'walks';
   static const String reminderBoxName = 'reminders';
   static const String weightBoxName = 'weight_entries';
+  static const String petPhotoBoxName = 'pet_photos';
   static const String settingsBoxName = 'settings';
   static const String appPrefsBoxName = 'app_prefs';
 
@@ -41,6 +43,7 @@ class HiveManager {
   Box<Walk>? _walkBox;
   Box<Reminder>? _reminderBox;
   Box<WeightEntry>? _weightBox;
+  Box<PetPhoto>? _petPhotoBox;
   Box? _settingsBox;
   Box? _appPrefsBox;
   
@@ -152,6 +155,11 @@ class HiveManager {
       Hive.registerAdapter(WeightUnitAdapter());
       logger.d("✅ DEBUG: WeightUnit adapter registered with typeId 15");
     }
+
+    if (!Hive.isAdapterRegistered(16)) {
+      Hive.registerAdapter(PetPhotoAdapter());
+      logger.d("✅ DEBUG: PetPhoto adapter registered with typeId 16");
+    }
   }
   
   /// Open all boxes in the correct order
@@ -171,6 +179,7 @@ class HiveManager {
     _reportBox = await _openBox<ReportEntry>(reportBoxName);
     _reminderBox = await _openBox<Reminder>(reminderBoxName);
     _weightBox = await _openBox<WeightEntry>(weightBoxName);
+    _petPhotoBox = await _openBox<PetPhoto>(petPhotoBoxName);
 
     // Open settings boxes
     _settingsBox = await _openBox(settingsBoxName);
@@ -277,6 +286,14 @@ class HiveManager {
     return _weightBox!;
   }
 
+  /// Get pet photos box
+  Box<PetPhoto> get petPhotoBox {
+    if (_petPhotoBox == null || !_petPhotoBox!.isOpen) {
+      throw HiveError("Pet photos box is not initialized. Call HiveManager.initialize() first.");
+    }
+    return _petPhotoBox!;
+  }
+
   /// Get settings box
   Box get settingsBox {
     if (_settingsBox == null || !_settingsBox!.isOpen) {
@@ -329,6 +346,7 @@ class HiveManager {
       await Hive.deleteBoxFromDisk(reportBoxName);
       await Hive.deleteBoxFromDisk(reminderBoxName);
       await Hive.deleteBoxFromDisk(weightBoxName);
+      await Hive.deleteBoxFromDisk(petPhotoBoxName);
       await Hive.deleteBoxFromDisk(settingsBoxName);
       await Hive.deleteBoxFromDisk(appPrefsBoxName);
 

@@ -16,6 +16,8 @@ import '../../ui/screens/profile_edit_screen.dart';
 import '../../ui/screens/terms_screen.dart';
 import '../screens/pet_profile_setup_screen.dart';
 import '../screens/pet_profile_screen.dart';
+import '../screens/photo_gallery_screen.dart';
+import '../screens/photo_detail_screen.dart';
 import '../providers/pet_profile_provider.dart';
 
 final logger = Logger();
@@ -84,6 +86,18 @@ GoRouter createRouter() => GoRouter(
       builder: (context, state) {
         final medicationId = state.pathParameters['medicationId']!;
         return MedicationDetailScreen(medicationId: medicationId);
+      },
+    ),
+    // Photo gallery routes
+    GoRoute(
+      path: '/photo-gallery',
+      builder: (context, state) => const PhotoGalleryScreen(),
+    ),
+    GoRoute(
+      path: '/photo-detail/:photoId',
+      builder: (context, state) {
+        final photoId = state.pathParameters['photoId']!;
+        return PhotoDetailScreen(photoId: photoId);
       },
     ),
     // Settings routes

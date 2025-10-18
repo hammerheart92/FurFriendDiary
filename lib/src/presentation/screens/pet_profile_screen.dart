@@ -222,6 +222,12 @@ class PetProfileScreen extends ConsumerWidget {
                   ),
                   _buildQuickActionChip(
                     context,
+                    icon: Icons.photo_library,
+                    label: l10n.photoGallery,
+                    onTap: () => context.push('/photo-gallery'),
+                  ),
+                  _buildQuickActionChip(
+                    context,
                     icon: Icons.medical_services,
                     label: l10n.medications,
                     onTap: () => context.go('/meds'),
