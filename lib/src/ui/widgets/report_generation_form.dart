@@ -17,7 +17,8 @@ class ReportGenerationForm extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<ReportGenerationForm> createState() => _ReportGenerationFormState();
+  ConsumerState<ReportGenerationForm> createState() =>
+      _ReportGenerationFormState();
 }
 
 class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
@@ -113,7 +114,8 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
                           child: Text(
                             _getReportTypeDescription(_reportType, l10n),
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface.withOpacity(0.7),
+                              color:
+                                  theme.colorScheme.onSurface.withOpacity(0.7),
                             ),
                           ),
                         ),
@@ -147,7 +149,8 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
                     contentPadding: EdgeInsets.zero,
                     leading: const Icon(Icons.date_range),
                     title: Text(l10n.startDate),
-                    subtitle: Text(DateFormat('MMMM dd, yyyy').format(_startDate)),
+                    subtitle:
+                        Text(DateFormat('MMMM dd, yyyy').format(_startDate)),
                     onTap: () => _selectStartDate(),
                   ),
 
@@ -156,7 +159,8 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
                     contentPadding: EdgeInsets.zero,
                     leading: const Icon(Icons.event),
                     title: Text(l10n.endDate),
-                    subtitle: Text(DateFormat('MMMM dd, yyyy').format(_endDate)),
+                    subtitle:
+                        Text(DateFormat('MMMM dd, yyyy').format(_endDate)),
                     onTap: () => _selectEndDate(),
                   ),
 
@@ -235,9 +239,11 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
                 child: SizedBox(
                   height: 56,
                   child: OutlinedButton(
-                    onPressed: _isLoading ? null : () {
-                      widget.onCancelled?.call();
-                    },
+                    onPressed: _isLoading
+                        ? null
+                        : () {
+                            widget.onCancelled?.call();
+                          },
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(color: theme.colorScheme.outline),
                       shape: RoundedRectangleBorder(
@@ -246,7 +252,8 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
                     ),
                     child: Text(
                       l10n.cancel,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -260,7 +267,9 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
                 child: SizedBox(
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: _isLoading || _endDate.isBefore(_startDate) ? null : _generateReport,
+                    onPressed: _isLoading || _endDate.isBefore(_startDate)
+                        ? null
+                        : _generateReport,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: theme.colorScheme.primary,
                       foregroundColor: theme.colorScheme.onPrimary,
@@ -272,7 +281,8 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
                         ? const CircularProgressIndicator(color: Colors.white)
                         : Text(
                             l10n.generateReport,
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                   ),
                 ),
@@ -286,8 +296,9 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
 
   Widget _buildQuickRangeChip(String label, int days) {
     final theme = Theme.of(context);
-    final isSelected = _startDate.isAtSameMomentAs(DateTime.now().subtract(Duration(days: days))) &&
-                      _endDate.isAtSameMomentAs(DateTime.now());
+    final isSelected = _startDate
+            .isAtSameMomentAs(DateTime.now().subtract(Duration(days: days))) &&
+        _endDate.isAtSameMomentAs(DateTime.now());
 
     return FilterChip(
       label: Text(label),
@@ -439,24 +450,36 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
     }
   }
 
-  Future<Map<String, dynamic>> _generateReportData(String reportType, String petId) async {
+  Future<Map<String, dynamic>> _generateReportData(
+      String reportType, String petId) async {
     // Get data from providers
-    final medications = await ref.read(medicationsByPetIdProvider(petId).future);
-    final appointments = await ref.read(appointmentsByPetIdProvider(petId).future);
+    final medications =
+        await ref.read(medicationsByPetIdProvider(petId).future);
+    final appointments =
+        await ref.read(appointmentsByPetIdProvider(petId).future);
     final feedings = await ref.read(feedingsByPetIdProvider(petId).future);
 
     // Filter data by date range
-    final filteredMedications = medications.where((med) =>
-        med.startDate.isAfter(_startDate.subtract(const Duration(days: 1))) &&
-        med.startDate.isBefore(_endDate.add(const Duration(days: 1)))).toList();
+    final filteredMedications = medications
+        .where((med) =>
+            med.startDate
+                .isAfter(_startDate.subtract(const Duration(days: 1))) &&
+            med.startDate.isBefore(_endDate.add(const Duration(days: 1))))
+        .toList();
 
-    final filteredAppointments = appointments.where((apt) =>
-        apt.appointmentDate.isAfter(_startDate.subtract(const Duration(days: 1))) &&
-        apt.appointmentDate.isBefore(_endDate.add(const Duration(days: 1)))).toList();
+    final filteredAppointments = appointments
+        .where((apt) =>
+            apt.appointmentDate
+                .isAfter(_startDate.subtract(const Duration(days: 1))) &&
+            apt.appointmentDate.isBefore(_endDate.add(const Duration(days: 1))))
+        .toList();
 
-    final filteredFeedings = feedings.where((feed) =>
-        feed.dateTime.isAfter(_startDate.subtract(const Duration(days: 1))) &&
-        feed.dateTime.isBefore(_endDate.add(const Duration(days: 1)))).toList();
+    final filteredFeedings = feedings
+        .where((feed) =>
+            feed.dateTime
+                .isAfter(_startDate.subtract(const Duration(days: 1))) &&
+            feed.dateTime.isBefore(_endDate.add(const Duration(days: 1))))
+        .toList();
 
     switch (reportType) {
       case 'Health Summary':
@@ -466,9 +489,11 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
           'feedings': filteredFeedings.map((f) => f.toJson()).toList(),
           'summary': {
             'totalMedications': filteredMedications.length,
-            'activeMedications': filteredMedications.where((m) => m.isActive).length,
+            'activeMedications':
+                filteredMedications.where((m) => m.isActive).length,
             'totalAppointments': filteredAppointments.length,
-            'completedAppointments': filteredAppointments.where((a) => a.isCompleted).length,
+            'completedAppointments':
+                filteredAppointments.where((a) => a.isCompleted).length,
             'totalFeedings': filteredFeedings.length,
           },
         };
@@ -478,9 +503,12 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
           'medications': filteredMedications.map((m) => m.toJson()).toList(),
           'summary': {
             'totalMedications': filteredMedications.length,
-            'activeMedications': filteredMedications.where((m) => m.isActive).length,
-            'inactiveMedications': filteredMedications.where((m) => !m.isActive).length,
-            'medicationsByMethod': _groupMedicationsByMethod(filteredMedications),
+            'activeMedications':
+                filteredMedications.where((m) => m.isActive).length,
+            'inactiveMedications':
+                filteredMedications.where((m) => !m.isActive).length,
+            'medicationsByMethod':
+                _groupMedicationsByMethod(filteredMedications),
           },
         };
 
@@ -489,7 +517,8 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
           'feedings': filteredFeedings.map((f) => f.toJson()).toList(),
           'summary': {
             'totalFeedings': filteredFeedings.length,
-            'averageFeedingsPerDay': filteredFeedings.length / (_endDate.difference(_startDate).inDays + 1),
+            'averageFeedingsPerDay': filteredFeedings.length /
+                (_endDate.difference(_startDate).inDays + 1),
             'feedingsByType': _groupFeedingsByType(filteredFeedings),
           },
         };
@@ -499,9 +528,12 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
           'appointments': filteredAppointments.map((a) => a.toJson()).toList(),
           'summary': {
             'totalAppointments': filteredAppointments.length,
-            'completedAppointments': filteredAppointments.where((a) => a.isCompleted).length,
-            'pendingAppointments': filteredAppointments.where((a) => !a.isCompleted).length,
-            'appointmentsByReason': _groupAppointmentsByReason(filteredAppointments),
+            'completedAppointments':
+                filteredAppointments.where((a) => a.isCompleted).length,
+            'pendingAppointments':
+                filteredAppointments.where((a) => !a.isCompleted).length,
+            'appointmentsByReason':
+                _groupAppointmentsByReason(filteredAppointments),
           },
         };
 

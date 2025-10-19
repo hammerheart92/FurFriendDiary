@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import '../../l10n/app_localizations.dart';
 
 /// Returns a localized relative date label (e.g., "Today", "Tomorrow", "Friday", or a formatted date).
-/// 
+///
 /// The function normalizes dates to local midnight to ensure correct day calculation,
 /// regardless of the time portion of the DateTime.
 String relativeDateLabel(BuildContext context, DateTime dateTime) {
@@ -16,7 +16,7 @@ String relativeDateLabel(BuildContext context, DateTime dateTime) {
   // Normalize both dates to midnight for accurate day comparison
   final today = DateTime(now.year, now.month, now.day);
   final targetDateOnly = DateTime(target.year, target.month, target.day);
-  
+
   // Calculate difference in days
   final diff = targetDateOnly.difference(today).inDays;
 
@@ -61,10 +61,10 @@ String localizedFullDate(BuildContext context, DateTime dateTime) {
 int daysUntil(DateTime dateTime) {
   final now = DateTime.now().toLocal();
   final target = dateTime.toLocal();
-  
+
   final today = DateTime(now.year, now.month, now.day);
   final targetDateOnly = DateTime(target.year, target.month, target.day);
-  
+
   return targetDateOnly.difference(today).inDays;
 }
 
@@ -84,4 +84,3 @@ String timeAgo(BuildContext context, DateTime dateTime) {
     return l10n.justNow;
   }
 }
-

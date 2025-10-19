@@ -46,7 +46,8 @@ class _AddWeightDialogState extends ConsumerState<AddWeightDialog> {
     final l10n = AppLocalizations.of(context);
 
     return AlertDialog(
-      title: Text(widget.existingEntry == null ? l10n.addWeight : l10n.editWeight),
+      title:
+          Text(widget.existingEntry == null ? l10n.addWeight : l10n.editWeight),
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -61,7 +62,8 @@ class _AddWeightDialogState extends ConsumerState<AddWeightDialog> {
                   suffixText: 'kg',
                   border: const OutlineInputBorder(),
                 ),
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
                 ],
@@ -157,15 +159,16 @@ class _AddWeightDialogState extends ConsumerState<AddWeightDialog> {
           : _notesController.text.trim();
 
       final entry = widget.existingEntry?.copyWith(
-        weight: weight,
-        date: _selectedDate,
-        notes: notes,
-      ) ?? WeightEntry(
-        petId: currentPet.id,
-        weight: weight,
-        date: _selectedDate,
-        notes: notes,
-      );
+            weight: weight,
+            date: _selectedDate,
+            notes: notes,
+          ) ??
+          WeightEntry(
+            petId: currentPet.id,
+            weight: weight,
+            date: _selectedDate,
+            notes: notes,
+          );
 
       final repository = ref.read(weightRepositoryProvider);
       if (widget.existingEntry == null) {
@@ -202,4 +205,3 @@ class _AddWeightDialogState extends ConsumerState<AddWeightDialog> {
     }
   }
 }
-

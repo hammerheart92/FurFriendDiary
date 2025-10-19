@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../domain/models/medication_entry.dart';
+import '../../providers/inventory_providers.dart';
 import '../../../l10n/app_localizations.dart';
 
-class MedicationCard extends StatelessWidget {
+class MedicationCard extends ConsumerWidget {
   final MedicationEntry medication;
   final VoidCallback? onTap;
   final VoidCallback? onToggleStatus;
   final VoidCallback? onDelete;
   final VoidCallback? onSetReminder;
+  final VoidCallback? onMarkAsGiven;
+  final VoidCallback? onAddRefill;
 
   const MedicationCard({
     super.key,
@@ -17,12 +21,15 @@ class MedicationCard extends StatelessWidget {
     this.onToggleStatus,
     this.onDelete,
     this.onSetReminder,
+    this.onMarkAsGiven,
+    this.onAddRefill,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final stockStatus = ref.watch(stockStatusProvider(medication.id));
 
     return Card(
       elevation: 2,
@@ -74,7 +81,8 @@ class MedicationCard extends StatelessWidget {
                               Text(
                                 '${medication.dosage} • ${_getLocalizedFrequency(l10n, medication.frequency)}',
                                 style: theme.textTheme.bodySmall?.copyWith(
-                                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                  color: theme.colorScheme.onSurface
+                                      .withOpacity(0.7),
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -85,6 +93,12 @@ class MedicationCard extends StatelessWidget {
                       ],
                     ),
                   ),
+
+                  // Stock status badge
+                  if (medication.stockQuantity != null) ...[
+                    _buildStockBadge(stockStatus, theme, l10n),
+                    const SizedBox(width: 4),
+                  ],
 
                   // Status indicator
                   Container(
@@ -133,11 +147,17 @@ class MedicationCard extends StatelessWidget {
                         child: Row(
                           children: [
                             Icon(
-                              medication.isActive ? Icons.pause : Icons.play_arrow,
-                              color: medication.isActive ? Colors.orange : Colors.green,
+                              medication.isActive
+                                  ? Icons.pause
+                                  : Icons.play_arrow,
+                              color: medication.isActive
+                                  ? Colors.orange
+                                  : Colors.green,
                             ),
                             const SizedBox(width: 8),
-                            Text(medication.isActive ? 'Mark Inactive' : 'Mark Active'),
+                            Text(medication.isActive
+                                ? 'Mark Inactive'
+                                : 'Mark Active'),
                           ],
                         ),
                       ),
@@ -167,7 +187,8 @@ class MedicationCard extends StatelessWidget {
                     child: _buildDetailItem(
                       icon: Icons.medical_services,
                       label: l10n.method,
-                      value: _getLocalizedAdministrationMethod(l10n, medication.administrationMethod),
+                      value: _getLocalizedAdministrationMethod(
+                          l10n, medication.administrationMethod),
                       color: Colors.blue,
                     ),
                   ),
@@ -185,12 +206,18 @@ class MedicationCard extends StatelessWidget {
                   // End date or duration
                   Expanded(
                     child: _buildDetailItem(
-                      icon: medication.endDate != null ? Icons.event_available : Icons.all_inclusive,
-                      label: medication.endDate != null ? l10n.ends : l10n.duration,
+                      icon: medication.endDate != null
+                          ? Icons.event_available
+                          : Icons.all_inclusive,
+                      label: medication.endDate != null
+                          ? l10n.ends
+                          : l10n.duration,
                       value: medication.endDate != null
                           ? DateFormat('MMM dd').format(medication.endDate!)
                           : l10n.ongoing,
-                      color: medication.endDate != null ? Colors.orange : Colors.purple,
+                      color: medication.endDate != null
+                          ? Colors.orange
+                          : Colors.purple,
                     ),
                   ),
                 ],
@@ -224,7 +251,8 @@ class MedicationCard extends StatelessWidget {
                             l10n.administrationTimes,
                             style: theme.textTheme.bodySmall?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: theme.colorScheme.onSurface.withOpacity(0.7),
+                              color:
+                                  theme.colorScheme.onSurface.withOpacity(0.7),
                             ),
                           ),
                         ],
@@ -243,7 +271,8 @@ class MedicationCard extends StatelessWidget {
                               color: theme.colorScheme.primary.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: theme.colorScheme.primary.withOpacity(0.3),
+                                color:
+                                    theme.colorScheme.primary.withOpacity(0.3),
                               ),
                             ),
                             child: Text(
@@ -290,7 +319,8 @@ class MedicationCard extends StatelessWidget {
                             'Notes',
                             style: theme.textTheme.bodySmall?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: theme.colorScheme.onSurface.withOpacity(0.7),
+                              color:
+                                  theme.colorScheme.onSurface.withOpacity(0.7),
                             ),
                           ),
                         ],
@@ -306,9 +336,105 @@ class MedicationCard extends StatelessWidget {
                   ),
                 ),
               ],
+
+              // Inventory action buttons (if stock tracking enabled)
+              if (medication.stockQuantity != null &&
+                  medication.isActive &&
+                  (onMarkAsGiven != null || onAddRefill != null)) ...[
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    if (onMarkAsGiven != null)
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: onMarkAsGiven,
+                          icon:
+                              const Icon(Icons.check_circle_outline, size: 18),
+                          label: Text(l10n.markAsGiven),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                          ),
+                        ),
+                      ),
+                    if (onMarkAsGiven != null && onAddRefill != null)
+                      const SizedBox(width: 8),
+                    if (onAddRefill != null)
+                      Expanded(
+                        child: FilledButton.icon(
+                          onPressed: onAddRefill,
+                          icon: const Icon(Icons.add_shopping_cart, size: 18),
+                          label: Text(l10n.addRefill),
+                          style: FilledButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ],
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildStockBadge(
+      StockStatus status, ThemeData theme, AppLocalizations l10n) {
+    Color badgeColor;
+    IconData badgeIcon;
+    String badgeText;
+
+    switch (status) {
+      case StockStatus.critical:
+        badgeColor = Colors.red;
+        badgeIcon = Icons.warning;
+        badgeText = l10n.pillsLeft(
+          medication.stockQuantity.toString(),
+          medication.stockUnit ?? l10n.pills,
+        );
+        break;
+      case StockStatus.low:
+        badgeColor = Colors.orange;
+        badgeIcon = Icons.info;
+        badgeText = l10n.pillsLeft(
+          medication.stockQuantity.toString(),
+          medication.stockUnit ?? l10n.pills,
+        );
+        break;
+      case StockStatus.sufficient:
+        badgeColor = Colors.green;
+        badgeIcon = Icons.inventory;
+        badgeText = l10n.pillsLeft(
+          medication.stockQuantity.toString(),
+          medication.stockUnit ?? l10n.pills,
+        );
+        break;
+      case StockStatus.notTracked:
+        return const SizedBox.shrink();
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: badgeColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: badgeColor, width: 1.5),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(badgeIcon, size: 12, color: badgeColor),
+          const SizedBox(width: 4),
+          Text(
+            badgeText,
+            style: TextStyle(
+              color: badgeColor,
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -409,7 +535,8 @@ class MedicationCard extends StatelessWidget {
     }
   }
 
-  String _getLocalizedAdministrationMethod(AppLocalizations l10n, String methodKey) {
+  String _getLocalizedAdministrationMethod(
+      AppLocalizations l10n, String methodKey) {
     switch (methodKey) {
       case 'administrationMethodOral':
         return l10n.administrationMethodOral;

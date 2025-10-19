@@ -12,7 +12,8 @@ class ReportEntry extends HiveObject {
   String petId;
 
   @HiveField(2)
-  String reportType; // 'Health Summary', 'Medication History', 'Activity Report', 'Veterinary Records'
+  String
+      reportType; // 'Health Summary', 'Medication History', 'Activity Report', 'Veterinary Records'
 
   @HiveField(3)
   DateTime startDate;
@@ -42,33 +43,41 @@ class ReportEntry extends HiveObject {
     this.filters,
     DateTime? generatedDate,
     DateTime? createdAt,
-  }) : id = id ?? const Uuid().v4(),
-       generatedDate = generatedDate ?? DateTime.now(),
-       createdAt = createdAt ?? DateTime.now();
+  })  : id = id ?? const Uuid().v4(),
+        generatedDate = generatedDate ?? DateTime.now(),
+        createdAt = createdAt ?? DateTime.now();
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'petId': petId,
-    'reportType': reportType,
-    'startDate': startDate.toIso8601String(),
-    'endDate': endDate.toIso8601String(),
-    'generatedDate': generatedDate.toIso8601String(),
-    'data': data,
-    'filters': filters,
-    'createdAt': createdAt.toIso8601String(),
-  };
+        'id': id,
+        'petId': petId,
+        'reportType': reportType,
+        'startDate': startDate.toIso8601String(),
+        'endDate': endDate.toIso8601String(),
+        'generatedDate': generatedDate.toIso8601String(),
+        'data': data,
+        'filters': filters,
+        'createdAt': createdAt.toIso8601String(),
+      };
 
   factory ReportEntry.fromJson(Map<String, dynamic> json) => ReportEntry(
-    id: json['id'],
-    petId: json['petId'],
-    reportType: json['reportType'],
-    startDate: DateTime.parse(json['startDate']),
-    endDate: DateTime.parse(json['endDate']),
-    generatedDate: json['generatedDate'] != null ? DateTime.parse(json['generatedDate']) : DateTime.now(),
-    data: json['data'] != null ? Map<String, dynamic>.from(json['data'] as Map) : {},
-    filters: json['filters'] != null ? Map<String, dynamic>.from(json['filters'] as Map) : null,
-    createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : DateTime.now(),
-  );
+        id: json['id'],
+        petId: json['petId'],
+        reportType: json['reportType'],
+        startDate: DateTime.parse(json['startDate']),
+        endDate: DateTime.parse(json['endDate']),
+        generatedDate: json['generatedDate'] != null
+            ? DateTime.parse(json['generatedDate'])
+            : DateTime.now(),
+        data: json['data'] != null
+            ? Map<String, dynamic>.from(json['data'] as Map)
+            : {},
+        filters: json['filters'] != null
+            ? Map<String, dynamic>.from(json['filters'] as Map)
+            : null,
+        createdAt: json['createdAt'] != null
+            ? DateTime.parse(json['createdAt'])
+            : DateTime.now(),
+      );
 
   ReportEntry copyWith({
     String? id,

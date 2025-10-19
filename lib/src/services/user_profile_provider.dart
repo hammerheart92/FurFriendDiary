@@ -20,13 +20,13 @@ class UserProfileNotifier extends StateNotifier<UserProfile?> {
 
   Future<void> updateDisplayName(String displayName) async {
     if (state == null) return;
-    
+
     final updatedProfile = UserProfile(
       id: state!.id,
       name: displayName,
       profilePicturePath: state!.profilePicturePath,
     );
-    
+
     await _box.put('current_user', updatedProfile);
     state = updatedProfile;
   }
@@ -35,8 +35,10 @@ class UserProfileNotifier extends StateNotifier<UserProfile?> {
     if (state == null) return;
 
     // Delete old profile picture if it exists
-    if (state!.profilePicturePath != null && state!.profilePicturePath != photoPath) {
-      await _profilePictureService.deleteProfilePicture(state!.profilePicturePath);
+    if (state!.profilePicturePath != null &&
+        state!.profilePicturePath != photoPath) {
+      await _profilePictureService
+          .deleteProfilePicture(state!.profilePicturePath);
     }
 
     final updatedProfile = UserProfile(
@@ -44,7 +46,7 @@ class UserProfileNotifier extends StateNotifier<UserProfile?> {
       name: state!.name,
       profilePicturePath: photoPath,
     );
-    
+
     await _box.put('current_user', updatedProfile);
     state = updatedProfile;
   }
@@ -55,19 +57,21 @@ class UserProfileNotifier extends StateNotifier<UserProfile?> {
       name: displayName,
       profilePicturePath: photoPath,
     );
-    
+
     await _box.put('current_user', profile);
     state = profile;
   }
 
   Future<void> deleteProfilePicture() async {
     if (state?.profilePicturePath != null) {
-      await _profilePictureService.deleteProfilePicture(state!.profilePicturePath);
+      await _profilePictureService
+          .deleteProfilePicture(state!.profilePicturePath);
       await updateProfilePicture(null);
     }
   }
 }
 
-final userProfileProvider = StateNotifierProvider<UserProfileNotifier, UserProfile?>((ref) {
+final userProfileProvider =
+    StateNotifierProvider<UserProfileNotifier, UserProfile?>((ref) {
   return UserProfileNotifier();
 });

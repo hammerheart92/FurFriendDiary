@@ -7,5 +7,6 @@ abstract class AppointmentRepository {
   Future<void> updateAppointment(AppointmentEntry appointment);
   Future<void> deleteAppointment(String id);
   Future<AppointmentEntry?> getAppointmentById(String id);
-  Future<List<AppointmentEntry>> getAppointmentsByDateRange(String petId, DateTime start, DateTime end);
+  Future<List<AppointmentEntry>> getAppointmentsByDateRange(
+      String petId, DateTime start, DateTime end);
 }

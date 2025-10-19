@@ -14,17 +14,22 @@ final medicationsRepositoryProvider = Provider<MedicationRepository>((ref) {
 });
 
 // Medications state provider
-final medicationsProvider = StateNotifierProvider<MedicationsNotifier, AsyncValue<List<MedicationEntry>>>((ref) {
+final medicationsProvider = StateNotifierProvider<MedicationsNotifier,
+    AsyncValue<List<MedicationEntry>>>((ref) {
   final repository = ref.watch(medicationsRepositoryProvider);
   return MedicationsNotifier(repository);
 });
 
 // Active medications provider for a specific pet
-final activeMedicationsProvider = Provider.family<List<MedicationEntry>, String>((ref, petId) {
+final activeMedicationsProvider =
+    Provider.family<List<MedicationEntry>, String>((ref, petId) {
   final medicationsAsync = ref.watch(medicationsProvider);
   return medicationsAsync.when(
     data: (medications) {
-      return medications.where((medication) => medication.petId == petId && medication.isActive).toList();
+      return medications
+          .where(
+              (medication) => medication.petId == petId && medication.isActive)
+          .toList();
     },
     loading: () => [],
     error: (_, __) => [],
@@ -32,11 +37,14 @@ final activeMedicationsProvider = Provider.family<List<MedicationEntry>, String>
 });
 
 // All medications provider for a specific pet
-final petMedicationsProvider = Provider.family<List<MedicationEntry>, String>((ref, petId) {
+final petMedicationsProvider =
+    Provider.family<List<MedicationEntry>, String>((ref, petId) {
   final medicationsAsync = ref.watch(medicationsProvider);
   return medicationsAsync.when(
     data: (medications) {
-      return medications.where((medication) => medication.petId == petId).toList();
+      return medications
+          .where((medication) => medication.petId == petId)
+          .toList();
     },
     loading: () => [],
     error: (_, __) => [],
@@ -44,16 +52,17 @@ final petMedicationsProvider = Provider.family<List<MedicationEntry>, String>((r
 });
 
 // Medications due today provider
-final todaysMedicationsProvider = Provider.family<List<MedicationEntry>, String>((ref, petId) {
+final todaysMedicationsProvider =
+    Provider.family<List<MedicationEntry>, String>((ref, petId) {
   final medicationsAsync = ref.watch(medicationsProvider);
   return medicationsAsync.when(
     data: (medications) {
       final now = DateTime.now();
       final startOfDay = DateTime(now.year, now.month, now.day);
       final endOfDay = startOfDay.add(const Duration(days: 1));
-      
+
       return medications
-          .where((medication) => 
+          .where((medication) =>
               medication.petId == petId &&
               medication.isActive &&
               medication.administrationTimes.isNotEmpty)
@@ -64,7 +73,8 @@ final todaysMedicationsProvider = Provider.family<List<MedicationEntry>, String>
   );
 });
 
-class MedicationsNotifier extends StateNotifier<AsyncValue<List<MedicationEntry>>> {
+class MedicationsNotifier
+    extends StateNotifier<AsyncValue<List<MedicationEntry>>> {
   final logger = Logger();
   final MedicationRepository _repository;
 
@@ -94,6 +104,11 @@ class MedicationsNotifier extends StateNotifier<AsyncValue<List<MedicationEntry>
     required String administrationMethod,
     String? notes,
     List<TimeOfDayModel>? administrationTimes,
+    int? stockQuantity,
+    String? stockUnit,
+    int? lowStockThreshold,
+    double? costPerUnit,
+    int? refillReminderDays,
   }) async {
     try {
       final medication = MedicationEntry(
@@ -107,11 +122,17 @@ class MedicationsNotifier extends StateNotifier<AsyncValue<List<MedicationEntry>
         administrationMethod: administrationMethod,
         notes: notes,
         administrationTimes: administrationTimes ?? [],
+        stockQuantity: stockQuantity,
+        stockUnit: stockUnit,
+        lowStockThreshold: lowStockThreshold,
+        costPerUnit: costPerUnit,
+        refillReminderDays: refillReminderDays,
       );
 
       await _repository.addMedication(medication);
       await _loadMedications(); // Reload to get updated list
-      logger.i("✅ DEBUG: Added medication '${medication.medicationName}' for pet $petId");
+      logger.i(
+          "✅ DEBUG: Added medication '${medication.medicationName}' for pet $petId");
     } catch (error, stackTrace) {
       logger.e("🚨 ERROR: Failed to add medication: $error");
       state = AsyncValue.error(error, stackTrace);
@@ -123,7 +144,8 @@ class MedicationsNotifier extends StateNotifier<AsyncValue<List<MedicationEntry>
     try {
       await _repository.updateMedication(updatedMedication);
       await _loadMedications(); // Reload to get updated list
-      logger.i("✅ DEBUG: Updated medication '${updatedMedication.medicationName}'");
+      logger.i(
+          "✅ DEBUG: Updated medication '${updatedMedication.medicationName}'");
     } catch (error, stackTrace) {
       logger.e("🚨 ERROR: Failed to update medication: $error");
       state = AsyncValue.error(error, stackTrace);
@@ -146,18 +168,21 @@ class MedicationsNotifier extends StateNotifier<AsyncValue<List<MedicationEntry>
   Future<void> toggleMedicationStatus(String medicationId) async {
     try {
       final currentMedications = state.value ?? [];
-      final medicationIndex = currentMedications.indexWhere((m) => m.id == medicationId);
-      
+      final medicationIndex =
+          currentMedications.indexWhere((m) => m.id == medicationId);
+
       if (medicationIndex == -1) {
         throw Exception('Medication not found');
       }
 
       final medication = currentMedications[medicationIndex];
-      final updatedMedication = medication.copyWith(isActive: !medication.isActive);
-      
+      final updatedMedication =
+          medication.copyWith(isActive: !medication.isActive);
+
       await _repository.updateMedication(updatedMedication);
       await _loadMedications(); // Reload to get updated list
-      logger.i("✅ DEBUG: Toggled medication status for '${medication.medicationName}' to ${updatedMedication.isActive ? 'active' : 'inactive'}");
+      logger.i(
+          "✅ DEBUG: Toggled medication status for '${medication.medicationName}' to ${updatedMedication.isActive ? 'active' : 'inactive'}");
     } catch (error, stackTrace) {
       logger.e("🚨 ERROR: Failed to toggle medication status: $error");
       state = AsyncValue.error(error, stackTrace);
@@ -179,7 +204,8 @@ class MedicationsNotifier extends StateNotifier<AsyncValue<List<MedicationEntry>
     try {
       return await _repository.getActiveMedicationsByPetId(petId);
     } catch (error) {
-      logger.e("🚨 ERROR: Failed to get active medications for pet $petId: $error");
+      logger.e(
+          "🚨 ERROR: Failed to get active medications for pet $petId: $error");
       return [];
     }
   }

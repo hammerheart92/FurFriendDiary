@@ -560,5 +560,108 @@
   "dateTaken": "Date Taken",
   "dateAdded": "Date Added",
   "fileSize": "File Size",
-  "photoDetails": "Photo Details"
+  "photoDetails": "Photo Details",
+
+  "medicationInventory": "Medication Inventory",
+  "lowStock": "Low Stock",
+  "allMedications": "All Medications",
+  "statistics": "Statistics",
+  "stockQuantity": "Stock Quantity",
+  "stockUnit": "Stock Unit",
+  "lowStockThreshold": "Low Stock Alert",
+  "costPerUnit": "Cost per Unit",
+  "addRefill": "Add Refill",
+  "recordPurchase": "Record Purchase",
+  "purchaseHistory": "Purchase History",
+  "quantityPurchased": "Quantity Purchased",
+  "purchaseDate": "Purchase Date",
+  "pharmacy": "Pharmacy",
+  "totalSpent": "Total Spent",
+  "averageCostPerUnit": "Average Cost per Unit",
+  "daysUntilEmpty": "Days Until Empty",
+  "pillsLeft": "{count} {unit} left",
+  "@pillsLeft": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "lowStockAlert": "Low Stock Alert",
+  "refillReminder": "Time to refill {medication}",
+  "@refillReminder": {
+    "placeholders": {
+      "medication": {
+        "type": "String"
+      }
+    }
+  },
+  "markAsGiven": "Mark as Given",
+  "addStock": "Add Stock",
+  "noPurchases": "No purchases recorded",
+  "purchaseAdded": "Purchase recorded",
+  "stockUpdated": "Stock updated",
+  "costPerMonth": "Cost per Month",
+  "lastPurchase": "Last Purchase",
+  "inventoryTracking": "Inventory Tracking",
+  "enableRefillReminders": "Enable Refill Reminders",
+  "refillReminderDays": "Remind me X days before empty",
+  "pills": "pills",
+  "ml": "ml",
+  "doses": "doses",
+  "tablets": "tablets",
+  "lowStockAlertBody": "Only {count} {unit} left for {medication}",
+  "@lowStockAlertBody": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      },
+      "medication": {
+        "type": "String"
+      }
+    }
+  },
+  "refillSoon": "Refill Soon",
+  "notTracked": "Not tracked",
+  "initialStock": "Initial Stock",
+  "optional": "Optional",
+  "daysBeforeEmpty": "Days before empty",
+  "inventoryOverview": "Inventory Overview",
+  "totalCost": "Total Cost",
+  "averageMonthlyCost": "Average Monthly Cost",
+  "medicationsTracked": "Medications Tracked",
+  "totalPurchases": "Total Purchases",
+  "viewHistory": "View History",
+  "editPurchase": "Edit Purchase",
+  "deletePurchase": "Delete Purchase",
+  "deletePurchaseConfirm": "Are you sure you want to delete this purchase record?",
+  "purchaseDeletedSuccessfully": "Purchase deleted successfully",
+  "failedToDeletePurchase": "Failed to delete purchase",
+  "invalidQuantity": "Please enter a valid quantity",
+  "invalidCost": "Please enter a valid cost",
+  "cost": "Cost",
+  "quantity": "Quantity",
+  "stockLevel": "Stock Level",
+  "sufficient": "Sufficient",
+  "critical": "Critical",
+  "refillNow": "Refill Now",
+  "viewInventory": "View Inventory",
+  "noMedicationsTracked": "No medications tracked",
+  "noLowStockMedications": "No low stock medications",
+  "totalSpentThisMonth": "Total Spent This Month",
+  "last30Days": "Last 30 days",
+  "totalSpentAllTime": "Total Spent All Time",
+  "allPurchases": "All purchases",
+  "averageCostPerMedication": "Average Cost per Medication",
+  "perMedication": "Per medication",
+  "topExpensiveMedications": "Top 5 Most Expensive Medications",
+  "stockNotTracked": "Stock not tracked",
+  "refill": "Refill",
+  "notTrackedEnum": "Not tracked"
 }

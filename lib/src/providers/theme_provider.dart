@@ -14,7 +14,8 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
   Future<void> _loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
     final themeName = prefs.getString('theme_mode') ?? 'system';
-    state = ThemeMode.values.firstWhere((e) => e.name == themeName, orElse: () => ThemeMode.system);
+    state = ThemeMode.values
+        .firstWhere((e) => e.name == themeName, orElse: () => ThemeMode.system);
   }
 
   Future<void> setTheme(ThemeMode mode) async {

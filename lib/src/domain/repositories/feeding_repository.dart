@@ -7,5 +7,6 @@ abstract class FeedingRepository {
   Future<void> updateFeeding(FeedingEntry feeding);
   Future<void> deleteFeeding(String id);
   Future<FeedingEntry?> getFeedingById(String id);
-  Future<List<FeedingEntry>> getFeedingsByDateRange(String petId, DateTime start, DateTime end);
+  Future<List<FeedingEntry>> getFeedingsByDateRange(
+      String petId, DateTime start, DateTime end);
 }

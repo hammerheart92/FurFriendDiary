@@ -143,7 +143,8 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
     }
 
     // Initialize caption controller if not editing
-    if (!_isEditingCaption && _captionController.text != (photo.caption ?? '')) {
+    if (!_isEditingCaption &&
+        _captionController.text != (photo.caption ?? '')) {
       _captionController.text = photo.caption ?? '';
     }
 
@@ -198,7 +199,9 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
                         errorBuilder: (context, error, stackTrace) {
                           return Container(
                             height: 300,
-                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerHighest,
                             child: const Center(
                               child: Icon(Icons.broken_image, size: 80),
                             ),
@@ -207,7 +210,9 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
                       )
                     : Container(
                         height: 300,
-                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
                         child: const Center(
                           child: Icon(Icons.broken_image, size: 80),
                         ),

@@ -661,7 +661,7 @@ class AppLocalizationsRo extends AppLocalizations {
   String get last7Days => 'Ultimele 7 zile';
 
   @override
-  String get last30Days => 'Ultimele 30 zile';
+  String get last30Days => 'Ultimele 30 de zile';
 
   @override
   String get last3Months => 'Ultimele 3 luni';
@@ -1279,4 +1279,221 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get photoDetails => 'Detalii Fotografie';
+
+  @override
+  String get medicationInventory => 'Inventar Medicamente';
+
+  @override
+  String get lowStock => 'Stoc Scăzut';
+
+  @override
+  String get allMedications => 'Toate Medicamentele';
+
+  @override
+  String get statistics => 'Statistici';
+
+  @override
+  String get stockQuantity => 'Cantitate Stoc';
+
+  @override
+  String get stockUnit => 'Unitate Stoc';
+
+  @override
+  String get lowStockThreshold => 'Alertă Stoc Scăzut';
+
+  @override
+  String get costPerUnit => 'Cost per Unitate';
+
+  @override
+  String get addRefill => 'Adaugă Reumplere';
+
+  @override
+  String get recordPurchase => 'Înregistrează Achiziție';
+
+  @override
+  String get purchaseHistory => 'Istoric Achiziții';
+
+  @override
+  String get quantityPurchased => 'Cantitate Achiziționată';
+
+  @override
+  String get purchaseDate => 'Data Achiziției';
+
+  @override
+  String get pharmacy => 'Farmacie';
+
+  @override
+  String get totalSpent => 'Total Cheltuit';
+
+  @override
+  String get averageCostPerUnit => 'Cost Mediu per Unitate';
+
+  @override
+  String get daysUntilEmpty => 'Zile Până la Epuizare';
+
+  @override
+  String pillsLeft(String count, String unit) {
+    return '$count $unit rămase';
+  }
+
+  @override
+  String get lowStockAlert => 'Alertă Stoc Scăzut';
+
+  @override
+  String refillReminder(String medication) {
+    return 'Este timpul să reumpli $medication';
+  }
+
+  @override
+  String get markAsGiven => 'Marchează ca Administrat';
+
+  @override
+  String get addStock => 'Adaugă Stoc';
+
+  @override
+  String get noPurchases => 'Nicio achiziție înregistrată';
+
+  @override
+  String get purchaseAdded => 'Achiziție înregistrată';
+
+  @override
+  String get stockUpdated => 'Stoc actualizat';
+
+  @override
+  String get costPerMonth => 'Cost pe Lună';
+
+  @override
+  String get lastPurchase => 'Ultima Achiziție';
+
+  @override
+  String get inventoryTracking => 'Urmărire Inventar';
+
+  @override
+  String get enableRefillReminders => 'Activează Mementouri Reumplere';
+
+  @override
+  String get refillReminderDays => 'Amintește-mi cu X zile înainte';
+
+  @override
+  String get pills => 'pastile';
+
+  @override
+  String get ml => 'ml';
+
+  @override
+  String get doses => 'doze';
+
+  @override
+  String get tablets => 'tablete';
+
+  @override
+  String lowStockAlertBody(String count, String unit, String medication) {
+    return 'Doar $count $unit rămase pentru $medication';
+  }
+
+  @override
+  String get refillSoon => 'Reumple Curând';
+
+  @override
+  String get notTracked => 'Neurmărit';
+
+  @override
+  String get initialStock => 'Stoc Inițial';
+
+  @override
+  String get daysBeforeEmpty => 'Zile înainte de epuizare';
+
+  @override
+  String get inventoryOverview => 'Privire de Ansamblu Inventar';
+
+  @override
+  String get totalCost => 'Cost Total';
+
+  @override
+  String get averageMonthlyCost => 'Cost Mediu Lunar';
+
+  @override
+  String get medicationsTracked => 'Medicamente Urmărite';
+
+  @override
+  String get totalPurchases => 'Total Achiziții';
+
+  @override
+  String get viewHistory => 'Vezi Istoric';
+
+  @override
+  String get editPurchase => 'Editează Achiziție';
+
+  @override
+  String get deletePurchase => 'Șterge Achiziție';
+
+  @override
+  String get deletePurchaseConfirm =>
+      'Sigur doriți să ștergeți această înregistrare de achiziție?';
+
+  @override
+  String get purchaseDeletedSuccessfully => 'Achiziție ștearsă cu succes';
+
+  @override
+  String get failedToDeletePurchase => 'Eșec la ștergerea achiziției';
+
+  @override
+  String get invalidQuantity => 'Vă rugăm introduceți o cantitate validă';
+
+  @override
+  String get invalidCost => 'Vă rugăm introduceți un cost valid';
+
+  @override
+  String get cost => 'Cost';
+
+  @override
+  String get quantity => 'Cantitate';
+
+  @override
+  String get stockLevel => 'Nivel Stoc';
+
+  @override
+  String get sufficient => 'Suficient';
+
+  @override
+  String get critical => 'Critic';
+
+  @override
+  String get refillNow => 'Reumple Acum';
+
+  @override
+  String get viewInventory => 'Vezi Inventar';
+
+  @override
+  String get noMedicationsTracked => 'Niciun medicament urmărit';
+
+  @override
+  String get noLowStockMedications => 'Niciun medicament cu stoc scăzut';
+
+  @override
+  String get totalSpentThisMonth => 'Total Cheltuit Luna Aceasta';
+
+  @override
+  String get totalSpentAllTime => 'Total Cheltuit Vreodată';
+
+  @override
+  String get allPurchases => 'Toate achizițiile';
+
+  @override
+  String get averageCostPerMedication => 'Cost Mediu per Medicament';
+
+  @override
+  String get perMedication => 'Per medicament';
+
+  @override
+  String get topExpensiveMedications => 'Top 5 Cele Mai Scumpe Medicamente';
+
+  @override
+  String get stockNotTracked => 'Stoc neurmărit';
+
+  @override
+  String get refill => 'Reumple';
+
+  @override
+  String get notTrackedEnum => 'Neurmărit';
 }

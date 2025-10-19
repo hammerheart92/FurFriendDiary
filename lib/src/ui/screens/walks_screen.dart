@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Package import (preferred)
@@ -14,7 +13,8 @@ class WalksScreen extends ConsumerStatefulWidget {
   ConsumerState<WalksScreen> createState() => _WalksScreenState();
 }
 
-class _WalksScreenState extends ConsumerState<WalksScreen> with AutomaticKeepAliveClientMixin {
+class _WalksScreenState extends ConsumerState<WalksScreen>
+    with AutomaticKeepAliveClientMixin {
   late final WalksController _controller;
 
   @override
@@ -36,7 +36,7 @@ class _WalksScreenState extends ConsumerState<WalksScreen> with AutomaticKeepAli
   @override
   Widget build(BuildContext context) {
     super.build(context); // Required for AutomaticKeepAliveClientMixin
-    
+
     return WalksScope(
       notifier: _controller,
       child: const walks.WalksScreen(),

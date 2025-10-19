@@ -9,7 +9,9 @@ final petProfileRepositoryProvider = Provider<PetProfileRepository>((ref) {
 });
 
 // All pet profiles state provider
-final petProfilesProvider = StateNotifierProvider<PetProfilesNotifier, AsyncValue<List<PetProfile>>>((ref) {
+final petProfilesProvider =
+    StateNotifierProvider<PetProfilesNotifier, AsyncValue<List<PetProfile>>>(
+        (ref) {
   final repository = ref.watch(petProfileRepositoryProvider);
   return PetProfilesNotifier(repository);
 });
@@ -59,7 +61,8 @@ class PetProfilesNotifier extends StateNotifier<AsyncValue<List<PetProfile>>> {
       logger.d("📥 DEBUG: Loaded ${profiles.length} profiles");
 
       for (var profile in profiles) {
-        logger.d("📥 DEBUG: - ${profile.name}: photoPath = ${profile.photoPath}");
+        logger
+            .d("📥 DEBUG: - ${profile.name}: photoPath = ${profile.photoPath}");
       }
 
       state = AsyncValue.data(profiles);
@@ -71,13 +74,15 @@ class PetProfilesNotifier extends StateNotifier<AsyncValue<List<PetProfile>>> {
   }
 
   Future<void> createOrUpdate(PetProfile profile) async {
-    logger.d("🔍 DEBUG: PetProfilesNotifier.createOrUpdate called with profile: ${profile.name}");
+    logger.d(
+        "🔍 DEBUG: PetProfilesNotifier.createOrUpdate called with profile: ${profile.name}");
     logger.d("🔍 DEBUG: Profile photoPath being saved: ${profile.photoPath}");
 
     try {
       final existing = _repository.getAll();
       final idx = existing.indexWhere((p) => p.id == profile.id);
-      logger.d("🔍 DEBUG: Existing profiles count: ${existing.length}, profile index: $idx");
+      logger.d(
+          "🔍 DEBUG: Existing profiles count: ${existing.length}, profile index: $idx");
 
       if (idx >= 0) {
         logger.d("🔍 DEBUG: Updating existing profile");
@@ -91,7 +96,8 @@ class PetProfilesNotifier extends StateNotifier<AsyncValue<List<PetProfile>>> {
 
       // Verify the save
       final allProfiles = _repository.getAll();
-      final savedProfile = allProfiles.firstWhere((p) => p.id == profile.id, orElse: () => profile);
+      final savedProfile = allProfiles.firstWhere((p) => p.id == profile.id,
+          orElse: () => profile);
       logger.d("🗂️ DEBUG: Verifying saved profile from Hive:");
       logger.d("🗂️ DEBUG: - Name: ${savedProfile.name}");
       logger.d("🗂️ DEBUG: - photoPath: ${savedProfile.photoPath}");
@@ -99,7 +105,6 @@ class PetProfilesNotifier extends StateNotifier<AsyncValue<List<PetProfile>>> {
       logger.d("🔍 DEBUG: Profile operation completed, reloading state");
       await load();
       logger.d("🔍 DEBUG: State reloaded successfully");
-
     } catch (error, stackTrace) {
       logger.e("🚨 ERROR: Failed in createOrUpdate: $error");
       state = AsyncValue.error(error, stackTrace);
@@ -127,4 +132,3 @@ class PetProfilesNotifier extends StateNotifier<AsyncValue<List<PetProfile>>> {
 
   Future<void> refresh() async => load();
 }
-

@@ -57,7 +57,8 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen>
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('Test notification sent! Check your notification bar.'),
+                    content: Text(
+                        'Test notification sent! Check your notification bar.'),
                     duration: Duration(seconds: 2),
                   ),
                 );

@@ -9,5 +9,13 @@ abstract class MedicationRepository {
   Future<void> updateMedication(MedicationEntry medication);
   Future<void> deleteMedication(String id);
   Future<MedicationEntry?> getMedicationById(String id);
-  Future<List<MedicationEntry>> getMedicationsByDateRange(String petId, DateTime start, DateTime end);
+  Future<List<MedicationEntry>> getMedicationsByDateRange(
+      String petId, DateTime start, DateTime end);
+
+  // Inventory management methods
+  Future<void> updateStock(String medicationId, int newQuantity);
+  Future<void> addStock(String medicationId, int quantity);
+  Future<void> recordDosageGiven(String medicationId, int dosageUnits);
+  List<MedicationEntry> getLowStockMedications(String petId);
+  int? getDaysUntilEmpty(MedicationEntry medication);
 }

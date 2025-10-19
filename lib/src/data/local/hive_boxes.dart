@@ -26,7 +26,7 @@ class HiveBoxes {
       rethrow;
     }
   }
-  
+
   static Box<FeedingEntry> getFeedings() {
     try {
       return HiveManager.instance.feedingBox;
@@ -35,7 +35,7 @@ class HiveBoxes {
       rethrow;
     }
   }
-  
+
   static Box<MedicationEntry> getMedications() {
     try {
       return HiveManager.instance.medicationBox;
@@ -44,7 +44,7 @@ class HiveBoxes {
       rethrow;
     }
   }
-  
+
   static Box<AppointmentEntry> getAppointments() {
     try {
       return HiveManager.instance.appointmentBox;
@@ -71,7 +71,7 @@ class HiveBoxes {
       rethrow;
     }
   }
-  
+
   static Box<dynamic> getSettings() {
     try {
       return HiveManager.instance.settingsBox;
@@ -80,7 +80,7 @@ class HiveBoxes {
       rethrow;
     }
   }
-  
+
   static Box<dynamic> getAppPrefs() {
     try {
       return HiveManager.instance.appPrefsBox;

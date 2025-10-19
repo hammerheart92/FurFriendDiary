@@ -71,7 +71,8 @@ class ReportViewer extends StatelessWidget {
                             Text(
                               '${l10n.generatedOn} ${DateFormat('MMMM dd, yyyy').format(report.generatedDate)} ${l10n.at} ${DateFormat('HH:mm').format(report.generatedDate)}',
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                color: theme.colorScheme.onSurface
+                                    .withOpacity(0.7),
                               ),
                             ),
                           ],
@@ -145,7 +146,8 @@ class ReportViewer extends StatelessWidget {
     );
   }
 
-  Widget _buildHeaderDetail(String label, String value, IconData icon, Color color) {
+  Widget _buildHeaderDetail(
+      String label, String value, IconData icon, Color color) {
     return Column(
       children: [
         Icon(
@@ -204,7 +206,8 @@ class ReportViewer extends StatelessWidget {
     }
   }
 
-  Widget _buildHealthSummary(Map<String, dynamic> summary, AppLocalizations l10n) {
+  Widget _buildHealthSummary(
+      Map<String, dynamic> summary, AppLocalizations l10n) {
     return Column(
       children: [
         Row(
@@ -252,7 +255,8 @@ class ReportViewer extends StatelessWidget {
     );
   }
 
-  Widget _buildMedicationSummary(Map<String, dynamic> summary, AppLocalizations l10n) {
+  Widget _buildMedicationSummary(
+      Map<String, dynamic> summary, AppLocalizations l10n) {
     return Column(
       children: [
         Row(
@@ -300,7 +304,8 @@ class ReportViewer extends StatelessWidget {
     );
   }
 
-  Widget _buildActivitySummary(Map<String, dynamic> summary, AppLocalizations l10n) {
+  Widget _buildActivitySummary(
+      Map<String, dynamic> summary, AppLocalizations l10n) {
     final avgPerDay = summary['averageFeedingsPerDay'] ?? 0.0;
     return Column(
       children: [
@@ -331,7 +336,8 @@ class ReportViewer extends StatelessWidget {
     );
   }
 
-  Widget _buildVeterinarySummary(Map<String, dynamic> summary, AppLocalizations l10n) {
+  Widget _buildVeterinarySummary(
+      Map<String, dynamic> summary, AppLocalizations l10n) {
     return Column(
       children: [
         Row(
@@ -379,7 +385,8 @@ class ReportViewer extends StatelessWidget {
     );
   }
 
-  Widget _buildSummaryCard(String title, String value, String subtitle, IconData icon, Color color) {
+  Widget _buildSummaryCard(
+      String title, String value, String subtitle, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -446,14 +453,17 @@ class ReportViewer extends StatelessWidget {
     // Medications section
     final medications = report.data['medications'] as List<dynamic>? ?? [];
     if (medications.isNotEmpty) {
-      content.add(_buildSectionHeader(theme, l10n.medications, Icons.medication, Colors.green));
+      content.add(_buildSectionHeader(
+          theme, l10n.medications, Icons.medication, Colors.green));
       content.add(_buildDataTable(
         [l10n.name, l10n.dosage, l10n.status],
-        medications.map((med) => [
-          med['medicationName']?.toString() ?? '',
-          med['dosage']?.toString() ?? '',
-          (med['isActive'] == true) ? l10n.active : l10n.inactive,
-        ]).toList(),
+        medications
+            .map((med) => [
+                  med['medicationName']?.toString() ?? '',
+                  med['dosage']?.toString() ?? '',
+                  (med['isActive'] == true) ? l10n.active : l10n.inactive,
+                ])
+            .toList(),
       ));
       content.add(const SizedBox(height: 16));
     }
@@ -461,14 +471,18 @@ class ReportViewer extends StatelessWidget {
     // Appointments section
     final appointments = report.data['appointments'] as List<dynamic>? ?? [];
     if (appointments.isNotEmpty) {
-      content.add(_buildSectionHeader(theme, l10n.appointments, Icons.local_hospital, Colors.blue));
+      content.add(_buildSectionHeader(
+          theme, l10n.appointments, Icons.local_hospital, Colors.blue));
       content.add(_buildDataTable(
         [l10n.date, l10n.veterinarian, l10n.reason],
-        appointments.map((apt) => [
-          DateFormat('MMM dd').format(DateTime.parse(apt['appointmentDate'])),
-          apt['veterinarian']?.toString() ?? '',
-          apt['reason']?.toString() ?? '',
-        ]).toList(),
+        appointments
+            .map((apt) => [
+                  DateFormat('MMM dd')
+                      .format(DateTime.parse(apt['appointmentDate'])),
+                  apt['veterinarian']?.toString() ?? '',
+                  apt['reason']?.toString() ?? '',
+                ])
+            .toList(),
       ));
       content.add(const SizedBox(height: 16));
     }
@@ -497,16 +511,19 @@ class ReportViewer extends StatelessWidget {
     }
 
     return [
-      _buildSectionHeader(theme, l10n.medicationDetails, Icons.medication, Colors.green),
+      _buildSectionHeader(
+          theme, l10n.medicationDetails, Icons.medication, Colors.green),
       _buildDataTable(
         [l10n.name, l10n.dosage, l10n.method, l10n.startDate, l10n.status],
-        medications.map((med) => [
-          med['medicationName']?.toString() ?? '',
-          med['dosage']?.toString() ?? '',
-          med['administrationMethod']?.toString() ?? '',
-          DateFormat('MMM dd').format(DateTime.parse(med['startDate'])),
-          (med['isActive'] == true) ? l10n.active : l10n.inactive,
-        ]).toList(),
+        medications
+            .map((med) => [
+                  med['medicationName']?.toString() ?? '',
+                  med['dosage']?.toString() ?? '',
+                  med['administrationMethod']?.toString() ?? '',
+                  DateFormat('MMM dd').format(DateTime.parse(med['startDate'])),
+                  (med['isActive'] == true) ? l10n.active : l10n.inactive,
+                ])
+            .toList(),
       ),
     ];
   }
@@ -532,15 +549,18 @@ class ReportViewer extends StatelessWidget {
     }
 
     return [
-      _buildSectionHeader(theme, l10n.feedingHistory, Icons.restaurant, Colors.orange),
+      _buildSectionHeader(
+          theme, l10n.feedingHistory, Icons.restaurant, Colors.orange),
       _buildDataTable(
         [l10n.date, l10n.type, l10n.amount, l10n.timeLabel],
-        feedings.map((feed) => [
-          DateFormat('MMM dd').format(DateTime.parse(feed['dateTime'])),
-          feed['foodType']?.toString() ?? '',
-          feed['amount']?.toString() ?? '',
-          DateFormat('HH:mm').format(DateTime.parse(feed['dateTime'])),
-        ]).toList(),
+        feedings
+            .map((feed) => [
+                  DateFormat('MMM dd').format(DateTime.parse(feed['dateTime'])),
+                  feed['foodType']?.toString() ?? '',
+                  feed['amount']?.toString() ?? '',
+                  DateFormat('HH:mm').format(DateTime.parse(feed['dateTime'])),
+                ])
+            .toList(),
       ),
     ];
   }
@@ -566,21 +586,26 @@ class ReportViewer extends StatelessWidget {
     }
 
     return [
-      _buildSectionHeader(theme, l10n.appointmentHistory, Icons.local_hospital, Colors.blue),
+      _buildSectionHeader(
+          theme, l10n.appointmentHistory, Icons.local_hospital, Colors.blue),
       _buildDataTable(
         [l10n.date, l10n.veterinarian, l10n.clinic, l10n.reason, l10n.status],
-        appointments.map((apt) => [
-          DateFormat('MMM dd').format(DateTime.parse(apt['appointmentDate'])),
-          apt['veterinarian']?.toString() ?? '',
-          apt['clinic']?.toString() ?? '',
-          apt['reason']?.toString() ?? '',
-          (apt['isCompleted'] == true) ? l10n.completed : l10n.pending,
-        ]).toList(),
+        appointments
+            .map((apt) => [
+                  DateFormat('MMM dd')
+                      .format(DateTime.parse(apt['appointmentDate'])),
+                  apt['veterinarian']?.toString() ?? '',
+                  apt['clinic']?.toString() ?? '',
+                  apt['reason']?.toString() ?? '',
+                  (apt['isCompleted'] == true) ? l10n.completed : l10n.pending,
+                ])
+            .toList(),
       ),
     ];
   }
 
-  Widget _buildSectionHeader(ThemeData theme, String title, IconData icon, Color color) {
+  Widget _buildSectionHeader(
+      ThemeData theme, String title, IconData icon, Color color) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -609,20 +634,26 @@ class ReportViewer extends StatelessWidget {
             columnSpacing: 16,
             headingRowHeight: 40,
             dataRowHeight: 40,
-            columns: headers.map((header) => DataColumn(
-              label: Text(
-                header,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            )).toList(),
-            rows: rows.map((row) => DataRow(
-              cells: row.map((cell) => DataCell(
-                Text(
-                  cell,
-                  style: const TextStyle(fontSize: 12),
-                ),
-              )).toList(),
-            )).toList(),
+            columns: headers
+                .map((header) => DataColumn(
+                      label: Text(
+                        header,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ))
+                .toList(),
+            rows: rows
+                .map((row) => DataRow(
+                      cells: row
+                          .map((cell) => DataCell(
+                                Text(
+                                  cell,
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                              ))
+                          .toList(),
+                    ))
+                .toList(),
           ),
         ),
       ),

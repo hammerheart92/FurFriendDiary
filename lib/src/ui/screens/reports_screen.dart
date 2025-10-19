@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/models/report_entry.dart';
@@ -241,21 +240,33 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
                       petId,
                     ),
                     _buildReportsList(
-                      reports.where((report) =>
-                        report.reportType == ReportTypeConstants.healthSummary ||
-                        report.reportType == ReportTypeConstants.veterinaryRecords).toList(),
+                      reports
+                          .where((report) =>
+                              report.reportType ==
+                                  ReportTypeConstants.healthSummary ||
+                              report.reportType ==
+                                  ReportTypeConstants.veterinaryRecords)
+                          .toList(),
                       l10n.noHealthReportsFound,
                       theme,
                       petId,
                     ),
                     _buildReportsList(
-                      reports.where((report) => report.reportType == ReportTypeConstants.medicationHistory).toList(),
+                      reports
+                          .where((report) =>
+                              report.reportType ==
+                              ReportTypeConstants.medicationHistory)
+                          .toList(),
                       l10n.noMedicationReportsFound,
                       theme,
                       petId,
                     ),
                     _buildReportsList(
-                      reports.where((report) => report.reportType == ReportTypeConstants.activityReport).toList(),
+                      reports
+                          .where((report) =>
+                              report.reportType ==
+                              ReportTypeConstants.activityReport)
+                          .toList(),
                       l10n.noActivityReportsFound,
                       theme,
                       petId,
@@ -273,7 +284,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
                     Text('${l10n.errorLoadingReports}: $error'),
                     const SizedBox(height: 16),
                     ElevatedButton(
-                      onPressed: () => ref.invalidate(reportsByPetIdProvider(petId)),
+                      onPressed: () =>
+                          ref.invalidate(reportsByPetIdProvider(petId)),
                       child: Text(l10n.retry),
                     ),
                   ],
@@ -304,7 +316,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
     String petId,
   ) {
     final l10n = AppLocalizations.of(context);
-    
+
     // Filter reports based on search query
     final filteredReports = reports.where((report) {
       if (_searchQuery.isEmpty) return true;
@@ -326,7 +338,9 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
             ),
             const SizedBox(height: 16),
             Text(
-              _searchQuery.isNotEmpty ? l10n.noReportsMatchSearch : emptyMessage,
+              _searchQuery.isNotEmpty
+                  ? l10n.noReportsMatchSearch
+                  : emptyMessage,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.6),
               ),

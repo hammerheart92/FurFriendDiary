@@ -15,9 +15,11 @@ class WalksScreen extends StatefulWidget {
   State<WalksScreen> createState() => _WalksScreenState();
 }
 
-class _WalksScreenState extends State<WalksScreen> with AutomaticKeepAliveClientMixin {
+class _WalksScreenState extends State<WalksScreen>
+    with AutomaticKeepAliveClientMixin {
   final logger = Logger();
-  WalkFilter _filter = WalkFilter.all; // Default to "All" so new items are visible
+  WalkFilter _filter =
+      WalkFilter.all; // Default to "All" so new items are visible
 
   @override
   bool get wantKeepAlive => true;
@@ -26,58 +28,63 @@ class _WalksScreenState extends State<WalksScreen> with AutomaticKeepAliveClient
   Widget build(BuildContext context) {
     super.build(context); // Required for AutomaticKeepAliveClientMixin
     final controller = WalksScope.of(context);
-    
-        return AnimatedBuilder(
+
+    return AnimatedBuilder(
       animation: controller,
       builder: (context, _) {
         final allWalks = controller.items;
         final filtered = _filteredWalks(allWalks);
         final isEmpty = filtered.isEmpty;
-        
-        logger.d('📱 UI REBUILD: Rendering ${allWalks.length} total walks, ${filtered.length} filtered');
+
+        logger.d(
+            '📱 UI REBUILD: Rendering ${allWalks.length} total walks, ${filtered.length} filtered');
         logger.d('📱 UI FILTER: Current filter: $_filter');
         logger.d('📱 UI EMPTY CHECK: isEmpty = $isEmpty');
-        
+
         if (filtered.isNotEmpty) {
           logger.d('📱 UI WALKS LIST:');
           for (int i = 0; i < filtered.length; i++) {
-            logger.d('   ${i + 1}. ${filtered[i].note} at ${filtered[i].start}');
+            logger
+                .d('   ${i + 1}. ${filtered[i].note} at ${filtered[i].start}');
           }
         } else if (allWalks.isNotEmpty) {
-          logger.d('📱 UI NOTE: ${allWalks.length} walks exist but filtered to 0 for $_filter');
+          logger.d(
+              '📱 UI NOTE: ${allWalks.length} walks exist but filtered to 0 for $_filter');
         }
 
         final l10n = AppLocalizations.of(context);
 
         return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.walks),
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            _FilterBar(
-              value: _filter,
-              onChanged: (f) => setState(() => _filter = f),
+          appBar: AppBar(
+            title: Text(l10n.walks),
+          ),
+          body: SafeArea(
+            child: Column(
+              children: [
+                _FilterBar(
+                  value: _filter,
+                  onChanged: (f) => setState(() => _filter = f),
+                ),
+                Expanded(
+                  child: isEmpty
+                      ? _EmptyState(onAdd: _showAddWalkSheet)
+                      : _ResponsiveWalkList(
+                          entries: filtered,
+                          key: const PageStorageKey('walks_list'),
+                        ),
+                ),
+              ],
             ),
-            Expanded(
-              child: isEmpty ? _EmptyState(onAdd: _showAddWalkSheet) : _ResponsiveWalkList(
-                entries: filtered,
-                key: const PageStorageKey('walks_list'),
-              ),
+          ),
+          floatingActionButton: Semantics(
+            button: true,
+            label: l10n.addWalk,
+            child: FloatingActionButton(
+              onPressed: _showAddWalkSheet,
+              child: const Icon(Icons.add),
             ),
-          ],
-        ),
-      ),
-      floatingActionButton: Semantics(
-        button: true,
-        label: l10n.addWalk,
-        child: FloatingActionButton(
-          onPressed: _showAddWalkSheet,
-          child: const Icon(Icons.add),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         );
       },
     );
@@ -88,7 +95,7 @@ class _WalksScreenState extends State<WalksScreen> with AutomaticKeepAliveClient
     DateTime startBoundary;
 
     logger.d('🔍 FILTERING: Input ${source.length} walks, filter: $_filter');
-    
+
     switch (_filter) {
       case WalkFilter.today:
         startBoundary = DateTime(now.year, now.month, now.day);
@@ -96,12 +103,14 @@ class _WalksScreenState extends State<WalksScreen> with AutomaticKeepAliveClient
         break;
       case WalkFilter.thisWeek:
         final weekday = now.weekday; // 1 Mon, 7 Sun
-        startBoundary = DateTime(now.year, now.month, now.day).subtract(Duration(days: weekday - 1));
+        startBoundary = DateTime(now.year, now.month, now.day)
+            .subtract(Duration(days: weekday - 1));
         logger.d('🔍 THIS WEEK filter: Looking for walks after $startBoundary');
         break;
       case WalkFilter.all:
         logger.d('🔍 ALL filter: Showing all ${source.length} walks');
-        final sorted = List.of(source)..sort((a, b) => b.start.compareTo(a.start));
+        final sorted = List.of(source)
+          ..sort((a, b) => b.start.compareTo(a.start));
         for (int i = 0; i < sorted.length; i++) {
           logger.d('   Walk ${i + 1}: ${sorted[i].note} at ${sorted[i].start}');
         }
@@ -110,10 +119,11 @@ class _WalksScreenState extends State<WalksScreen> with AutomaticKeepAliveClient
 
     final list = source.where((w) {
       final isAfter = w.start.isAfter(startBoundary);
-      logger.d('   Walk "${w.note}" at ${w.start} - isAfter($startBoundary): $isAfter');
+      logger.d(
+          '   Walk "${w.note}" at ${w.start} - isAfter($startBoundary): $isAfter');
       return isAfter;
     }).toList();
-    
+
     list.sort((a, b) => b.start.compareTo(a.start));
     logger.d('🔍 FILTER RESULT: ${list.length} walks match $_filter filter');
     return list;
@@ -129,7 +139,8 @@ class _WalksScreenState extends State<WalksScreen> with AutomaticKeepAliveClient
       isScrollControlled: true,
       builder: (context) => _AddWalkSheet(
         onSubmit: (entry) async {
-          logger.i('📝 FORM SUBMITTED - Walk Data: ${entry.note} at ${entry.start}');
+          logger.i(
+              '📝 FORM SUBMITTED - Walk Data: ${entry.note} at ${entry.start}');
           logger.i('📅 Walk Date: ${entry.start}');
           logger.i('💾 SAVING TO REPOSITORY...');
 
@@ -171,15 +182,20 @@ class _FilterBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: SegmentedButton<WalkFilter>(
         segments: [
-          ButtonSegment(value: WalkFilter.today, label: Text(labels[WalkFilter.today]!)),
-          ButtonSegment(value: WalkFilter.thisWeek, label: Text(labels[WalkFilter.thisWeek]!)),
-          ButtonSegment(value: WalkFilter.all, label: Text(labels[WalkFilter.all]!)),
+          ButtonSegment(
+              value: WalkFilter.today, label: Text(labels[WalkFilter.today]!)),
+          ButtonSegment(
+              value: WalkFilter.thisWeek,
+              label: Text(labels[WalkFilter.thisWeek]!)),
+          ButtonSegment(
+              value: WalkFilter.all, label: Text(labels[WalkFilter.all]!)),
         ],
         selected: {value},
         onSelectionChanged: (set) => onChanged(set.first),
         showSelectedIcon: false,
         style: ButtonStyle(
-          padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 12, vertical: 10)),
+          padding: WidgetStateProperty.all(
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 10)),
         ),
       ),
     );
@@ -254,7 +270,8 @@ class WalkCard extends StatelessWidget {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     final time = DateFormat.Hm().format(entry.start);
-    final primaryLine = '$time • ${entry.durationMin} ${l10n.min} • ${entry.distanceKm.toStringAsFixed(1)} ${l10n.km}';
+    final primaryLine =
+        '$time • ${entry.durationMin} ${l10n.min} • ${entry.distanceKm.toStringAsFixed(1)} ${l10n.km}';
 
     return Semantics(
       container: true,
@@ -270,7 +287,9 @@ class WalkCard extends StatelessWidget {
                 title: Text(l10n.walkDetails),
                 content: _WalkDetails(entry: entry),
                 actions: [
-                  TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.close)),
+                  TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(l10n.close)),
                 ],
               ),
             );
@@ -284,7 +303,8 @@ class WalkCard extends StatelessWidget {
                 // Primary row: stats only (no icon)
                 Text(
                   primaryLine,
-                  style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+                  style: theme.textTheme.titleMedium
+                      ?.copyWith(fontWeight: FontWeight.w600),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -314,7 +334,6 @@ class WalkCard extends StatelessWidget {
     );
   }
 }
-
 
 class _EmptyState extends StatelessWidget {
   const _EmptyState({required this.onAdd});
@@ -378,16 +397,22 @@ class _WalkDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final df = DateFormat('EEE, MMM d • HH:mm', Localizations.localeOf(context).toString());
+    final df = DateFormat(
+        'EEE, MMM d • HH:mm', Localizations.localeOf(context).toString());
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _DetailRow(l10n.start, df.format(entry.start)),
         _DetailRow(l10n.durationMin, '${entry.durationMin} ${l10n.min}'),
-        _DetailRow(l10n.distance, '${entry.distanceKm.toStringAsFixed(2)} ${l10n.km}'),
-        if (entry.paceMinPerKm != null) _DetailRow(l10n.pace, "${entry.paceMinPerKm!.toStringAsFixed(0)}'/km"),
-        if (entry.surface != null) _DetailRow(l10n.surfaceLabel, _getLocalizedSurface(context, entry.surface)),
+        _DetailRow(
+            l10n.distance, '${entry.distanceKm.toStringAsFixed(2)} ${l10n.km}'),
+        if (entry.paceMinPerKm != null)
+          _DetailRow(
+              l10n.pace, "${entry.paceMinPerKm!.toStringAsFixed(0)}'/km"),
+        if (entry.surface != null)
+          _DetailRow(
+              l10n.surfaceLabel, _getLocalizedSurface(context, entry.surface)),
         if (entry.note?.isNotEmpty == true) _DetailRow(l10n.notes, entry.note!),
       ],
     );
@@ -406,7 +431,11 @@ class _DetailRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          SizedBox(width: 100, child: Text(label, style: theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w600))),
+          SizedBox(
+              width: 100,
+              child: Text(label,
+                  style: theme.textTheme.bodyMedium!
+                      .copyWith(fontWeight: FontWeight.w600))),
           Expanded(child: Text(value, style: theme.textTheme.bodyMedium)),
         ],
       ),
@@ -445,7 +474,8 @@ class _AddWalkSheetState extends State<_AddWalkSheet> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    final df = DateFormat('EEE, MMM d • HH:mm', Localizations.localeOf(context).toString());
+    final df = DateFormat(
+        'EEE, MMM d • HH:mm', Localizations.localeOf(context).toString());
 
     return Padding(
       padding: EdgeInsets.only(
@@ -460,93 +490,105 @@ class _AddWalkSheetState extends State<_AddWalkSheet> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-            Text(l10n.addWalk, style: theme.textTheme.titleLarge),
-            const SizedBox(height: 12),
-            _RowField(
-              label: l10n.start,
-              child: OutlinedButton.icon(
-                onPressed: () async {
-                  final date = await showDatePicker(
-                    context: context,
-                    firstDate: DateTime.now().subtract(const Duration(days: 30)),
-                    lastDate: DateTime.now(),
-                    initialDate: _start,
-                  );
-                  if (date == null) return;
-                  if (!mounted) return;
-                  final time = await showTimePicker(context: context, initialTime: TimeOfDay.fromDateTime(_start));
-                  if (time == null || !mounted) return;
-                  setState(() => _start = DateTime(date.year, date.month, date.day, time.hour, time.minute));
-                },
-                icon: const Icon(Icons.event),
-                label: Text(df.format(_start)),
-              ),
-            ),
-            _RowField(
-              label: l10n.durationMin,
-              child: TextFormField(
-                controller: _durationCtrl,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(suffixText: l10n.min, hintText: '30'),
-                validator: _positiveInt,
-              ),
-            ),
-            _RowField(
-              label: l10n.distance,
-              child: TextFormField(
-                controller: _distanceCtrl,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: InputDecoration(suffixText: l10n.km, hintText: '2.0'),
-                validator: _positiveDouble,
-              ),
-            ),
-            _RowField(
-              label: l10n.surfaceLabel,
-              child: DropdownButtonFormField<String>(
-                initialValue: _surface,
-                items: [
-                  DropdownMenuItem(value: 'paved', child: Text(l10n.surfacePaved)),
-                  DropdownMenuItem(value: 'gravel', child: Text(l10n.surfaceGravel)),
-                  DropdownMenuItem(value: 'mixed', child: Text(l10n.surfaceMixed)),
-                ],
-                onChanged: (v) => setState(() => _surface = v),
-              ),
-            ),
-            _RowField(
-              label: l10n.notes,
-              child: TextFormField(
-                controller: _noteCtrl,
-                maxLines: 2,
-                decoration: InputDecoration(hintText: l10n.optional),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: FilledButton(
-                    onPressed: () {
-                      if (!_form.currentState!.validate()) return;
-                      final entry = WalkEntry(
-                        start: _start,
-                        durationMin: int.parse(_durationCtrl.text),
-                        distanceKm: double.parse(_distanceCtrl.text),
-                        note: _noteCtrl.text.trim().isEmpty ? null : _noteCtrl.text.trim(),
-                        surface: _surface,
-                        paceMinPerKm: null,
-                      );
-                      widget.onSubmit(entry);
-                    },
-                    child: Text(l10n.add),
-                  ),
+              Text(l10n.addWalk, style: theme.textTheme.titleLarge),
+              const SizedBox(height: 12),
+              _RowField(
+                label: l10n.start,
+                child: OutlinedButton.icon(
+                  onPressed: () async {
+                    final date = await showDatePicker(
+                      context: context,
+                      firstDate:
+                          DateTime.now().subtract(const Duration(days: 30)),
+                      lastDate: DateTime.now(),
+                      initialDate: _start,
+                    );
+                    if (date == null) return;
+                    if (!mounted) return;
+                    final time = await showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay.fromDateTime(_start));
+                    if (time == null || !mounted) return;
+                    setState(() => _start = DateTime(date.year, date.month,
+                        date.day, time.hour, time.minute));
+                  },
+                  icon: const Icon(Icons.event),
+                  label: Text(df.format(_start)),
                 ),
-              ],
-            ),
-          ],
+              ),
+              _RowField(
+                label: l10n.durationMin,
+                child: TextFormField(
+                  controller: _durationCtrl,
+                  keyboardType: TextInputType.number,
+                  decoration:
+                      InputDecoration(suffixText: l10n.min, hintText: '30'),
+                  validator: _positiveInt,
+                ),
+              ),
+              _RowField(
+                label: l10n.distance,
+                child: TextFormField(
+                  controller: _distanceCtrl,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  decoration:
+                      InputDecoration(suffixText: l10n.km, hintText: '2.0'),
+                  validator: _positiveDouble,
+                ),
+              ),
+              _RowField(
+                label: l10n.surfaceLabel,
+                child: DropdownButtonFormField<String>(
+                  initialValue: _surface,
+                  items: [
+                    DropdownMenuItem(
+                        value: 'paved', child: Text(l10n.surfacePaved)),
+                    DropdownMenuItem(
+                        value: 'gravel', child: Text(l10n.surfaceGravel)),
+                    DropdownMenuItem(
+                        value: 'mixed', child: Text(l10n.surfaceMixed)),
+                  ],
+                  onChanged: (v) => setState(() => _surface = v),
+                ),
+              ),
+              _RowField(
+                label: l10n.notes,
+                child: TextFormField(
+                  controller: _noteCtrl,
+                  maxLines: 2,
+                  decoration: InputDecoration(hintText: l10n.optional),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: FilledButton(
+                      onPressed: () {
+                        if (!_form.currentState!.validate()) return;
+                        final entry = WalkEntry(
+                          start: _start,
+                          durationMin: int.parse(_durationCtrl.text),
+                          distanceKm: double.parse(_distanceCtrl.text),
+                          note: _noteCtrl.text.trim().isEmpty
+                              ? null
+                              : _noteCtrl.text.trim(),
+                          surface: _surface,
+                          paceMinPerKm: null,
+                        );
+                        widget.onSubmit(entry);
+                      },
+                      child: Text(l10n.add),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-    ),
-  );
+    );
   }
 
   String? _positiveInt(String? v) {
@@ -579,7 +621,8 @@ class _RowField extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(width: 92, child: Text(label, style: theme.textTheme.bodyMedium)),
+          SizedBox(
+              width: 92, child: Text(label, style: theme.textTheme.bodyMedium)),
           const SizedBox(width: 8),
           Expanded(child: child),
         ],

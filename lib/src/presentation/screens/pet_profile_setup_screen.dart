@@ -11,7 +11,8 @@ class PetProfileSetupScreen extends ConsumerStatefulWidget {
   const PetProfileSetupScreen({super.key});
 
   @override
-  ConsumerState<PetProfileSetupScreen> createState() => _PetProfileSetupScreenState();
+  ConsumerState<PetProfileSetupScreen> createState() =>
+      _PetProfileSetupScreenState();
 }
 
 class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
@@ -38,7 +39,8 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
 
   Future<void> _pickImage() async {
     try {
-      final imagePath = await _profilePictureService.selectProfilePicture(context);
+      final imagePath =
+          await _profilePictureService.selectProfilePicture(context);
       if (imagePath != null) {
         setState(() {
           _savedImagePath = imagePath;
@@ -79,7 +81,7 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
     }
 
     logger.d("[PROFILE_SETUP] Form validation passed");
-    
+
     setState(() {
       _isLoading = true;
     });
@@ -90,11 +92,14 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
 
       if (_savedImagePath != null) {
         final imageFile = File(_savedImagePath!);
-        logger.d("[PROFILE_PIC] Checking if saved image file exists: ${await imageFile.exists()}");
+        logger.d(
+            "[PROFILE_PIC] Checking if saved image file exists: ${await imageFile.exists()}");
         if (await imageFile.exists()) {
-          logger.d("[PROFILE_PIC] Image file confirmed at path: $_savedImagePath");
+          logger.d(
+              "[PROFILE_PIC] Image file confirmed at path: $_savedImagePath");
         } else {
-          logger.e("[PROFILE_PIC] ERROR: Image file does NOT exist at path: $_savedImagePath");
+          logger.e(
+              "[PROFILE_PIC] ERROR: Image file does NOT exist at path: $_savedImagePath");
         }
       } else {
         logger.d("[PROFILE_PIC] No image path to save (null)");
@@ -103,13 +108,18 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
       final profile = PetProfile(
         name: _nameController.text.trim(),
         species: _speciesController.text.trim(),
-        breed: _breedController.text.trim().isEmpty ? null : _breedController.text.trim(),
+        breed: _breedController.text.trim().isEmpty
+            ? null
+            : _breedController.text.trim(),
         birthday: _selectedBirthday,
         photoPath: _savedImagePath,
-        notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
+        notes: _notesController.text.trim().isEmpty
+            ? null
+            : _notesController.text.trim(),
       );
 
-      logger.d("[PROFILE_SETUP] Created profile object - Name: ${profile.name}, Species: ${profile.species}, ID: ${profile.id}");
+      logger.d(
+          "[PROFILE_SETUP] Created profile object - Name: ${profile.name}, Species: ${profile.species}, ID: ${profile.id}");
       logger.d("[PROFILE_SETUP] Profile photoPath: ${profile.photoPath}");
 
       logger.d("[PROFILE_SETUP] Calling provider to save profile");
@@ -141,7 +151,7 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Setup Pet Profile'),
@@ -181,7 +191,8 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
                         : Icon(
                             Icons.pets,
                             size: 48,
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                            color: theme.colorScheme.onSurface
+                                .withValues(alpha: 0.6),
                           ),
                   ),
                 ),
@@ -191,7 +202,8 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
                 child: TextButton.icon(
                   onPressed: _pickImage,
                   icon: const Icon(Icons.camera_alt),
-                  label: Text(_savedImagePath != null ? 'Change Photo' : 'Add Photo'),
+                  label: Text(
+                      _savedImagePath != null ? 'Change Photo' : 'Add Photo'),
                 ),
               ),
               const SizedBox(height: 24),
@@ -300,4 +312,3 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
     );
   }
 }
-

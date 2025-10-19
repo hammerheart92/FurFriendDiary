@@ -30,7 +30,8 @@ class NotificationService {
       print('🔔 DEBUG: Current local time: ${DateTime.now()}');
 
       // Android initialization settings
-      const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+      const androidSettings =
+          AndroidInitializationSettings('@mipmap/ic_launcher');
 
       // iOS initialization settings
       const iosSettings = DarwinInitializationSettings(
@@ -73,7 +74,7 @@ class NotificationService {
   /// CRITICAL: Create Android notification channel
   Future<void> _createNotificationChannel() async {
     print('🔔 DEBUG: Creating Android notification channel...');
-    
+
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
       'reminders', // id - MUST match the channelId in notification details
       'Reminders', // name
@@ -102,11 +103,13 @@ class NotificationService {
 
     if (androidPlugin != null) {
       // Request permissions on Android 13+
-      final permissionGranted = await androidPlugin.requestNotificationsPermission();
+      final permissionGranted =
+          await androidPlugin.requestNotificationsPermission();
       print('🔔 DEBUG: Notification permission granted: $permissionGranted');
 
       // Check exact alarm permission
-      final canScheduleExactAlarms = await androidPlugin.canScheduleExactNotifications();
+      final canScheduleExactAlarms =
+          await androidPlugin.canScheduleExactNotifications();
       print('🔔 DEBUG: Can schedule exact alarms: $canScheduleExactAlarms');
 
       if (canScheduleExactAlarms == false) {
@@ -124,7 +127,8 @@ class NotificationService {
     print('🔔 DEBUG: Is active: ${reminder.isActive}');
 
     if (!_initialized) {
-      print('⚠️ DEBUG: NotificationService not initialized! Initializing now...');
+      print(
+          '⚠️ DEBUG: NotificationService not initialized! Initializing now...');
       await initialize();
     }
 
@@ -146,9 +150,9 @@ class NotificationService {
           await _scheduleOnce(reminder);
           break;
       }
-      
+
       print('✅ DEBUG: Notification scheduled successfully!');
-      
+
       // Verify scheduling
       await _printPendingNotifications();
     } catch (e, stackTrace) {
@@ -166,7 +170,8 @@ class NotificationService {
 
     final now = DateTime.now();
     print('🔔 DEBUG: Current time: $now');
-    print('🔔 DEBUG: Time until notification: ${reminder.scheduledTime.difference(now).inSeconds} seconds');
+    print(
+        '🔔 DEBUG: Time until notification: ${reminder.scheduledTime.difference(now).inSeconds} seconds');
 
     final tzDateTime = tz.TZDateTime.from(reminder.scheduledTime, tz.local);
     print('🔔 DEBUG: TZ DateTime: $tzDateTime');
@@ -225,7 +230,7 @@ class NotificationService {
 
   Future<void> _scheduleDaily(Reminder reminder) async {
     print('🔔 DEBUG: Scheduling DAILY reminder');
-    
+
     final androidDetails = AndroidNotificationDetails(
       'reminders',
       'Reminders',
@@ -269,7 +274,7 @@ class NotificationService {
 
   Future<void> _scheduleTwiceDaily(Reminder reminder) async {
     print('🔔 DEBUG: Scheduling TWICE DAILY reminder');
-    
+
     final androidDetails = AndroidNotificationDetails(
       'reminders',
       'Reminders',
@@ -338,7 +343,7 @@ class NotificationService {
 
   Future<void> _scheduleWeekly(Reminder reminder) async {
     print('🔔 DEBUG: Scheduling WEEKLY reminder');
-    
+
     final androidDetails = AndroidNotificationDetails(
       'reminders',
       'Reminders',
@@ -440,5 +445,40 @@ class NotificationService {
   Future<void> cancelAll() async {
     await _notifications.cancelAll();
     print('🔔 DEBUG: Cancelled all notifications');
+  }
+
+  /// Show a notification with custom details
+  Future<void> showNotification({
+    required int id,
+    required String title,
+    required String body,
+    NotificationDetails? details,
+  }) async {
+    if (!_initialized) {
+      await initialize();
+    }
+
+    // Use provided details or default
+    final notificationDetails = details ??
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'reminders',
+            'Reminders',
+            channelDescription: 'Pet care reminders and notifications',
+            importance: Importance.high,
+            priority: Priority.high,
+            playSound: true,
+            enableVibration: true,
+            icon: '@mipmap/ic_launcher',
+          ),
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true,
+          ),
+        );
+
+    await _notifications.show(id, title, body, notificationDetails);
+    print('✅ DEBUG: Notification shown - ID: $id, Title: $title');
   }
 }

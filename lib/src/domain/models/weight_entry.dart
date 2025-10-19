@@ -86,4 +86,3 @@ enum WeightUnit {
   @HiveField(1)
   pounds,
 }
-

@@ -40,17 +40,17 @@ class WeightHistoryScreen extends ConsumerWidget {
               children: [
                 // Summary Card
                 _buildSummaryCard(context, l10n, latestWeight, weightChange),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // Chart
                 _buildWeightChart(context, l10n, entries),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // History List
                 _buildHistoryList(context, l10n, entries, ref),
-                
+
                 // Bottom padding for FAB
                 const SizedBox(height: 80),
               ],
@@ -148,8 +148,9 @@ class WeightHistoryScreen extends ConsumerWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    backgroundColor: (weightChange > 0 ? Colors.green : Colors.red)
-                        .withOpacity(0.1),
+                    backgroundColor:
+                        (weightChange > 0 ? Colors.green : Colors.red)
+                            .withOpacity(0.1),
                   ),
                 ],
               ],
@@ -178,15 +179,17 @@ class WeightHistoryScreen extends ConsumerWidget {
 
     // Sort entries by date (oldest first for chart)
     final sortedEntries = entries.reversed.toList();
-    
+
     final spots = sortedEntries.asMap().entries.map((entry) {
       return FlSpot(entry.key.toDouble(), entry.value.weight);
     }).toList();
 
-    final minWeight = sortedEntries.map((e) => e.weight).reduce((a, b) => a < b ? a : b);
-    final maxWeight = sortedEntries.map((e) => e.weight).reduce((a, b) => a > b ? a : b);
+    final minWeight =
+        sortedEntries.map((e) => e.weight).reduce((a, b) => a < b ? a : b);
+    final maxWeight =
+        sortedEntries.map((e) => e.weight).reduce((a, b) => a > b ? a : b);
     final weightRange = maxWeight - minWeight;
-    
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Padding(
@@ -222,7 +225,8 @@ class WeightHistoryScreen extends ConsumerWidget {
                         showTitles: true,
                         reservedSize: 30,
                         getTitlesWidget: (value, meta) {
-                          if (value.toInt() >= 0 && value.toInt() < sortedEntries.length) {
+                          if (value.toInt() >= 0 &&
+                              value.toInt() < sortedEntries.length) {
                             final entry = sortedEntries[value.toInt()];
                             return Text(
                               DateFormat('M/d').format(entry.date),
@@ -233,8 +237,10 @@ class WeightHistoryScreen extends ConsumerWidget {
                         },
                       ),
                     ),
-                    rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    rightTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false)),
+                    topTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false)),
                   ),
                   borderData: FlBorderData(show: true),
                   minY: minWeight - (weightRange * 0.1),
@@ -248,7 +254,10 @@ class WeightHistoryScreen extends ConsumerWidget {
                       dotData: const FlDotData(show: true),
                       belowBarData: BarAreaData(
                         show: true,
-                        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.1),
                       ),
                     ),
                   ],
@@ -286,7 +295,8 @@ class WeightHistoryScreen extends ConsumerWidget {
             separatorBuilder: (context, index) => const Divider(height: 1),
             itemBuilder: (context, index) {
               final entry = entries[index];
-              final previousEntry = index < entries.length - 1 ? entries[index + 1] : null;
+              final previousEntry =
+                  index < entries.length - 1 ? entries[index + 1] : null;
               final change = previousEntry != null
                   ? entry.weight - previousEntry.weight
                   : null;
@@ -319,8 +329,9 @@ class WeightHistoryScreen extends ConsumerWidget {
                             color: change > 0 ? Colors.green : Colors.red,
                           ),
                         ),
-                        backgroundColor: (change > 0 ? Colors.green : Colors.red)
-                            .withOpacity(0.1),
+                        backgroundColor:
+                            (change > 0 ? Colors.green : Colors.red)
+                                .withOpacity(0.1),
                       ),
                     IconButton(
                       icon: const Icon(Icons.delete_outline),
@@ -397,4 +408,3 @@ class WeightHistoryScreen extends ConsumerWidget {
     );
   }
 }
-

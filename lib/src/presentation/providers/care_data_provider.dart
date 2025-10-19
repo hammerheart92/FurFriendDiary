@@ -39,13 +39,15 @@ class FeedingProvider extends _$FeedingProvider {
 }
 
 @riverpod
-Future<List<FeedingEntry>> feedingsByPetId(FeedingsByPetIdRef ref, String petId) async {
+Future<List<FeedingEntry>> feedingsByPetId(
+    FeedingsByPetIdRef ref, String petId) async {
   final repository = ref.watch(feedingRepositoryProvider);
   return await repository.getFeedingsByPetId(petId);
 }
 
 @riverpod
-Future<List<FeedingEntry>> feedingsByDateRange(FeedingsByDateRangeRef ref, String petId, DateTime start, DateTime end) async {
+Future<List<FeedingEntry>> feedingsByDateRange(FeedingsByDateRangeRef ref,
+    String petId, DateTime start, DateTime end) async {
   final repository = ref.watch(feedingRepositoryProvider);
   return await repository.getFeedingsByDateRange(petId, start, end);
 }
@@ -79,19 +81,22 @@ class MedicationProvider extends _$MedicationProvider {
 }
 
 @riverpod
-Future<List<MedicationEntry>> medicationsByPetId(MedicationsByPetIdRef ref, String petId) async {
+Future<List<MedicationEntry>> medicationsByPetId(
+    MedicationsByPetIdRef ref, String petId) async {
   final repository = ref.watch(medicationRepositoryProvider);
   return await repository.getMedicationsByPetId(petId);
 }
 
 @riverpod
-Future<List<MedicationEntry>> activeMedicationsByPetId(ActiveMedicationsByPetIdRef ref, String petId) async {
+Future<List<MedicationEntry>> activeMedicationsByPetId(
+    ActiveMedicationsByPetIdRef ref, String petId) async {
   final repository = ref.watch(medicationRepositoryProvider);
   return await repository.getActiveMedicationsByPetId(petId);
 }
 
 @riverpod
-Future<List<MedicationEntry>> inactiveMedicationsByPetId(InactiveMedicationsByPetIdRef ref, String petId) async {
+Future<List<MedicationEntry>> inactiveMedicationsByPetId(
+    InactiveMedicationsByPetIdRef ref, String petId) async {
   final repository = ref.watch(medicationRepositoryProvider);
   return await repository.getInactiveMedicationsByPetId(petId);
 }
@@ -125,13 +130,18 @@ class AppointmentProvider extends _$AppointmentProvider {
 }
 
 @riverpod
-Future<List<AppointmentEntry>> appointmentsByPetId(AppointmentsByPetIdRef ref, String petId) async {
+Future<List<AppointmentEntry>> appointmentsByPetId(
+    AppointmentsByPetIdRef ref, String petId) async {
   final repository = ref.watch(appointmentRepositoryProvider);
   return await repository.getAppointmentsByPetId(petId);
 }
 
 @riverpod
-Future<List<AppointmentEntry>> appointmentsByDateRange(AppointmentsByDateRangeRef ref, String petId, DateTime start, DateTime end) async {
+Future<List<AppointmentEntry>> appointmentsByDateRange(
+    AppointmentsByDateRangeRef ref,
+    String petId,
+    DateTime start,
+    DateTime end) async {
   final repository = ref.watch(appointmentRepositoryProvider);
   return await repository.getAppointmentsByDateRange(petId, start, end);
 }
@@ -165,19 +175,22 @@ class ReportProvider extends _$ReportProvider {
 }
 
 @riverpod
-Future<List<ReportEntry>> reportsByPetId(ReportsByPetIdRef ref, String petId) async {
+Future<List<ReportEntry>> reportsByPetId(
+    ReportsByPetIdRef ref, String petId) async {
   final repository = ref.watch(reportRepositoryProvider);
   return await repository.getReportsByPetId(petId);
 }
 
 @riverpod
-Future<List<ReportEntry>> reportsByDateRange(ReportsByDateRangeRef ref, String petId, DateTime start, DateTime end) async {
+Future<List<ReportEntry>> reportsByDateRange(ReportsByDateRangeRef ref,
+    String petId, DateTime start, DateTime end) async {
   final repository = ref.watch(reportRepositoryProvider);
   return await repository.getReportsByDateRange(petId, start, end);
 }
 
 @riverpod
-Future<List<ReportEntry>> reportsByType(ReportsByTypeRef ref, String petId, String reportType) async {
+Future<List<ReportEntry>> reportsByType(
+    ReportsByTypeRef ref, String petId, String reportType) async {
   final repository = ref.watch(reportRepositoryProvider);
   return await repository.getReportsByType(petId, reportType);
 }

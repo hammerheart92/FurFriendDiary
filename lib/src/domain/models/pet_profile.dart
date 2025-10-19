@@ -93,4 +93,3 @@ class PetProfile extends HiveObject {
     );
   }
 }
-

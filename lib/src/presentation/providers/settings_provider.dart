@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Provider for theme mode setting
-final themeModeProvider = StateNotifierProvider<ThemeModeNotifier, ThemeMode>((ref) {
+final themeModeProvider =
+    StateNotifierProvider<ThemeModeNotifier, ThemeMode>((ref) {
   return ThemeModeNotifier();
 });
 
@@ -49,7 +50,8 @@ class LocaleNotifier extends StateNotifier<Locale> {
 }
 
 /// Provider for notifications enabled setting
-final notificationsEnabledProvider = StateNotifierProvider<NotificationsEnabledNotifier, bool>((ref) {
+final notificationsEnabledProvider =
+    StateNotifierProvider<NotificationsEnabledNotifier, bool>((ref) {
   return NotificationsEnabledNotifier();
 });
 

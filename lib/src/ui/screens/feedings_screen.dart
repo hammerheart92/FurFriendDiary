@@ -14,7 +14,6 @@ import '../../data/repositories/feeding_repository_impl.dart';
 import '../../presentation/providers/care_data_provider.dart';
 import '../../../l10n/app_localizations.dart';
 
-
 final _logger = Logger();
 final _uuid = Uuid();
 
@@ -89,7 +88,6 @@ class _FeedingTile extends StatelessWidget {
 }
 
 class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
-
   Future<void> _showFeedingDetails(FeedingEntry feeding) async {
     final l10n = AppLocalizations.of(context);
     await showDialog(
@@ -100,7 +98,8 @@ class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('${l10n.date}: ${TimeOfDay.fromDateTime(feeding.dateTime).format(context)}'),
+            Text(
+                '${l10n.date}: ${TimeOfDay.fromDateTime(feeding.dateTime).format(context)}'),
             if (feeding.amount > 0) Text('${l10n.amount}: ${feeding.amount}'),
           ],
         ),
@@ -251,7 +250,8 @@ class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
       isScrollControlled: true,
       builder: (context) => _AddFeedingSheet(
         onSubmit: (feeding) {
-          _logger.i('🍽️ FEEDING FORM: Form submitted with foodType: ${feeding.foodType}');
+          _logger.i(
+              '🍽️ FEEDING FORM: Form submitted with foodType: ${feeding.foodType}');
           _addFeeding(feeding);
         },
       ),
@@ -265,10 +265,13 @@ class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
     final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
     final currentPet = ref.watch(currentPetProfileProvider);
-    final feedingsAsync = ref.watch(feedingsByPetIdProvider(currentPet?.id ?? ''));
+    final feedingsAsync =
+        ref.watch(feedingsByPetIdProvider(currentPet?.id ?? ''));
 
     return AppPage(
-      title: currentPet != null ? l10n.petFeedings(currentPet.name) : l10n.feedings,
+      title: currentPet != null
+          ? l10n.petFeedings(currentPet.name)
+          : l10n.feedings,
       body: Column(
         children: [
           // Pet Profile Display
@@ -294,7 +297,9 @@ class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
                       radius: 24,
                       backgroundColor: scheme.primary,
                       child: Text(
-                        currentPet.name.isNotEmpty ? currentPet.name[0].toUpperCase() : '?',
+                        currentPet.name.isNotEmpty
+                            ? currentPet.name[0].toUpperCase()
+                            : '?',
                         style: TextStyle(
                           color: scheme.onPrimary,
                           fontSize: 18,
@@ -309,15 +314,21 @@ class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
                         children: [
                           Text(
                             currentPet.name,
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                           ),
                           Text(
                             '${currentPet.species} • ${currentPet.breed ?? l10n.mixed}',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: scheme.onSurface.withOpacity(0.7),
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: scheme.onSurface.withOpacity(0.7),
+                                ),
                           ),
                         ],
                       ),
@@ -343,7 +354,8 @@ class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
                             radius: 32,
                             backgroundColor: scheme.onSurface.withOpacity(0.08),
                             child: Icon(Icons.restaurant,
-                                size: 28, color: scheme.onSurface.withOpacity(0.60)),
+                                size: 28,
+                                color: scheme.onSurface.withOpacity(0.60)),
                           ),
                           const SizedBox(height: AppSpacing.s5),
                           Text(
@@ -351,9 +363,10 @@ class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
                                 ? l10n.noFeedingsRecorded(currentPet.name)
                                 : l10n.noFeedingsRecordedGeneric,
                             textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: scheme.onSurface.withOpacity(0.7),
-                            ),
+                            style:
+                                Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                      color: scheme.onSurface.withOpacity(0.7),
+                                    ),
                           ),
                           const SizedBox(height: 16),
                           FilledButton(
@@ -429,13 +442,15 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
       _notesController.text = widget.feeding!.notes ?? '';
       _selectedPetId = widget.feeding!.petId;
       _selectedDateTime = widget.feeding!.dateTime;
-      _logger.i('🍽️ FEEDING FORM: Edit mode - Pre-filled with existing feeding data');
+      _logger.i(
+          '🍽️ FEEDING FORM: Edit mode - Pre-filled with existing feeding data');
     } else {
       // Add mode - use draft state
       final formState = ref.read(feedingFormStateNotifierProvider);
       _foodTypeController.text = formState.foodType;
       _selectedPetId = ref.read(currentPetProfileProvider)?.id;
-      _logger.i('🍽️ FEEDING FORM: Add mode - Initial foodType from provider: "${formState.foodType}"');
+      _logger.i(
+          '🍽️ FEEDING FORM: Add mode - Initial foodType from provider: "${formState.foodType}"');
     }
   }
 
@@ -468,7 +483,8 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
 
     if (!_isEditMode) {
       ref.listen(feedingFormStateNotifierProvider, (previous, next) {
-        _logger.i('🍽️ FEEDING FORM: Provider state changed - foodType: "${next.foodType}"');
+        _logger.i(
+            '🍽️ FEEDING FORM: Provider state changed - foodType: "${next.foodType}"');
         if (next.foodType != _foodTypeController.text) {
           _logger.i('🍽️ FEEDING FORM: Syncing controller to provider state');
           _foodTypeController.text = next.foodType;
@@ -509,10 +525,12 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
                           prefixIcon: const Icon(Icons.pets),
                           border: const OutlineInputBorder(),
                         ),
-                        items: pets.map((pet) => DropdownMenuItem(
-                          value: pet.id,
-                          child: Text(pet.name),
-                        )).toList(),
+                        items: pets
+                            .map((pet) => DropdownMenuItem(
+                                  value: pet.id,
+                                  child: Text(pet.name),
+                                ))
+                            .toList(),
                         onChanged: (value) {
                           setState(() {
                             _selectedPetId = value;
@@ -550,7 +568,9 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
                 },
                 onChanged: (value) {
                   if (!_isEditMode) {
-                    ref.read(feedingFormStateNotifierProvider.notifier).updateFoodType(value);
+                    ref
+                        .read(feedingFormStateNotifierProvider.notifier)
+                        .updateFoodType(value);
                   }
                 },
               ),
@@ -566,7 +586,8 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
                   suffixText: 'g',
                   border: const OutlineInputBorder(),
                 ),
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return l10n.pleaseEnterAmount;
@@ -599,8 +620,11 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
                     if (time != null && mounted) {
                       setState(() {
                         _selectedDateTime = DateTime(
-                          date.year, date.month, date.day,
-                          time.hour, time.minute,
+                          date.year,
+                          date.month,
+                          date.day,
+                          time.hour,
+                          time.minute,
                         );
                       });
                     }
@@ -654,7 +678,9 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
                                   foodType: _foodTypeController.text,
                                   amount: double.parse(_amountController.text),
                                   dateTime: _selectedDateTime,
-                                  notes: _notesController.text.isEmpty ? null : _notesController.text,
+                                  notes: _notesController.text.isEmpty
+                                      ? null
+                                      : _notesController.text,
                                 )
                               : FeedingEntry(
                                   id: _uuid.v4(),
@@ -662,7 +688,9 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
                                   foodType: _foodTypeController.text,
                                   amount: double.parse(_amountController.text),
                                   dateTime: _selectedDateTime,
-                                  notes: _notesController.text.isEmpty ? null : _notesController.text,
+                                  notes: _notesController.text.isEmpty
+                                      ? null
+                                      : _notesController.text,
                                 );
 
                           widget.onSubmit(feeding);

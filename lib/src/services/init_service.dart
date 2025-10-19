@@ -1,4 +1,3 @@
-
 import '../data/local/local_storage_service.dart';
 
 class InitService {

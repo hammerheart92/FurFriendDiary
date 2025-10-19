@@ -57,7 +57,8 @@ class ReportsList extends ConsumerWidget {
 
         // Sort reports by generation date (newest first)
         final sortedReports = [...fetchedReports];
-        sortedReports.sort((a, b) => b.generatedDate.compareTo(a.generatedDate));
+        sortedReports
+            .sort((a, b) => b.generatedDate.compareTo(a.generatedDate));
 
         return ListView.builder(
           padding: const EdgeInsets.all(16),
@@ -164,7 +165,8 @@ class ReportsList extends ConsumerWidget {
     );
   }
 
-  Future<void> _showDeleteDialog(BuildContext context, WidgetRef ref, ReportEntry report) async {
+  Future<void> _showDeleteDialog(
+      BuildContext context, WidgetRef ref, ReportEntry report) async {
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(

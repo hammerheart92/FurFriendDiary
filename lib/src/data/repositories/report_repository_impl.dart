@@ -28,9 +28,8 @@ class ReportRepositoryImpl implements ReportRepository {
   Future<List<ReportEntry>> getReportsByPetId(String petId) async {
     try {
       final box = HiveBoxes.getReports();
-      final reports = box.values
-          .where((report) => report.petId == petId)
-          .toList();
+      final reports =
+          box.values.where((report) => report.petId == petId).toList();
       // Sort by creation date, newest first
       reports.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       logger.i("🔍 DEBUG: Retrieved ${reports.length} reports for pet $petId");
@@ -46,7 +45,8 @@ class ReportRepositoryImpl implements ReportRepository {
     try {
       final box = HiveBoxes.getReports();
       await box.put(report.id, report);
-      logger.i("✅ DEBUG: Added report '${report.reportType}' with ID ${report.id}");
+      logger.i(
+          "✅ DEBUG: Added report '${report.reportType}' with ID ${report.id}");
     } catch (e) {
       logger.e("🚨 ERROR: Failed to add report '${report.reportType}': $e");
       rethrow;
@@ -58,7 +58,8 @@ class ReportRepositoryImpl implements ReportRepository {
     try {
       final box = HiveBoxes.getReports();
       await box.put(report.id, report);
-      logger.i("✅ DEBUG: Updated report '${report.reportType}' with ID ${report.id}");
+      logger.i(
+          "✅ DEBUG: Updated report '${report.reportType}' with ID ${report.id}");
     } catch (e) {
       logger.e("🚨 ERROR: Failed to update report '${report.reportType}': $e");
       rethrow;
@@ -71,7 +72,8 @@ class ReportRepositoryImpl implements ReportRepository {
       final box = HiveBoxes.getReports();
       final report = box.get(id);
       await box.delete(id);
-      logger.i("✅ DEBUG: Deleted report with ID $id${report != null ? " ('${report.reportType}')" : ""}");
+      logger.i(
+          "✅ DEBUG: Deleted report with ID $id${report != null ? " ('${report.reportType}')" : ""}");
     } catch (e) {
       logger.e("🚨 ERROR: Failed to delete report with ID $id: $e");
       rethrow;
@@ -96,7 +98,8 @@ class ReportRepositoryImpl implements ReportRepository {
   }
 
   @override
-  Future<List<ReportEntry>> getReportsByDateRange(String petId, DateTime start, DateTime end) async {
+  Future<List<ReportEntry>> getReportsByDateRange(
+      String petId, DateTime start, DateTime end) async {
     try {
       final box = HiveBoxes.getReports();
       final reports = box.values
@@ -107,27 +110,33 @@ class ReportRepositoryImpl implements ReportRepository {
           .toList();
       // Sort by generation date, newest first
       reports.sort((a, b) => b.generatedDate.compareTo(a.generatedDate));
-      logger.i("🔍 DEBUG: Retrieved ${reports.length} reports for pet $petId in date range");
+      logger.i(
+          "🔍 DEBUG: Retrieved ${reports.length} reports for pet $petId in date range");
       return reports;
     } catch (e) {
-      logger.e("🚨 ERROR: Failed to get reports by date range for pet $petId: $e");
+      logger.e(
+          "🚨 ERROR: Failed to get reports by date range for pet $petId: $e");
       rethrow;
     }
   }
 
   @override
-  Future<List<ReportEntry>> getReportsByType(String petId, String reportType) async {
+  Future<List<ReportEntry>> getReportsByType(
+      String petId, String reportType) async {
     try {
       final box = HiveBoxes.getReports();
       final reports = box.values
-          .where((report) => report.petId == petId && report.reportType == reportType)
+          .where((report) =>
+              report.petId == petId && report.reportType == reportType)
           .toList();
       // Sort by generation date, newest first
       reports.sort((a, b) => b.generatedDate.compareTo(a.generatedDate));
-      logger.i("🔍 DEBUG: Retrieved ${reports.length} '$reportType' reports for pet $petId");
+      logger.i(
+          "🔍 DEBUG: Retrieved ${reports.length} '$reportType' reports for pet $petId");
       return reports;
     } catch (e) {
-      logger.e("🚨 ERROR: Failed to get '$reportType' reports for pet $petId: $e");
+      logger.e(
+          "🚨 ERROR: Failed to get '$reportType' reports for pet $petId: $e");
       rethrow;
     }
   }

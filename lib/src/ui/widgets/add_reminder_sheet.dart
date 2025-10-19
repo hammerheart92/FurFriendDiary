@@ -41,7 +41,8 @@ class _AddReminderSheetState extends ConsumerState<AddReminderSheet> {
   void initState() {
     super.initState();
     _titleController = TextEditingController(text: widget.prefilledTitle);
-    _descriptionController = TextEditingController(text: widget.prefilledDescription);
+    _descriptionController =
+        TextEditingController(text: widget.prefilledDescription);
 
     if (widget.prefilledType != null) {
       _selectedType = widget.prefilledType!;
@@ -265,9 +266,7 @@ class _AddReminderSheetState extends ConsumerState<AddReminderSheet> {
         linkedEntityId: widget.linkedEntityId,
       );
 
-      await ref
-          .read(reminderNotifierProvider.notifier)
-          .addReminder(reminder);
+      await ref.read(reminderNotifierProvider.notifier).addReminder(reminder);
 
       if (mounted) {
         Navigator.of(context).pop(true);

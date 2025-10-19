@@ -41,7 +41,8 @@ class ProfilePictureWidget extends StatelessWidget {
       if (exists) {
         try {
           final fileSize = imageFile.lengthSync();
-          _logger.d('[PROFILE_PIC] SUCCESS: File verified! Size: $fileSize bytes');
+          _logger
+              .d('[PROFILE_PIC] SUCCESS: File verified! Size: $fileSize bytes');
           backgroundImage = FileImage(imageFile);
         } catch (e) {
           _logger.e('[PROFILE_PIC] ERROR: Failed to read file: $e');
@@ -52,8 +53,10 @@ class ProfilePictureWidget extends StatelessWidget {
           );
         }
       } else {
-        _logger.e('[PROFILE_PIC] ERROR: imagePath is set but file does NOT exist!');
-        _logger.e('[PROFILE_PIC] ERROR: Expected at: ${imageFile.absolute.path}');
+        _logger.e(
+            '[PROFILE_PIC] ERROR: imagePath is set but file does NOT exist!');
+        _logger
+            .e('[PROFILE_PIC] ERROR: Expected at: ${imageFile.absolute.path}');
         child = Icon(
           Icons.pets,
           size: radius * 0.7,
@@ -61,7 +64,8 @@ class ProfilePictureWidget extends StatelessWidget {
         );
       }
     } else {
-      _logger.d('[PROFILE_PIC] imagePath is null or empty, showing default icon');
+      _logger
+          .d('[PROFILE_PIC] imagePath is null or empty, showing default icon');
       child = Icon(
         Icons.pets,
         size: radius * 0.7,

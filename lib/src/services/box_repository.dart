@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -28,7 +27,9 @@ class BoxRepository {
   Future<List<Map<String, dynamic>>> listAll() async {
     await ensureOpen();
     final box = Hive.box<String>(boxName);
-    return box.values.map((e) => jsonDecode(e) as Map<String, dynamic>).toList();
+    return box.values
+        .map((e) => jsonDecode(e) as Map<String, dynamic>)
+        .toList();
   }
 
   Future<void> delete(String id) async {

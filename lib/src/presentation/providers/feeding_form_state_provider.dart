@@ -34,7 +34,12 @@ class FeedingFormState {
     );
   }
 
-  bool get isEmpty => foodType.isEmpty && amount == null && time == null && date == null && (notes?.isEmpty ?? true);
+  bool get isEmpty =>
+      foodType.isEmpty &&
+      amount == null &&
+      time == null &&
+      date == null &&
+      (notes?.isEmpty ?? true);
 
   bool get isValid => foodType.isNotEmpty;
 }

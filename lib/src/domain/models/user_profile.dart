@@ -7,22 +7,22 @@ part 'user_profile.g.dart';
 class UserProfile extends HiveObject {
   @HiveField(0)
   String id;
-  
+
   @HiveField(1)
   String name;
-  
+
   @HiveField(2)
   String? email;
-  
+
   @HiveField(3)
   String? profilePicturePath;
-  
+
   @HiveField(4)
   DateTime createdAt;
-  
+
   @HiveField(5)
   DateTime updatedAt;
-  
+
   @HiveField(6)
   bool hasCompletedOnboarding;
 
@@ -34,29 +34,29 @@ class UserProfile extends HiveObject {
     DateTime? createdAt,
     DateTime? updatedAt,
     this.hasCompletedOnboarding = false,
-  }) : id = id ?? const Uuid().v4(),
-       createdAt = createdAt ?? DateTime.now(),
-       updatedAt = updatedAt ?? DateTime.now();
+  })  : id = id ?? const Uuid().v4(),
+        createdAt = createdAt ?? DateTime.now(),
+        updatedAt = updatedAt ?? DateTime.now();
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'name': name,
-    'email': email,
-    'profilePicturePath': profilePicturePath,
-    'createdAt': createdAt.toIso8601String(),
-    'updatedAt': updatedAt.toIso8601String(),
-    'hasCompletedOnboarding': hasCompletedOnboarding,
-  };
+        'id': id,
+        'name': name,
+        'email': email,
+        'profilePicturePath': profilePicturePath,
+        'createdAt': createdAt.toIso8601String(),
+        'updatedAt': updatedAt.toIso8601String(),
+        'hasCompletedOnboarding': hasCompletedOnboarding,
+      };
 
   factory UserProfile.fromJson(Map<String, dynamic> json) => UserProfile(
-    id: json['id'],
-    name: json['name'],
-    email: json['email'],
-    profilePicturePath: json['profilePicturePath'],
-    createdAt: DateTime.parse(json['createdAt']),
-    updatedAt: DateTime.parse(json['updatedAt']),
-    hasCompletedOnboarding: json['hasCompletedOnboarding'] ?? false,
-  );
+        id: json['id'],
+        name: json['name'],
+        email: json['email'],
+        profilePicturePath: json['profilePicturePath'],
+        createdAt: DateTime.parse(json['createdAt']),
+        updatedAt: DateTime.parse(json['updatedAt']),
+        hasCompletedOnboarding: json['hasCompletedOnboarding'] ?? false,
+      );
 
   UserProfile copyWith({
     String? id,
@@ -74,7 +74,8 @@ class UserProfile extends HiveObject {
       profilePicturePath: profilePicturePath ?? this.profilePicturePath,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? DateTime.now(),
-      hasCompletedOnboarding: hasCompletedOnboarding ?? this.hasCompletedOnboarding,
+      hasCompletedOnboarding:
+          hasCompletedOnboarding ?? this.hasCompletedOnboarding,
     );
   }
 }

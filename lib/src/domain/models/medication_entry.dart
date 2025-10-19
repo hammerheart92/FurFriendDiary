@@ -8,40 +8,59 @@ part 'medication_entry.g.dart';
 class MedicationEntry extends HiveObject {
   @HiveField(0)
   String id;
-  
+
   @HiveField(1)
   String petId;
-  
+
   @HiveField(2)
   String medicationName;
-  
+
   @HiveField(3)
   String dosage;
-  
+
   @HiveField(4)
   String frequency; // "Once daily", "Twice daily", etc.
-  
+
   @HiveField(5)
   DateTime startDate;
-  
+
   @HiveField(6)
   DateTime? endDate;
-  
+
   @HiveField(7)
   String administrationMethod; // "Oral", "Topical", "Injection"
-  
+
   @HiveField(8)
   String? notes;
-  
+
   @HiveField(9)
   bool isActive;
-  
+
   @HiveField(10)
   DateTime createdAt;
-  
+
   @HiveField(11)
   List<TimeOfDayModel> administrationTimes; // Specific times of day
-  
+
+  // Inventory tracking fields
+  @HiveField(12)
+  int? stockQuantity; // current pills/doses remaining
+
+  @HiveField(13)
+  String? stockUnit; // "pills", "ml", "doses", "tablets"
+
+  @HiveField(14)
+  int? lowStockThreshold; // alert when below this
+
+  @HiveField(15)
+  double? costPerUnit; // price per pill/dose
+
+  @HiveField(16)
+  DateTime? lastPurchaseDate;
+
+  @HiveField(17)
+  int? refillReminderDays; // remind X days before running out
+
   MedicationEntry({
     String? id,
     required this.petId,
@@ -55,39 +74,65 @@ class MedicationEntry extends HiveObject {
     this.isActive = true,
     DateTime? createdAt,
     List<TimeOfDayModel>? administrationTimes,
-  }) : id = id ?? const Uuid().v4(),
-       createdAt = createdAt ?? DateTime.now(),
-       administrationTimes = administrationTimes ?? [];
+    this.stockQuantity,
+    this.stockUnit,
+    this.lowStockThreshold,
+    this.costPerUnit,
+    this.lastPurchaseDate,
+    this.refillReminderDays,
+  })  : id = id ?? const Uuid().v4(),
+        createdAt = createdAt ?? DateTime.now(),
+        administrationTimes = administrationTimes ?? [];
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'petId': petId,
-    'medicationName': medicationName,
-    'dosage': dosage,
-    'frequency': frequency,
-    'startDate': startDate.toIso8601String(),
-    'endDate': endDate?.toIso8601String(),
-    'administrationMethod': administrationMethod,
-    'notes': notes,
-    'isActive': isActive,
-    'createdAt': createdAt.toIso8601String(),
-    'administrationTimes': administrationTimes.map((time) => time.toJson()).toList(),
-  };
+        'id': id,
+        'petId': petId,
+        'medicationName': medicationName,
+        'dosage': dosage,
+        'frequency': frequency,
+        'startDate': startDate.toIso8601String(),
+        'endDate': endDate?.toIso8601String(),
+        'administrationMethod': administrationMethod,
+        'notes': notes,
+        'isActive': isActive,
+        'createdAt': createdAt.toIso8601String(),
+        'administrationTimes':
+            administrationTimes.map((time) => time.toJson()).toList(),
+        'stockQuantity': stockQuantity,
+        'stockUnit': stockUnit,
+        'lowStockThreshold': lowStockThreshold,
+        'costPerUnit': costPerUnit,
+        'lastPurchaseDate': lastPurchaseDate?.toIso8601String(),
+        'refillReminderDays': refillReminderDays,
+      };
 
-  factory MedicationEntry.fromJson(Map<String, dynamic> json) => MedicationEntry(
-    id: json['id'],
-    petId: json['petId'],
-    medicationName: json['medicationName'],
-    dosage: json['dosage'],
-    frequency: json['frequency'],
-    startDate: DateTime.parse(json['startDate']),
-    endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
-    administrationMethod: json['administrationMethod'],
-    notes: json['notes'],
-    isActive: json['isActive'] ?? true,
-    createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : DateTime.now(),
-    administrationTimes: _parseAdministrationTimes(json['administrationTimes']),
-  );
+  factory MedicationEntry.fromJson(Map<String, dynamic> json) =>
+      MedicationEntry(
+        id: json['id'],
+        petId: json['petId'],
+        medicationName: json['medicationName'],
+        dosage: json['dosage'],
+        frequency: json['frequency'],
+        startDate: DateTime.parse(json['startDate']),
+        endDate:
+            json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
+        administrationMethod: json['administrationMethod'],
+        notes: json['notes'],
+        isActive: json['isActive'] ?? true,
+        createdAt: json['createdAt'] != null
+            ? DateTime.parse(json['createdAt'])
+            : DateTime.now(),
+        administrationTimes:
+            _parseAdministrationTimes(json['administrationTimes']),
+        stockQuantity: json['stockQuantity'],
+        stockUnit: json['stockUnit'],
+        lowStockThreshold: json['lowStockThreshold'],
+        costPerUnit: json['costPerUnit'],
+        lastPurchaseDate: json['lastPurchaseDate'] != null
+            ? DateTime.parse(json['lastPurchaseDate'])
+            : null,
+        refillReminderDays: json['refillReminderDays'],
+      );
 
   static List<TimeOfDayModel> _parseAdministrationTimes(dynamic timesData) {
     if (timesData == null) return [];
@@ -106,11 +151,13 @@ class MedicationEntry extends HiveObject {
         if (timeItem is TimeOfDayModel) {
           return timeItem;
         } else {
-          throw ArgumentError('Unsupported administration time format: ${timeItem.runtimeType}');
+          throw ArgumentError(
+              'Unsupported administration time format: ${timeItem.runtimeType}');
         }
       }
     }).toList();
   }
+
   MedicationEntry copyWith({
     String? id,
     String? petId,
@@ -124,6 +171,12 @@ class MedicationEntry extends HiveObject {
     bool? isActive,
     DateTime? createdAt,
     List<TimeOfDayModel>? administrationTimes,
+    int? stockQuantity,
+    String? stockUnit,
+    int? lowStockThreshold,
+    double? costPerUnit,
+    DateTime? lastPurchaseDate,
+    int? refillReminderDays,
   }) {
     return MedicationEntry(
       id: id ?? this.id,
@@ -138,6 +191,12 @@ class MedicationEntry extends HiveObject {
       isActive: isActive ?? this.isActive,
       createdAt: createdAt ?? this.createdAt,
       administrationTimes: administrationTimes ?? this.administrationTimes,
+      stockQuantity: stockQuantity ?? this.stockQuantity,
+      stockUnit: stockUnit ?? this.stockUnit,
+      lowStockThreshold: lowStockThreshold ?? this.lowStockThreshold,
+      costPerUnit: costPerUnit ?? this.costPerUnit,
+      lastPurchaseDate: lastPurchaseDate ?? this.lastPurchaseDate,
+      refillReminderDays: refillReminderDays ?? this.refillReminderDays,
     );
   }
 }

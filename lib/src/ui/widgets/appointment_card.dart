@@ -74,7 +74,8 @@ class AppointmentCard extends StatelessWidget {
                               Text(
                                 '${appointment.clinic} • ${appointment.reason}',
                                 style: theme.textTheme.bodySmall?.copyWith(
-                                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                  color: theme.colorScheme.onSurface
+                                      .withOpacity(0.7),
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -93,7 +94,9 @@ class AppointmentCard extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: appointment.isCompleted ? Colors.green : _getStatusColor(),
+                      color: appointment.isCompleted
+                          ? Colors.green
+                          : _getStatusColor(),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -136,11 +139,17 @@ class AppointmentCard extends StatelessWidget {
                         child: Row(
                           children: [
                             Icon(
-                              appointment.isCompleted ? Icons.undo : Icons.check,
-                              color: appointment.isCompleted ? Colors.orange : Colors.green,
+                              appointment.isCompleted
+                                  ? Icons.undo
+                                  : Icons.check,
+                              color: appointment.isCompleted
+                                  ? Colors.orange
+                                  : Colors.green,
                             ),
                             const SizedBox(width: 8),
-                            Text(appointment.isCompleted ? l10n.markPending : l10n.markCompleted),
+                            Text(appointment.isCompleted
+                                ? l10n.markPending
+                                : l10n.markCompleted),
                           ],
                         ),
                       ),
@@ -171,7 +180,8 @@ class AppointmentCard extends StatelessWidget {
                       context: context,
                       icon: Icons.calendar_today,
                       label: l10n.date,
-                      value: localizedShortDate(context, appointment.appointmentDate),
+                      value: localizedShortDate(
+                          context, appointment.appointmentDate),
                       color: Colors.blue,
                     ),
                   ),
@@ -182,7 +192,8 @@ class AppointmentCard extends StatelessWidget {
                       context: context,
                       icon: Icons.access_time,
                       label: l10n.timeLabel,
-                      value: localizedTime(context, appointment.appointmentTime),
+                      value:
+                          localizedTime(context, appointment.appointmentTime),
                       color: Colors.green,
                     ),
                   ),
@@ -201,7 +212,8 @@ class AppointmentCard extends StatelessWidget {
               ),
 
               // Notes section
-              if (appointment.notes != null && appointment.notes!.isNotEmpty) ...[
+              if (appointment.notes != null &&
+                  appointment.notes!.isNotEmpty) ...[
                 const SizedBox(height: 16),
                 Container(
                   width: double.infinity,
@@ -228,7 +240,8 @@ class AppointmentCard extends StatelessWidget {
                             l10n.notes,
                             style: theme.textTheme.bodySmall?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: theme.colorScheme.onSurface.withOpacity(0.7),
+                              color:
+                                  theme.colorScheme.onSurface.withOpacity(0.7),
                             ),
                           ),
                         ],
@@ -340,7 +353,7 @@ class AppointmentCard extends StatelessWidget {
 
   String _getStatusText(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     if (appointment.isCompleted) {
       return l10n.completed;
     }
@@ -375,7 +388,7 @@ class AppointmentCard extends StatelessWidget {
 
   String _getDaysLabel(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     if (appointment.isCompleted) {
       return l10n.status;
     }
@@ -391,7 +404,7 @@ class AppointmentCard extends StatelessWidget {
 
   String _getDaysValue(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     if (appointment.isCompleted) {
       return l10n.done;
     }

@@ -29,7 +29,8 @@ class ImageService {
       }
 
       if (status.isPermanentlyDenied) {
-        throw PermissionPermanentlyDeniedException('Gallery permission permanently denied');
+        throw PermissionPermanentlyDeniedException(
+            'Gallery permission permanently denied');
       }
 
       final XFile? image = await _picker.pickImage(
@@ -65,7 +66,8 @@ class ImageService {
       }
 
       if (status.isPermanentlyDenied) {
-        throw PermissionPermanentlyDeniedException('Gallery permission permanently denied');
+        throw PermissionPermanentlyDeniedException(
+            'Gallery permission permanently denied');
       }
 
       // Pick multiple images
@@ -95,7 +97,8 @@ class ImageService {
       }
 
       if (status.isPermanentlyDenied) {
-        throw PermissionPermanentlyDeniedException('Camera permission permanently denied');
+        throw PermissionPermanentlyDeniedException(
+            'Camera permission permanently denied');
       }
 
       final XFile? image = await _picker.pickImage(

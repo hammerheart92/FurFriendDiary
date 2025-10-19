@@ -71,7 +71,8 @@ class ReportCard extends StatelessWidget {
                               Text(
                                 _getDateRange(),
                                 style: theme.textTheme.bodySmall?.copyWith(
-                                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                  color: theme.colorScheme.onSurface
+                                      .withOpacity(0.7),
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -197,7 +198,8 @@ class ReportCard extends StatelessWidget {
                             l10n.summary,
                             style: theme.textTheme.bodySmall?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: theme.colorScheme.onSurface.withOpacity(0.7),
+                              color:
+                                  theme.colorScheme.onSurface.withOpacity(0.7),
                             ),
                           ),
                         ],

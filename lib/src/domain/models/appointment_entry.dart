@@ -46,34 +46,37 @@ class AppointmentEntry extends HiveObject {
     this.notes,
     this.isCompleted = false,
     DateTime? createdAt,
-  }) : id = id ?? const Uuid().v4(),
-       createdAt = createdAt ?? DateTime.now();
+  })  : id = id ?? const Uuid().v4(),
+        createdAt = createdAt ?? DateTime.now();
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'petId': petId,
-    'veterinarian': veterinarian,
-    'clinic': clinic,
-    'appointmentDate': appointmentDate.toIso8601String(),
-    'appointmentTime': appointmentTime.toIso8601String(),
-    'reason': reason,
-    'notes': notes,
-    'isCompleted': isCompleted,
-    'createdAt': createdAt.toIso8601String(),
-  };
+        'id': id,
+        'petId': petId,
+        'veterinarian': veterinarian,
+        'clinic': clinic,
+        'appointmentDate': appointmentDate.toIso8601String(),
+        'appointmentTime': appointmentTime.toIso8601String(),
+        'reason': reason,
+        'notes': notes,
+        'isCompleted': isCompleted,
+        'createdAt': createdAt.toIso8601String(),
+      };
 
-  factory AppointmentEntry.fromJson(Map<String, dynamic> json) => AppointmentEntry(
-    id: json['id'],
-    petId: json['petId'],
-    veterinarian: json['veterinarian'],
-    clinic: json['clinic'],
-    appointmentDate: DateTime.parse(json['appointmentDate']),
-    appointmentTime: DateTime.parse(json['appointmentTime']),
-    reason: json['reason'],
-    notes: json['notes'],
-    isCompleted: json['isCompleted'] ?? false,
-    createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : DateTime.now(),
-  );
+  factory AppointmentEntry.fromJson(Map<String, dynamic> json) =>
+      AppointmentEntry(
+        id: json['id'],
+        petId: json['petId'],
+        veterinarian: json['veterinarian'],
+        clinic: json['clinic'],
+        appointmentDate: DateTime.parse(json['appointmentDate']),
+        appointmentTime: DateTime.parse(json['appointmentTime']),
+        reason: json['reason'],
+        notes: json['notes'],
+        isCompleted: json['isCompleted'] ?? false,
+        createdAt: json['createdAt'] != null
+            ? DateTime.parse(json['createdAt'])
+            : DateTime.now(),
+      );
 
   AppointmentEntry copyWith({
     String? id,

@@ -34,7 +34,8 @@ class ProfilePictureService {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Select Photo'),
-        content: const Text('Choose how you want to select a photo for your pet.'),
+        content:
+            const Text('Choose how you want to select a photo for your pet.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -62,7 +63,8 @@ class ProfilePictureService {
     _logger.d('[PROFILE_PIC] App documents directory: ${appDir.path}');
 
     final profilePicsDir = Directory('${appDir.path}/profile_pictures');
-    _logger.d('[PROFILE_PIC] Profile pictures directory: ${profilePicsDir.path}');
+    _logger
+        .d('[PROFILE_PIC] Profile pictures directory: ${profilePicsDir.path}');
 
     // Create directory if it doesn't exist
     if (!await profilePicsDir.exists()) {
@@ -92,7 +94,7 @@ class ProfilePictureService {
   /// Deletes a profile picture file
   Future<void> deleteProfilePicture(String? imagePath) async {
     if (imagePath == null || imagePath.isEmpty) return;
-    
+
     final file = File(imagePath);
     if (await file.exists()) {
       await file.delete();

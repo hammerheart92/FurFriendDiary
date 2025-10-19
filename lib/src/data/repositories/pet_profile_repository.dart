@@ -6,7 +6,7 @@ import '../local/hive_boxes.dart';
 class PetProfileRepository {
   final logger = Logger();
   static const String _settingsBoxName = 'app_prefs';
-  
+
   Box<PetProfile>? _profileBox;
   Box? _settingsBox;
 
@@ -16,15 +16,15 @@ class PetProfileRepository {
   // Initialize boxes - called from InitService
   Future<void> init() async {
     logger.i("🔍 DEBUG: PetProfileRepository.init() called");
-    
+
     try {
       // Use HiveBoxes to get already opened boxes
       _profileBox = HiveBoxes.getPetProfiles();
       logger.i("🔍 DEBUG: Got pet profiles box successfully");
-      
+
       _settingsBox = HiveBoxes.getAppPrefs();
       logger.i("🔍 DEBUG: Got app prefs box successfully");
-      
+
       logger.i("🔍 DEBUG: PetProfileRepository initialization completed");
     } catch (e) {
       logger.e("🚨 ERROR: PetProfileRepository.init() failed: $e");
@@ -62,7 +62,7 @@ class PetProfileRepository {
           await _profiles.put(profile.id, updated);
         }
       }
-      
+
       // Activate the selected profile
       final targetProfile = _profiles.get(id);
       if (targetProfile != null) {
@@ -78,40 +78,41 @@ class PetProfileRepository {
 
   // Add new profile
   Future<void> add(PetProfile profile) async {
-    logger.i("🔍 DEBUG: PetProfileRepository.add() called for: ${profile.name}");
-    
+    logger
+        .i("🔍 DEBUG: PetProfileRepository.add() called for: ${profile.name}");
+
     try {
       logger.d("🔍 DEBUG: Attempting to get pet_profiles box");
-      final box = _profiles; // This will call HiveBoxes.getPetProfiles() with defensive checks
-      
+      final box =
+          _profiles; // This will call HiveBoxes.getPetProfiles() with defensive checks
+
       logger.d("🔍 DEBUG: Box retrieved successfully. IsOpen: ${box.isOpen}");
       logger.d("🔍 DEBUG: Current box length: ${box.length}");
-      
+
       // If this is the first profile, make it active
       final isFirstProfile = box.isEmpty;
       logger.d("🔍 DEBUG: Is first profile: $isFirstProfile");
-      
-      final profileToSave = isFirstProfile 
-          ? profile.copyWith(isActive: true) 
-          : profile;
-      
+
+      final profileToSave =
+          isFirstProfile ? profile.copyWith(isActive: true) : profile;
+
       logger.d("🔍 DEBUG: About to save profile with ID: ${profile.id}");
-      logger.d("🔍 DEBUG: Profile to save - Name: ${profileToSave.name}, Active: ${profileToSave.isActive}");
-      
+      logger.d(
+          "🔍 DEBUG: Profile to save - Name: ${profileToSave.name}, Active: ${profileToSave.isActive}");
+
       await box.put(profile.id, profileToSave);
-      
+
       logger.i("🔍 DEBUG: Profile saved successfully!");
       logger.d("🔍 DEBUG: Box now contains ${box.length} profiles");
-      
+
       // Verify the save
       final savedProfile = box.get(profile.id);
       logger.d("🔍 DEBUG: Verification - saved profile: ${savedProfile?.name}");
-      
+
       if (isFirstProfile) {
         await _settings.put('hasCompletedSetup', true);
         logger.i("🔍 DEBUG: Setup completion flag set to true");
       }
-      
     } catch (e) {
       logger.e("🚨 ERROR: addPetProfile failed: $e");
       logger.e("🚨 ERROR: Error type: ${e.runtimeType}");
@@ -130,9 +131,9 @@ class PetProfileRepository {
     try {
       final profile = _profiles.get(id);
       if (profile == null) return;
-      
+
       await _profiles.delete(id);
-      
+
       // If we deleted the active profile, activate another one if available
       if (profile.isActive && _profiles.isNotEmpty) {
         final firstProfile = _profiles.values.first;

@@ -24,14 +24,15 @@ class WalkStatsCard extends ConsumerWidget {
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Center(
-            child: Text('Failed to load stats: $err', textAlign: TextAlign.center),
+            child:
+                Text('Failed to load stats: $err', textAlign: TextAlign.center),
           ),
         ),
       ),
       data: (_) {
         // Now we can safely call the stats provider
         final stats = ref.watch(walkStatsProvider(petId));
-        
+
         return Card(
           elevation: 3,
           shape: RoundedRectangleBorder(
@@ -71,9 +72,9 @@ class WalkStatsCard extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 20),
-                  
+
                   // Stats grid
                   Row(
                     children: [
@@ -85,41 +86,39 @@ class WalkStatsCard extends ConsumerWidget {
                           theme: theme,
                         ),
                       ),
-                      
                       Container(
                         width: 1,
                         height: 50,
                         color: theme.colorScheme.onPrimary.withOpacity(0.3),
                       ),
-                      
                       Expanded(
                         child: _buildStatColumn(
                           title: 'Total Time',
-                          value: _formatDuration(stats['totalDuration'] as Duration),
+                          value: _formatDuration(
+                              stats['totalDuration'] as Duration),
                           icon: Icons.timer,
                           theme: theme,
                         ),
                       ),
-                      
                       Container(
                         width: 1,
                         height: 50,
                         color: theme.colorScheme.onPrimary.withOpacity(0.3),
                       ),
-                      
                       Expanded(
                         child: _buildStatColumn(
                           title: 'Distance',
-                          value: _formatDistance(stats['totalDistance'] as double),
+                          value:
+                              _formatDistance(stats['totalDistance'] as double),
                           icon: Icons.straighten,
                           theme: theme,
                         ),
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Average stats
                   Container(
                     padding: const EdgeInsets.all(12),
@@ -135,12 +134,14 @@ class WalkStatsCard extends ConsumerWidget {
                               Text(
                                 'Avg Duration',
                                 style: theme.textTheme.bodySmall?.copyWith(
-                                  color: theme.colorScheme.onPrimary.withOpacity(0.8),
+                                  color: theme.colorScheme.onPrimary
+                                      .withOpacity(0.8),
                                 ),
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                _formatDuration(stats['averageWalkDuration'] as Duration),
+                                _formatDuration(
+                                    stats['averageWalkDuration'] as Duration),
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   color: theme.colorScheme.onPrimary,
                                   fontWeight: FontWeight.bold,
@@ -155,12 +156,14 @@ class WalkStatsCard extends ConsumerWidget {
                               Text(
                                 'Avg Distance',
                                 style: theme.textTheme.bodySmall?.copyWith(
-                                  color: theme.colorScheme.onPrimary.withOpacity(0.8),
+                                  color: theme.colorScheme.onPrimary
+                                      .withOpacity(0.8),
                                 ),
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                _formatDistance(stats['averageDistance'] as double),
+                                _formatDistance(
+                                    stats['averageDistance'] as double),
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   color: theme.colorScheme.onPrimary,
                                   fontWeight: FontWeight.bold,
@@ -218,7 +221,7 @@ class WalkStatsCard extends ConsumerWidget {
   String _formatDuration(Duration duration) {
     final hours = duration.inHours;
     final minutes = duration.inMinutes.remainder(60);
-    
+
     if (hours > 0) {
       return '${hours}h ${minutes}m';
     }

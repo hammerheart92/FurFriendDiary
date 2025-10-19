@@ -116,7 +116,8 @@ class PhotoRepository {
       // Check file size
       final fileSize = await imageFile.length();
       if (fileSize > maxFileSizeBytes) {
-        throw Exception('File is too large. Maximum size is ${maxFileSizeBytes ~/ (1024 * 1024)}MB');
+        throw Exception(
+            'File is too large. Maximum size is ${maxFileSizeBytes ~/ (1024 * 1024)}MB');
       }
 
       _logger.d('Original file size: ${fileSize ~/ 1024}KB');
@@ -262,9 +263,7 @@ class PhotoRepository {
 
   /// Get all photos for a specific pet, sorted by date descending
   List<PetPhoto> getPhotosForPet(String petId) {
-    return _box.values
-        .where((photo) => photo.petId == petId)
-        .toList()
+    return _box.values.where((photo) => photo.petId == petId).toList()
       ..sort((a, b) => b.dateTaken.compareTo(a.dateTaken));
   }
 

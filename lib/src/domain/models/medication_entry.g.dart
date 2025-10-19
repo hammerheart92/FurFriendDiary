@@ -29,13 +29,19 @@ class MedicationEntryAdapter extends TypeAdapter<MedicationEntry> {
       isActive: fields[9] as bool,
       createdAt: fields[10] as DateTime?,
       administrationTimes: (fields[11] as List?)?.cast<TimeOfDayModel>(),
+      stockQuantity: fields[12] as int?,
+      stockUnit: fields[13] as String?,
+      lowStockThreshold: fields[14] as int?,
+      costPerUnit: fields[15] as double?,
+      lastPurchaseDate: fields[16] as DateTime?,
+      refillReminderDays: fields[17] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, MedicationEntry obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(18)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -59,7 +65,19 @@ class MedicationEntryAdapter extends TypeAdapter<MedicationEntry> {
       ..writeByte(10)
       ..write(obj.createdAt)
       ..writeByte(11)
-      ..write(obj.administrationTimes);
+      ..write(obj.administrationTimes)
+      ..writeByte(12)
+      ..write(obj.stockQuantity)
+      ..writeByte(13)
+      ..write(obj.stockUnit)
+      ..writeByte(14)
+      ..write(obj.lowStockThreshold)
+      ..writeByte(15)
+      ..write(obj.costPerUnit)
+      ..writeByte(16)
+      ..write(obj.lastPurchaseDate)
+      ..writeByte(17)
+      ..write(obj.refillReminderDays);
   }
 
   @override

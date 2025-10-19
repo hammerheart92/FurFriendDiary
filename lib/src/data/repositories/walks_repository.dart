@@ -17,7 +17,8 @@ class WalksRepository {
 
   Box<Walk> get _box {
     if (_walksBox == null || !_walksBox!.isOpen) {
-      throw Exception('WalksRepository not initialized. Call initialize() first.');
+      throw Exception(
+          'WalksRepository not initialized. Call initialize() first.');
     }
     return _walksBox!;
   }
@@ -53,26 +54,23 @@ class WalksRepository {
 
   // Get walks for a specific pet
   List<Walk> getWalksForPet(String petId) {
-    return _box.values
-        .where((walk) => walk.petId == petId)
-        .toList()
+    return _box.values.where((walk) => walk.petId == petId).toList()
       ..sort((a, b) => b.startTime.compareTo(a.startTime));
   }
 
   // Get active walk for a pet
   Walk? getActiveWalk(String petId) {
     return _box.values.cast<Walk?>().firstWhere(
-      (walk) => walk != null && walk.petId == petId && walk.isActive,
-      orElse: () => null,
-    );
+          (walk) => walk != null && walk.petId == petId && walk.isActive,
+          orElse: () => null,
+        );
   }
 
   // Get walks within date range
   List<Walk> getWalksByDateRange(DateTime start, DateTime end) {
     return _box.values
-        .where((walk) => 
-            walk.startTime.isAfter(start) && 
-            walk.startTime.isBefore(end))
+        .where((walk) =>
+            walk.startTime.isAfter(start) && walk.startTime.isBefore(end))
         .toList()
       ..sort((a, b) => b.startTime.compareTo(a.startTime));
   }
@@ -82,7 +80,7 @@ class WalksRepository {
     final now = DateTime.now();
     final startOfDay = DateTime(now.year, now.month, now.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
-    
+
     return getWalksByDateRange(startOfDay, endOfDay);
   }
 
@@ -90,20 +88,19 @@ class WalksRepository {
   Map<String, dynamic> getWalkStats(String petId, {int days = 7}) {
     final endDate = DateTime.now();
     final startDate = endDate.subtract(Duration(days: days));
-    
+
     final walks = getWalksForPet(petId)
-        .where((walk) => 
-            walk.startTime.isAfter(startDate) && 
-            walk.endTime != null)
+        .where(
+            (walk) => walk.startTime.isAfter(startDate) && walk.endTime != null)
         .toList();
 
     final totalWalks = walks.length;
     final totalDuration = walks.fold<Duration>(
-      Duration.zero, 
+      Duration.zero,
       (total, walk) => total + (walk.actualDuration ?? Duration.zero),
     );
     final totalDistance = walks.fold<double>(
-      0.0, 
+      0.0,
       (total, walk) => total + (walk.distance ?? 0.0),
     );
 
@@ -111,7 +108,7 @@ class WalksRepository {
       'totalWalks': totalWalks,
       'totalDuration': totalDuration,
       'totalDistance': totalDistance,
-      'averageWalkDuration': totalWalks > 0 
+      'averageWalkDuration': totalWalks > 0
           ? Duration(milliseconds: totalDuration.inMilliseconds ~/ totalWalks)
           : Duration.zero,
       'averageDistance': totalWalks > 0 ? totalDistance / totalWalks : 0.0,

@@ -12,8 +12,9 @@ class ReminderRepository {
 
   Future<void> addReminder(Reminder reminder) async {
     print('📦 DEBUG: ReminderRepository.addReminder called');
-    print('📦 DEBUG: Reminder: ${reminder.title}, Active: ${reminder.isActive}');
-    
+    print(
+        '📦 DEBUG: Reminder: ${reminder.title}, Active: ${reminder.isActive}');
+
     await _box.put(reminder.id, reminder);
     print('✅ DEBUG: Saved to Hive');
 
@@ -67,9 +68,7 @@ class ReminderRepository {
   }
 
   List<Reminder> getActiveRemindersByPetId(String petId) {
-    return _box.values
-        .where((r) => r.petId == petId && r.isActive)
-        .toList();
+    return _box.values.where((r) => r.petId == petId && r.isActive).toList();
   }
 
   List<Reminder> getRemindersByType(String petId, ReminderType type) {
@@ -117,5 +116,4 @@ class ReminderRepository {
 
     _logger.i('Rescheduled ${activeReminders.length} active reminders');
   }
-
 }

@@ -7,37 +7,37 @@ part 'walk.g.dart';
 class Walk extends HiveObject {
   @HiveField(0)
   String id;
-  
+
   @HiveField(1)
   String petId;
-  
+
   @HiveField(2)
   DateTime start;
-  
+
   @HiveField(3)
   DateTime? endTime;
-  
+
   @HiveField(4)
   int durationMinutes;
-  
+
   @HiveField(5)
   double? distance;
-  
+
   @HiveField(6)
   WalkType walkType;
-  
+
   @HiveField(7)
   bool isActive;
-  
+
   @HiveField(8)
   bool isComplete;
-  
+
   @HiveField(9)
   String? notes;
-  
+
   @HiveField(10)
   DateTime startTime;
-  
+
   @HiveField(11)
   List<WalkLocation>? locations;
 
@@ -54,41 +54,46 @@ class Walk extends HiveObject {
     this.notes,
     DateTime? startTime,
     this.locations,
-  }) : id = id ?? const Uuid().v4(),
-       startTime = startTime ?? start;
+  })  : id = id ?? const Uuid().v4(),
+        startTime = startTime ?? start;
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'petId': petId,
-    'start': start.toIso8601String(),
-    'endTime': endTime?.toIso8601String(),
-    'durationMinutes': durationMinutes,
-    'distance': distance,
-    'walkType': walkType.toString(),
-    'isActive': isActive,
-    'isComplete': isComplete,
-    'notes': notes,
-    'startTime': startTime.toIso8601String(),
-    'locations': locations?.map((l) => l.toJson()).toList(),
-  };
+        'id': id,
+        'petId': petId,
+        'start': start.toIso8601String(),
+        'endTime': endTime?.toIso8601String(),
+        'durationMinutes': durationMinutes,
+        'distance': distance,
+        'walkType': walkType.toString(),
+        'isActive': isActive,
+        'isComplete': isComplete,
+        'notes': notes,
+        'startTime': startTime.toIso8601String(),
+        'locations': locations?.map((l) => l.toJson()).toList(),
+      };
 
   factory Walk.fromJson(Map<String, dynamic> json) => Walk(
-    id: json['id'],
-    petId: json['petId'],
-    start: DateTime.parse(json['start']),
-    endTime: json['endTime'] != null ? DateTime.parse(json['endTime']) : null,
-    durationMinutes: json['durationMinutes'],
-    distance: (json['distance'] as num?)?.toDouble(),
-    walkType: WalkType.values.firstWhere(
-      (e) => e.toString() == json['walkType'],
-      orElse: () => WalkType.walk,
-    ),
-    isActive: json['isActive'] ?? false,
-    isComplete: json['isComplete'] ?? false,
-    notes: json['notes'],
-    startTime: json['startTime'] != null ? DateTime.parse(json['startTime']) : null,
-    locations: json['locations']?.map<WalkLocation>((l) => WalkLocation.fromJson(l)).toList(),
-  );
+        id: json['id'],
+        petId: json['petId'],
+        start: DateTime.parse(json['start']),
+        endTime:
+            json['endTime'] != null ? DateTime.parse(json['endTime']) : null,
+        durationMinutes: json['durationMinutes'],
+        distance: (json['distance'] as num?)?.toDouble(),
+        walkType: WalkType.values.firstWhere(
+          (e) => e.toString() == json['walkType'],
+          orElse: () => WalkType.walk,
+        ),
+        isActive: json['isActive'] ?? false,
+        isComplete: json['isComplete'] ?? false,
+        notes: json['notes'],
+        startTime: json['startTime'] != null
+            ? DateTime.parse(json['startTime'])
+            : null,
+        locations: json['locations']
+            ?.map<WalkLocation>((l) => WalkLocation.fromJson(l))
+            .toList(),
+      );
 
   Walk copyWith({
     String? id,
@@ -213,10 +218,10 @@ extension WalkTypeExtension on WalkType {
 class WalkLocation extends HiveObject {
   @HiveField(0)
   double latitude;
-  
+
   @HiveField(1)
   double longitude;
-  
+
   @HiveField(2)
   DateTime timestamp;
 
@@ -227,14 +232,14 @@ class WalkLocation extends HiveObject {
   });
 
   Map<String, dynamic> toJson() => {
-    'latitude': latitude,
-    'longitude': longitude,
-    'timestamp': timestamp.toIso8601String(),
-  };
+        'latitude': latitude,
+        'longitude': longitude,
+        'timestamp': timestamp.toIso8601String(),
+      };
 
   factory WalkLocation.fromJson(Map<String, dynamic> json) => WalkLocation(
-    latitude: (json['latitude'] as num).toDouble(),
-    longitude: (json['longitude'] as num).toDouble(),
-    timestamp: DateTime.parse(json['timestamp']),
-  );
+        latitude: (json['latitude'] as num).toDouble(),
+        longitude: (json['longitude'] as num).toDouble(),
+        timestamp: DateTime.parse(json['timestamp']),
+      );
 }

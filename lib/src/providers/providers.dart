@@ -9,7 +9,8 @@ final walksRepositoryProvider = Provider<WalksRepository>((ref) {
 });
 
 // Walks state provider
-final walksProvider = StateNotifierProvider<WalksNotifier, AsyncValue<List<Walk>>>((ref) {
+final walksProvider =
+    StateNotifierProvider<WalksNotifier, AsyncValue<List<Walk>>>((ref) {
   final repository = ref.watch(walksRepositoryProvider);
   return WalksNotifier(repository);
 });
@@ -19,7 +20,8 @@ final activeWalkProvider = Provider.family<Walk?, String>((ref, petId) {
   final walksAsync = ref.watch(walksProvider);
   return walksAsync.when(
     data: (walks) {
-      final filtered = walks.where((walk) => walk.petId == petId && walk.isActive);
+      final filtered =
+          walks.where((walk) => walk.petId == petId && walk.isActive);
       return filtered.isNotEmpty ? filtered.first : null;
     },
     loading: () => null,
@@ -35,10 +37,10 @@ final todaysWalksProvider = Provider<List<Walk>>((ref) {
       final now = DateTime.now();
       final startOfDay = DateTime(now.year, now.month, now.day);
       final endOfDay = startOfDay.add(const Duration(days: 1));
-      
+
       return walks
-          .where((walk) => 
-              walk.startTime.isAfter(startOfDay) && 
+          .where((walk) =>
+              walk.startTime.isAfter(startOfDay) &&
               walk.startTime.isBefore(endOfDay))
           .toList();
     },
@@ -48,7 +50,8 @@ final todaysWalksProvider = Provider<List<Walk>>((ref) {
 });
 
 // Walk statistics provider
-final walkStatsProvider = Provider.family<Map<String, dynamic>, String>((ref, petId) {
+final walkStatsProvider =
+    Provider.family<Map<String, dynamic>, String>((ref, petId) {
   final repository = ref.watch(walksRepositoryProvider);
   return repository.getWalkStats(petId);
 });

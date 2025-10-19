@@ -21,13 +21,15 @@ class FileLogger {
     }
 
     // Create log file with timestamp
-    final timestamp = DateTime.now().toIso8601String().replaceAll(':', '-').split('.')[0];
+    final timestamp =
+        DateTime.now().toIso8601String().replaceAll(':', '-').split('.')[0];
     _logFile = File('${logsDir.path}/debug_$timestamp.log');
 
     // Write header to file
     await _logFile!.writeAsString('=== FurFriendDiary Debug Log ===\n');
     await _logFile!.writeAsString('Started: ${DateTime.now()}\n');
-    await _logFile!.writeAsString('Log file: ${_logFile!.path}\n\n', mode: FileMode.append);
+    await _logFile!.writeAsString('Log file: ${_logFile!.path}\n\n',
+        mode: FileMode.append);
 
     print('📝 DEBUG: Log file created at: ${_logFile!.path}');
 

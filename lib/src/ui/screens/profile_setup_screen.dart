@@ -8,7 +8,8 @@ import 'package:image_picker/image_picker.dart';
 
 // A Riverpod provider to manage the state of the profile setup form.
 // It holds the form data in a simple Map.
-final profileSetupProvider = StateNotifierProvider<ProfileSetupNotifier, Map<String, dynamic>>((ref) {
+final profileSetupProvider =
+    StateNotifierProvider<ProfileSetupNotifier, Map<String, dynamic>>((ref) {
   return ProfileSetupNotifier();
 });
 
@@ -42,7 +43,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         _imageFile = pickedFile;
       });
       // Save the image path to the state.
-      ref.read(profileSetupProvider.notifier).updateField('imagePath', pickedFile.path);
+      ref
+          .read(profileSetupProvider.notifier)
+          .updateField('imagePath', pickedFile.path);
     }
   }
 
@@ -83,7 +86,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   radius: 60,
                   // Updated to Material 3 surface color.
                   backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                  backgroundImage: _imageFile != null ? FileImage(File(_imageFile!.path)) : null,
+                  backgroundImage: _imageFile != null
+                      ? FileImage(File(_imageFile!.path))
+                      : null,
                   child: _imageFile == null
                       ? Icon(
                           Icons.pets,
@@ -108,7 +113,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   }
                   return null;
                 },
-                onSaved: (value) => ref.read(profileSetupProvider.notifier).updateField('name', value!),
+                onSaved: (value) => ref
+                    .read(profileSetupProvider.notifier)
+                    .updateField('name', value!),
               ),
               const SizedBox(height: 16),
 
@@ -124,7 +131,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   }
                   return null;
                 },
-                onSaved: (value) => ref.read(profileSetupProvider.notifier).updateField('type', value!),
+                onSaved: (value) => ref
+                    .read(profileSetupProvider.notifier)
+                    .updateField('type', value!),
               ),
               const SizedBox(height: 16),
 
@@ -140,7 +149,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   }
                   return null;
                 },
-                onSaved: (value) => ref.read(profileSetupProvider.notifier).updateField('breed', value!),
+                onSaved: (value) => ref
+                    .read(profileSetupProvider.notifier)
+                    .updateField('breed', value!),
               ),
               const SizedBox(height: 16),
 
@@ -160,7 +171,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   }
                   return null;
                 },
-                onSaved: (value) => ref.read(profileSetupProvider.notifier).updateField('age', int.parse(value!)),
+                onSaved: (value) => ref
+                    .read(profileSetupProvider.notifier)
+                    .updateField('age', int.parse(value!)),
               ),
               const SizedBox(height: 16),
 
@@ -180,7 +193,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   }
                   return null;
                 },
-                onSaved: (value) => ref.read(profileSetupProvider.notifier).updateField('weight', double.parse(value!)),
+                onSaved: (value) => ref
+                    .read(profileSetupProvider.notifier)
+                    .updateField('weight', double.parse(value!)),
               ),
               const SizedBox(height: 32),
 

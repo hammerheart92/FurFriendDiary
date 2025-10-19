@@ -7,6 +7,7 @@ abstract class ReportRepository {
   Future<void> updateReport(ReportEntry report);
   Future<void> deleteReport(String id);
   Future<ReportEntry?> getReportById(String id);
-  Future<List<ReportEntry>> getReportsByDateRange(String petId, DateTime start, DateTime end);
+  Future<List<ReportEntry>> getReportsByDateRange(
+      String petId, DateTime start, DateTime end);
   Future<List<ReportEntry>> getReportsByType(String petId, String reportType);
 }

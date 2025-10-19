@@ -28,20 +28,20 @@ class TimeOfDayModel extends HiveObject {
   }
 
   Map<String, dynamic> toJson() => {
-    'hour': hour,
-    'minute': minute,
-  };
+        'hour': hour,
+        'minute': minute,
+      };
 
   factory TimeOfDayModel.fromJson(Map<String, dynamic> json) {
-  final hour = json['hour'] as int;
-  final minute = json['minute'] as int;
-  
-  if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
-    throw ArgumentError('Invalid time values: hour=$hour, minute=$minute');
+    final hour = json['hour'] as int;
+    final minute = json['minute'] as int;
+
+    if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+      throw ArgumentError('Invalid time values: hour=$hour, minute=$minute');
+    }
+
+    return TimeOfDayModel(hour: hour, minute: minute);
   }
-  
-  return TimeOfDayModel(hour: hour, minute: minute);
-}
 
   String format24Hour() {
     return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';

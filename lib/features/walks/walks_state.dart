@@ -44,7 +44,7 @@ class WalkEntry {
       distanceKm: walk.distance ?? 0.0,
       note: walk.notes,
       surface: _mapWalkTypeToSurface(walk.walkType),
-      paceMinPerKm: walk.distance != null && walk.durationMinutes > 0 
+      paceMinPerKm: walk.distance != null && walk.durationMinutes > 0
           ? walk.durationMinutes / walk.distance!
           : null,
     );
@@ -81,7 +81,7 @@ class WalkEntry {
 class WalksController extends ChangeNotifier {
   final logger = Logger();
   final String _defaultPetId;
-  
+
   WalksController(this._defaultPetId) {
     _initializeWalks();
   }
@@ -89,11 +89,11 @@ class WalksController extends ChangeNotifier {
   /// Initialize walks with immediate mock data, then try to load from storage
   Future<void> _initializeWalks() async {
     logger.i('🚀 INITIALIZING WalksController...');
-    
+
     try {
       // First, add mock data immediately for UI responsiveness
       _addMockData();
-      
+
       // Then try to load real data from storage
       await _loadWalksFromHive();
     } catch (e) {
@@ -106,10 +106,10 @@ class WalksController extends ChangeNotifier {
   }
 
   final List<WalkEntry> _items = [];
-  
+
   /// Read-only access to walks list
   List<WalkEntry> get items => List.unmodifiable(_items);
-  
+
   /// Load walks from Hive storage and convert to WalkEntry
   Future<void> _loadWalksFromHive() async {
     logger.i('🔄 ATTEMPTING to load walks from Hive...');
@@ -117,9 +117,9 @@ class WalksController extends ChangeNotifier {
       // Get the properly typed walks box
       final walkBox = HiveManager.instance.walkBox;
       final walks = walkBox.values.toList();
-      
+
       logger.i('📚 DIRECT HIVE: Found ${walks.length} walks in storage');
-      
+
       if (walks.isNotEmpty) {
         _items.clear();
         // Convert Walk objects to WalkEntry objects
@@ -140,7 +140,7 @@ class WalksController extends ChangeNotifier {
       logger.i('📝 Keeping mock data as fallback');
     }
   }
-  
+
   /// Add mock data as fallback
   void _addMockData() {
     logger.i('📝 Adding mock data as fallback');
@@ -178,30 +178,29 @@ class WalksController extends ChangeNotifier {
     }
     notifyListeners();
   }
-  
+
   /// Add a new walk and save to both UI state and Hive persistence
   Future<void> add(WalkEntry entry) async {
     logger.i('🚶 ADDING walk: ${entry.note} at ${entry.start}');
-    
+
     try {
       // 1. Add to UI state immediately for instant feedback
       _items.insert(0, entry);
       notifyListeners();
       logger.i('✅ Walk added to UI state');
-      
+
       // 2. Save to Hive storage for persistence
       final walk = entry.toWalk(petId: _defaultPetId);
-      
+
       // Save directly to Hive storage
       await _saveToHive(walk);
       logger.i('💾 Walk saved to Hive storage');
-      
     } catch (e) {
       logger.e('❌ Error saving walk: $e');
       // Keep the UI state since user sees the confirmation
     }
   }
-  
+
   /// Save walk directly to Hive
   Future<void> _saveToHive(Walk walk) async {
     try {
@@ -213,13 +212,13 @@ class WalksController extends ChangeNotifier {
       rethrow;
     }
   }
-  
+
   /// Refresh walks from storage (useful after app restart)
   Future<void> refresh() async {
     logger.i('🔄 REFRESHING walks from storage...');
     await _loadWalksFromHive();
   }
-  
+
   /// Clear all walks (for testing)
   void clear() {
     _items.clear();

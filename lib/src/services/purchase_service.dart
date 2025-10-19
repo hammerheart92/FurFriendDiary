@@ -1,4 +1,3 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -6,7 +5,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 final premiumProvider = StateProvider<bool>((_) => false);
 
 class PurchaseService {
-  static const _productId = String.fromEnvironment('PREMIUM_PRODUCT_ID', defaultValue: 'premium_lifetime');
+  static const _productId = String.fromEnvironment('PREMIUM_PRODUCT_ID',
+      defaultValue: 'premium_lifetime');
   static final InAppPurchase _iap = InAppPurchase.instance;
   static const _storage = FlutterSecureStorage();
 

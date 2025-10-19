@@ -8,9 +8,7 @@ class WeightRepository {
 
   /// Get all weight entries for a specific pet
   List<WeightEntry> getWeightEntriesForPet(String petId) {
-    return _box.values
-        .where((entry) => entry.petId == petId)
-        .toList()
+    return _box.values.where((entry) => entry.petId == petId).toList()
       ..sort((a, b) => b.date.compareTo(a.date)); // Most recent first
   }
 
@@ -45,7 +43,7 @@ class WeightRepository {
   double? getWeightChange(String petId) {
     final entries = getWeightEntriesForPet(petId);
     if (entries.length < 2) return null;
-    
+
     final latest = entries.first.weight;
     final earliest = entries.last.weight;
     return latest - earliest;
@@ -64,4 +62,3 @@ class WeightRepository {
     }
   }
 }
-

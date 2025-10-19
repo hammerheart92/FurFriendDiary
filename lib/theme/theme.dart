@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 
-
 ThemeData _baseTheme(ColorScheme scheme) {
   return ThemeData(
     useMaterial3: true,
     colorScheme: scheme,
     scaffoldBackgroundColor: scheme.surface,
-
     appBarTheme: AppBarTheme(
       backgroundColor: scheme.surface,
       foregroundColor: scheme.onSurface,
       elevation: 0,
       centerTitle: false,
     ),
-
     cardTheme: CardThemeData(
       elevation: 1,
       shape: RoundedRectangleBorder(
@@ -21,7 +18,6 @@ ThemeData _baseTheme(ColorScheme scheme) {
       ),
       margin: const EdgeInsets.all(16.0),
     ),
-
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       type: BottomNavigationBarType.fixed,
       backgroundColor: scheme.surface,
@@ -29,11 +25,9 @@ ThemeData _baseTheme(ColorScheme scheme) {
       unselectedItemColor: scheme.onSurface.withValues(alpha: 0.6),
       elevation: 2,
     ),
-
     listTileTheme: const ListTileThemeData(
       contentPadding: EdgeInsets.symmetric(horizontal: 24.0),
     ),
-
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
       backgroundColor: scheme.inverseSurface,
@@ -63,4 +57,3 @@ ThemeData darkTheme() {
     secondary: const Color(0xFFFF8FA3), // BrandColors.pink
   ));
 }
-

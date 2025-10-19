@@ -1,4 +1,3 @@
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fur_friend_diary/main.dart';
 
@@ -8,4 +7,3 @@ void main() {
     expect(find.text('Feedings'), findsWidgets);
   });
 }
-

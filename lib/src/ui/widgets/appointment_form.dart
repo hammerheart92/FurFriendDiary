@@ -168,7 +168,9 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                     contentPadding: EdgeInsets.zero,
                     leading: const Icon(Icons.calendar_today),
                     title: Text(l10n.appointmentDate),
-                    subtitle: Text(DateFormat('MMMM dd, yyyy', Localizations.localeOf(context).toString()).format(_appointmentDate)),
+                    subtitle: Text(DateFormat('MMMM dd, yyyy',
+                            Localizations.localeOf(context).toString())
+                        .format(_appointmentDate)),
                     onTap: () => _selectAppointmentDate(),
                   ),
 
@@ -207,7 +209,9 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                     SwitchListTile(
                       contentPadding: EdgeInsets.zero,
                       title: Text(l10n.markAsCompleted),
-                      subtitle: Text(_isCompleted ? l10n.appointmentCompleted : l10n.appointmentPending),
+                      subtitle: Text(_isCompleted
+                          ? l10n.appointmentCompleted
+                          : l10n.appointmentPending),
                       value: _isCompleted,
                       onChanged: (value) {
                         setState(() {
@@ -236,7 +240,6 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                     ),
                   ),
                   const SizedBox(height: 16),
-
                   TextFormField(
                     controller: _notesController,
                     maxLines: 4,
@@ -260,9 +263,11 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                 child: SizedBox(
                   height: 56,
                   child: OutlinedButton(
-                    onPressed: _isLoading ? null : () {
-                      widget.onCancelled?.call();
-                    },
+                    onPressed: _isLoading
+                        ? null
+                        : () {
+                            widget.onCancelled?.call();
+                          },
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(color: theme.colorScheme.outline),
                       shape: RoundedRectangleBorder(
@@ -271,7 +276,8 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                     ),
                     child: Text(
                       l10n.cancel,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -296,8 +302,11 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                     child: _isLoading
                         ? const CircularProgressIndicator(color: Colors.white)
                         : Text(
-                            widget.appointment != null ? l10n.updateAppointment : l10n.saveAppointment,
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            widget.appointment != null
+                                ? l10n.updateAppointment
+                                : l10n.saveAppointment,
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                   ),
                 ),
@@ -377,14 +386,18 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
         appointmentDate: _appointmentDate,
         appointmentTime: appointmentDateTime,
         reason: _reasonController.text.trim(),
-        notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
+        notes: _notesController.text.trim().isEmpty
+            ? null
+            : _notesController.text.trim(),
         isCompleted: _isCompleted,
         createdAt: widget.appointment?.createdAt,
       );
 
       if (widget.appointment != null) {
         // Update existing appointment
-        await ref.read(appointmentProviderProvider.notifier).updateAppointment(appointment);
+        await ref
+            .read(appointmentProviderProvider.notifier)
+            .updateAppointment(appointment);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -395,7 +408,9 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
         }
       } else {
         // Add new appointment
-        await ref.read(appointmentProviderProvider.notifier).addAppointment(appointment);
+        await ref
+            .read(appointmentProviderProvider.notifier)
+            .addAppointment(appointment);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

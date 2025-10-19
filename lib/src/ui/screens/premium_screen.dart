@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../services/purchase_service.dart';
@@ -43,9 +42,12 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Unlock unlimited pets, advanced reports, and calendar export.'),
+                        const Text(
+                            'Unlock unlimited pets, advanced reports, and calendar export.'),
                         const SizedBox(height: 12),
-                        if (products.isEmpty) const Text('Products not available yet. Configure store listings.'),
+                        if (products.isEmpty)
+                          const Text(
+                              'Products not available yet. Configure store listings.'),
                         for (final p in products)
                           Card(
                             child: ListTile(

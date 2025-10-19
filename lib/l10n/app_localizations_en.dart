@@ -1269,4 +1269,221 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get photoDetails => 'Photo Details';
+
+  @override
+  String get medicationInventory => 'Medication Inventory';
+
+  @override
+  String get lowStock => 'Low Stock';
+
+  @override
+  String get allMedications => 'All Medications';
+
+  @override
+  String get statistics => 'Statistics';
+
+  @override
+  String get stockQuantity => 'Stock Quantity';
+
+  @override
+  String get stockUnit => 'Stock Unit';
+
+  @override
+  String get lowStockThreshold => 'Low Stock Alert';
+
+  @override
+  String get costPerUnit => 'Cost per Unit';
+
+  @override
+  String get addRefill => 'Add Refill';
+
+  @override
+  String get recordPurchase => 'Record Purchase';
+
+  @override
+  String get purchaseHistory => 'Purchase History';
+
+  @override
+  String get quantityPurchased => 'Quantity Purchased';
+
+  @override
+  String get purchaseDate => 'Purchase Date';
+
+  @override
+  String get pharmacy => 'Pharmacy';
+
+  @override
+  String get totalSpent => 'Total Spent';
+
+  @override
+  String get averageCostPerUnit => 'Average Cost per Unit';
+
+  @override
+  String get daysUntilEmpty => 'Days Until Empty';
+
+  @override
+  String pillsLeft(String count, String unit) {
+    return '$count $unit left';
+  }
+
+  @override
+  String get lowStockAlert => 'Low Stock Alert';
+
+  @override
+  String refillReminder(String medication) {
+    return 'Time to refill $medication';
+  }
+
+  @override
+  String get markAsGiven => 'Mark as Given';
+
+  @override
+  String get addStock => 'Add Stock';
+
+  @override
+  String get noPurchases => 'No purchases recorded';
+
+  @override
+  String get purchaseAdded => 'Purchase recorded';
+
+  @override
+  String get stockUpdated => 'Stock updated';
+
+  @override
+  String get costPerMonth => 'Cost per Month';
+
+  @override
+  String get lastPurchase => 'Last Purchase';
+
+  @override
+  String get inventoryTracking => 'Inventory Tracking';
+
+  @override
+  String get enableRefillReminders => 'Enable Refill Reminders';
+
+  @override
+  String get refillReminderDays => 'Remind me X days before empty';
+
+  @override
+  String get pills => 'pills';
+
+  @override
+  String get ml => 'ml';
+
+  @override
+  String get doses => 'doses';
+
+  @override
+  String get tablets => 'tablets';
+
+  @override
+  String lowStockAlertBody(String count, String unit, String medication) {
+    return 'Only $count $unit left for $medication';
+  }
+
+  @override
+  String get refillSoon => 'Refill Soon';
+
+  @override
+  String get notTracked => 'Not tracked';
+
+  @override
+  String get initialStock => 'Initial Stock';
+
+  @override
+  String get daysBeforeEmpty => 'Days before empty';
+
+  @override
+  String get inventoryOverview => 'Inventory Overview';
+
+  @override
+  String get totalCost => 'Total Cost';
+
+  @override
+  String get averageMonthlyCost => 'Average Monthly Cost';
+
+  @override
+  String get medicationsTracked => 'Medications Tracked';
+
+  @override
+  String get totalPurchases => 'Total Purchases';
+
+  @override
+  String get viewHistory => 'View History';
+
+  @override
+  String get editPurchase => 'Edit Purchase';
+
+  @override
+  String get deletePurchase => 'Delete Purchase';
+
+  @override
+  String get deletePurchaseConfirm =>
+      'Are you sure you want to delete this purchase record?';
+
+  @override
+  String get purchaseDeletedSuccessfully => 'Purchase deleted successfully';
+
+  @override
+  String get failedToDeletePurchase => 'Failed to delete purchase';
+
+  @override
+  String get invalidQuantity => 'Please enter a valid quantity';
+
+  @override
+  String get invalidCost => 'Please enter a valid cost';
+
+  @override
+  String get cost => 'Cost';
+
+  @override
+  String get quantity => 'Quantity';
+
+  @override
+  String get stockLevel => 'Stock Level';
+
+  @override
+  String get sufficient => 'Sufficient';
+
+  @override
+  String get critical => 'Critical';
+
+  @override
+  String get refillNow => 'Refill Now';
+
+  @override
+  String get viewInventory => 'View Inventory';
+
+  @override
+  String get noMedicationsTracked => 'No medications tracked';
+
+  @override
+  String get noLowStockMedications => 'No low stock medications';
+
+  @override
+  String get totalSpentThisMonth => 'Total Spent This Month';
+
+  @override
+  String get totalSpentAllTime => 'Total Spent All Time';
+
+  @override
+  String get allPurchases => 'All purchases';
+
+  @override
+  String get averageCostPerMedication => 'Average Cost per Medication';
+
+  @override
+  String get perMedication => 'Per medication';
+
+  @override
+  String get topExpensiveMedications => 'Top 5 Most Expensive Medications';
+
+  @override
+  String get stockNotTracked => 'Stock not tracked';
+
+  @override
+  String get refill => 'Refill';
+
+  @override
+  String get notTrackedEnum => 'Not tracked';
 }

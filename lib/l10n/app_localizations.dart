@@ -2431,6 +2431,426 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Photo Details'**
   String get photoDetails;
+
+  /// No description provided for @medicationInventory.
+  ///
+  /// In en, this message translates to:
+  /// **'Medication Inventory'**
+  String get medicationInventory;
+
+  /// No description provided for @lowStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Low Stock'**
+  String get lowStock;
+
+  /// No description provided for @allMedications.
+  ///
+  /// In en, this message translates to:
+  /// **'All Medications'**
+  String get allMedications;
+
+  /// No description provided for @statistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get statistics;
+
+  /// No description provided for @stockQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock Quantity'**
+  String get stockQuantity;
+
+  /// No description provided for @stockUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock Unit'**
+  String get stockUnit;
+
+  /// No description provided for @lowStockThreshold.
+  ///
+  /// In en, this message translates to:
+  /// **'Low Stock Alert'**
+  String get lowStockThreshold;
+
+  /// No description provided for @costPerUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost per Unit'**
+  String get costPerUnit;
+
+  /// No description provided for @addRefill.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Refill'**
+  String get addRefill;
+
+  /// No description provided for @recordPurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Record Purchase'**
+  String get recordPurchase;
+
+  /// No description provided for @purchaseHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase History'**
+  String get purchaseHistory;
+
+  /// No description provided for @quantityPurchased.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity Purchased'**
+  String get quantityPurchased;
+
+  /// No description provided for @purchaseDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase Date'**
+  String get purchaseDate;
+
+  /// No description provided for @pharmacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Pharmacy'**
+  String get pharmacy;
+
+  /// No description provided for @totalSpent.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Spent'**
+  String get totalSpent;
+
+  /// No description provided for @averageCostPerUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Average Cost per Unit'**
+  String get averageCostPerUnit;
+
+  /// No description provided for @daysUntilEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Days Until Empty'**
+  String get daysUntilEmpty;
+
+  /// No description provided for @pillsLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} {unit} left'**
+  String pillsLeft(String count, String unit);
+
+  /// No description provided for @lowStockAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Low Stock Alert'**
+  String get lowStockAlert;
+
+  /// No description provided for @refillReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Time to refill {medication}'**
+  String refillReminder(String medication);
+
+  /// No description provided for @markAsGiven.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Given'**
+  String get markAsGiven;
+
+  /// No description provided for @addStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Stock'**
+  String get addStock;
+
+  /// No description provided for @noPurchases.
+  ///
+  /// In en, this message translates to:
+  /// **'No purchases recorded'**
+  String get noPurchases;
+
+  /// No description provided for @purchaseAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase recorded'**
+  String get purchaseAdded;
+
+  /// No description provided for @stockUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock updated'**
+  String get stockUpdated;
+
+  /// No description provided for @costPerMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost per Month'**
+  String get costPerMonth;
+
+  /// No description provided for @lastPurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Purchase'**
+  String get lastPurchase;
+
+  /// No description provided for @inventoryTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory Tracking'**
+  String get inventoryTracking;
+
+  /// No description provided for @enableRefillReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Refill Reminders'**
+  String get enableRefillReminders;
+
+  /// No description provided for @refillReminderDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind me X days before empty'**
+  String get refillReminderDays;
+
+  /// No description provided for @pills.
+  ///
+  /// In en, this message translates to:
+  /// **'pills'**
+  String get pills;
+
+  /// No description provided for @ml.
+  ///
+  /// In en, this message translates to:
+  /// **'ml'**
+  String get ml;
+
+  /// No description provided for @doses.
+  ///
+  /// In en, this message translates to:
+  /// **'doses'**
+  String get doses;
+
+  /// No description provided for @tablets.
+  ///
+  /// In en, this message translates to:
+  /// **'tablets'**
+  String get tablets;
+
+  /// No description provided for @lowStockAlertBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Only {count} {unit} left for {medication}'**
+  String lowStockAlertBody(String count, String unit, String medication);
+
+  /// No description provided for @refillSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill Soon'**
+  String get refillSoon;
+
+  /// No description provided for @notTracked.
+  ///
+  /// In en, this message translates to:
+  /// **'Not tracked'**
+  String get notTracked;
+
+  /// No description provided for @initialStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Initial Stock'**
+  String get initialStock;
+
+  /// No description provided for @daysBeforeEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Days before empty'**
+  String get daysBeforeEmpty;
+
+  /// No description provided for @inventoryOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory Overview'**
+  String get inventoryOverview;
+
+  /// No description provided for @totalCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Cost'**
+  String get totalCost;
+
+  /// No description provided for @averageMonthlyCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Average Monthly Cost'**
+  String get averageMonthlyCost;
+
+  /// No description provided for @medicationsTracked.
+  ///
+  /// In en, this message translates to:
+  /// **'Medications Tracked'**
+  String get medicationsTracked;
+
+  /// No description provided for @totalPurchases.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Purchases'**
+  String get totalPurchases;
+
+  /// No description provided for @viewHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'View History'**
+  String get viewHistory;
+
+  /// No description provided for @editPurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Purchase'**
+  String get editPurchase;
+
+  /// No description provided for @deletePurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Purchase'**
+  String get deletePurchase;
+
+  /// No description provided for @deletePurchaseConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this purchase record?'**
+  String get deletePurchaseConfirm;
+
+  /// No description provided for @purchaseDeletedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase deleted successfully'**
+  String get purchaseDeletedSuccessfully;
+
+  /// No description provided for @failedToDeletePurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete purchase'**
+  String get failedToDeletePurchase;
+
+  /// No description provided for @invalidQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid quantity'**
+  String get invalidQuantity;
+
+  /// No description provided for @invalidCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid cost'**
+  String get invalidCost;
+
+  /// No description provided for @cost.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost'**
+  String get cost;
+
+  /// No description provided for @quantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get quantity;
+
+  /// No description provided for @stockLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock Level'**
+  String get stockLevel;
+
+  /// No description provided for @sufficient.
+  ///
+  /// In en, this message translates to:
+  /// **'Sufficient'**
+  String get sufficient;
+
+  /// No description provided for @critical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get critical;
+
+  /// No description provided for @refillNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill Now'**
+  String get refillNow;
+
+  /// No description provided for @viewInventory.
+  ///
+  /// In en, this message translates to:
+  /// **'View Inventory'**
+  String get viewInventory;
+
+  /// No description provided for @noMedicationsTracked.
+  ///
+  /// In en, this message translates to:
+  /// **'No medications tracked'**
+  String get noMedicationsTracked;
+
+  /// No description provided for @noLowStockMedications.
+  ///
+  /// In en, this message translates to:
+  /// **'No low stock medications'**
+  String get noLowStockMedications;
+
+  /// No description provided for @totalSpentThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Spent This Month'**
+  String get totalSpentThisMonth;
+
+  /// No description provided for @totalSpentAllTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Spent All Time'**
+  String get totalSpentAllTime;
+
+  /// No description provided for @allPurchases.
+  ///
+  /// In en, this message translates to:
+  /// **'All purchases'**
+  String get allPurchases;
+
+  /// No description provided for @averageCostPerMedication.
+  ///
+  /// In en, this message translates to:
+  /// **'Average Cost per Medication'**
+  String get averageCostPerMedication;
+
+  /// No description provided for @perMedication.
+  ///
+  /// In en, this message translates to:
+  /// **'Per medication'**
+  String get perMedication;
+
+  /// No description provided for @topExpensiveMedications.
+  ///
+  /// In en, this message translates to:
+  /// **'Top 5 Most Expensive Medications'**
+  String get topExpensiveMedications;
+
+  /// No description provided for @stockNotTracked.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock not tracked'**
+  String get stockNotTracked;
+
+  /// No description provided for @refill.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill'**
+  String get refill;
+
+  /// No description provided for @notTrackedEnum.
+  ///
+  /// In en, this message translates to:
+  /// **'Not tracked'**
+  String get notTrackedEnum;
 }
 
 class _AppLocalizationsDelegate

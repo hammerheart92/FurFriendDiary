@@ -7,22 +7,22 @@ part 'feeding_entry.g.dart';
 class FeedingEntry extends HiveObject {
   @HiveField(0)
   String id;
-  
+
   @HiveField(1)
   String petId;
-  
+
   @HiveField(2)
   DateTime dateTime;
-  
+
   @HiveField(3)
   String foodType;
-  
+
   @HiveField(4)
   double amount;
-  
+
   @HiveField(5)
   String? notes;
-  
+
   FeedingEntry({
     String? id,
     required this.petId,
@@ -33,22 +33,22 @@ class FeedingEntry extends HiveObject {
   }) : id = id ?? const Uuid().v4();
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'petId': petId,
-    'dateTime': dateTime.toIso8601String(),
-    'foodType': foodType,
-    'amount': amount,
-    'notes': notes,
-  };
+        'id': id,
+        'petId': petId,
+        'dateTime': dateTime.toIso8601String(),
+        'foodType': foodType,
+        'amount': amount,
+        'notes': notes,
+      };
 
   factory FeedingEntry.fromJson(Map<String, dynamic> json) => FeedingEntry(
-    id: json['id'],
-    petId: json['petId'],
-    dateTime: DateTime.parse(json['dateTime']),
-    foodType: json['foodType'],
-    amount: (json['amount'] as num).toDouble(),
-    notes: json['notes'],
-  );
+        id: json['id'],
+        petId: json['petId'],
+        dateTime: DateTime.parse(json['dateTime']),
+        foodType: json['foodType'],
+        amount: (json['amount'] as num).toDouble(),
+        notes: json['notes'],
+      );
 
   FeedingEntry copyWith({
     String? id,

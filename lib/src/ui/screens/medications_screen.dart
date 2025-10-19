@@ -8,6 +8,7 @@ import '../../providers/medications_provider.dart';
 import '../../presentation/providers/pet_profile_provider.dart';
 import '../../presentation/providers/reminder_provider.dart';
 import '../widgets/medication_card.dart';
+import '../../presentation/widgets/add_refill_dialog.dart';
 import '../../../l10n/app_localizations.dart';
 
 class MedicationsScreen extends ConsumerStatefulWidget {
@@ -98,6 +99,13 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.inventory_2),
+            onPressed: () => context.push('/medication-inventory'),
+            tooltip: l10n.medicationInventory,
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: theme.colorScheme.onPrimary,
@@ -160,9 +168,8 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
           Expanded(
             child: medicationsAsync.when(
               data: (medications) {
-                final petMedications = medications
-                    .where((med) => med.petId == petId)
-                    .toList();
+                final petMedications =
+                    medications.where((med) => med.petId == petId).toList();
 
                 return TabBarView(
                   controller: _tabController,
@@ -245,7 +252,9 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
             ),
             const SizedBox(height: 16),
             Text(
-              _searchQuery.isNotEmpty ? l10n.noMedicationsMatchSearch : emptyMessage,
+              _searchQuery.isNotEmpty
+                  ? l10n.noMedicationsMatchSearch
+                  : emptyMessage,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.6),
               ),
@@ -280,6 +289,12 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
             onToggleStatus: () => _toggleMedicationStatus(medication),
             onDelete: () => _deleteMedication(medication),
             onSetReminder: () => _showReminderDialog(medication),
+            onMarkAsGiven: medication.stockQuantity != null
+                ? () => _markAsGiven(medication)
+                : null,
+            onAddRefill: medication.stockQuantity != null
+                ? () => _showAddRefillDialog(medication)
+                : null,
           );
         },
       ),
@@ -289,16 +304,16 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
   Future<void> _toggleMedicationStatus(MedicationEntry medication) async {
     final l10n = AppLocalizations.of(context);
     try {
-      await ref.read(medicationsProvider.notifier).toggleMedicationStatus(medication.id);
+      await ref
+          .read(medicationsProvider.notifier)
+          .toggleMedicationStatus(medication.id);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              medication.isActive
-                  ? l10n.medicationMarkedInactive
-                  : l10n.medicationMarkedActive
-            ),
+            content: Text(medication.isActive
+                ? l10n.medicationMarkedInactive
+                : l10n.medicationMarkedActive),
             backgroundColor: Colors.green,
           ),
         );
@@ -340,7 +355,9 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
 
     if (shouldDelete == true) {
       try {
-        await ref.read(medicationsProvider.notifier).deleteMedication(medication.id);
+        await ref
+            .read(medicationsProvider.notifier)
+            .deleteMedication(medication.id);
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -360,6 +377,53 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
           );
         }
       }
+    }
+  }
+
+  Future<void> _markAsGiven(MedicationEntry medication) async {
+    final l10n = AppLocalizations.of(context);
+
+    try {
+      // Determine dosage units to decrement (default to 1)
+      final dosageUnits =
+          1; // Could be made configurable based on medication.dosage
+
+      await ref.read(medicationsRepositoryProvider).recordDosageGiven(
+            medication.id,
+            dosageUnits,
+          );
+
+      await ref.read(medicationsProvider.notifier).refresh();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.stockUpdated),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $error'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _showAddRefillDialog(MedicationEntry medication) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AddRefillDialog(medication: medication),
+    );
+
+    if (result == true && mounted) {
+      // Dialog already shows success message, just refresh the list
+      await ref.read(medicationsProvider.notifier).refresh();
     }
   }
 
@@ -400,7 +464,8 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
                       leading: const Icon(Icons.schedule),
                       title: const Text('Remind Daily'),
                       subtitle: medication.administrationTimes.isNotEmpty
-                          ? Text('First dose: ${medication.administrationTimes.first.format24Hour()}')
+                          ? Text(
+                              'First dose: ${medication.administrationTimes.first.format24Hour()}')
                           : null,
                       onTap: () async {
                         Navigator.pop(context);
@@ -409,8 +474,10 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
                           ReminderFrequency.daily,
                           medication.administrationTimes.isNotEmpty
                               ? TimeOfDay(
-                                  hour: medication.administrationTimes.first.hour,
-                                  minute: medication.administrationTimes.first.minute,
+                                  hour:
+                                      medication.administrationTimes.first.hour,
+                                  minute: medication
+                                      .administrationTimes.first.minute,
                                 )
                               : null,
                         );
@@ -420,7 +487,8 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
                       ListTile(
                         leading: const Icon(Icons.repeat),
                         title: const Text('Remind All Doses'),
-                        subtitle: Text('${medication.administrationTimes.length} times daily'),
+                        subtitle: Text(
+                            '${medication.administrationTimes.length} times daily'),
                         onTap: () async {
                           Navigator.pop(context);
                           await _createMultipleReminders(medication);
@@ -509,7 +577,8 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
       final now = DateTime.now();
 
       for (final time in medication.administrationTimes) {
-        final scheduledTime = DateTime(now.year, now.month, now.day, time.hour, time.minute);
+        final scheduledTime =
+            DateTime(now.year, now.month, now.day, time.hour, time.minute);
 
         final reminder = Reminder(
           petId: medication.petId,

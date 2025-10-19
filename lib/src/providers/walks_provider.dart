@@ -23,7 +23,8 @@ class WalksNotifier extends StateNotifier<AsyncValue<List<Walk>>> {
     }
   }
 
-  Future<void> startWalk({required String petId, WalkType walkType = WalkType.regular}) async {
+  Future<void> startWalk(
+      {required String petId, WalkType walkType = WalkType.regular}) async {
     final currentWalks = state.value ?? [];
     if (currentWalks.any((w) => w.petId == petId && w.isActive)) {
       throw Exception('A walk is already in progress for this pet.');
@@ -42,7 +43,8 @@ class WalksNotifier extends StateNotifier<AsyncValue<List<Walk>>> {
     state = AsyncValue.data([walk, ...currentWalks]);
   }
 
-  Future<void> endWalk({required String walkId, double? distance, String? notes}) async {
+  Future<void> endWalk(
+      {required String walkId, double? distance, String? notes}) async {
     final currentWalks = state.value ?? [];
     final walkIndex = currentWalks.indexWhere((w) => w.id == walkId);
 
@@ -58,10 +60,10 @@ class WalksNotifier extends StateNotifier<AsyncValue<List<Walk>>> {
     );
 
     await _repo.put(walk.id, updatedWalk.toJson());
-    
+
     final updatedList = List<Walk>.from(currentWalks);
     updatedList[walkIndex] = updatedWalk;
-    
+
     state = AsyncValue.data(updatedList);
   }
 
@@ -72,16 +74,18 @@ class WalksNotifier extends StateNotifier<AsyncValue<List<Walk>>> {
   }
 }
 
-final walksRepoProvider = Provider<BoxRepository>((ref) => BoxRepository('walks'));
+final walksRepoProvider =
+    Provider<BoxRepository>((ref) => BoxRepository('walks'));
 
-final walksProvider = StateNotifierProvider<WalksNotifier, AsyncValue<List<Walk>>>((ref) {
+final walksProvider =
+    StateNotifierProvider<WalksNotifier, AsyncValue<List<Walk>>>((ref) {
   return WalksNotifier(ref.watch(walksRepoProvider));
 });
 
 final activeWalkProvider = Provider.family<Walk?, String>((ref, petId) {
   final walks = ref.watch(walksProvider).value;
   if (walks == null) return null;
-  
+
   try {
     return walks.firstWhere((w) => w.petId == petId && w.isActive);
   } catch (e) {
@@ -89,26 +93,29 @@ final activeWalkProvider = Provider.family<Walk?, String>((ref, petId) {
   }
 });
 
-final walkDurationProvider = StreamProvider.family<Duration, DateTime>((ref, startTime) {
+final walkDurationProvider =
+    StreamProvider.family<Duration, DateTime>((ref, startTime) {
   return Stream.periodic(const Duration(seconds: 1), (_) {
     return DateTime.now().difference(startTime);
   });
 });
 
-final walkStatsProvider = Provider.family<Map<String, dynamic>, String>((ref, petId) {
+final walkStatsProvider =
+    Provider.family<Map<String, dynamic>, String>((ref, petId) {
   final walksAsync = ref.watch(walksProvider);
-  
+
   return walksAsync.when(
     data: (walks) {
       final now = DateTime.now();
       final oneWeekAgo = now.subtract(const Duration(days: 7));
-      
-      final recentWalks = walks.where((w) => 
-        w.petId == petId && 
-        w.isComplete &&
-        w.startTime.isAfter(oneWeekAgo)
-      ).toList();
-      
+
+      final recentWalks = walks
+          .where((w) =>
+              w.petId == petId &&
+              w.isComplete &&
+              w.startTime.isAfter(oneWeekAgo))
+          .toList();
+
       if (recentWalks.isEmpty) {
         return {
           'totalWalks': 0,
@@ -118,27 +125,26 @@ final walkStatsProvider = Provider.family<Map<String, dynamic>, String>((ref, pe
           'averageDistance': 0.0,
         };
       }
-      
+
       final totalDuration = recentWalks.fold<Duration>(
-        Duration.zero, 
+        Duration.zero,
         (prev, walk) => prev + (walk.actualDuration ?? Duration.zero),
       );
-      
+
       final totalDistance = recentWalks.fold<double>(
-        0.0, 
+        0.0,
         (prev, walk) => prev + (walk.distance ?? 0.0),
       );
-      
+
       return {
         'totalWalks': recentWalks.length,
         'totalDuration': totalDuration,
         'totalDistance': totalDistance,
-        'averageWalkDuration': totalDuration.inMinutes > 0 
-            ? Duration(minutes: totalDuration.inMinutes ~/ recentWalks.length) 
+        'averageWalkDuration': totalDuration.inMinutes > 0
+            ? Duration(minutes: totalDuration.inMinutes ~/ recentWalks.length)
             : Duration.zero,
-        'averageDistance': totalDistance > 0 
-            ? totalDistance / recentWalks.length 
-            : 0.0,
+        'averageDistance':
+            totalDistance > 0 ? totalDistance / recentWalks.length : 0.0,
       };
     },
     loading: () => {

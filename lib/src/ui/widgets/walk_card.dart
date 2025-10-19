@@ -17,7 +17,7 @@ class WalkCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Card(
       elevation: 2,
       margin: const EdgeInsets.only(bottom: 8),
@@ -44,7 +44,8 @@ class WalkCard extends StatelessWidget {
                       color: _getWalkTypeColor(walk.walkType).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: _getWalkTypeColor(walk.walkType).withOpacity(0.3),
+                        color:
+                            _getWalkTypeColor(walk.walkType).withOpacity(0.3),
                       ),
                     ),
                     child: Row(
@@ -66,9 +67,9 @@ class WalkCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  
+
                   const Spacer(),
-                  
+
                   // Date and time
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -87,7 +88,7 @@ class WalkCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  
+
                   // More options menu
                   if (onDelete != null)
                     PopupMenuButton<String>(
@@ -112,9 +113,9 @@ class WalkCard extends StatelessWidget {
                     ),
                 ],
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Walk stats row
               Row(
                 children: [
@@ -127,7 +128,7 @@ class WalkCard extends StatelessWidget {
                       color: Colors.blue,
                     ),
                   ),
-                  
+
                   // Distance
                   Expanded(
                     child: _buildStatItem(
@@ -137,11 +138,13 @@ class WalkCard extends StatelessWidget {
                       color: Colors.green,
                     ),
                   ),
-                  
+
                   // Status
                   Expanded(
                     child: _buildStatItem(
-                      icon: walk.isActive ? Icons.play_circle : Icons.check_circle,
+                      icon: walk.isActive
+                          ? Icons.play_circle
+                          : Icons.check_circle,
                       label: 'Status',
                       value: walk.isActive ? 'Active' : 'Completed',
                       color: walk.isActive ? Colors.orange : Colors.green,
@@ -149,7 +152,7 @@ class WalkCard extends StatelessWidget {
                   ),
                 ],
               ),
-              
+
               // Notes section
               if (walk.notes != null && walk.notes!.isNotEmpty) ...[
                 const SizedBox(height: 16),
@@ -178,7 +181,8 @@ class WalkCard extends StatelessWidget {
                             'Notes',
                             style: theme.textTheme.bodySmall?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: theme.colorScheme.onSurface.withOpacity(0.7),
+                              color:
+                                  theme.colorScheme.onSurface.withOpacity(0.7),
                             ),
                           ),
                         ],

@@ -15,10 +15,12 @@ class MedicationDetailScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<MedicationDetailScreen> createState() => _MedicationDetailScreenState();
+  ConsumerState<MedicationDetailScreen> createState() =>
+      _MedicationDetailScreenState();
 }
 
-class _MedicationDetailScreenState extends ConsumerState<MedicationDetailScreen> {
+class _MedicationDetailScreenState
+    extends ConsumerState<MedicationDetailScreen> {
   bool _isEditing = false;
   bool _isLoading = false;
 
@@ -103,14 +105,17 @@ class _MedicationDetailScreenState extends ConsumerState<MedicationDetailScreen>
 
         return Scaffold(
           appBar: AppBar(
-            title: Text(_isEditing ? AppLocalizations.of(context)!.editMedication : AppLocalizations.of(context)!.medicationDetails),
+            title: Text(_isEditing
+                ? AppLocalizations.of(context)!.editMedication
+                : AppLocalizations.of(context)!.medicationDetails),
             backgroundColor: theme.colorScheme.primary,
             foregroundColor: theme.colorScheme.onPrimary,
             elevation: 0,
             actions: [
               if (_isEditing)
                 TextButton(
-                  onPressed: _isLoading ? null : () => _saveMedication(medication),
+                  onPressed:
+                      _isLoading ? null : () => _saveMedication(medication),
                   child: Text(
                     AppLocalizations.of(context)!.save,
                     style: TextStyle(
@@ -147,10 +152,14 @@ class _MedicationDetailScreenState extends ConsumerState<MedicationDetailScreen>
                       children: [
                         Icon(
                           medication.isActive ? Icons.pause : Icons.play_arrow,
-                          color: medication.isActive ? Colors.orange : Colors.green,
+                          color: medication.isActive
+                              ? Colors.orange
+                              : Colors.green,
                         ),
                         const SizedBox(width: 8),
-                        Text(medication.isActive ? AppLocalizations.of(context)!.markInactive : AppLocalizations.of(context)!.markActive),
+                        Text(medication.isActive
+                            ? AppLocalizations.of(context)!.markInactive
+                            : AppLocalizations.of(context)!.markActive),
                       ],
                     ),
                   ),
@@ -179,7 +188,8 @@ class _MedicationDetailScreenState extends ConsumerState<MedicationDetailScreen>
         body: Center(child: CircularProgressIndicator()),
       ),
       error: (error, stack) => Scaffold(
-        appBar: AppBar(title: Text(AppLocalizations.of(context)!.errorLoadingMedications)),
+        appBar: AppBar(
+            title: Text(AppLocalizations.of(context)!.errorLoadingMedications)),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -240,11 +250,15 @@ class _MedicationDetailScreenState extends ConsumerState<MedicationDetailScreen>
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: medication.isActive ? Colors.green : Colors.grey,
+                            color: medication.isActive
+                                ? Colors.green
+                                : Colors.grey,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            medication.isActive ? AppLocalizations.of(context)!.active : AppLocalizations.of(context)!.inactive,
+                            medication.isActive
+                                ? AppLocalizations.of(context)!.active
+                                : AppLocalizations.of(context)!.inactive,
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 12,
@@ -276,10 +290,17 @@ class _MedicationDetailScreenState extends ConsumerState<MedicationDetailScreen>
                     ),
                   ),
                   const SizedBox(height: 16),
-
-                  _buildDetailRow(AppLocalizations.of(context)!.dosage, medication.dosage, Icons.straighten),
-                  _buildDetailRow(AppLocalizations.of(context)!.frequency, _getLocalizedFrequency(medication.frequency), Icons.schedule),
-                  _buildDetailRow(AppLocalizations.of(context)!.administrationMethod, _getLocalizedAdministrationMethod(medication.administrationMethod), Icons.medical_services),
+                  _buildDetailRow(AppLocalizations.of(context)!.dosage,
+                      medication.dosage, Icons.straighten),
+                  _buildDetailRow(
+                      AppLocalizations.of(context)!.frequency,
+                      _getLocalizedFrequency(medication.frequency),
+                      Icons.schedule),
+                  _buildDetailRow(
+                      AppLocalizations.of(context)!.administrationMethod,
+                      _getLocalizedAdministrationMethod(
+                          medication.administrationMethod),
+                      Icons.medical_services),
                 ],
               ),
             ),
@@ -301,20 +322,26 @@ class _MedicationDetailScreenState extends ConsumerState<MedicationDetailScreen>
                     ),
                   ),
                   const SizedBox(height: 16),
-
                   _buildDetailRow(
                     AppLocalizations.of(context)!.startDate,
-                    DateFormat('MMMM dd, yyyy', Localizations.localeOf(context).toString()).format(medication.startDate),
+                    DateFormat('MMMM dd, yyyy',
+                            Localizations.localeOf(context).toString())
+                        .format(medication.startDate),
                     Icons.calendar_today,
                   ),
                   if (medication.endDate != null)
                     _buildDetailRow(
                       AppLocalizations.of(context)!.endDate,
-                      DateFormat('MMMM dd, yyyy', Localizations.localeOf(context).toString()).format(medication.endDate!),
+                      DateFormat('MMMM dd, yyyy',
+                              Localizations.localeOf(context).toString())
+                          .format(medication.endDate!),
                       Icons.event_available,
                     )
                   else
-                    _buildDetailRow(AppLocalizations.of(context)!.duration, AppLocalizations.of(context)!.ongoing, Icons.all_inclusive),
+                    _buildDetailRow(
+                        AppLocalizations.of(context)!.duration,
+                        AppLocalizations.of(context)!.ongoing,
+                        Icons.all_inclusive),
                 ],
               ),
             ),
@@ -337,7 +364,6 @@ class _MedicationDetailScreenState extends ConsumerState<MedicationDetailScreen>
                       ),
                     ),
                     const SizedBox(height: 16),
-
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
@@ -441,104 +467,97 @@ class _MedicationDetailScreenState extends ConsumerState<MedicationDetailScreen>
                   const SizedBox(height: 16),
 
                   // Medication name
-                  Builder(
-                    builder: (context) {
-                      final l10n = AppLocalizations.of(context)!;
-                      return TextFormField(
-                        controller: _medicationNameController,
-                        decoration: InputDecoration(
-                          labelText: l10n.medicationName,
-                          prefixIcon: const Icon(Icons.medication),
-                          border: const OutlineInputBorder(),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return l10n.pleaseEnterMedicationName;
-                          }
-                          return null;
-                        },
-                      );
-                    }
-                  ),
+                  Builder(builder: (context) {
+                    final l10n = AppLocalizations.of(context)!;
+                    return TextFormField(
+                      controller: _medicationNameController,
+                      decoration: InputDecoration(
+                        labelText: l10n.medicationName,
+                        prefixIcon: const Icon(Icons.medication),
+                        border: const OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return l10n.pleaseEnterMedicationName;
+                        }
+                        return null;
+                      },
+                    );
+                  }),
 
                   const SizedBox(height: 16),
 
                   // Dosage
-                  Builder(
-                    builder: (context) {
-                      final l10n = AppLocalizations.of(context)!;
-                      return TextFormField(
-                        controller: _dosageController,
-                        decoration: InputDecoration(
-                          labelText: l10n.dosage,
-                          prefixIcon: const Icon(Icons.straighten),
-                          border: const OutlineInputBorder(),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return l10n.pleaseEnterDosage;
-                          }
-                          return null;
-                        },
-                      );
-                    }
-                  ),
+                  Builder(builder: (context) {
+                    final l10n = AppLocalizations.of(context)!;
+                    return TextFormField(
+                      controller: _dosageController,
+                      decoration: InputDecoration(
+                        labelText: l10n.dosage,
+                        prefixIcon: const Icon(Icons.straighten),
+                        border: const OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return l10n.pleaseEnterDosage;
+                        }
+                        return null;
+                      },
+                    );
+                  }),
 
                   const SizedBox(height: 16),
 
                   // Frequency dropdown
-                  Builder(
-                    builder: (context) {
-                      final l10n = AppLocalizations.of(context)!;
-                      return DropdownButtonFormField<String>(
-                        value: _selectedFrequency,
-                        decoration: InputDecoration(
-                          labelText: l10n.frequency,
-                          prefixIcon: const Icon(Icons.schedule),
-                          border: const OutlineInputBorder(),
-                        ),
-                        items: _frequencies.map((frequency) {
-                          return DropdownMenuItem(
-                            value: frequency,
-                            child: Text(_getLocalizedFrequency(frequency)),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedFrequency = value!;
-                          });
-                        },
-                      );
-                    }
-                  ),
+                  Builder(builder: (context) {
+                    final l10n = AppLocalizations.of(context)!;
+                    return DropdownButtonFormField<String>(
+                      value: _selectedFrequency,
+                      decoration: InputDecoration(
+                        labelText: l10n.frequency,
+                        prefixIcon: const Icon(Icons.schedule),
+                        border: const OutlineInputBorder(),
+                      ),
+                      items: _frequencies.map((frequency) {
+                        return DropdownMenuItem(
+                          value: frequency,
+                          child: Text(_getLocalizedFrequency(frequency)),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedFrequency = value!;
+                        });
+                      },
+                    );
+                  }),
 
                   const SizedBox(height: 16),
 
                   // Administration method dropdown
-                  Builder(
-                    builder: (context) {
-                      final l10n = AppLocalizations.of(context)!;
-                      return DropdownButtonFormField<String>(
-                        value: _selectedAdministrationMethod,
-                        decoration: InputDecoration(
-                          labelText: l10n.administrationMethod,
-                          prefixIcon: const Icon(Icons.medical_services),
-                          border: const OutlineInputBorder(),
-                        ),
-                        items: _administrationMethods.map((method) {
-                          return DropdownMenuItem(
-                            value: method,
-                            child: Text(_getLocalizedAdministrationMethod(method)),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedAdministrationMethod = value!;
-                          });
-                        },
-                      );
-                    }
-                  ),
+                  Builder(builder: (context) {
+                    final l10n = AppLocalizations.of(context)!;
+                    return DropdownButtonFormField<String>(
+                      value: _selectedAdministrationMethod,
+                      decoration: InputDecoration(
+                        labelText: l10n.administrationMethod,
+                        prefixIcon: const Icon(Icons.medical_services),
+                        border: const OutlineInputBorder(),
+                      ),
+                      items: _administrationMethods.map((method) {
+                        return DropdownMenuItem(
+                          value: method,
+                          child:
+                              Text(_getLocalizedAdministrationMethod(method)),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedAdministrationMethod = value!;
+                        });
+                      },
+                    );
+                  }),
                 ],
               ),
             ),
@@ -560,20 +579,17 @@ class _MedicationDetailScreenState extends ConsumerState<MedicationDetailScreen>
                     ),
                   ),
                   const SizedBox(height: 16),
-
-                  Builder(
-                    builder: (context) {
-                      final l10n = AppLocalizations.of(context)!;
-                      return TextFormField(
-                        controller: _notesController,
-                        maxLines: 4,
-                        decoration: InputDecoration(
-                          hintText: l10n.additionalNotesHint,
-                          border: const OutlineInputBorder(),
-                        ),
-                      );
-                    }
-                  ),
+                  Builder(builder: (context) {
+                    final l10n = AppLocalizations.of(context)!;
+                    return TextFormField(
+                      controller: _notesController,
+                      maxLines: 4,
+                      decoration: InputDecoration(
+                        hintText: l10n.additionalNotesHint,
+                        border: const OutlineInputBorder(),
+                      ),
+                    );
+                  }),
                 ],
               ),
             ),
@@ -597,7 +613,8 @@ class _MedicationDetailScreenState extends ConsumerState<MedicationDetailScreen>
               const SizedBox(width: 16),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: _isLoading ? null : () => _saveMedication(medication),
+                  onPressed:
+                      _isLoading ? null : () => _saveMedication(medication),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.colorScheme.primary,
                     foregroundColor: theme.colorScheme.onPrimary,
@@ -707,10 +724,14 @@ class _MedicationDetailScreenState extends ConsumerState<MedicationDetailScreen>
         dosage: _dosageController.text.trim(),
         frequency: _selectedFrequency,
         administrationMethod: _selectedAdministrationMethod,
-        notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
+        notes: _notesController.text.trim().isEmpty
+            ? null
+            : _notesController.text.trim(),
       );
 
-      await ref.read(medicationsProvider.notifier).updateMedication(updatedMedication);
+      await ref
+          .read(medicationsProvider.notifier)
+          .updateMedication(updatedMedication);
 
       if (mounted) {
         setState(() {
@@ -744,16 +765,16 @@ class _MedicationDetailScreenState extends ConsumerState<MedicationDetailScreen>
   Future<void> _toggleMedicationStatus(MedicationEntry medication) async {
     final l10n = AppLocalizations.of(context)!;
     try {
-      await ref.read(medicationsProvider.notifier).toggleMedicationStatus(medication.id);
+      await ref
+          .read(medicationsProvider.notifier)
+          .toggleMedicationStatus(medication.id);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              medication.isActive
-                  ? l10n.medicationMarkedInactive
-                  : l10n.medicationMarkedActive
-            ),
+            content: Text(medication.isActive
+                ? l10n.medicationMarkedInactive
+                : l10n.medicationMarkedActive),
             backgroundColor: Colors.green,
           ),
         );
@@ -795,7 +816,9 @@ class _MedicationDetailScreenState extends ConsumerState<MedicationDetailScreen>
 
     if (shouldDelete == true) {
       try {
-        await ref.read(medicationsProvider.notifier).deleteMedication(medication.id);
+        await ref
+            .read(medicationsProvider.notifier)
+            .deleteMedication(medication.id);
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

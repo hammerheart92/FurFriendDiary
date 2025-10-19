@@ -96,7 +96,9 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
     final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(_editingAppointment != null ? l10n.editAppointment : l10n.addAppointment),
+        title: Text(_editingAppointment != null
+            ? l10n.editAppointment
+            : l10n.addAppointment),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
         elevation: 0,
@@ -204,7 +206,11 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
                   controller: _tabController,
                   children: [
                     _buildAppointmentsList(
-                      appointments.where((apt) => !apt.isCompleted && apt.appointmentDate.isAfter(DateTime.now())).toList(),
+                      appointments
+                          .where((apt) =>
+                              !apt.isCompleted &&
+                              apt.appointmentDate.isAfter(DateTime.now()))
+                          .toList(),
                       l10n.noUpcomingAppointments,
                       theme,
                       petId,
@@ -234,7 +240,8 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
                     Text('${l10n.errorLoadingAppointments}: $error'),
                     const SizedBox(height: 16),
                     ElevatedButton(
-                      onPressed: () => ref.invalidate(appointmentsByPetIdProvider(petId)),
+                      onPressed: () =>
+                          ref.invalidate(appointmentsByPetIdProvider(petId)),
                       child: Text(l10n.retry),
                     ),
                   ],
@@ -297,7 +304,9 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
             ),
             const SizedBox(height: 16),
             Text(
-              _searchQuery.isNotEmpty ? l10n.noAppointmentsMatchSearch : emptyMessage,
+              _searchQuery.isNotEmpty
+                  ? l10n.noAppointmentsMatchSearch
+                  : emptyMessage,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.6),
               ),

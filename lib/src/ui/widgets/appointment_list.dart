@@ -49,7 +49,8 @@ class AppointmentList extends ConsumerWidget {
               onTap: () => onEditAppointment?.call(appointment),
               onToggleStatus: () => _toggleAppointmentStatus(ref, appointment),
               onDelete: () => _showDeleteDialog(context, ref, appointment),
-              onSetReminder: () => _showReminderDialog(context, ref, appointment),
+              onSetReminder: () =>
+                  _showReminderDialog(context, ref, appointment),
             );
           },
         );
@@ -85,7 +86,8 @@ class AppointmentList extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () => ref.invalidate(appointmentsByPetIdProvider(petId)),
+              onPressed: () =>
+                  ref.invalidate(appointmentsByPetIdProvider(petId)),
               child: const Text('Retry'),
             ),
           ],
@@ -146,19 +148,23 @@ class AppointmentList extends ConsumerWidget {
     );
   }
 
-  Future<void> _toggleAppointmentStatus(WidgetRef ref, AppointmentEntry appointment) async {
+  Future<void> _toggleAppointmentStatus(
+      WidgetRef ref, AppointmentEntry appointment) async {
     try {
       final updatedAppointment = appointment.copyWith(
         isCompleted: !appointment.isCompleted,
       );
 
-      await ref.read(appointmentProviderProvider.notifier).updateAppointment(updatedAppointment);
+      await ref
+          .read(appointmentProviderProvider.notifier)
+          .updateAppointment(updatedAppointment);
     } catch (error) {
       // Error handling would be done by the provider/repository
     }
   }
 
-  Future<void> _showDeleteDialog(BuildContext context, WidgetRef ref, AppointmentEntry appointment) async {
+  Future<void> _showDeleteDialog(
+      BuildContext context, WidgetRef ref, AppointmentEntry appointment) async {
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -184,7 +190,9 @@ class AppointmentList extends ConsumerWidget {
 
     if (result == true) {
       try {
-        await ref.read(appointmentProviderProvider.notifier).deleteAppointment(appointment.id);
+        await ref
+            .read(appointmentProviderProvider.notifier)
+            .deleteAppointment(appointment.id);
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -206,7 +214,8 @@ class AppointmentList extends ConsumerWidget {
     }
   }
 
-  void _showReminderDialog(BuildContext context, WidgetRef ref, AppointmentEntry appointment) {
+  void _showReminderDialog(
+      BuildContext context, WidgetRef ref, AppointmentEntry appointment) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -240,42 +249,53 @@ class AppointmentList extends ConsumerWidget {
                     ListTile(
                       leading: const Icon(Icons.today, color: Colors.blue),
                       title: const Text('1 Day Before'),
-                      subtitle: Text(_formatReminderTime(appointment.appointmentDate, const Duration(days: 1))),
+                      subtitle: Text(_formatReminderTime(
+                          appointment.appointmentDate,
+                          const Duration(days: 1))),
                       onTap: () {
                         Navigator.pop(context);
                         _createReminder(
                           context,
                           ref,
                           appointment,
-                          appointment.appointmentDate.subtract(const Duration(days: 1)),
+                          appointment.appointmentDate
+                              .subtract(const Duration(days: 1)),
                         );
                       },
                     ),
                     ListTile(
-                      leading: const Icon(Icons.access_time, color: Colors.orange),
+                      leading:
+                          const Icon(Icons.access_time, color: Colors.orange),
                       title: const Text('1 Hour Before'),
-                      subtitle: Text(_formatReminderTime(appointment.appointmentDate, const Duration(hours: 1))),
+                      subtitle: Text(_formatReminderTime(
+                          appointment.appointmentDate,
+                          const Duration(hours: 1))),
                       onTap: () {
                         Navigator.pop(context);
                         _createReminder(
                           context,
                           ref,
                           appointment,
-                          appointment.appointmentDate.subtract(const Duration(hours: 1)),
+                          appointment.appointmentDate
+                              .subtract(const Duration(hours: 1)),
                         );
                       },
                     ),
                     ListTile(
-                      leading: const Icon(Icons.notifications, color: Colors.green),
+                      leading:
+                          const Icon(Icons.notifications, color: Colors.green),
                       title: const Text('30 Minutes Before'),
-                      subtitle: Text(_formatReminderTime(appointment.appointmentDate, const Duration(minutes: 30))),
+                      subtitle: Text(_formatReminderTime(
+                          appointment.appointmentDate,
+                          const Duration(minutes: 30))),
                       onTap: () {
                         Navigator.pop(context);
                         _createReminder(
                           context,
                           ref,
                           appointment,
-                          appointment.appointmentDate.subtract(const Duration(minutes: 30)),
+                          appointment.appointmentDate
+                              .subtract(const Duration(minutes: 30)),
                         );
                       },
                     ),

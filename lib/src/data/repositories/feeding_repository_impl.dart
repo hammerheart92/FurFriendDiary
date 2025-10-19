@@ -43,10 +43,11 @@ class FeedingRepositoryImpl implements FeedingRepository {
   }
 
   @override
-  Future<List<FeedingEntry>> getFeedingsByDateRange(String petId, DateTime start, DateTime end) async {
+  Future<List<FeedingEntry>> getFeedingsByDateRange(
+      String petId, DateTime start, DateTime end) async {
     final box = HiveBoxes.getFeedings();
     return box.values
-        .where((feeding) => 
+        .where((feeding) =>
             feeding.petId == petId &&
             feeding.dateTime.isAfter(start) &&
             feeding.dateTime.isBefore(end))

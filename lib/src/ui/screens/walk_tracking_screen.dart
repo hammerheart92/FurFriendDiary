@@ -42,7 +42,9 @@ class _WalkTrackingScreenState extends ConsumerState<WalkTrackingScreen> {
         foregroundColor: theme.colorScheme.onPrimary,
         elevation: 0,
       ),
-      body: activeWalk == null ? _buildStartWalkView(theme) : _buildActiveWalkView(theme, activeWalk),
+      body: activeWalk == null
+          ? _buildStartWalkView(theme)
+          : _buildActiveWalkView(theme, activeWalk),
     );
   }
 
@@ -64,7 +66,7 @@ class _WalkTrackingScreenState extends ConsumerState<WalkTrackingScreen> {
           child: Column(
             children: [
               const SizedBox(height: 40),
-              
+
               // Pet avatar placeholder
               Container(
                 width: 120,
@@ -142,10 +144,11 @@ class _WalkTrackingScreenState extends ConsumerState<WalkTrackingScreen> {
                                 Text(type.displayName),
                               ],
                             ),
-                            backgroundColor: isSelected 
+                            backgroundColor: isSelected
                                 ? theme.colorScheme.primary.withOpacity(0.2)
                                 : null,
-                            selectedColor: theme.colorScheme.primary.withOpacity(0.3),
+                            selectedColor:
+                                theme.colorScheme.primary.withOpacity(0.3),
                           );
                         }).toList(),
                       ),
@@ -202,7 +205,8 @@ class _WalkTrackingScreenState extends ConsumerState<WalkTrackingScreen> {
             children: [
               // Status indicator
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   color: Colors.green,
                   borderRadius: BorderRadius.circular(20),
@@ -235,7 +239,8 @@ class _WalkTrackingScreenState extends ConsumerState<WalkTrackingScreen> {
               // Timer display
               Consumer(
                 builder: (context, ref, child) {
-                  final durationAsync = ref.watch(walkDurationProvider(activeWalk.startTime));
+                  final durationAsync =
+                      ref.watch(walkDurationProvider(activeWalk.startTime));
                   return durationAsync.when(
                     data: (duration) {
                       final hours = duration.inHours;
@@ -270,7 +275,8 @@ class _WalkTrackingScreenState extends ConsumerState<WalkTrackingScreen> {
                             Text(
                               activeWalk.walkType.displayName,
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                color: theme.colorScheme.onSurface
+                                    .withOpacity(0.7),
                               ),
                             ),
                           ],
@@ -300,11 +306,12 @@ class _WalkTrackingScreenState extends ConsumerState<WalkTrackingScreen> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        
+
                         // Distance input
                         TextField(
                           controller: _distanceController,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true),
                           decoration: const InputDecoration(
                             labelText: 'Distance (km)',
                             hintText: 'Enter distance walked',
@@ -312,9 +319,9 @@ class _WalkTrackingScreenState extends ConsumerState<WalkTrackingScreen> {
                             border: OutlineInputBorder(),
                           ),
                         ),
-                        
+
                         const SizedBox(height: 16),
-                        
+
                         // Notes input
                         Expanded(
                           child: TextField(
@@ -369,9 +376,9 @@ class _WalkTrackingScreenState extends ConsumerState<WalkTrackingScreen> {
   Future<void> _startWalk() async {
     try {
       await ref.read(walksProvider.notifier).startWalk(
-        petId: widget.petId,
-        walkType: _selectedWalkType,
-      );
+            petId: widget.petId,
+            walkType: _selectedWalkType,
+          );
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -387,15 +394,15 @@ class _WalkTrackingScreenState extends ConsumerState<WalkTrackingScreen> {
   Future<void> _endWalk(Walk activeWalk) async {
     try {
       final distance = double.tryParse(_distanceController.text);
-      final notes = _notesController.text.trim().isEmpty 
-          ? null 
+      final notes = _notesController.text.trim().isEmpty
+          ? null
           : _notesController.text.trim();
 
       await ref.read(walksProvider.notifier).endWalk(
-        walkId: activeWalk.id,
-        distance: distance,
-        notes: notes,
-      );
+            walkId: activeWalk.id,
+            distance: distance,
+            notes: notes,
+          );
 
       if (mounted) {
         Navigator.of(context).pop();

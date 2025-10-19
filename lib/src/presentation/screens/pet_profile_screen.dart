@@ -32,7 +32,8 @@ class PetProfileScreen extends ConsumerWidget {
         ],
       ),
       body: profilesAsync.when(
-        data: (profiles) => _buildProfileList(context, ref, profiles, currentProfile),
+        data: (profiles) =>
+            _buildProfileList(context, ref, profiles, currentProfile),
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
           child: Column(
@@ -85,7 +86,8 @@ class PetProfileScreen extends ConsumerWidget {
           const SizedBox(height: 16),
           ...profiles.map((profile) => Padding(
                 padding: const EdgeInsets.only(bottom: 12),
-                child: _buildProfileCard(context, ref, profile, profile == currentProfile),
+                child: _buildProfileCard(
+                    context, ref, profile, profile == currentProfile),
               )),
         ],
       ),
@@ -94,7 +96,7 @@ class PetProfileScreen extends ConsumerWidget {
 
   Widget _buildEmptyState(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -102,7 +104,10 @@ class PetProfileScreen extends ConsumerWidget {
           Icon(
             Icons.pets,
             size: 96,
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: 255*0.5),
+            color: Theme.of(context)
+                .colorScheme
+                .primary
+                .withValues(alpha: 255 * 0.5),
           ),
           const SizedBox(height: 24),
           Text(
@@ -113,7 +118,10 @@ class PetProfileScreen extends ConsumerWidget {
           Text(
             l10n.addYourFirstPet,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 255*0.6),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 255 * 0.6),
                 ),
           ),
           const SizedBox(height: 32),
@@ -127,10 +135,11 @@ class PetProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildActiveProfileCard(BuildContext context, WidgetRef ref, PetProfile profile) {
+  Widget _buildActiveProfileCard(
+      BuildContext context, WidgetRef ref, PetProfile profile) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    
+
     return Card(
       elevation: 4,
       child: Container(
@@ -139,7 +148,7 @@ class PetProfileScreen extends ConsumerWidget {
           gradient: LinearGradient(
             colors: [
               theme.colorScheme.primaryContainer,
-              theme.colorScheme.primaryContainer.withValues(alpha: 255*0.7),
+              theme.colorScheme.primaryContainer.withValues(alpha: 255 * 0.7),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -168,21 +177,25 @@ class PetProfileScreen extends ConsumerWidget {
                         Text(
                           '${profile.species}${profile.breed != null ? ' • ${profile.breed}' : ''}',
                           style: theme.textTheme.bodyLarge?.copyWith(
-                            color: theme.colorScheme.onPrimaryContainer.withValues(alpha: 255*0.8),
+                            color: theme.colorScheme.onPrimaryContainer
+                                .withValues(alpha: 255 * 0.8),
                           ),
                         ),
                         if (profile.age > 0)
                           Text(
-                            l10n.yearsOld(profile.age, profile.age != 1 ? 's' : ''),
+                            l10n.yearsOld(
+                                profile.age, profile.age != 1 ? 's' : ''),
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onPrimaryContainer.withValues(alpha: 255*0.7),
+                              color: theme.colorScheme.onPrimaryContainer
+                                  .withValues(alpha: 255 * 0.7),
                             ),
                           ),
                       ],
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.primary,
                       borderRadius: BorderRadius.circular(16),
@@ -202,7 +215,8 @@ class PetProfileScreen extends ConsumerWidget {
                 Text(
                   profile.notes!,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onPrimaryContainer.withValues(alpha: 255*0.8),
+                    color: theme.colorScheme.onPrimaryContainer
+                        .withValues(alpha: 255 * 0.8),
                   ),
                 ),
               ],
@@ -265,7 +279,8 @@ class PetProfileScreen extends ConsumerWidget {
         color: theme.colorScheme.onPrimaryContainer,
         fontSize: 12,
       ),
-      backgroundColor: theme.colorScheme.primaryContainer.withValues(alpha: 200),
+      backgroundColor:
+          theme.colorScheme.primaryContainer.withValues(alpha: 200),
       side: BorderSide(
         color: theme.colorScheme.onPrimaryContainer.withValues(alpha: 100),
       ),
@@ -281,10 +296,11 @@ class PetProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildProfileCard(BuildContext context, WidgetRef ref, PetProfile profile, bool isActive) {
+  Widget _buildProfileCard(
+      BuildContext context, WidgetRef ref, PetProfile profile, bool isActive) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    
+
     return Card(
       child: ListTile(
         leading: _buildProfileAvatar(context, profile, 40),
@@ -297,7 +313,8 @@ class PetProfileScreen extends ConsumerWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('${profile.species}${profile.breed != null ? ' • ${profile.breed}' : ''}'),
+            Text(
+                '${profile.species}${profile.breed != null ? ' • ${profile.breed}' : ''}'),
             if (profile.age > 0)
               Text(l10n.yearsOld(profile.age, profile.age != 1 ? 's' : '')),
           ],
@@ -308,7 +325,8 @@ class PetProfileScreen extends ConsumerWidget {
                 color: theme.colorScheme.primary,
               )
             : PopupMenuButton<String>(
-                onSelected: (value) => _handleMenuAction(context, ref, profile, value),
+                onSelected: (value) =>
+                    _handleMenuAction(context, ref, profile, value),
                 itemBuilder: (context) => [
                   PopupMenuItem(
                     value: 'activate',
@@ -330,7 +348,8 @@ class PetProfileScreen extends ConsumerWidget {
                     value: 'delete',
                     child: ListTile(
                       leading: const Icon(Icons.delete, color: Colors.red),
-                      title: Text(l10n.delete, style: const TextStyle(color: Colors.red)),
+                      title: Text(l10n.delete,
+                          style: const TextStyle(color: Colors.red)),
                       contentPadding: EdgeInsets.zero,
                     ),
                   ),
@@ -341,7 +360,8 @@ class PetProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildProfileAvatar(BuildContext context, PetProfile profile, double radius) {
+  Widget _buildProfileAvatar(
+      BuildContext context, PetProfile profile, double radius) {
     _logger.d('[PROFILE_PIC] Building avatar for pet: ${profile.name}');
     _logger.d('[PROFILE_PIC] photoPath from profile: ${profile.photoPath}');
 
@@ -357,7 +377,8 @@ class PetProfileScreen extends ConsumerWidget {
       if (exists) {
         try {
           final fileSize = imageFile.lengthSync();
-          _logger.d('[PROFILE_PIC] SUCCESS: File verified! Size: $fileSize bytes');
+          _logger
+              .d('[PROFILE_PIC] SUCCESS: File verified! Size: $fileSize bytes');
           _logger.d('[PROFILE_PIC] Creating CircleAvatar with FileImage');
 
           return CircleAvatar(
@@ -368,11 +389,14 @@ class PetProfileScreen extends ConsumerWidget {
           _logger.e('[PROFILE_PIC] ERROR: Failed to read file: $e');
         }
       } else {
-        _logger.e('[PROFILE_PIC] ERROR: photoPath is set but file does NOT exist!');
-        _logger.e('[PROFILE_PIC] ERROR: Expected at: ${imageFile.absolute.path}');
+        _logger.e(
+            '[PROFILE_PIC] ERROR: photoPath is set but file does NOT exist!');
+        _logger
+            .e('[PROFILE_PIC] ERROR: Expected at: ${imageFile.absolute.path}');
       }
     } else {
-      _logger.d('[PROFILE_PIC] photoPath is null or empty, showing default icon');
+      _logger
+          .d('[PROFILE_PIC] photoPath is null or empty, showing default icon');
     }
 
     _logger.d('[PROFILE_PIC] Falling back to default pet icon');
@@ -400,7 +424,9 @@ class PetProfileScreen extends ConsumerWidget {
       case 'edit':
         // TODO: Navigate to edit screen (could reuse setup screen with profile data)
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${AppLocalizations.of(context).edit} feature coming soon!')),
+          SnackBar(
+              content: Text(
+                  '${AppLocalizations.of(context).edit} feature coming soon!')),
         );
         break;
       case 'delete':
@@ -409,7 +435,8 @@ class PetProfileScreen extends ConsumerWidget {
     }
   }
 
-  Future<void> _activateProfile(BuildContext context, WidgetRef ref, PetProfile profile) async {
+  Future<void> _activateProfile(
+      BuildContext context, WidgetRef ref, PetProfile profile) async {
     try {
       await ref.read(petProfilesProvider.notifier).setActive(profile.id);
       if (context.mounted) {
@@ -428,7 +455,8 @@ class PetProfileScreen extends ConsumerWidget {
     }
   }
 
-  Future<void> _deleteProfile(BuildContext context, WidgetRef ref, PetProfile profile) async {
+  Future<void> _deleteProfile(
+      BuildContext context, WidgetRef ref, PetProfile profile) async {
     final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
@@ -469,4 +497,3 @@ class PetProfileScreen extends ConsumerWidget {
     }
   }
 }
-
