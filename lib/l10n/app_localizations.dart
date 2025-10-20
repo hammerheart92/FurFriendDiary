@@ -2851,6 +2851,270 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not tracked'**
   String get notTrackedEnum;
+
+  /// No description provided for @veterinarians.
+  ///
+  /// In en, this message translates to:
+  /// **'Veterinarians'**
+  String get veterinarians;
+
+  /// No description provided for @addVet.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Veterinarian'**
+  String get addVet;
+
+  /// No description provided for @editVet.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Veterinarian'**
+  String get editVet;
+
+  /// No description provided for @vetDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Veterinarian Details'**
+  String get vetDetails;
+
+  /// No description provided for @vetName.
+  ///
+  /// In en, this message translates to:
+  /// **'Veterinarian Name'**
+  String get vetName;
+
+  /// No description provided for @clinicName.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic Name'**
+  String get clinicName;
+
+  /// No description provided for @specialty.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialty'**
+  String get specialty;
+
+  /// No description provided for @phoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumber;
+
+  /// No description provided for @email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// No description provided for @address.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get address;
+
+  /// No description provided for @website.
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get website;
+
+  /// No description provided for @setAsPreferred.
+  ///
+  /// In en, this message translates to:
+  /// **'Set as Preferred Vet'**
+  String get setAsPreferred;
+
+  /// No description provided for @preferredVet.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferred Vet'**
+  String get preferredVet;
+
+  /// No description provided for @generalPractice.
+  ///
+  /// In en, this message translates to:
+  /// **'General Practice'**
+  String get generalPractice;
+
+  /// No description provided for @emergencyMedicine.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency Medicine'**
+  String get emergencyMedicine;
+
+  /// No description provided for @cardiology.
+  ///
+  /// In en, this message translates to:
+  /// **'Cardiology'**
+  String get cardiology;
+
+  /// No description provided for @dermatology.
+  ///
+  /// In en, this message translates to:
+  /// **'Dermatology'**
+  String get dermatology;
+
+  /// No description provided for @surgery.
+  ///
+  /// In en, this message translates to:
+  /// **'Surgery'**
+  String get surgery;
+
+  /// No description provided for @orthopedics.
+  ///
+  /// In en, this message translates to:
+  /// **'Orthopedics'**
+  String get orthopedics;
+
+  /// No description provided for @oncology.
+  ///
+  /// In en, this message translates to:
+  /// **'Oncology'**
+  String get oncology;
+
+  /// No description provided for @ophthalmology.
+  ///
+  /// In en, this message translates to:
+  /// **'Ophthalmology'**
+  String get ophthalmology;
+
+  /// No description provided for @callVet.
+  ///
+  /// In en, this message translates to:
+  /// **'Call Veterinarian'**
+  String get callVet;
+
+  /// No description provided for @emailVet.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Veterinarian'**
+  String get emailVet;
+
+  /// No description provided for @openWebsite.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Website'**
+  String get openWebsite;
+
+  /// No description provided for @lastVisit.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Visit'**
+  String get lastVisit;
+
+  /// No description provided for @totalAppointments.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Appointments'**
+  String get totalAppointments;
+
+  /// No description provided for @recentAppointments.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Appointments'**
+  String get recentAppointments;
+
+  /// No description provided for @noVetsAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'No veterinarians added'**
+  String get noVetsAdded;
+
+  /// No description provided for @addFirstVet.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your pet\'s veterinarian to keep track of visits and contact information'**
+  String get addFirstVet;
+
+  /// No description provided for @deleteVet.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Veterinarian'**
+  String get deleteVet;
+
+  /// No description provided for @deleteVetConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this veterinarian? This will not affect existing appointments.'**
+  String get deleteVetConfirm;
+
+  /// No description provided for @vetDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Veterinarian deleted'**
+  String get vetDeleted;
+
+  /// No description provided for @vetAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Veterinarian added'**
+  String get vetAdded;
+
+  /// No description provided for @vetUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Veterinarian updated'**
+  String get vetUpdated;
+
+  /// No description provided for @selectVet.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Veterinarian'**
+  String get selectVet;
+
+  /// No description provided for @addNewVet.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Veterinarian'**
+  String get addNewVet;
+
+  /// No description provided for @invalidPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid phone number'**
+  String get invalidPhone;
+
+  /// No description provided for @invalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email address'**
+  String get invalidEmail;
+
+  /// No description provided for @invalidWebsite.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid website URL'**
+  String get invalidWebsite;
+
+  /// No description provided for @vetNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Veterinarian name is required'**
+  String get vetNameRequired;
+
+  /// No description provided for @clinicNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic name is required'**
+  String get clinicNameRequired;
+
+  /// No description provided for @searchVets.
+  ///
+  /// In en, this message translates to:
+  /// **'Search veterinarians...'**
+  String get searchVets;
+
+  /// No description provided for @noVetsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No veterinarians found'**
+  String get noVetsFound;
+
+  /// No description provided for @noVetsMatchSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'No veterinarians match your search'**
+  String get noVetsMatchSearch;
 }
 
 class _AppLocalizationsDelegate

@@ -27,13 +27,14 @@ class AppointmentEntryAdapter extends TypeAdapter<AppointmentEntry> {
       notes: fields[7] as String?,
       isCompleted: fields[8] as bool,
       createdAt: fields[9] as DateTime?,
+      vetId: fields[10] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, AppointmentEntry obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -53,7 +54,9 @@ class AppointmentEntryAdapter extends TypeAdapter<AppointmentEntry> {
       ..writeByte(8)
       ..write(obj.isCompleted)
       ..writeByte(9)
-      ..write(obj.createdAt);
+      ..write(obj.createdAt)
+      ..writeByte(10)
+      ..write(obj.vetId);
   }
 
   @override

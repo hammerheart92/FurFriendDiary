@@ -19,6 +19,9 @@ import '../screens/photo_gallery_screen.dart';
 import '../screens/photo_detail_screen.dart';
 import '../screens/medication_inventory_screen.dart';
 import '../screens/purchase_history_screen.dart';
+import '../screens/vet_list_screen.dart';
+import '../screens/add_vet_screen.dart';
+import '../screens/vet_detail_screen.dart';
 import '../providers/pet_profile_provider.dart';
 
 final logger = Logger();
@@ -130,6 +133,29 @@ GoRouter createRouter() => GoRouter(
         GoRoute(
           path: '/terms',
           builder: (context, state) => const TermsScreen(),
+        ),
+        // Vet routes
+        GoRoute(
+          path: '/vet-list',
+          builder: (context, state) => const VetListScreen(),
+        ),
+        GoRoute(
+          path: '/add-vet',
+          builder: (context, state) => const AddVetScreen(),
+        ),
+        GoRoute(
+          path: '/edit-vet/:vetId',
+          builder: (context, state) {
+            final vetId = state.pathParameters['vetId']!;
+            return AddVetScreen(vetId: vetId);
+          },
+        ),
+        GoRoute(
+          path: '/vet-detail/:vetId',
+          builder: (context, state) {
+            final vetId = state.pathParameters['vetId']!;
+            return VetDetailScreen(vetId: vetId);
+          },
         ),
       ],
     );

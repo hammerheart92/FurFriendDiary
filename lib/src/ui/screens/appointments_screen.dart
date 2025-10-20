@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../domain/models/appointment_entry.dart';
 import '../../presentation/providers/care_data_provider.dart';
 import '../../presentation/providers/pet_profile_provider.dart';
@@ -140,6 +141,13 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.local_hospital),
+            tooltip: l10n.veterinarians,
+            onPressed: () => context.push('/vet-list'),
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: theme.colorScheme.onPrimary,

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../domain/models/appointment_entry.dart';
+import '../../domain/models/vet_profile.dart';
 import '../../presentation/providers/care_data_provider.dart';
 import '../../presentation/providers/pet_profile_provider.dart';
+import '../../presentation/providers/vet_provider.dart';
 import '../../../l10n/app_localizations.dart';
 
 class AppointmentForm extends ConsumerStatefulWidget {
@@ -33,6 +35,8 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
   TimeOfDay _appointmentTime = const TimeOfDay(hour: 9, minute: 0);
   bool _isCompleted = false;
   bool _isLoading = false;
+  String? _selectedVetId;
+  bool _useManualEntry = false;
 
   @override
   void initState() {
@@ -51,6 +55,8 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
     _appointmentDate = appointment.appointmentDate;
     _appointmentTime = TimeOfDay.fromDateTime(appointment.appointmentTime);
     _isCompleted = appointment.isCompleted;
+    _selectedVetId = appointment.vetId;
+    _useManualEntry = appointment.vetId == null;
   }
 
   @override
@@ -87,41 +93,8 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Veterinarian name
-                  TextFormField(
-                    controller: _veterinarianController,
-                    decoration: InputDecoration(
-                      labelText: '${l10n.veterinarian} *',
-                      hintText: l10n.veterinarianHint,
-                      prefixIcon: const Icon(Icons.person),
-                      border: const OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return l10n.pleaseEnterVeterinarian;
-                      }
-                      return null;
-                    },
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Clinic name
-                  TextFormField(
-                    controller: _clinicController,
-                    decoration: InputDecoration(
-                      labelText: '${l10n.clinic} *',
-                      hintText: l10n.clinicHint,
-                      prefixIcon: const Icon(Icons.local_hospital),
-                      border: const OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return l10n.pleaseEnterClinic;
-                      }
-                      return null;
-                    },
-                  ),
+                  // Vet selection or manual entry
+                  _buildVetSelection(l10n),
 
                   const SizedBox(height: 16),
 
@@ -318,6 +291,178 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
     );
   }
 
+  Widget _buildVetSelection(AppLocalizations l10n) {
+    final vetsAsync = ref.watch(vetsProvider);
+
+    return vetsAsync.when(
+      data: (vets) {
+        if (vets.isEmpty || _useManualEntry) {
+          // Manual entry mode
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                controller: _veterinarianController,
+                decoration: InputDecoration(
+                  labelText: '${l10n.veterinarian} *',
+                  hintText: l10n.veterinarianHint,
+                  prefixIcon: const Icon(Icons.person),
+                  border: const OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return l10n.pleaseEnterVeterinarian;
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _clinicController,
+                decoration: InputDecoration(
+                  labelText: '${l10n.clinic} *',
+                  hintText: l10n.clinicHint,
+                  prefixIcon: const Icon(Icons.local_hospital),
+                  border: const OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return l10n.pleaseEnterClinic;
+                  }
+                  return null;
+                },
+              ),
+              if (vets.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                TextButton.icon(
+                  onPressed: () {
+                    setState(() {
+                      _useManualEntry = false;
+                    });
+                  },
+                  icon: const Icon(Icons.arrow_back),
+                  label: Text(l10n.selectVet),
+                ),
+              ],
+            ],
+          );
+        }
+
+        // Vet selection mode
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            DropdownButtonFormField<String>(
+              value: _selectedVetId,
+              decoration: InputDecoration(
+                labelText: l10n.selectVet,
+                prefixIcon: const Icon(Icons.local_hospital),
+                border: const OutlineInputBorder(),
+              ),
+              items: [
+                ...vets.map((vet) => DropdownMenuItem(
+                      value: vet.id,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            vet.name,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            vet.clinicName,
+                            style: const TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    )),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  _selectedVetId = value;
+                  if (value != null) {
+                    final selectedVet = vets.firstWhere((v) => v.id == value);
+                    _veterinarianController.text = selectedVet.name;
+                    _clinicController.text = selectedVet.clinicName;
+                  }
+                });
+              },
+              validator: (value) {
+                if (value == null) {
+                  return l10n.pleaseEnterVeterinarian;
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                TextButton.icon(
+                  onPressed: () {
+                    setState(() {
+                      _useManualEntry = true;
+                      _selectedVetId = null;
+                      _veterinarianController.clear();
+                      _clinicController.clear();
+                    });
+                  },
+                  icon: const Icon(Icons.edit),
+                  label: const Text('Enter manually'),
+                ),
+                const Spacer(),
+                TextButton.icon(
+                  onPressed: () {
+                    // Navigate to add vet screen
+                    // Note: This would require navigation context
+                  },
+                  icon: const Icon(Icons.add),
+                  label: Text(l10n.addNewVet),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+      loading: () => const CircularProgressIndicator(),
+      error: (_, __) => Column(
+        children: [
+          TextFormField(
+            controller: _veterinarianController,
+            decoration: InputDecoration(
+              labelText: '${l10n.veterinarian} *',
+              hintText: l10n.veterinarianHint,
+              prefixIcon: const Icon(Icons.person),
+              border: const OutlineInputBorder(),
+            ),
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return l10n.pleaseEnterVeterinarian;
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _clinicController,
+            decoration: InputDecoration(
+              labelText: '${l10n.clinic} *',
+              hintText: l10n.clinicHint,
+              prefixIcon: const Icon(Icons.local_hospital),
+              border: const OutlineInputBorder(),
+            ),
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return l10n.pleaseEnterClinic;
+              }
+              return null;
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _selectAppointmentDate() async {
     final picked = await showDatePicker(
       context: context,
@@ -391,6 +536,7 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
             : _notesController.text.trim(),
         isCompleted: _isCompleted,
         createdAt: widget.appointment?.createdAt,
+        vetId: _selectedVetId,
       );
 
       if (widget.appointment != null) {

@@ -291,22 +291,70 @@ class PurchaseHistoryScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 4),
-            Text(
-              '${DateFormat('MMM dd, yyyy').format(purchase.purchaseDate)} • '
-              '${purchase.pharmacy ?? l10n.notTracked} • '
-              '\$${purchase.cost.toStringAsFixed(2)}',
+            Row(
+              children: [
+                Icon(
+                  Icons.calendar_today,
+                  size: 14,
+                  color: Colors.grey[600],
+                ),
+                const SizedBox(width: 4),
+                Text(DateFormat('MMM dd, yyyy').format(purchase.purchaseDate)),
+                const SizedBox(width: 12),
+                Icon(
+                  Icons.attach_money,
+                  size: 14,
+                  color: Colors.green,
+                ),
+                Text(
+                  purchase.cost.toStringAsFixed(2),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.green,
+                  ),
+                ),
+              ],
             ),
+            if (purchase.pharmacy != null && purchase.pharmacy!.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  Icon(
+                    Icons.local_pharmacy,
+                    size: 14,
+                    color: Colors.grey[600],
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    purchase.pharmacy!,
+                    style: TextStyle(color: Colors.grey[700]),
+                  ),
+                ],
+              ),
+            ],
             if (purchase.notes != null && purchase.notes!.isNotEmpty) ...[
               const SizedBox(height: 4),
-              Text(
-                purchase.notes!,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                  fontStyle: FontStyle.italic,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+              Row(
+                children: [
+                  Icon(
+                    Icons.note,
+                    size: 14,
+                    color: Colors.grey[600],
+                  ),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      purchase.notes!,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                        fontStyle: FontStyle.italic,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
             ],
           ],

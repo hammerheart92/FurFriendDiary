@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import '../../domain/models/medication_entry.dart';
 import '../../domain/models/medication_purchase.dart';
 import '../../providers/inventory_providers.dart';
@@ -26,6 +27,7 @@ class _AddRefillDialogState extends ConsumerState<AddRefillDialog> {
   final _costController = TextEditingController();
   final _pharmacyController = TextEditingController();
   final _notesController = TextEditingController();
+  final _logger = Logger();
 
   DateTime _purchaseDate = DateTime.now();
   bool _isLoading = false;
@@ -83,19 +85,46 @@ class _AddRefillDialogState extends ConsumerState<AddRefillDialog> {
         notes: _notesController.text.isEmpty ? null : _notesController.text,
       );
 
+      // Debug logging for purchase record
+      _logger.i('💊 Creating purchase record:');
+      _logger.i('  Medication: ${widget.medication.medicationName}');
+      _logger.i('  Quantity: $quantity');
+      _logger.i('  Cost: \$${cost.toStringAsFixed(2)}');
+      _logger.i('  Pharmacy: ${purchase.pharmacy ?? "(not specified)"}');
+      _logger.i('  Date: ${DateFormat('MMM dd, yyyy').format(_purchaseDate)}');
+
       // Add purchase to repository
       final purchaseRepo = ref.read(purchaseRepositoryProvider);
       await purchaseRepo.addPurchase(purchase);
 
-      // Update medication stock
+      // Update medication stock AND last purchase date together
       final medicationRepo = ref.read(medicationsRepositoryProvider);
-      await medicationRepo.addStock(widget.medication.id, quantity);
 
-      // Update last purchase date
-      final updatedMedication = widget.medication.copyWith(
-        lastPurchaseDate: _purchaseDate,
-      );
-      await medicationRepo.updateMedication(updatedMedication);
+      // Get current medication to calculate new stock
+      final currentMedication =
+          await medicationRepo.getMedicationById(widget.medication.id);
+      if (currentMedication != null) {
+        final currentStock = currentMedication.stockQuantity ?? 0;
+        final newStock = currentStock + quantity;
+
+        // Debug logging
+        _logger.i('🔄 Adding refill to ${currentMedication.medicationName}');
+        _logger.i('📊 Current stock: $currentStock');
+        _logger.i('➕ Adding quantity: $quantity');
+        _logger.i('📈 New stock will be: $newStock');
+
+        // Update both stock and last purchase date in one operation
+        final updatedMedication = currentMedication.copyWith(
+          stockQuantity: newStock,
+          lastPurchaseDate: _purchaseDate,
+        );
+        await medicationRepo.updateMedication(updatedMedication);
+
+        _logger.i('✅ Stock update saved successfully to Hive');
+      } else {
+        _logger.e('🚨 Medication not found with ID: ${widget.medication.id}');
+        throw Exception('Medication not found');
+      }
 
       // Refresh medications list
       await ref.read(medicationsProvider.notifier).refresh();
@@ -113,7 +142,8 @@ class _AddRefillDialogState extends ConsumerState<AddRefillDialog> {
           ),
         );
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      _logger.e('🚨 Failed to add refill', error: e, stackTrace: stackTrace);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

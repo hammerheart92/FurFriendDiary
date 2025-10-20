@@ -34,7 +34,32 @@ class SettingsScreen extends ConsumerWidget {
           ),
           const Divider(),
 
+          // Pet Management Group
+          _buildSectionHeader(context, 'Pet Management'),
+          ListTile(
+            leading: const Icon(Icons.local_hospital),
+            title: Text(l10n.veterinarians),
+            subtitle: const Text('Manage veterinarians and clinics'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.push('/vet-list'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.photo_library),
+            title: const Text('Photo Gallery'),
+            subtitle: const Text('View and manage pet photos'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.push('/photo-gallery'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.inventory),
+            title: const Text('Medication Inventory'),
+            subtitle: const Text('Track medication stock levels'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.push('/medication-inventory'),
+          ),
+
           // Account Settings Group
+          const Divider(height: 32),
           _buildSectionHeader(context, l10n.accountSettings),
           ListTile(
             leading: const Icon(Icons.language),

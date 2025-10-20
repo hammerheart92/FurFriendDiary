@@ -35,6 +35,9 @@ class AppointmentEntry extends HiveObject {
   @HiveField(9)
   DateTime createdAt;
 
+  @HiveField(10)
+  String? vetId;
+
   AppointmentEntry({
     String? id,
     required this.petId,
@@ -46,6 +49,7 @@ class AppointmentEntry extends HiveObject {
     this.notes,
     this.isCompleted = false,
     DateTime? createdAt,
+    this.vetId,
   })  : id = id ?? const Uuid().v4(),
         createdAt = createdAt ?? DateTime.now();
 
@@ -60,6 +64,7 @@ class AppointmentEntry extends HiveObject {
         'notes': notes,
         'isCompleted': isCompleted,
         'createdAt': createdAt.toIso8601String(),
+        'vetId': vetId,
       };
 
   factory AppointmentEntry.fromJson(Map<String, dynamic> json) =>
@@ -76,6 +81,7 @@ class AppointmentEntry extends HiveObject {
         createdAt: json['createdAt'] != null
             ? DateTime.parse(json['createdAt'])
             : DateTime.now(),
+        vetId: json['vetId'],
       );
 
   AppointmentEntry copyWith({
@@ -89,6 +95,7 @@ class AppointmentEntry extends HiveObject {
     String? notes,
     bool? isCompleted,
     DateTime? createdAt,
+    String? vetId,
   }) {
     return AppointmentEntry(
       id: id ?? this.id,
@@ -101,6 +108,7 @@ class AppointmentEntry extends HiveObject {
       notes: notes ?? this.notes,
       isCompleted: isCompleted ?? this.isCompleted,
       createdAt: createdAt ?? this.createdAt,
+      vetId: vetId ?? this.vetId,
     );
   }
 }

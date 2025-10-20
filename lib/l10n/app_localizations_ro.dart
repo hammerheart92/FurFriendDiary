@@ -1496,4 +1496,138 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get notTrackedEnum => 'Neurmărit';
+
+  @override
+  String get veterinarians => 'Veterinari';
+
+  @override
+  String get addVet => 'Adaugă Veterinar';
+
+  @override
+  String get editVet => 'Editează Veterinar';
+
+  @override
+  String get vetDetails => 'Detalii Veterinar';
+
+  @override
+  String get vetName => 'Nume Veterinar';
+
+  @override
+  String get clinicName => 'Nume Clinică';
+
+  @override
+  String get specialty => 'Specialitate';
+
+  @override
+  String get phoneNumber => 'Număr Telefon';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get address => 'Adresă';
+
+  @override
+  String get website => 'Website';
+
+  @override
+  String get setAsPreferred => 'Setează ca Veterinar Preferat';
+
+  @override
+  String get preferredVet => 'Veterinar Preferat';
+
+  @override
+  String get generalPractice => 'Medicină Generală';
+
+  @override
+  String get emergencyMedicine => 'Medicină de Urgență';
+
+  @override
+  String get cardiology => 'Cardiologie';
+
+  @override
+  String get dermatology => 'Dermatologie';
+
+  @override
+  String get surgery => 'Chirurgie';
+
+  @override
+  String get orthopedics => 'Ortopedie';
+
+  @override
+  String get oncology => 'Oncologie';
+
+  @override
+  String get ophthalmology => 'Oftalmologie';
+
+  @override
+  String get callVet => 'Sună Veterinarul';
+
+  @override
+  String get emailVet => 'Trimite Email Veterinarului';
+
+  @override
+  String get openWebsite => 'Deschide Website';
+
+  @override
+  String get lastVisit => 'Ultima Vizită';
+
+  @override
+  String get totalAppointments => 'Total Programări';
+
+  @override
+  String get recentAppointments => 'Programări Recente';
+
+  @override
+  String get noVetsAdded => 'Niciun veterinar adăugat';
+
+  @override
+  String get addFirstVet =>
+      'Adaugă veterinarul animalului tău pentru a urmări vizitele și informațiile de contact';
+
+  @override
+  String get deleteVet => 'Șterge Veterinar';
+
+  @override
+  String get deleteVetConfirm =>
+      'Sigur vrei să ștergi acest veterinar? Acest lucru nu va afecta programările existente.';
+
+  @override
+  String get vetDeleted => 'Veterinar șters';
+
+  @override
+  String get vetAdded => 'Veterinar adăugat';
+
+  @override
+  String get vetUpdated => 'Veterinar actualizat';
+
+  @override
+  String get selectVet => 'Selectează Veterinar';
+
+  @override
+  String get addNewVet => 'Adaugă Veterinar Nou';
+
+  @override
+  String get invalidPhone => 'Număr de telefon invalid';
+
+  @override
+  String get invalidEmail => 'Adresă de email invalidă';
+
+  @override
+  String get invalidWebsite => 'URL website invalid';
+
+  @override
+  String get vetNameRequired => 'Numele veterinarului este obligatoriu';
+
+  @override
+  String get clinicNameRequired => 'Numele clinicii este obligatoriu';
+
+  @override
+  String get searchVets => 'Caută veterinari...';
+
+  @override
+  String get noVetsFound => 'Niciun veterinar găsit';
+
+  @override
+  String get noVetsMatchSearch => 'Niciun veterinar nu corespunde căutării';
 }

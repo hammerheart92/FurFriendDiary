@@ -1486,4 +1486,138 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notTrackedEnum => 'Not tracked';
+
+  @override
+  String get veterinarians => 'Veterinarians';
+
+  @override
+  String get addVet => 'Add Veterinarian';
+
+  @override
+  String get editVet => 'Edit Veterinarian';
+
+  @override
+  String get vetDetails => 'Veterinarian Details';
+
+  @override
+  String get vetName => 'Veterinarian Name';
+
+  @override
+  String get clinicName => 'Clinic Name';
+
+  @override
+  String get specialty => 'Specialty';
+
+  @override
+  String get phoneNumber => 'Phone Number';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get address => 'Address';
+
+  @override
+  String get website => 'Website';
+
+  @override
+  String get setAsPreferred => 'Set as Preferred Vet';
+
+  @override
+  String get preferredVet => 'Preferred Vet';
+
+  @override
+  String get generalPractice => 'General Practice';
+
+  @override
+  String get emergencyMedicine => 'Emergency Medicine';
+
+  @override
+  String get cardiology => 'Cardiology';
+
+  @override
+  String get dermatology => 'Dermatology';
+
+  @override
+  String get surgery => 'Surgery';
+
+  @override
+  String get orthopedics => 'Orthopedics';
+
+  @override
+  String get oncology => 'Oncology';
+
+  @override
+  String get ophthalmology => 'Ophthalmology';
+
+  @override
+  String get callVet => 'Call Veterinarian';
+
+  @override
+  String get emailVet => 'Email Veterinarian';
+
+  @override
+  String get openWebsite => 'Open Website';
+
+  @override
+  String get lastVisit => 'Last Visit';
+
+  @override
+  String get totalAppointments => 'Total Appointments';
+
+  @override
+  String get recentAppointments => 'Recent Appointments';
+
+  @override
+  String get noVetsAdded => 'No veterinarians added';
+
+  @override
+  String get addFirstVet =>
+      'Add your pet\'s veterinarian to keep track of visits and contact information';
+
+  @override
+  String get deleteVet => 'Delete Veterinarian';
+
+  @override
+  String get deleteVetConfirm =>
+      'Are you sure you want to delete this veterinarian? This will not affect existing appointments.';
+
+  @override
+  String get vetDeleted => 'Veterinarian deleted';
+
+  @override
+  String get vetAdded => 'Veterinarian added';
+
+  @override
+  String get vetUpdated => 'Veterinarian updated';
+
+  @override
+  String get selectVet => 'Select Veterinarian';
+
+  @override
+  String get addNewVet => 'Add New Veterinarian';
+
+  @override
+  String get invalidPhone => 'Invalid phone number';
+
+  @override
+  String get invalidEmail => 'Invalid email address';
+
+  @override
+  String get invalidWebsite => 'Invalid website URL';
+
+  @override
+  String get vetNameRequired => 'Veterinarian name is required';
+
+  @override
+  String get clinicNameRequired => 'Clinic name is required';
+
+  @override
+  String get searchVets => 'Search veterinarians...';
+
+  @override
+  String get noVetsFound => 'No veterinarians found';
+
+  @override
+  String get noVetsMatchSearch => 'No veterinarians match your search';
 }
