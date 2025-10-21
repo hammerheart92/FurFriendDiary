@@ -22,6 +22,7 @@ import '../screens/purchase_history_screen.dart';
 import '../screens/vet_list_screen.dart';
 import '../screens/add_vet_screen.dart';
 import '../screens/vet_detail_screen.dart';
+import '../screens/reports_dashboard_screen.dart';
 import '../providers/pet_profile_provider.dart';
 
 final logger = Logger();
@@ -80,6 +81,9 @@ GoRouter createRouter() => GoRouter(
                 builder: (_, __) => const AppointmentsScreen()),
             GoRoute(
                 path: '/reports', builder: (_, __) => const ReportsScreen()),
+            GoRoute(
+                path: '/analytics',
+                builder: (_, __) => const ReportsDashboardScreen()),
             GoRoute(
                 path: '/settings', builder: (_, __) => const SettingsScreen()),
             GoRoute(

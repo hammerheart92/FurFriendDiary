@@ -710,5 +710,87 @@
   "clinicNameRequired": "Clinic name is required",
   "searchVets": "Search veterinarians...",
   "noVetsFound": "No veterinarians found",
-  "noVetsMatchSearch": "No veterinarians match your search"
+  "noVetsMatchSearch": "No veterinarians match your search",
+
+  "reportsAndAnalytics": "Reports & Analytics",
+  "healthScore": "Health Score",
+  "medicationAdherence": "Medication Adherence",
+  "activityLevels": "Activity Levels",
+  "expenseTracking": "Expense Tracking",
+  "stable": "Stable",
+  "gaining": "Gaining",
+  "losing": "Losing",
+  "weightTrend": "Weight Trend",
+  "totalExpenses": "Total Expenses",
+  "averageWeeklyExpenses": "Average Weekly Expenses",
+  "expenseBreakdown": "Expense Breakdown",
+  "generateReport": "Generate Report",
+  "reportPeriod": "Report Period",
+  "last7Days": "Last 7 Days",
+  "last30Days": "Last 30 Days",
+  "last90Days": "Last 90 Days",
+  "customRange": "Custom Range",
+  "healthMetrics": "Health Metrics",
+  "activityMetrics": "Activity Metrics",
+  "expenseMetrics": "Expense Metrics",
+  "overview": "Overview",
+  "health": "Health",
+  "activity": "Activity",
+  "activityHigh": "High",
+  "activityMedium": "Medium",
+  "activityLow": "Low",
+
+  "exportToPDF": "Export to PDF",
+  "shareReport": "Share Report",
+  "exportOptions": "Export Options",
+  "fullReport": "Full Report",
+  "fullReportDescription": "Complete health report with all metrics",
+  "vetSummary": "Vet Summary",
+  "vetSummaryDescription": "Last 30 days summary for vet visit",
+  "shareText": "Share Text Summary",
+  "shareTextDescription": "Share as text message",
+  "reportGenerated": "Report generated successfully",
+  "reportExported": "Report saved to device",
+  "generatingReport": "Generating report...",
+  "exportingReport": "Exporting report...",
+  "sharingReport": "Sharing report...",
+  "reportSaved": "Report saved to: {path}",
+  "@reportSaved": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToGeneratePDF": "Failed to generate PDF: {error}",
+  "@failedToGeneratePDF": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToExportReport": "Failed to export report",
+  "failedToShareReport": "Failed to share report",
+
+  "recommendations": "Recommendations",
+  "noDataAvailable": "No data available for this period",
+  "insufficientData": "Insufficient data for analysis",
+  "expensesByCategory": "Expenses by Category",
+  "averageMonthly": "Average Monthly",
+  "topCategories": "Top Categories",
+  "dismissRecommendation": "Dismiss",
+  "reportingPeriod": "Reporting Period",
+  "dataInsights": "Data Insights",
+  "noRecommendations": "No recommendations available",
+  "healthScoreExcellent": "Excellent",
+  "healthScoreGood": "Good",
+  "healthScoreFair": "Fair",
+  "healthScoreLow": "Low",
+  "medicationAdherence": "Medication Adherence",
+  "activityLevel": "Activity Level",
+  "expenseTrend": "Expense Trend",
+  "trendIncreasing": "Increasing",
+  "trendDecreasing": "Decreasing",
+  "trendStable": "Stable"
 }

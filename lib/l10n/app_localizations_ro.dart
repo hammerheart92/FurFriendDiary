@@ -658,10 +658,10 @@ class AppLocalizationsRo extends AppLocalizations {
       'Data de încheiere trebuie să fie după data de început';
 
   @override
-  String get last7Days => 'Ultimele 7 zile';
+  String get last7Days => 'Ultimele 7 Zile';
 
   @override
-  String get last30Days => 'Ultimele 30 de zile';
+  String get last30Days => 'Ultimele 30 Zile';
 
   @override
   String get last3Months => 'Ultimele 3 luni';
@@ -1142,7 +1142,7 @@ class AppLocalizationsRo extends AppLocalizations {
   String get weight => 'Greutate';
 
   @override
-  String get weightTrend => 'Tendința Greutății';
+  String get weightTrend => 'Tendință Greutate';
 
   @override
   String get history => 'Istoric';
@@ -1630,4 +1630,185 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get noVetsMatchSearch => 'Niciun veterinar nu corespunde căutării';
+
+  @override
+  String get reportsAndAnalytics => 'Rapoarte & Analize';
+
+  @override
+  String get healthScore => 'Scor Sănătate';
+
+  @override
+  String get medicationAdherence => 'Respectarea Medicamentelor';
+
+  @override
+  String get activityLevels => 'Niveluri Activitate';
+
+  @override
+  String get expenseTracking => 'Urmărire Cheltuieli';
+
+  @override
+  String get stable => 'Stabil';
+
+  @override
+  String get gaining => 'Câștig';
+
+  @override
+  String get losing => 'Pierdere';
+
+  @override
+  String get totalExpenses => 'Cheltuieli Totale';
+
+  @override
+  String get averageWeeklyExpenses => 'Cheltuieli Medii Săptămânale';
+
+  @override
+  String get expenseBreakdown => 'Detaliere Cheltuieli';
+
+  @override
+  String get reportPeriod => 'Perioada Raport';
+
+  @override
+  String get last90Days => 'Ultimele 90 Zile';
+
+  @override
+  String get customRange => 'Interval Personalizat';
+
+  @override
+  String get healthMetrics => 'Metrici Sănătate';
+
+  @override
+  String get activityMetrics => 'Metrici Activitate';
+
+  @override
+  String get expenseMetrics => 'Metrici Cheltuieli';
+
+  @override
+  String get overview => 'Prezentare Generală';
+
+  @override
+  String get activityHigh => 'Ridicat';
+
+  @override
+  String get activityMedium => 'Mediu';
+
+  @override
+  String get activityLow => 'Scăzut';
+
+  @override
+  String get exportToPDF => 'Exportă în PDF';
+
+  @override
+  String get shareReport => 'Partajează Raport';
+
+  @override
+  String get exportOptions => 'Opțiuni Export';
+
+  @override
+  String get fullReport => 'Raport Complet';
+
+  @override
+  String get fullReportDescription =>
+      'Raport complet de sănătate cu toate metricile';
+
+  @override
+  String get vetSummary => 'Rezumat pentru Veterinar';
+
+  @override
+  String get vetSummaryDescription =>
+      'Rezumat ultimele 30 zile pentru vizită veterinar';
+
+  @override
+  String get shareText => 'Partajează Rezumat Text';
+
+  @override
+  String get shareTextDescription => 'Partajează ca mesaj text';
+
+  @override
+  String get reportGenerated => 'Raport generat cu succes';
+
+  @override
+  String get reportExported => 'Raport salvat pe dispozitiv';
+
+  @override
+  String get generatingReport => 'Generare raport...';
+
+  @override
+  String get exportingReport => 'Exportare raport...';
+
+  @override
+  String get sharingReport => 'Partajare raport...';
+
+  @override
+  String reportSaved(String path) {
+    return 'Raport salvat în: $path';
+  }
+
+  @override
+  String failedToGeneratePDF(String error) {
+    return 'Eroare la generarea PDF: $error';
+  }
+
+  @override
+  String get failedToExportReport => 'Eroare la exportul raportului';
+
+  @override
+  String get failedToShareReport => 'Eroare la partajarea raportului';
+
+  @override
+  String get recommendations => 'Recomandări';
+
+  @override
+  String get noDataAvailable =>
+      'Nu sunt date disponibile pentru această perioadă';
+
+  @override
+  String get insufficientData => 'Date insuficiente pentru analiză';
+
+  @override
+  String get expensesByCategory => 'Cheltuieli pe Categorii';
+
+  @override
+  String get averageMonthly => 'Medie Lunară';
+
+  @override
+  String get topCategories => 'Categorii Principale';
+
+  @override
+  String get dismissRecommendation => 'Respinge';
+
+  @override
+  String get reportingPeriod => 'Perioada Raportului';
+
+  @override
+  String get dataInsights => 'Informații din Date';
+
+  @override
+  String get noRecommendations => 'Nu sunt recomandări disponibile';
+
+  @override
+  String get healthScoreExcellent => 'Excelent';
+
+  @override
+  String get healthScoreGood => 'Bun';
+
+  @override
+  String get healthScoreFair => 'Satisfăcător';
+
+  @override
+  String get healthScoreLow => 'Scăzut';
+
+  @override
+  String get activityLevel => 'Nivel de Activitate';
+
+  @override
+  String get expenseTrend => 'Tendință Cheltuieli';
+
+  @override
+  String get trendIncreasing => 'În Creștere';
+
+  @override
+  String get trendDecreasing => 'În Scădere';
+
+  @override
+  String get trendStable => 'Stabil';
 }

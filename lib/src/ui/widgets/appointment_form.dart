@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../domain/models/appointment_entry.dart';
-import '../../domain/models/vet_profile.dart';
 import '../../presentation/providers/care_data_provider.dart';
 import '../../presentation/providers/pet_profile_provider.dart';
 import '../../presentation/providers/vet_provider.dart';
@@ -396,7 +395,10 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
               },
             ),
             const SizedBox(height: 8),
-            Row(
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              alignment: WrapAlignment.spaceBetween,
               children: [
                 TextButton.icon(
                   onPressed: () {
@@ -409,8 +411,10 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                   },
                   icon: const Icon(Icons.edit),
                   label: const Text('Enter manually'),
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  ),
                 ),
-                const Spacer(),
                 TextButton.icon(
                   onPressed: () {
                     // Navigate to add vet screen
@@ -418,6 +422,9 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                   },
                   icon: const Icon(Icons.add),
                   label: Text(l10n.addNewVet),
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  ),
                 ),
               ],
             ),

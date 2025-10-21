@@ -649,10 +649,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get endDateMustBeAfterStartDate => 'End date must be after start date';
 
   @override
-  String get last7Days => 'Last 7 days';
+  String get last7Days => 'Last 7 Days';
 
   @override
-  String get last30Days => 'Last 30 days';
+  String get last30Days => 'Last 30 Days';
 
   @override
   String get last3Months => 'Last 3 months';
@@ -1620,4 +1620,182 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noVetsMatchSearch => 'No veterinarians match your search';
+
+  @override
+  String get reportsAndAnalytics => 'Reports & Analytics';
+
+  @override
+  String get healthScore => 'Health Score';
+
+  @override
+  String get medicationAdherence => 'Medication Adherence';
+
+  @override
+  String get activityLevels => 'Activity Levels';
+
+  @override
+  String get expenseTracking => 'Expense Tracking';
+
+  @override
+  String get stable => 'Stable';
+
+  @override
+  String get gaining => 'Gaining';
+
+  @override
+  String get losing => 'Losing';
+
+  @override
+  String get totalExpenses => 'Total Expenses';
+
+  @override
+  String get averageWeeklyExpenses => 'Average Weekly Expenses';
+
+  @override
+  String get expenseBreakdown => 'Expense Breakdown';
+
+  @override
+  String get reportPeriod => 'Report Period';
+
+  @override
+  String get last90Days => 'Last 90 Days';
+
+  @override
+  String get customRange => 'Custom Range';
+
+  @override
+  String get healthMetrics => 'Health Metrics';
+
+  @override
+  String get activityMetrics => 'Activity Metrics';
+
+  @override
+  String get expenseMetrics => 'Expense Metrics';
+
+  @override
+  String get overview => 'Overview';
+
+  @override
+  String get activityHigh => 'High';
+
+  @override
+  String get activityMedium => 'Medium';
+
+  @override
+  String get activityLow => 'Low';
+
+  @override
+  String get exportToPDF => 'Export to PDF';
+
+  @override
+  String get shareReport => 'Share Report';
+
+  @override
+  String get exportOptions => 'Export Options';
+
+  @override
+  String get fullReport => 'Full Report';
+
+  @override
+  String get fullReportDescription => 'Complete health report with all metrics';
+
+  @override
+  String get vetSummary => 'Vet Summary';
+
+  @override
+  String get vetSummaryDescription => 'Last 30 days summary for vet visit';
+
+  @override
+  String get shareText => 'Share Text Summary';
+
+  @override
+  String get shareTextDescription => 'Share as text message';
+
+  @override
+  String get reportGenerated => 'Report generated successfully';
+
+  @override
+  String get reportExported => 'Report saved to device';
+
+  @override
+  String get generatingReport => 'Generating report...';
+
+  @override
+  String get exportingReport => 'Exporting report...';
+
+  @override
+  String get sharingReport => 'Sharing report...';
+
+  @override
+  String reportSaved(String path) {
+    return 'Report saved to: $path';
+  }
+
+  @override
+  String failedToGeneratePDF(String error) {
+    return 'Failed to generate PDF: $error';
+  }
+
+  @override
+  String get failedToExportReport => 'Failed to export report';
+
+  @override
+  String get failedToShareReport => 'Failed to share report';
+
+  @override
+  String get recommendations => 'Recommendations';
+
+  @override
+  String get noDataAvailable => 'No data available for this period';
+
+  @override
+  String get insufficientData => 'Insufficient data for analysis';
+
+  @override
+  String get expensesByCategory => 'Expenses by Category';
+
+  @override
+  String get averageMonthly => 'Average Monthly';
+
+  @override
+  String get topCategories => 'Top Categories';
+
+  @override
+  String get dismissRecommendation => 'Dismiss';
+
+  @override
+  String get reportingPeriod => 'Reporting Period';
+
+  @override
+  String get dataInsights => 'Data Insights';
+
+  @override
+  String get noRecommendations => 'No recommendations available';
+
+  @override
+  String get healthScoreExcellent => 'Excellent';
+
+  @override
+  String get healthScoreGood => 'Good';
+
+  @override
+  String get healthScoreFair => 'Fair';
+
+  @override
+  String get healthScoreLow => 'Low';
+
+  @override
+  String get activityLevel => 'Activity Level';
+
+  @override
+  String get expenseTrend => 'Expense Trend';
+
+  @override
+  String get trendIncreasing => 'Increasing';
+
+  @override
+  String get trendDecreasing => 'Decreasing';
+
+  @override
+  String get trendStable => 'Stable';
 }

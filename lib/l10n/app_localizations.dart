@@ -1325,13 +1325,13 @@ abstract class AppLocalizations {
   /// No description provided for @last7Days.
   ///
   /// In en, this message translates to:
-  /// **'Last 7 days'**
+  /// **'Last 7 Days'**
   String get last7Days;
 
   /// No description provided for @last30Days.
   ///
   /// In en, this message translates to:
-  /// **'Last 30 days'**
+  /// **'Last 30 Days'**
   String get last30Days;
 
   /// No description provided for @last3Months.
@@ -3115,6 +3115,354 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No veterinarians match your search'**
   String get noVetsMatchSearch;
+
+  /// No description provided for @reportsAndAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports & Analytics'**
+  String get reportsAndAnalytics;
+
+  /// No description provided for @healthScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Score'**
+  String get healthScore;
+
+  /// No description provided for @medicationAdherence.
+  ///
+  /// In en, this message translates to:
+  /// **'Medication Adherence'**
+  String get medicationAdherence;
+
+  /// No description provided for @activityLevels.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity Levels'**
+  String get activityLevels;
+
+  /// No description provided for @expenseTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense Tracking'**
+  String get expenseTracking;
+
+  /// No description provided for @stable.
+  ///
+  /// In en, this message translates to:
+  /// **'Stable'**
+  String get stable;
+
+  /// No description provided for @gaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Gaining'**
+  String get gaining;
+
+  /// No description provided for @losing.
+  ///
+  /// In en, this message translates to:
+  /// **'Losing'**
+  String get losing;
+
+  /// No description provided for @totalExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Expenses'**
+  String get totalExpenses;
+
+  /// No description provided for @averageWeeklyExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Average Weekly Expenses'**
+  String get averageWeeklyExpenses;
+
+  /// No description provided for @expenseBreakdown.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense Breakdown'**
+  String get expenseBreakdown;
+
+  /// No description provided for @reportPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Report Period'**
+  String get reportPeriod;
+
+  /// No description provided for @last90Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 90 Days'**
+  String get last90Days;
+
+  /// No description provided for @customRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Range'**
+  String get customRange;
+
+  /// No description provided for @healthMetrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Metrics'**
+  String get healthMetrics;
+
+  /// No description provided for @activityMetrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity Metrics'**
+  String get activityMetrics;
+
+  /// No description provided for @expenseMetrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense Metrics'**
+  String get expenseMetrics;
+
+  /// No description provided for @overview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get overview;
+
+  /// No description provided for @activityHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get activityHigh;
+
+  /// No description provided for @activityMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get activityMedium;
+
+  /// No description provided for @activityLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get activityLow;
+
+  /// No description provided for @exportToPDF.
+  ///
+  /// In en, this message translates to:
+  /// **'Export to PDF'**
+  String get exportToPDF;
+
+  /// No description provided for @shareReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Report'**
+  String get shareReport;
+
+  /// No description provided for @exportOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Options'**
+  String get exportOptions;
+
+  /// No description provided for @fullReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Report'**
+  String get fullReport;
+
+  /// No description provided for @fullReportDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete health report with all metrics'**
+  String get fullReportDescription;
+
+  /// No description provided for @vetSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Vet Summary'**
+  String get vetSummary;
+
+  /// No description provided for @vetSummaryDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 30 days summary for vet visit'**
+  String get vetSummaryDescription;
+
+  /// No description provided for @shareText.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Text Summary'**
+  String get shareText;
+
+  /// No description provided for @shareTextDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Share as text message'**
+  String get shareTextDescription;
+
+  /// No description provided for @reportGenerated.
+  ///
+  /// In en, this message translates to:
+  /// **'Report generated successfully'**
+  String get reportGenerated;
+
+  /// No description provided for @reportExported.
+  ///
+  /// In en, this message translates to:
+  /// **'Report saved to device'**
+  String get reportExported;
+
+  /// No description provided for @generatingReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating report...'**
+  String get generatingReport;
+
+  /// No description provided for @exportingReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Exporting report...'**
+  String get exportingReport;
+
+  /// No description provided for @sharingReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharing report...'**
+  String get sharingReport;
+
+  /// No description provided for @reportSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Report saved to: {path}'**
+  String reportSaved(String path);
+
+  /// No description provided for @failedToGeneratePDF.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to generate PDF: {error}'**
+  String failedToGeneratePDF(String error);
+
+  /// No description provided for @failedToExportReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to export report'**
+  String get failedToExportReport;
+
+  /// No description provided for @failedToShareReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to share report'**
+  String get failedToShareReport;
+
+  /// No description provided for @recommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendations'**
+  String get recommendations;
+
+  /// No description provided for @noDataAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No data available for this period'**
+  String get noDataAvailable;
+
+  /// No description provided for @insufficientData.
+  ///
+  /// In en, this message translates to:
+  /// **'Insufficient data for analysis'**
+  String get insufficientData;
+
+  /// No description provided for @expensesByCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Expenses by Category'**
+  String get expensesByCategory;
+
+  /// No description provided for @averageMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Average Monthly'**
+  String get averageMonthly;
+
+  /// No description provided for @topCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Categories'**
+  String get topCategories;
+
+  /// No description provided for @dismissRecommendation.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get dismissRecommendation;
+
+  /// No description provided for @reportingPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Reporting Period'**
+  String get reportingPeriod;
+
+  /// No description provided for @dataInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Insights'**
+  String get dataInsights;
+
+  /// No description provided for @noRecommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'No recommendations available'**
+  String get noRecommendations;
+
+  /// No description provided for @healthScoreExcellent.
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent'**
+  String get healthScoreExcellent;
+
+  /// No description provided for @healthScoreGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get healthScoreGood;
+
+  /// No description provided for @healthScoreFair.
+  ///
+  /// In en, this message translates to:
+  /// **'Fair'**
+  String get healthScoreFair;
+
+  /// No description provided for @healthScoreLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get healthScoreLow;
+
+  /// No description provided for @activityLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity Level'**
+  String get activityLevel;
+
+  /// No description provided for @expenseTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense Trend'**
+  String get expenseTrend;
+
+  /// No description provided for @trendIncreasing.
+  ///
+  /// In en, this message translates to:
+  /// **'Increasing'**
+  String get trendIncreasing;
+
+  /// No description provided for @trendDecreasing.
+  ///
+  /// In en, this message translates to:
+  /// **'Decreasing'**
+  String get trendDecreasing;
+
+  /// No description provided for @trendStable.
+  ///
+  /// In en, this message translates to:
+  /// **'Stable'**
+  String get trendStable;
 }
 
 class _AppLocalizationsDelegate

@@ -52,9 +52,13 @@ dependencies:
   json_annotation: ^4.8.1
   riverpod: ^2.5.1
   riverpod_annotation: ^2.3.5
-  
+
   # Charts
   fl_chart: ^0.68.0
+
+  # PDF and Sharing
+  pdf: ^3.10.4
+  share_plus: ^7.2.1
 
 dev_dependencies:
   flutter_test:

@@ -13,6 +13,8 @@ import '../../domain/models/reminder.dart';
 import '../../domain/models/weight_entry.dart';
 import '../../domain/models/pet_photo.dart';
 import '../../domain/models/vet_profile.dart';
+import '../../domain/models/health_report.dart';
+import '../../domain/models/expense_report.dart';
 
 class HiveManager {
   final logger = Logger();
@@ -35,6 +37,8 @@ class HiveManager {
   static const String weightBoxName = 'weight_entries';
   static const String petPhotoBoxName = 'pet_photos';
   static const String vetProfileBoxName = 'vet_profiles';
+  static const String healthReportBoxName = 'health_reports';
+  static const String expenseReportBoxName = 'expense_reports';
   static const String settingsBoxName = 'settings';
   static const String appPrefsBoxName = 'app_prefs';
 
@@ -50,6 +54,8 @@ class HiveManager {
   Box<WeightEntry>? _weightBox;
   Box<PetPhoto>? _petPhotoBox;
   Box<VetProfile>? _vetProfileBox;
+  Box<HealthReport>? _healthReportBox;
+  Box<ExpenseReport>? _expenseReportBox;
   Box? _settingsBox;
   Box? _appPrefsBox;
 
@@ -175,6 +181,16 @@ class HiveManager {
       Hive.registerAdapter(VetProfileAdapter());
       logger.d("✅ DEBUG: VetProfile adapter registered with typeId 19");
     }
+
+    if (!Hive.isAdapterRegistered(20)) {
+      Hive.registerAdapter(HealthReportAdapter());
+      logger.d("✅ DEBUG: HealthReport adapter registered with typeId 20");
+    }
+
+    if (!Hive.isAdapterRegistered(21)) {
+      Hive.registerAdapter(ExpenseReportAdapter());
+      logger.d("✅ DEBUG: ExpenseReport adapter registered with typeId 21");
+    }
   }
 
   /// Open all boxes in the correct order
@@ -198,6 +214,8 @@ class HiveManager {
     _weightBox = await _openBox<WeightEntry>(weightBoxName);
     _petPhotoBox = await _openBox<PetPhoto>(petPhotoBoxName);
     _vetProfileBox = await _openBox<VetProfile>(vetProfileBoxName);
+    _healthReportBox = await _openBox<HealthReport>(healthReportBoxName);
+    _expenseReportBox = await _openBox<ExpenseReport>(expenseReportBoxName);
 
     // Open settings boxes
     _settingsBox = await _openBox(settingsBoxName);
@@ -340,6 +358,24 @@ class HiveManager {
     return _vetProfileBox!;
   }
 
+  /// Get health reports box
+  Box<HealthReport> get healthReportBox {
+    if (_healthReportBox == null || !_healthReportBox!.isOpen) {
+      throw HiveError(
+          "Health reports box is not initialized. Call HiveManager.initialize() first.");
+    }
+    return _healthReportBox!;
+  }
+
+  /// Get expense reports box
+  Box<ExpenseReport> get expenseReportBox {
+    if (_expenseReportBox == null || !_expenseReportBox!.isOpen) {
+      throw HiveError(
+          "Expense reports box is not initialized. Call HiveManager.initialize() first.");
+    }
+    return _expenseReportBox!;
+  }
+
   /// Get settings box
   Box get settingsBox {
     if (_settingsBox == null || !_settingsBox!.isOpen) {
@@ -398,6 +434,8 @@ class HiveManager {
       await Hive.deleteBoxFromDisk(weightBoxName);
       await Hive.deleteBoxFromDisk(petPhotoBoxName);
       await Hive.deleteBoxFromDisk(vetProfileBoxName);
+      await Hive.deleteBoxFromDisk(healthReportBoxName);
+      await Hive.deleteBoxFromDisk(expenseReportBoxName);
       await Hive.deleteBoxFromDisk(settingsBoxName);
       await Hive.deleteBoxFromDisk(appPrefsBoxName);
 

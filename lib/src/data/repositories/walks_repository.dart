@@ -2,26 +2,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../../domain/models/walk.dart';
 
 class WalksRepository {
-  static const String _boxName = 'walks';
-  Box<Walk>? _walksBox;
+  final Box<Walk> _box;
 
-  Future<void> initialize() async {
-    if (!Hive.isAdapterRegistered(3)) {
-      Hive.registerAdapter(WalkAdapter());
-    }
-    if (!Hive.isAdapterRegistered(4)) {
-      Hive.registerAdapter(WalkTypeAdapter());
-    }
-    _walksBox = await Hive.openBox<Walk>(_boxName);
-  }
-
-  Box<Walk> get _box {
-    if (_walksBox == null || !_walksBox!.isOpen) {
-      throw Exception(
-          'WalksRepository not initialized. Call initialize() first.');
-    }
-    return _walksBox!;
-  }
+  WalksRepository(this._box);
 
   // Create a new walk
   Future<void> startWalk(Walk walk) async {
@@ -125,8 +108,26 @@ class WalksRepository {
     return _box.watch();
   }
 
-  // Cleanup
+  // Cleanup - Box is managed by HiveManager, no need to close here
   Future<void> dispose() async {
-    await _walksBox?.close();
+    // Box lifecycle is managed by HiveManager
+  }
+
+  // Migration: Update walks with default-pet-id to use actual pet ID
+  Future<void> migrateDefaultPetIdWalks(String actualPetId) async {
+    final defaultWalks =
+        _box.values.where((walk) => walk.petId == 'default-pet-id').toList();
+
+    if (defaultWalks.isEmpty) return;
+
+    print(
+        'Migrating ${defaultWalks.length} walks from default-pet-id to $actualPetId');
+
+    for (final walk in defaultWalks) {
+      final updatedWalk = walk.copyWith(petId: actualPetId);
+      await _box.put(walk.id, updatedWalk);
+    }
+
+    print('Migration complete!');
   }
 }

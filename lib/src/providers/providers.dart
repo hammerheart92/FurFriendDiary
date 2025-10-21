@@ -1,11 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../data/repositories/walks_repository.dart';
+import '../data/local/hive_manager.dart';
 import '../domain/models/walk.dart';
 
 // Repository provider
 final walksRepositoryProvider = Provider<WalksRepository>((ref) {
-  return WalksRepository();
+  final box = HiveManager.instance.walkBox;
+  return WalksRepository(box);
 });
 
 // Walks state provider
@@ -61,16 +63,7 @@ class WalksNotifier extends StateNotifier<AsyncValue<List<Walk>>> {
   final Uuid _uuid = const Uuid();
 
   WalksNotifier(this._repository) : super(const AsyncValue.loading()) {
-    _initialize();
-  }
-
-  Future<void> _initialize() async {
-    try {
-      await _repository.initialize();
-      _loadWalks();
-    } catch (error, stackTrace) {
-      state = AsyncValue.error(error, stackTrace);
-    }
+    _loadWalks();
   }
 
   void _loadWalks() {

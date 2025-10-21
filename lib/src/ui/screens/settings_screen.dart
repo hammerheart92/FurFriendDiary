@@ -37,6 +37,13 @@ class SettingsScreen extends ConsumerWidget {
           // Pet Management Group
           _buildSectionHeader(context, 'Pet Management'),
           ListTile(
+            leading: const Icon(Icons.analytics),
+            title: Text(l10n.reportsAndAnalytics),
+            subtitle: const Text('View health scores and activity metrics'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.push('/analytics'),
+          ),
+          ListTile(
             leading: const Icon(Icons.local_hospital),
             title: Text(l10n.veterinarians),
             subtitle: const Text('Manage veterinarians and clinics'),
