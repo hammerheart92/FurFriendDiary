@@ -88,8 +88,8 @@ class VetRepository {
   List<VetProfile> getVetsBySpecialty(String specialty) {
     try {
       return _box.values
-          .where((vet) =>
-              vet.specialty?.toLowerCase() == specialty.toLowerCase())
+          .where(
+              (vet) => vet.specialty?.toLowerCase() == specialty.toLowerCase())
           .toList();
     } catch (e) {
       return [];

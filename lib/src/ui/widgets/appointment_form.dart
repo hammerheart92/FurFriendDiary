@@ -371,7 +371,8 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                           ),
                           Text(
                             vet.clinicName,
-                            style: const TextStyle(fontSize: 12, color: Colors.grey),
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.grey),
                           ),
                         ],
                       ),
@@ -412,7 +413,8 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                   icon: const Icon(Icons.edit),
                   label: const Text('Enter manually'),
                   style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   ),
                 ),
                 TextButton.icon(
@@ -423,7 +425,8 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                   icon: const Icon(Icons.add),
                   label: Text(l10n.addNewVet),
                   style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   ),
                 ),
               ],

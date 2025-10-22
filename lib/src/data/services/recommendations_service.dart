@@ -11,7 +11,8 @@ class RecommendationsService {
     final recommendations = <String>[];
 
     // Check medication adherence
-    final adherence = await analyticsService.calculateMedicationAdherence(petId, 30);
+    final adherence =
+        await analyticsService.calculateMedicationAdherence(petId, 30);
     if (adherence < 80) {
       recommendations.add('Set more medication reminders to improve adherence');
     }

@@ -51,7 +51,8 @@ class _HealthScoreChartState extends State<HealthScoreChart>
   Color _getScoreColor() {
     if (widget.score >= 80) return const Color(0xFF10B981); // Green - Excellent
     if (widget.score >= 60) return const Color(0xFFF59E0B); // Orange - Good
-    if (widget.score >= 40) return const Color(0xFFFB923C); // Light Orange - Fair
+    if (widget.score >= 40)
+      return const Color(0xFFFB923C); // Light Orange - Fair
     return const Color(0xFFEF4444); // Red - Low
   }
 
@@ -84,7 +85,8 @@ class _HealthScoreChartState extends State<HealthScoreChart>
               child: AnimatedBuilder(
                 animation: _animation,
                 builder: (context, child) {
-                  final animatedScore = (widget.score * _animation.value).toStringAsFixed(0);
+                  final animatedScore =
+                      (widget.score * _animation.value).toStringAsFixed(0);
                   return CustomPaint(
                     painter: _CircularProgressPainter(
                       progress: (widget.score / 100) * _animation.value,
@@ -97,16 +99,16 @@ class _HealthScoreChartState extends State<HealthScoreChart>
                           Text(
                             animatedScore,
                             style: theme.textTheme.displayLarge?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: color,
-                                ),
+                              fontWeight: FontWeight.bold,
+                              color: color,
+                            ),
                           ),
                           Text(
                             label,
                             style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: color,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                              color: color,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ],
                       ),
@@ -121,9 +123,12 @@ class _HealthScoreChartState extends State<HealthScoreChart>
               runSpacing: 8,
               alignment: WrapAlignment.center,
               children: [
-                _buildLegendItem(theme, 'Excellent (80+)', const Color(0xFF10B981)),
-                _buildLegendItem(theme, 'Good (60-79)', const Color(0xFFF59E0B)),
-                _buildLegendItem(theme, 'Fair (40-59)', const Color(0xFFFB923C)),
+                _buildLegendItem(
+                    theme, 'Excellent (80+)', const Color(0xFF10B981)),
+                _buildLegendItem(
+                    theme, 'Good (60-79)', const Color(0xFFF59E0B)),
+                _buildLegendItem(
+                    theme, 'Fair (40-59)', const Color(0xFFFB923C)),
                 _buildLegendItem(theme, 'Low (<40)', const Color(0xFFEF4444)),
               ],
             ),

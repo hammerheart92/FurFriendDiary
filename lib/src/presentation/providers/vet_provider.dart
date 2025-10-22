@@ -40,8 +40,7 @@ final vetsBySpecialtyProvider =
     Provider.family<List<VetProfile>, String>((ref, specialty) {
   final vetsAsync = ref.watch(vetsProvider);
   return vetsAsync.when(
-    data: (vets) =>
-        vets.where((v) => v.specialty == specialty).toList(),
+    data: (vets) => vets.where((v) => v.specialty == specialty).toList(),
     loading: () => [],
     error: (_, __) => [],
   );

@@ -54,7 +54,8 @@ class ExpenseReport extends HiveObject {
       totalExpenses: totalExpenses ?? this.totalExpenses,
       categoryBreakdown: categoryBreakdown ?? this.categoryBreakdown,
       averagePerWeek: averagePerWeek ?? this.averagePerWeek,
-      mostExpensiveCategory: mostExpensiveCategory ?? this.mostExpensiveCategory,
+      mostExpensiveCategory:
+          mostExpensiveCategory ?? this.mostExpensiveCategory,
     );
   }
 }

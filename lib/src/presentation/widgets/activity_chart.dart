@@ -83,11 +83,13 @@ class _ActivityChartState extends State<ActivityChart>
                       barTouchData: BarTouchData(
                         enabled: true,
                         touchTooltipData: BarTouchTooltipData(
-                          getTooltipColor: (group) => theme.colorScheme.inverseSurface,
+                          getTooltipColor: (group) =>
+                              theme.colorScheme.inverseSurface,
                           tooltipRoundedRadius: 8,
                           tooltipPadding: const EdgeInsets.all(8),
                           getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                            final label = groupIndex == 0 ? 'Feedings' : 'Walks';
+                            final label =
+                                groupIndex == 0 ? 'Feedings' : 'Walks';
                             return BarTooltipItem(
                               '$label\n${rod.toY.toStringAsFixed(1)} per day',
                               TextStyle(
@@ -145,7 +147,8 @@ class _ActivityChartState extends State<ActivityChart>
                                 value.toStringAsFixed(1),
                                 style: TextStyle(
                                   fontSize: 10,
-                                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                                  color: theme.colorScheme.onSurface
+                                      .withValues(alpha: 0.7),
                                 ),
                               );
                             },
@@ -163,7 +166,8 @@ class _ActivityChartState extends State<ActivityChart>
                         drawVerticalLine: false,
                         getDrawingHorizontalLine: (value) {
                           return FlLine(
-                            color: theme.colorScheme.outline.withValues(alpha: 0.2),
+                            color: theme.colorScheme.outline
+                                .withValues(alpha: 0.2),
                             strokeWidth: 1,
                           );
                         },
@@ -190,7 +194,8 @@ class _ActivityChartState extends State<ActivityChart>
                               backDrawRodData: BackgroundBarChartRodData(
                                 show: true,
                                 toY: _getMaxY(avgFeedings, avgWalks),
-                                color: const Color(0xFFF59E0B).withValues(alpha: 0.1),
+                                color: const Color(0xFFF59E0B)
+                                    .withValues(alpha: 0.1),
                               ),
                             ),
                           ],
@@ -215,7 +220,8 @@ class _ActivityChartState extends State<ActivityChart>
                               backDrawRodData: BackgroundBarChartRodData(
                                 show: true,
                                 toY: _getMaxY(avgFeedings, avgWalks),
-                                color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                                color: const Color(0xFF10B981)
+                                    .withValues(alpha: 0.1),
                               ),
                             ),
                           ],

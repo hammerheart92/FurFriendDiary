@@ -283,12 +283,12 @@ class WalkCard extends StatelessWidget {
             // No navigation. Show details locally.
             showDialog<void>(
               context: context,
-              builder: (_) => AlertDialog(
+              builder: (dialogContext) => AlertDialog(
                 title: Text(l10n.walkDetails),
                 content: _WalkDetails(entry: entry),
                 actions: [
                   TextButton(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () => Navigator.of(dialogContext).pop(),
                       child: Text(l10n.close)),
                 ],
               ),

@@ -146,7 +146,8 @@ class AnalyticsService {
     DateTime startDate,
     DateTime endDate,
   ) async {
-    final expenses = await calculateExpensesByCategory(petId, startDate, endDate);
+    final expenses =
+        await calculateExpensesByCategory(petId, startDate, endDate);
     return expenses;
   }
 
@@ -210,7 +211,8 @@ class AnalyticsService {
       endDate.day,
     );
 
-    final totalExpenses = await calculateTotalExpenses(petId, startDate, endDate);
+    final totalExpenses =
+        await calculateTotalExpenses(petId, startDate, endDate);
     const months = 6.0;
 
     return totalExpenses / months;
@@ -247,8 +249,18 @@ class AnalyticsService {
 
       // Format as "Jan", "Feb", etc.
       final monthNames = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
       ];
       final monthKey = monthNames[monthDate.month - 1];
 
@@ -321,7 +333,8 @@ class AnalyticsService {
 
     if (prevMonthExpenses == 0) return 'stable';
 
-    final percentChange = ((lastMonthExpenses - prevMonthExpenses) / prevMonthExpenses) * 100;
+    final percentChange =
+        ((lastMonthExpenses - prevMonthExpenses) / prevMonthExpenses) * 100;
 
     if (percentChange > 15) {
       return 'increasing';

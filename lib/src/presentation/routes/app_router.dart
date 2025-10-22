@@ -27,6 +27,12 @@ import '../providers/pet_profile_provider.dart';
 
 final logger = Logger();
 
+/// Provider for GoRouter - ensures router persists across app rebuilds
+/// This prevents navigation state from being reset when locale/theme changes
+final routerProvider = Provider<GoRouter>((ref) {
+  return createRouter();
+});
+
 GoRouter createRouter() => GoRouter(
       initialLocation: '/',
       redirect: (context, state) async {

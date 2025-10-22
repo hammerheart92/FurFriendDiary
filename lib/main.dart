@@ -116,11 +116,12 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
     final locale = ref.watch(localeProvider);
+    final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       onGenerateTitle: (ctx) => AppLocalizations.of(ctx).appTitle,
-      routerConfig: createRouter(),
+      routerConfig: router,
       theme: lightTheme(),
       darkTheme: darkTheme(),
       themeMode: themeMode,

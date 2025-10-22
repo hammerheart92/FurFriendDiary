@@ -45,7 +45,8 @@ class _ExpenseChartState extends State<ExpenseChart>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final totalExpense = widget.expensesByCategory.values.fold(0.0, (a, b) => a + b);
+    final totalExpense =
+        widget.expensesByCategory.values.fold(0.0, (a, b) => a + b);
 
     if (totalExpense == 0) {
       return Card(
@@ -94,7 +95,8 @@ class _ExpenseChartState extends State<ExpenseChart>
                         return PieChart(
                           PieChartData(
                             pieTouchData: PieTouchData(
-                              touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                              touchCallback:
+                                  (FlTouchEvent event, pieTouchResponse) {
                                 setState(() {
                                   if (!event.isInterestedForInteractions ||
                                       pieTouchResponse == null ||
@@ -215,7 +217,8 @@ class _ExpenseChartState extends State<ExpenseChart>
                     Text(
                       '${percentage.toStringAsFixed(1)}%',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                        color:
+                            theme.colorScheme.onSurface.withValues(alpha: 0.6),
                         fontSize: 10,
                       ),
                     ),
@@ -302,7 +305,7 @@ class _MonthlyExpenseChartState extends State<MonthlyExpenseChart>
 
     final maxExpense = widget.monthlyExpenses.values.reduce(math.max);
     final avgExpense = widget.monthlyExpenses.values.reduce((a, b) => a + b) /
-                       widget.monthlyExpenses.length;
+        widget.monthlyExpenses.length;
 
     return Card(
       child: Padding(
@@ -345,11 +348,13 @@ class _MonthlyExpenseChartState extends State<MonthlyExpenseChart>
                       barTouchData: BarTouchData(
                         enabled: true,
                         touchTooltipData: BarTouchTooltipData(
-                          getTooltipColor: (group) => theme.colorScheme.inverseSurface,
+                          getTooltipColor: (group) =>
+                              theme.colorScheme.inverseSurface,
                           tooltipRoundedRadius: 8,
                           tooltipPadding: const EdgeInsets.all(8),
                           getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                            final monthKey = widget.monthlyExpenses.keys.elementAt(groupIndex);
+                            final monthKey = widget.monthlyExpenses.keys
+                                .elementAt(groupIndex);
                             return BarTooltipItem(
                               '$monthKey\n${widget.currencySymbol}${rod.toY.toStringAsFixed(2)}',
                               TextStyle(
@@ -368,10 +373,12 @@ class _MonthlyExpenseChartState extends State<MonthlyExpenseChart>
                             showTitles: true,
                             reservedSize: 40,
                             getTitlesWidget: (value, meta) {
-                              if (value.toInt() >= widget.monthlyExpenses.length) {
+                              if (value.toInt() >=
+                                  widget.monthlyExpenses.length) {
                                 return const Text('');
                               }
-                              final monthKey = widget.monthlyExpenses.keys.elementAt(value.toInt());
+                              final monthKey = widget.monthlyExpenses.keys
+                                  .elementAt(value.toInt());
                               return Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: Text(
@@ -388,7 +395,8 @@ class _MonthlyExpenseChartState extends State<MonthlyExpenseChart>
                             reservedSize: 50,
                             getTitlesWidget: (value, meta) {
                               return Text(
-                                widget.currencySymbol + value.toStringAsFixed(0),
+                                widget.currencySymbol +
+                                    value.toStringAsFixed(0),
                                 style: const TextStyle(fontSize: 10),
                               );
                             },
@@ -407,7 +415,8 @@ class _MonthlyExpenseChartState extends State<MonthlyExpenseChart>
                         horizontalInterval: maxExpense / 5,
                         getDrawingHorizontalLine: (value) {
                           return FlLine(
-                            color: theme.colorScheme.outline.withValues(alpha: 0.2),
+                            color: theme.colorScheme.outline
+                                .withValues(alpha: 0.2),
                             strokeWidth: 1,
                           );
                         },

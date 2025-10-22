@@ -77,7 +77,8 @@ class _VetListScreenState extends ConsumerState<VetListScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${vet.name} ${AppLocalizations.of(context)!.setAsPreferred}'),
+            content: Text(
+                '${vet.name} ${AppLocalizations.of(context)!.setAsPreferred}'),
           ),
         );
       }
@@ -155,7 +156,8 @@ class _VetListScreenState extends ConsumerState<VetListScreen> {
               ),
             ListTile(
               leading: const Icon(Icons.delete, color: Colors.red),
-              title: Text(l10n.deleteVet, style: const TextStyle(color: Colors.red)),
+              title: Text(l10n.deleteVet,
+                  style: const TextStyle(color: Colors.red)),
               onTap: () {
                 Navigator.pop(context);
                 _deleteVet(vet);
@@ -209,7 +211,9 @@ class _VetListScreenState extends ConsumerState<VetListScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    searchQuery.isNotEmpty ? l10n.noVetsMatchSearch : l10n.noVetsAdded,
+                    searchQuery.isNotEmpty
+                        ? l10n.noVetsMatchSearch
+                        : l10n.noVetsAdded,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   if (searchQuery.isEmpty) ...[
@@ -275,7 +279,9 @@ class _VetListScreenState extends ConsumerState<VetListScreen> {
                                     const SizedBox(height: 4),
                                     Text(
                                       vet.clinicName,
-                                      style: Theme.of(context).textTheme.bodyMedium,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
                                     ),
                                   ],
                                 ),

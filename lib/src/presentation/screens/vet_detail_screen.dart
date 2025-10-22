@@ -71,7 +71,8 @@ class VetDetailScreen extends ConsumerWidget {
     }
   }
 
-  Future<void> _deleteVet(BuildContext context, WidgetRef ref, VetProfile vet) async {
+  Future<void> _deleteVet(
+      BuildContext context, WidgetRef ref, VetProfile vet) async {
     final l10n = AppLocalizations.of(context)!;
     final confirm = await showDialog<bool>(
       context: context,
@@ -110,7 +111,8 @@ class VetDetailScreen extends ConsumerWidget {
     }
   }
 
-  Future<void> _togglePreferred(BuildContext context, WidgetRef ref, VetProfile vet) async {
+  Future<void> _togglePreferred(
+      BuildContext context, WidgetRef ref, VetProfile vet) async {
     try {
       if (vet.isPreferred) {
         // Cannot unset preferred directly, need to set another vet as preferred
@@ -124,7 +126,8 @@ class VetDetailScreen extends ConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('${vet.name} ${AppLocalizations.of(context)!.setAsPreferred}'),
+              content: Text(
+                  '${vet.name} ${AppLocalizations.of(context)!.setAsPreferred}'),
             ),
           );
         }
@@ -179,7 +182,10 @@ class VetDetailScreen extends ConsumerWidget {
                       Expanded(
                         child: Text(
                           vet.name,
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
                         ),
@@ -286,15 +292,16 @@ class VetDetailScreen extends ConsumerWidget {
 
           // Statistics Card
           FutureBuilder<List<AppointmentEntry>>(
-            future: ref.read(appointmentRepositoryProvider).getAllAppointments(),
+            future:
+                ref.read(appointmentRepositoryProvider).getAllAppointments(),
             builder: (context, snapshot) {
               final allAppointments = snapshot.data ?? [];
-              final vetAppointments = allAppointments
-                  .where((apt) => apt.vetId == vetId)
-                  .toList();
+              final vetAppointments =
+                  allAppointments.where((apt) => apt.vetId == vetId).toList();
 
               // Sort by date descending
-              vetAppointments.sort((a, b) => b.appointmentDate.compareTo(a.appointmentDate));
+              vetAppointments.sort(
+                  (a, b) => b.appointmentDate.compareTo(a.appointmentDate));
 
               final recentAppointments = vetAppointments.take(5).toList();
 
@@ -308,7 +315,10 @@ class VetDetailScreen extends ConsumerWidget {
                         children: [
                           Text(
                             'Statistics',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
                           ),
@@ -327,7 +337,8 @@ class VetDetailScreen extends ConsumerWidget {
                                 child: _StatCard(
                                   label: l10n.lastVisit,
                                   value: vet.lastVisitDate != null
-                                      ? DateFormat.yMMMd().format(vet.lastVisitDate!)
+                                      ? DateFormat.yMMMd()
+                                          .format(vet.lastVisitDate!)
                                       : 'N/A',
                                   icon: Icons.access_time,
                                 ),
@@ -350,7 +361,10 @@ class VetDetailScreen extends ConsumerWidget {
                           children: [
                             Text(
                               l10n.recentAppointments,
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                             ),
@@ -367,7 +381,8 @@ class VetDetailScreen extends ConsumerWidget {
                                   ),
                                   title: Text(appointment.reason),
                                   subtitle: Text(
-                                    DateFormat.yMMMd().format(appointment.appointmentDate),
+                                    DateFormat.yMMMd()
+                                        .format(appointment.appointmentDate),
                                   ),
                                   trailing: Icon(
                                     appointment.isCompleted
