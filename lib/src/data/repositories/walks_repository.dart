@@ -120,14 +120,9 @@ class WalksRepository {
 
     if (defaultWalks.isEmpty) return;
 
-    print(
-        'Migrating ${defaultWalks.length} walks from default-pet-id to $actualPetId');
-
     for (final walk in defaultWalks) {
       final updatedWalk = walk.copyWith(petId: actualPetId);
       await _box.put(walk.id, updatedWalk);
     }
-
-    print('Migration complete!');
   }
 }

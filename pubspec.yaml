@@ -85,8 +85,10 @@ flutter:
   assets:
     - assets/images/
     - assets/i18n/
+    - assets/fonts/
   fonts:
-    - family: Inter
+    - family: Roboto
       fonts:
-        - asset: assets/fonts/Inter-Regular.ttf
-        - asset: assets/fonts/Inter-Bold.ttf
+        - asset: assets/fonts/Roboto-Regular.ttf
+        - asset: assets/fonts/Roboto-Bold.ttf
+          weight: 700

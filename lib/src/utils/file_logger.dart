@@ -31,8 +31,6 @@ class FileLogger {
     await _logFile!.writeAsString('Log file: ${_logFile!.path}\n\n',
         mode: FileMode.append);
 
-    print('📝 DEBUG: Log file created at: ${_logFile!.path}');
-
     _instance = Logger(
       printer: _FileAndConsolePrinter(_logFile!),
       level: Level.debug,
@@ -61,6 +59,7 @@ class _FileAndConsolePrinter extends LogPrinter {
     // Write to file asynchronously (don't await to avoid blocking)
     logFile.writeAsString('$logLine\n', mode: FileMode.append).catchError((e) {
       print('Error writing to log file: $e');
+      return logFile; // Return the file even on error
     });
 
     // Return for console output

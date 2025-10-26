@@ -8,6 +8,7 @@ import '../../domain/models/appointment_entry.dart';
 import '../providers/vet_provider.dart';
 import '../../data/repositories/appointment_repository_impl.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../utils/specialty_helper.dart';
 
 class VetDetailScreen extends ConsumerWidget {
   final String vetId;
@@ -113,12 +114,13 @@ class VetDetailScreen extends ConsumerWidget {
 
   Future<void> _togglePreferred(
       BuildContext context, WidgetRef ref, VetProfile vet) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       if (vet.isPreferred) {
         // Cannot unset preferred directly, need to set another vet as preferred
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('This is already your preferred vet'),
+          SnackBar(
+            content: Text(l10n.alreadyPreferred),
           ),
         );
       } else {
@@ -149,7 +151,7 @@ class VetDetailScreen extends ConsumerWidget {
     if (vet == null) {
       return Scaffold(
         appBar: AppBar(title: Text(l10n.vetDetails)),
-        body: const Center(child: Text('Vet not found')),
+        body: Center(child: Text(l10n.vetNotFound)),
       );
     }
 
@@ -206,7 +208,10 @@ class VetDetailScreen extends ConsumerWidget {
                   if (vet.specialty != null) ...[
                     const SizedBox(height: 8),
                     Chip(
-                      label: Text(vet.specialty!),
+                      label: Text(SpecialtyHelper.getLocalizedSpecialty(
+                        vet.specialty,
+                        l10n,
+                      )),
                     ),
                   ],
                   if (!vet.isPreferred) ...[
@@ -238,7 +243,7 @@ class VetDetailScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Contact Information',
+                      l10n.contactInformation,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -314,7 +319,7 @@ class VetDetailScreen extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Statistics',
+                            l10n.statistics,
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium

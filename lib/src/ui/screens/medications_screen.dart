@@ -462,10 +462,10 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
                   children: [
                     ListTile(
                       leading: const Icon(Icons.schedule),
-                      title: const Text('Remind Daily'),
+                      title: Text(l10n.remindDaily),
                       subtitle: medication.administrationTimes.isNotEmpty
                           ? Text(
-                              'First dose: ${medication.administrationTimes.first.format24Hour()}')
+                              '${l10n.firstDose}: ${medication.administrationTimes.first.format24Hour()}')
                           : null,
                       onTap: () async {
                         Navigator.pop(context);
@@ -486,9 +486,9 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
                     if (medication.administrationTimes.length > 1)
                       ListTile(
                         leading: const Icon(Icons.repeat),
-                        title: const Text('Remind All Doses'),
+                        title: Text(l10n.remindAllDoses),
                         subtitle: Text(
-                            '${medication.administrationTimes.length} times daily'),
+                            '${medication.administrationTimes.length} ${l10n.timesDaily}'),
                         onTap: () async {
                           Navigator.pop(context);
                           await _createMultipleReminders(medication);
@@ -496,8 +496,8 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
                       ),
                     ListTile(
                       leading: const Icon(Icons.today),
-                      title: const Text('Remind Once'),
-                      subtitle: const Text('Custom time'),
+                      title: Text(l10n.remindOnce),
+                      subtitle: Text(l10n.customTime),
                       onTap: () async {
                         Navigator.pop(context);
                         await _selectCustomReminderTime(medication);

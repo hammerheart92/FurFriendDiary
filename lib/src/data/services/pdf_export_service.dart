@@ -3,21 +3,51 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:fur_friend_diary/src/domain/models/pet_profile.dart';
 import 'package:fur_friend_diary/src/data/services/analytics_service.dart';
+import 'package:fur_friend_diary/l10n/app_localizations.dart';
 
 /// Service for generating and sharing PDF reports
 class PDFExportService {
   final AnalyticsService analyticsService;
 
+  // Cached fonts to avoid reloading on every PDF generation
+  pw.Font? _regularFont;
+  pw.Font? _boldFont;
+
   PDFExportService({required this.analyticsService});
+
+  /// Load fonts from assets (supports Romanian diacritics: ă, â, î, ș, ț)
+  /// Falls back to built-in fonts if custom fonts fail to load
+  Future<void> _loadFonts() async {
+    if (_regularFont == null || _boldFont == null) {
+      try {
+        // Try to load custom fonts from assets
+        final regularData = await rootBundle.load('assets/fonts/Roboto-Regular.ttf');
+        final boldData = await rootBundle.load('assets/fonts/Roboto-Bold.ttf');
+
+        _regularFont = pw.Font.ttf(regularData);
+        _boldFont = pw.Font.ttf(boldData);
+      } catch (e) {
+        // Fallback to built-in fonts if custom fonts fail
+        // Note: Built-in fonts don't support Romanian diacritics (ă, â, î, ș, ț)
+        _regularFont = pw.Font.helvetica();
+        _boldFont = pw.Font.helveticaBold();
+      }
+    }
+  }
 
   /// Generate a full health report PDF for a pet
   Future<String> generateHealthReport({
     required PetProfile pet,
     required DateTime startDate,
     required DateTime endDate,
+    required AppLocalizations l10n,
   }) async {
+    // Load fonts with Romanian character support
+    await _loadFonts();
+
     final pdf = pw.Document();
 
     // Calculate analytics data
@@ -52,10 +82,11 @@ class PDFExportService {
             children: [
               // Header
               pw.Text(
-                'Pet Health Report',
+                l10n.pdfPetHealthReport,
                 style: pw.TextStyle(
                   fontSize: 24,
                   fontWeight: pw.FontWeight.bold,
+                  font: _boldFont,
                 ),
               ),
               pw.SizedBox(height: 10),
@@ -63,58 +94,58 @@ class PDFExportService {
               pw.SizedBox(height: 20),
 
               // Pet Information
-              _buildSection('Pet Information', [
-                _buildInfoRow('Name', pet.name),
-                _buildInfoRow('Species', pet.species),
-                _buildInfoRow('Breed', pet.breed ?? 'Unknown'),
+              _buildSection(l10n.pdfPetInformation, [
+                _buildInfoRow(l10n.pdfName, pet.name),
+                _buildInfoRow(l10n.pdfSpecies, _translateSpecies(pet.species, l10n)),
+                _buildInfoRow(l10n.pdfBreed, pet.breed ?? l10n.pdfUnknown),
                 _buildInfoRow(
-                    'Age',
+                    l10n.pdfAge,
                     pet.birthday != null
-                        ? '${_calculateAge(pet.birthday!)} years'
-                        : 'Unknown'),
+                        ? '${_calculateAge(pet.birthday!)} ${l10n.pdfYears}'
+                        : l10n.pdfUnknown),
               ]),
               pw.SizedBox(height: 20),
 
               // Report Period
-              _buildSection('Report Period', [
+              _buildSection(l10n.pdfReportPeriod, [
                 _buildInfoRow(
-                  'From',
+                  l10n.pdfFrom,
                   '${startDate.day}/${startDate.month}/${startDate.year}',
                 ),
                 _buildInfoRow(
-                  'To',
+                  l10n.pdfTo,
                   '${endDate.day}/${endDate.month}/${endDate.year}',
                 ),
               ]),
               pw.SizedBox(height: 20),
 
               // Health Metrics
-              _buildSection('Health Metrics', [
-                _buildInfoRow('Overall Health Score',
+              _buildSection(l10n.pdfHealthMetrics, [
+                _buildInfoRow(l10n.pdfOverallHealthScore,
                     '${healthScore.toStringAsFixed(0)}/100'),
-                _buildInfoRow('Medication Adherence',
+                _buildInfoRow(l10n.pdfMedicationAdherence,
                     '${medicationAdherence.toStringAsFixed(0)}%'),
-                _buildInfoRow('Weight Trend', _formatWeightTrend(weightTrend)),
+                _buildInfoRow(l10n.pdfWeightTrend, _formatWeightTrend(weightTrend, l10n)),
               ]),
               pw.SizedBox(height: 20),
 
               // Activity Summary
-              _buildSection('Activity Summary', [
-                _buildInfoRow('Total Feedings',
+              _buildSection(l10n.pdfActivitySummary, [
+                _buildInfoRow(l10n.pdfTotalFeedings,
                     activityLevels['totalFeedings']?.toInt().toString() ?? '0'),
-                _buildInfoRow('Total Walks',
+                _buildInfoRow(l10n.pdfTotalWalks,
                     activityLevels['totalWalks']?.toInt().toString() ?? '0'),
-                _buildInfoRow('Avg Feedings/Day',
+                _buildInfoRow(l10n.pdfAvgFeedingsPerDay,
                     activityLevels['avgFeedings']?.toStringAsFixed(1) ?? '0.0'),
-                _buildInfoRow('Avg Walks/Day',
+                _buildInfoRow(l10n.pdfAvgWalksPerDay,
                     activityLevels['avgWalks']?.toStringAsFixed(1) ?? '0.0'),
               ]),
               pw.SizedBox(height: 20),
 
               // Expenses
-              _buildSection('Expenses', [
+              _buildSection(l10n.pdfExpenses, [
                 _buildInfoRow(
-                    'Total Expenses', '\$${totalExpenses.toStringAsFixed(2)}'),
+                    l10n.pdfTotalExpenses, '\$${totalExpenses.toStringAsFixed(2)}'),
               ]),
               pw.SizedBox(height: 30),
 
@@ -122,12 +153,12 @@ class PDFExportService {
               pw.Divider(),
               pw.SizedBox(height: 10),
               pw.Text(
-                'Generated on ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
-                style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey),
+                '${l10n.pdfGeneratedOn} ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
+                style: pw.TextStyle(fontSize: 10, color: PdfColors.grey, font: _regularFont),
               ),
               pw.Text(
-                'FurFriend Diary - Pet Health Management',
-                style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey),
+                l10n.pdfFooter,
+                style: pw.TextStyle(fontSize: 10, color: PdfColors.grey, font: _regularFont),
               ),
             ],
           );
@@ -143,7 +174,11 @@ class PDFExportService {
   /// Generate a veterinary summary PDF (last 30 days)
   Future<String> generateVetSummary({
     required PetProfile pet,
+    required AppLocalizations l10n,
   }) async {
+    // Load fonts with Romanian character support
+    await _loadFonts();
+
     final endDate = DateTime.now();
     final startDate = endDate.subtract(const Duration(days: 30));
 
@@ -171,10 +206,11 @@ class PDFExportService {
             children: [
               // Header
               pw.Text(
-                'Veterinary Summary',
+                l10n.pdfVeterinarySummary,
                 style: pw.TextStyle(
                   fontSize: 24,
                   fontWeight: pw.FontWeight.bold,
+                  font: _boldFont,
                 ),
               ),
               pw.SizedBox(height: 10),
@@ -182,52 +218,53 @@ class PDFExportService {
               pw.SizedBox(height: 20),
 
               // Pet Information
-              _buildSection('Pet Information', [
-                _buildInfoRow('Name', pet.name),
-                _buildInfoRow('Species', pet.species),
-                _buildInfoRow('Breed', pet.breed ?? 'Unknown'),
+              _buildSection(l10n.pdfPetInformation, [
+                _buildInfoRow(l10n.pdfName, pet.name),
+                _buildInfoRow(l10n.pdfSpecies, _translateSpecies(pet.species, l10n)),
+                _buildInfoRow(l10n.pdfBreed, pet.breed ?? l10n.pdfUnknown),
                 _buildInfoRow(
-                    'Age',
+                    l10n.pdfAge,
                     pet.birthday != null
-                        ? '${_calculateAge(pet.birthday!)} years'
-                        : 'Unknown'),
+                        ? '${_calculateAge(pet.birthday!)} ${l10n.pdfYears}'
+                        : l10n.pdfUnknown),
               ]),
               pw.SizedBox(height: 20),
 
               // Summary Period
               pw.Text(
-                'Last 30 Days Summary',
+                l10n.pdfLast30DaysSummary,
                 style: pw.TextStyle(
                   fontSize: 16,
                   fontWeight: pw.FontWeight.bold,
+                  font: _boldFont,
                 ),
               ),
               pw.SizedBox(height: 10),
 
               // Health Status
-              _buildSection('Health Status', [
+              _buildSection(l10n.pdfHealthStatus, [
                 _buildInfoRow(
-                    'Health Score', '${healthScore.toStringAsFixed(0)}/100'),
-                _buildInfoRow('Medication Compliance',
+                    l10n.pdfHealthScore, '${healthScore.toStringAsFixed(0)}/100'),
+                _buildInfoRow(l10n.pdfMedicationCompliance,
                     '${medicationAdherence.toStringAsFixed(0)}%'),
-                _buildInfoRow('Weight Trend', _formatWeightTrend(weightTrend)),
+                _buildInfoRow(l10n.pdfWeightTrend, _formatWeightTrend(weightTrend, l10n)),
               ]),
               pw.SizedBox(height: 20),
 
               // Activity Overview
-              _buildSection('Activity Overview', [
-                _buildInfoRow('Daily Feedings (Avg)',
+              _buildSection(l10n.pdfActivityOverview, [
+                _buildInfoRow(l10n.pdfDailyFeedingsAvg,
                     activityLevels['avgFeedings']?.toStringAsFixed(1) ?? '0.0'),
-                _buildInfoRow('Daily Walks (Avg)',
+                _buildInfoRow(l10n.pdfDailyWalksAvg,
                     activityLevels['avgWalks']?.toStringAsFixed(1) ?? '0.0'),
               ]),
               pw.SizedBox(height: 20),
 
               // Notes section
-              _buildSection('Notes', [
+              _buildSection(l10n.pdfNotes, [
                 pw.Text(
-                  'Please review the attached health data and discuss any concerns during the appointment.',
-                  style: const pw.TextStyle(fontSize: 12),
+                  l10n.pdfNotesText,
+                  style: pw.TextStyle(fontSize: 12, font: _regularFont),
                 ),
               ]),
               pw.SizedBox(height: 30),
@@ -236,12 +273,12 @@ class PDFExportService {
               pw.Divider(),
               pw.SizedBox(height: 10),
               pw.Text(
-                'Generated on ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
-                style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey),
+                '${l10n.pdfGeneratedOn} ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
+                style: pw.TextStyle(fontSize: 10, color: PdfColors.grey, font: _regularFont),
               ),
               pw.Text(
-                'FurFriend Diary - Pet Health Management',
-                style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey),
+                l10n.pdfFooter,
+                style: pw.TextStyle(fontSize: 10, color: PdfColors.grey, font: _regularFont),
               ),
             ],
           );
@@ -269,6 +306,7 @@ class PDFExportService {
     required PetProfile pet,
     required DateTime startDate,
     required DateTime endDate,
+    required AppLocalizations l10n,
   }) async {
     final healthScore = await analyticsService.calculateHealthScore(
       pet.id,
@@ -296,7 +334,7 @@ class PDFExportService {
     buffer.writeln('Health Score: ${healthScore.toStringAsFixed(0)}/100');
     buffer.writeln(
         'Medication Adherence: ${medicationAdherence.toStringAsFixed(0)}%');
-    buffer.writeln('Weight Trend: ${_formatWeightTrend(weightTrend)}');
+    buffer.writeln('Weight Trend: ${_formatWeightTrend(weightTrend, l10n)}');
     buffer.writeln('');
     buffer.writeln(
         'Activity (${startDate.day}/${startDate.month}/${startDate.year} - ${endDate.day}/${endDate.month}/${endDate.year}):');
@@ -329,6 +367,7 @@ class PDFExportService {
           style: pw.TextStyle(
             fontSize: 16,
             fontWeight: pw.FontWeight.bold,
+            font: _boldFont,
           ),
         ),
         pw.SizedBox(height: 10),
@@ -346,12 +385,12 @@ class PDFExportService {
             flex: 2,
             child: pw.Text(
               label,
-              style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+              style: pw.TextStyle(fontWeight: pw.FontWeight.bold, font: _boldFont),
             ),
           ),
           pw.Expanded(
             flex: 3,
-            child: pw.Text(value),
+            child: pw.Text(value, style: pw.TextStyle(font: _regularFont)),
           ),
         ],
       ),
@@ -368,16 +407,27 @@ class PDFExportService {
     return age;
   }
 
-  String _formatWeightTrend(String trend) {
+  String _formatWeightTrend(String trend, AppLocalizations l10n) {
     switch (trend) {
       case 'stable':
-        return 'Stable';
+        return l10n.pdfStable;
       case 'gaining':
-        return 'Gaining';
+        return l10n.pdfGaining;
       case 'losing':
-        return 'Losing';
+        return l10n.pdfLosing;
       default:
-        return 'Unknown';
+        return l10n.pdfUnknown;
+    }
+  }
+
+  String _translateSpecies(String species, AppLocalizations l10n) {
+    switch (species.toLowerCase()) {
+      case 'cat':
+        return l10n.pdfCat;
+      case 'dog':
+        return l10n.pdfDog;
+      default:
+        return species;
     }
   }
 

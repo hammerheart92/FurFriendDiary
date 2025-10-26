@@ -353,28 +353,57 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
           children: [
             DropdownButtonFormField<String>(
               value: _selectedVetId,
+              isExpanded: true,
+              isDense: false,
+              itemHeight: 56,
               decoration: InputDecoration(
                 labelText: l10n.selectVet,
                 prefixIcon: const Icon(Icons.local_hospital),
                 border: const OutlineInputBorder(),
               ),
+              menuMaxHeight: 300,
               items: [
                 ...vets.map((vet) => DropdownMenuItem(
                       value: vet.id,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            vet.name,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            vet.clinicName,
-                            style: const TextStyle(
-                                fontSize: 12, color: Colors.grey),
-                          ),
-                        ],
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.medical_services,
+                              size: 20,
+                              color: Colors.teal,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    vet.name,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    vet.clinicName,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     )),
               ],
@@ -411,7 +440,7 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                     });
                   },
                   icon: const Icon(Icons.edit),
-                  label: const Text('Enter manually'),
+                  label: Text(l10n.enterManually),
                   style: TextButton.styleFrom(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

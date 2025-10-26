@@ -5,6 +5,25 @@ import '../../domain/models/medication_entry.dart';
 import '../../providers/inventory_providers.dart';
 import '../../../l10n/app_localizations.dart';
 
+/// Extension to translate stock unit values from database to localized strings
+extension StockUnitTranslation on AppLocalizations {
+  String translateStockUnit(String? unit) {
+    if (unit == null) return pills;
+    switch (unit.toLowerCase()) {
+      case 'pills':
+        return pills;
+      case 'tablets':
+        return tablets;
+      case 'ml':
+        return ml;
+      case 'doses':
+        return doses;
+      default:
+        return unit; // Return as-is if unknown
+    }
+  }
+}
+
 class MedicationCard extends ConsumerWidget {
   final MedicationEntry medication;
   final VoidCallback? onTap;
@@ -391,7 +410,7 @@ class MedicationCard extends ConsumerWidget {
         badgeIcon = Icons.warning;
         badgeText = l10n.pillsLeft(
           medication.stockQuantity.toString(),
-          medication.stockUnit ?? l10n.pills,
+          l10n.translateStockUnit(medication.stockUnit),
         );
         break;
       case StockStatus.low:
@@ -399,7 +418,7 @@ class MedicationCard extends ConsumerWidget {
         badgeIcon = Icons.info;
         badgeText = l10n.pillsLeft(
           medication.stockQuantity.toString(),
-          medication.stockUnit ?? l10n.pills,
+          l10n.translateStockUnit(medication.stockUnit),
         );
         break;
       case StockStatus.sufficient:
@@ -407,7 +426,7 @@ class MedicationCard extends ConsumerWidget {
         badgeIcon = Icons.inventory;
         badgeText = l10n.pillsLeft(
           medication.stockQuantity.toString(),
-          medication.stockUnit ?? l10n.pills,
+          l10n.translateStockUnit(medication.stockUnit),
         );
         break;
       case StockStatus.notTracked:

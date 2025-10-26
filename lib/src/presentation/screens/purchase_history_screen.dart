@@ -5,6 +5,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../domain/models/medication_purchase.dart';
 import '../../providers/inventory_providers.dart';
 import '../../providers/medications_provider.dart';
+import '../../ui/widgets/medication_card.dart'; // Import for StockUnitTranslation extension
 
 class PurchaseHistoryScreen extends ConsumerWidget {
   final String medicationId;
@@ -64,7 +65,7 @@ class PurchaseHistoryScreen extends ConsumerWidget {
               totalSpent,
               totalQuantity,
               averageCostPerUnit,
-              medication?.stockUnit ?? 'units',
+              l10n.translateStockUnit(medication?.stockUnit),
             ),
 
           // Purchase List
@@ -72,7 +73,7 @@ class PurchaseHistoryScreen extends ConsumerWidget {
             child: purchases.isEmpty
                 ? _buildEmptyState(context, l10n)
                 : _buildPurchaseList(context, l10n, purchases, ref,
-                    medication?.stockUnit ?? 'units'),
+                    l10n.translateStockUnit(medication?.stockUnit)),
           ),
         ],
       ),

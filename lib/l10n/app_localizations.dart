@@ -746,6 +746,12 @@ abstract class AppLocalizations {
   /// **'Please enter clinic name'**
   String get pleaseEnterClinic;
 
+  /// No description provided for @enterManually.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter manually'**
+  String get enterManually;
+
   /// No description provided for @reason.
   ///
   /// In en, this message translates to:
@@ -1091,7 +1097,7 @@ abstract class AppLocalizations {
   /// No description provided for @total.
   ///
   /// In en, this message translates to:
-  /// **'total'**
+  /// **'Total'**
   String get total;
 
   /// No description provided for @avg.
@@ -1129,6 +1135,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Total Feedings'**
   String get totalFeedings;
+
+  /// No description provided for @totalWalks.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Walks'**
+  String get totalWalks;
 
   /// No description provided for @dailyAverage.
   ///
@@ -1682,6 +1694,12 @@ abstract class AppLocalizations {
   /// **'Open source licenses'**
   String get openSourceLicenses;
 
+  /// No description provided for @couldNotOpenLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open link'**
+  String get couldNotOpenLink;
+
   /// No description provided for @about.
   ///
   /// In en, this message translates to:
@@ -1934,11 +1952,65 @@ abstract class AppLocalizations {
   /// **'Set Reminder'**
   String get setReminder;
 
+  /// No description provided for @oneDayBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'1 Day Before'**
+  String get oneDayBefore;
+
+  /// No description provided for @oneHourBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'1 Hour Before'**
+  String get oneHourBefore;
+
+  /// No description provided for @thirtyMinutesBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'30 Minutes Before'**
+  String get thirtyMinutesBefore;
+
   /// No description provided for @reminderSet.
   ///
   /// In en, this message translates to:
   /// **'Reminder set successfully'**
   String get reminderSet;
+
+  /// No description provided for @remindDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind Daily'**
+  String get remindDaily;
+
+  /// No description provided for @remindAllDoses.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind All Doses'**
+  String get remindAllDoses;
+
+  /// No description provided for @remindOnce.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind Once'**
+  String get remindOnce;
+
+  /// No description provided for @firstDose.
+  ///
+  /// In en, this message translates to:
+  /// **'First dose'**
+  String get firstDose;
+
+  /// No description provided for @customTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom time'**
+  String get customTime;
+
+  /// No description provided for @timesDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'times daily'**
+  String get timesDaily;
 
   /// No description provided for @remindersCreated.
   ///
@@ -3116,6 +3188,60 @@ abstract class AppLocalizations {
   /// **'No veterinarians match your search'**
   String get noVetsMatchSearch;
 
+  /// No description provided for @contactInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Information'**
+  String get contactInformation;
+
+  /// No description provided for @vetNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Vet not found'**
+  String get vetNotFound;
+
+  /// No description provided for @alreadyPreferred.
+  ///
+  /// In en, this message translates to:
+  /// **'This is already your preferred vet'**
+  String get alreadyPreferred;
+
+  /// No description provided for @errorOccurred.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get errorOccurred;
+
+  /// No description provided for @petManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Pet Management'**
+  String get petManagement;
+
+  /// No description provided for @viewHealthScoresAndMetrics.
+  ///
+  /// In en, this message translates to:
+  /// **'View health scores and activity metrics'**
+  String get viewHealthScoresAndMetrics;
+
+  /// No description provided for @manageVeterinariansAndClinics.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage veterinarians and clinics'**
+  String get manageVeterinariansAndClinics;
+
+  /// No description provided for @viewAndManagePetPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'View and manage pet photos'**
+  String get viewAndManagePetPhotos;
+
+  /// No description provided for @trackMedicationStockLevels.
+  ///
+  /// In en, this message translates to:
+  /// **'Track medication stock levels'**
+  String get trackMedicationStockLevels;
+
   /// No description provided for @reportsAndAnalytics.
   ///
   /// In en, this message translates to:
@@ -3211,6 +3337,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Activity Metrics'**
   String get activityMetrics;
+
+  /// No description provided for @dailyActivityAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Activity Average'**
+  String get dailyActivityAverage;
+
+  /// No description provided for @feedingsPerDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedings/day'**
+  String get feedingsPerDay;
+
+  /// No description provided for @walksPerDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Walks/day'**
+  String get walksPerDay;
 
   /// No description provided for @expenseMetrics.
   ///
@@ -3463,6 +3607,324 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Stable'**
   String get trendStable;
+
+  /// No description provided for @monthlyExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Expenses'**
+  String get monthlyExpenses;
+
+  /// No description provided for @average.
+  ///
+  /// In en, this message translates to:
+  /// **'Average'**
+  String get average;
+
+  /// No description provided for @highest.
+  ///
+  /// In en, this message translates to:
+  /// **'Highest'**
+  String get highest;
+
+  /// No description provided for @excellentRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent (80+)'**
+  String get excellentRange;
+
+  /// No description provided for @goodRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Good (60-79)'**
+  String get goodRange;
+
+  /// No description provided for @fairRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Fair (40-59)'**
+  String get fairRange;
+
+  /// No description provided for @lowRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Low (<40)'**
+  String get lowRange;
+
+  /// No description provided for @recSetMedicationReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Set more medication reminders to improve adherence'**
+  String get recSetMedicationReminders;
+
+  /// No description provided for @recConsiderVetWeightGain.
+  ///
+  /// In en, this message translates to:
+  /// **'Consider vet consultation about weight gain'**
+  String get recConsiderVetWeightGain;
+
+  /// No description provided for @recConsiderVetWeightLoss.
+  ///
+  /// In en, this message translates to:
+  /// **'Consider vet consultation about weight loss'**
+  String get recConsiderVetWeightLoss;
+
+  /// No description provided for @recIncreaseDailyWalks.
+  ///
+  /// In en, this message translates to:
+  /// **'Increase daily walks for better health'**
+  String get recIncreaseDailyWalks;
+
+  /// No description provided for @recReviewMedicationCosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Review medication costs with your vet'**
+  String get recReviewMedicationCosts;
+
+  /// No description provided for @recScheduleVetCheckup.
+  ///
+  /// In en, this message translates to:
+  /// **'Health score is low - schedule a vet checkup'**
+  String get recScheduleVetCheckup;
+
+  /// No description provided for @healthScoreDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on weight stability, medication adherence, and activity levels'**
+  String get healthScoreDescription;
+
+  /// No description provided for @pdfPetHealthReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Pet Health Report'**
+  String get pdfPetHealthReport;
+
+  /// No description provided for @pdfPetInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Pet Information'**
+  String get pdfPetInformation;
+
+  /// No description provided for @pdfName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get pdfName;
+
+  /// No description provided for @pdfSpecies.
+  ///
+  /// In en, this message translates to:
+  /// **'Species'**
+  String get pdfSpecies;
+
+  /// No description provided for @pdfBreed.
+  ///
+  /// In en, this message translates to:
+  /// **'Breed'**
+  String get pdfBreed;
+
+  /// No description provided for @pdfAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Age'**
+  String get pdfAge;
+
+  /// No description provided for @pdfYears.
+  ///
+  /// In en, this message translates to:
+  /// **'years'**
+  String get pdfYears;
+
+  /// No description provided for @pdfCat.
+  ///
+  /// In en, this message translates to:
+  /// **'Cat'**
+  String get pdfCat;
+
+  /// No description provided for @pdfDog.
+  ///
+  /// In en, this message translates to:
+  /// **'Dog'**
+  String get pdfDog;
+
+  /// No description provided for @pdfUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get pdfUnknown;
+
+  /// No description provided for @pdfReportPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Report Period'**
+  String get pdfReportPeriod;
+
+  /// No description provided for @pdfFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get pdfFrom;
+
+  /// No description provided for @pdfTo.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get pdfTo;
+
+  /// No description provided for @pdfHealthMetrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Metrics'**
+  String get pdfHealthMetrics;
+
+  /// No description provided for @pdfOverallHealthScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Health Score'**
+  String get pdfOverallHealthScore;
+
+  /// No description provided for @pdfMedicationAdherence.
+  ///
+  /// In en, this message translates to:
+  /// **'Medication Adherence'**
+  String get pdfMedicationAdherence;
+
+  /// No description provided for @pdfWeightTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight Trend'**
+  String get pdfWeightTrend;
+
+  /// No description provided for @pdfStable.
+  ///
+  /// In en, this message translates to:
+  /// **'Stable'**
+  String get pdfStable;
+
+  /// No description provided for @pdfGaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Gaining'**
+  String get pdfGaining;
+
+  /// No description provided for @pdfLosing.
+  ///
+  /// In en, this message translates to:
+  /// **'Losing'**
+  String get pdfLosing;
+
+  /// No description provided for @pdfActivitySummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity Summary'**
+  String get pdfActivitySummary;
+
+  /// No description provided for @pdfTotalFeedings.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Feedings'**
+  String get pdfTotalFeedings;
+
+  /// No description provided for @pdfTotalWalks.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Walks'**
+  String get pdfTotalWalks;
+
+  /// No description provided for @pdfAvgFeedingsPerDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg Feedings/Day'**
+  String get pdfAvgFeedingsPerDay;
+
+  /// No description provided for @pdfAvgWalksPerDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg Walks/Day'**
+  String get pdfAvgWalksPerDay;
+
+  /// No description provided for @pdfExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Expenses'**
+  String get pdfExpenses;
+
+  /// No description provided for @pdfTotalExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Expenses'**
+  String get pdfTotalExpenses;
+
+  /// No description provided for @pdfGeneratedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Generated on'**
+  String get pdfGeneratedOn;
+
+  /// No description provided for @pdfFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'FurFriend Diary - Pet Health Management'**
+  String get pdfFooter;
+
+  /// No description provided for @pdfVeterinarySummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Veterinary Summary'**
+  String get pdfVeterinarySummary;
+
+  /// No description provided for @pdfLast30DaysSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 30 Days Summary'**
+  String get pdfLast30DaysSummary;
+
+  /// No description provided for @pdfHealthStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Status'**
+  String get pdfHealthStatus;
+
+  /// No description provided for @pdfHealthScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Score'**
+  String get pdfHealthScore;
+
+  /// No description provided for @pdfMedicationCompliance.
+  ///
+  /// In en, this message translates to:
+  /// **'Medication Compliance'**
+  String get pdfMedicationCompliance;
+
+  /// No description provided for @pdfActivityOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity Overview'**
+  String get pdfActivityOverview;
+
+  /// No description provided for @pdfDailyFeedingsAvg.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Feedings (Avg)'**
+  String get pdfDailyFeedingsAvg;
+
+  /// No description provided for @pdfDailyWalksAvg.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Walks (Avg)'**
+  String get pdfDailyWalksAvg;
+
+  /// No description provided for @pdfNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get pdfNotes;
+
+  /// No description provided for @pdfNotesText.
+  ///
+  /// In en, this message translates to:
+  /// **'Please review the attached health data and discuss any concerns during the appointment.'**
+  String get pdfNotesText;
 }
 
 class _AppLocalizationsDelegate

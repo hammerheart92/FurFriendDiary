@@ -354,6 +354,9 @@ class AppLocalizationsRo extends AppLocalizations {
   String get pleaseEnterClinic => 'Vă rugăm să introduceți numele clinicii';
 
   @override
+  String get enterManually => 'Adaugă manual';
+
+  @override
   String get reason => 'Motiv';
 
   @override
@@ -531,7 +534,7 @@ class AppLocalizationsRo extends AppLocalizations {
   String get outOf => 'din';
 
   @override
-  String get total => 'total';
+  String get total => 'Total';
 
   @override
   String get avg => 'medie';
@@ -549,7 +552,10 @@ class AppLocalizationsRo extends AppLocalizations {
   String get days => 'zile';
 
   @override
-  String get totalFeedings => 'Total Hrăniri';
+  String get totalFeedings => 'Hrăniri Totale';
+
+  @override
+  String get totalWalks => 'Plimbări Totale';
 
   @override
   String get dailyAverage => 'Medie Zilnică';
@@ -852,6 +858,9 @@ class AppLocalizationsRo extends AppLocalizations {
   String get openSourceLicenses => 'Licențe open source';
 
   @override
+  String get couldNotOpenLink => 'Nu s-a putut deschide linkul';
+
+  @override
   String get about => 'Despre';
 
   @override
@@ -1005,7 +1014,34 @@ class AppLocalizationsRo extends AppLocalizations {
   String get setReminder => 'Setează Memento';
 
   @override
+  String get oneDayBefore => 'Cu o zi înainte';
+
+  @override
+  String get oneHourBefore => 'Cu o oră înainte';
+
+  @override
+  String get thirtyMinutesBefore => 'Cu 30 de minute înainte';
+
+  @override
   String get reminderSet => 'Memento setat cu succes';
+
+  @override
+  String get remindDaily => 'Reamintește zilnic';
+
+  @override
+  String get remindAllDoses => 'Reamintește toate dozele';
+
+  @override
+  String get remindOnce => 'Reamintește o dată';
+
+  @override
+  String get firstDose => 'Prima doză';
+
+  @override
+  String get customTime => 'Timp personalizat';
+
+  @override
+  String get timesDaily => 'ori pe zi';
 
   @override
   String remindersCreated(int count) {
@@ -1632,6 +1668,37 @@ class AppLocalizationsRo extends AppLocalizations {
   String get noVetsMatchSearch => 'Niciun veterinar nu corespunde căutării';
 
   @override
+  String get contactInformation => 'Informații de Contact';
+
+  @override
+  String get vetNotFound => 'Veterinar negăsit';
+
+  @override
+  String get alreadyPreferred => 'Acesta este deja veterinarul preferat';
+
+  @override
+  String get errorOccurred => 'Eroare';
+
+  @override
+  String get petManagement => 'Gestionarea animalelor de companie';
+
+  @override
+  String get viewHealthScoresAndMetrics =>
+      'Vizualizați scorurile de sănătate și indicatorii de activitate';
+
+  @override
+  String get manageVeterinariansAndClinics =>
+      'Gestionarea medicilor veterinari și a clinicilor';
+
+  @override
+  String get viewAndManagePetPhotos =>
+      'Vizualizați și gestionați fotografiile animalelor de companie';
+
+  @override
+  String get trackMedicationStockLevels =>
+      'Urmăriți nivelurile stocurilor de medicamente';
+
+  @override
   String get reportsAndAnalytics => 'Rapoarte & Analize';
 
   @override
@@ -1678,6 +1745,15 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get activityMetrics => 'Metrici Activitate';
+
+  @override
+  String get dailyActivityAverage => 'Media activităților zilnice';
+
+  @override
+  String get feedingsPerDay => 'Hrăniri/zi';
+
+  @override
+  String get walksPerDay => 'Plimbări/zi';
 
   @override
   String get expenseMetrics => 'Metrici Cheltuieli';
@@ -1811,4 +1887,173 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get trendStable => 'Stabil';
+
+  @override
+  String get monthlyExpenses => 'Cheltuieli lunare';
+
+  @override
+  String get average => 'Medie';
+
+  @override
+  String get highest => 'Cel mai înalt';
+
+  @override
+  String get excellentRange => 'Excelent (80+)';
+
+  @override
+  String get goodRange => 'Bun (60-79)';
+
+  @override
+  String get fairRange => 'Satisfăcător (40-59)';
+
+  @override
+  String get lowRange => 'Scăzut (<40)';
+
+  @override
+  String get recSetMedicationReminders =>
+      'Setați mai multe mementouri pentru medicamente pentru a îmbunătăți respectarea';
+
+  @override
+  String get recConsiderVetWeightGain =>
+      'Luați în considerare consultarea unui medic veterinar în legătură cu creșterea în greutate';
+
+  @override
+  String get recConsiderVetWeightLoss =>
+      'Luați în considerare consultarea unui medic veterinar în legătură cu pierderea în greutate';
+
+  @override
+  String get recIncreaseDailyWalks =>
+      'Creșteți numărul plimbărilor zilnice pentru o sănătate mai bună';
+
+  @override
+  String get recReviewMedicationCosts =>
+      'Revedeți costurile medicamentelor cu medicul veterinar';
+
+  @override
+  String get recScheduleVetCheckup =>
+      'Scorul de sănătate este scăzut - programați un control veterinar';
+
+  @override
+  String get healthScoreDescription =>
+      'Pe baza stabilității greutății, a respectării tratamentului medicamentos și a nivelului de activitate';
+
+  @override
+  String get pdfPetHealthReport =>
+      'Raport privind starea de sănătate a animalului de companie';
+
+  @override
+  String get pdfPetInformation => 'Informații despre animalul de companie';
+
+  @override
+  String get pdfName => 'Nume';
+
+  @override
+  String get pdfSpecies => 'Specie';
+
+  @override
+  String get pdfBreed => 'Rasă';
+
+  @override
+  String get pdfAge => 'Vârstă';
+
+  @override
+  String get pdfYears => 'ani';
+
+  @override
+  String get pdfCat => 'Pisică';
+
+  @override
+  String get pdfDog => 'Câine';
+
+  @override
+  String get pdfUnknown => 'Necunoscut';
+
+  @override
+  String get pdfReportPeriod => 'Perioada raportului';
+
+  @override
+  String get pdfFrom => 'De la';
+
+  @override
+  String get pdfTo => 'Până la';
+
+  @override
+  String get pdfHealthMetrics => 'Indicatori de sănătate';
+
+  @override
+  String get pdfOverallHealthScore => 'Scorul general de sănătate';
+
+  @override
+  String get pdfMedicationAdherence => 'Aderarea la medicație';
+
+  @override
+  String get pdfWeightTrend => 'Tendința greutății';
+
+  @override
+  String get pdfStable => 'Stabilă';
+
+  @override
+  String get pdfGaining => 'Câștig';
+
+  @override
+  String get pdfLosing => 'Pierdere';
+
+  @override
+  String get pdfActivitySummary => 'Rezumat activitate';
+
+  @override
+  String get pdfTotalFeedings => 'Total hrăniri';
+
+  @override
+  String get pdfTotalWalks => 'Total plimbări';
+
+  @override
+  String get pdfAvgFeedingsPerDay => 'Media hrăniri/zi';
+
+  @override
+  String get pdfAvgWalksPerDay => 'Media plimbări/zi';
+
+  @override
+  String get pdfExpenses => 'Cheltuieli';
+
+  @override
+  String get pdfTotalExpenses => 'Cheltuieli totale';
+
+  @override
+  String get pdfGeneratedOn => 'Generat la';
+
+  @override
+  String get pdfFooter =>
+      'FurFriend Diary - Gestionarea sănătății animalului de companie';
+
+  @override
+  String get pdfVeterinarySummary => 'Rezumat veterinar';
+
+  @override
+  String get pdfLast30DaysSummary => 'Rezumat ultimele 30 de zile';
+
+  @override
+  String get pdfHealthStatus => 'Starea de sănătate';
+
+  @override
+  String get pdfHealthScore => 'Scorul de sănătate';
+
+  @override
+  String get pdfMedicationCompliance => 'Conformitatea cu medicația';
+
+  @override
+  String get pdfActivityOverview => 'Prezentare generală a activității';
+
+  @override
+  String get pdfDailyFeedingsAvg => 'Hrăniri zilnice (medie)';
+
+  @override
+  String get pdfDailyWalksAvg => 'Plimbări zilnice (medie)';
+
+  @override
+  String get pdfNotes => 'Note';
+
+  @override
+  String get pdfNotesText =>
+      'Vă rugăm să revizuiți datele de sănătate atașate și să discutați orice preocupări în timpul programării.';
 }

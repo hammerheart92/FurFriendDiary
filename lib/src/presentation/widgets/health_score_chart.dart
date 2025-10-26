@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:fur_friend_diary/l10n/app_localizations.dart';
 
 class HealthScoreChart extends StatefulWidget {
   final double score;
@@ -56,18 +57,20 @@ class _HealthScoreChartState extends State<HealthScoreChart>
     return const Color(0xFFEF4444); // Red - Low
   }
 
-  String _getScoreLabel() {
-    if (widget.score >= 80) return 'Excellent';
-    if (widget.score >= 60) return 'Good';
-    if (widget.score >= 40) return 'Fair';
-    return 'Low';
+  String _getScoreLabel(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    if (widget.score >= 80) return l10n.healthScoreExcellent;
+    if (widget.score >= 60) return l10n.healthScoreGood;
+    if (widget.score >= 40) return l10n.healthScoreFair;
+    return l10n.healthScoreLow;
   }
 
   @override
   Widget build(BuildContext context) {
     final color = _getScoreColor();
-    final label = _getScoreLabel();
+    final label = _getScoreLabel(context);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Card(
       child: Padding(
@@ -75,7 +78,7 @@ class _HealthScoreChartState extends State<HealthScoreChart>
         child: Column(
           children: [
             Text(
-              'Health Score',
+              l10n.healthScore,
               style: theme.textTheme.titleLarge,
             ),
             const SizedBox(height: 24),
@@ -124,12 +127,12 @@ class _HealthScoreChartState extends State<HealthScoreChart>
               alignment: WrapAlignment.center,
               children: [
                 _buildLegendItem(
-                    theme, 'Excellent (80+)', const Color(0xFF10B981)),
+                    theme, l10n.excellentRange, const Color(0xFF10B981)),
                 _buildLegendItem(
-                    theme, 'Good (60-79)', const Color(0xFFF59E0B)),
+                    theme, l10n.goodRange, const Color(0xFFF59E0B)),
                 _buildLegendItem(
-                    theme, 'Fair (40-59)', const Color(0xFFFB923C)),
-                _buildLegendItem(theme, 'Low (<40)', const Color(0xFFEF4444)),
+                    theme, l10n.fairRange, const Color(0xFFFB923C)),
+                _buildLegendItem(theme, l10n.lowRange, const Color(0xFFEF4444)),
               ],
             ),
           ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
+import 'package:fur_friend_diary/l10n/app_localizations.dart';
 
 class ExpenseChart extends StatefulWidget {
   final Map<String, double> expensesByCategory;
@@ -42,9 +43,26 @@ class _ExpenseChartState extends State<ExpenseChart>
     super.dispose();
   }
 
+  /// Translate expense category from English to localized text
+  String _translateCategory(String category, AppLocalizations l10n) {
+    switch (category) {
+      case 'Medications':
+        return l10n.medications;
+      case 'Appointments':
+        return l10n.appointments;
+      case 'Food':
+        return 'Mâncare'; // TODO: Add to translations if needed
+      case 'Other':
+        return 'Altele'; // TODO: Add to translations if needed
+      default:
+        return category;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final totalExpense =
         widget.expensesByCategory.values.fold(0.0, (a, b) => a + b);
 
@@ -71,12 +89,12 @@ class _ExpenseChartState extends State<ExpenseChart>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Expenses by Category',
+              l10n.expensesByCategory,
               style: theme.textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
             Text(
-              'Total: ${widget.currencySymbol}${totalExpense.toStringAsFixed(2)}',
+              '${l10n.total}: ${widget.currencySymbol}${totalExpense.toStringAsFixed(2)}',
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: theme.colorScheme.primary,
@@ -182,6 +200,7 @@ class _ExpenseChartState extends State<ExpenseChart>
   Widget _buildLegend(ThemeData theme, double totalExpense) {
     final categories = widget.expensesByCategory.entries.toList();
     final colors = _getCategoryColors();
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -208,7 +227,7 @@ class _ExpenseChartState extends State<ExpenseChart>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      entry.key,
+                      _translateCategory(entry.key, l10n),
                       style: theme.textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -286,6 +305,7 @@ class _MonthlyExpenseChartState extends State<MonthlyExpenseChart>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     if (widget.monthlyExpenses.isEmpty) {
       return Card(
@@ -314,7 +334,7 @@ class _MonthlyExpenseChartState extends State<MonthlyExpenseChart>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Monthly Expenses',
+              l10n.monthlyExpenses,
               style: theme.textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
@@ -322,14 +342,14 @@ class _MonthlyExpenseChartState extends State<MonthlyExpenseChart>
               children: [
                 _buildStatChip(
                   context,
-                  'Average',
+                  l10n.average,
                   '${widget.currencySymbol}${avgExpense.toStringAsFixed(2)}',
                   Colors.blue,
                 ),
                 const SizedBox(width: 8),
                 _buildStatChip(
                   context,
-                  'Highest',
+                  l10n.highest,
                   '${widget.currencySymbol}${maxExpense.toStringAsFixed(2)}',
                   Colors.red,
                 ),

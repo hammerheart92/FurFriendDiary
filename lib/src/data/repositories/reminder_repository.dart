@@ -11,21 +11,13 @@ class ReminderRepository {
   Box<Reminder> get _box => HiveManager.instance.reminderBox;
 
   Future<void> addReminder(Reminder reminder) async {
-    print('📦 DEBUG: ReminderRepository.addReminder called');
-    print(
-        '📦 DEBUG: Reminder: ${reminder.title}, Active: ${reminder.isActive}');
-
     await _box.put(reminder.id, reminder);
-    print('✅ DEBUG: Saved to Hive');
 
     if (reminder.isActive) {
-      print('📦 DEBUG: Calling NotificationService.scheduleReminder...');
       await _notificationService.scheduleReminder(reminder);
-      print('✅ DEBUG: NotificationService.scheduleReminder completed');
     }
 
     _logger.i('Added reminder: ${reminder.title}');
-    print('✅ DEBUG: ReminderRepository.addReminder completed');
   }
 
   Future<void> updateReminder(Reminder reminder) async {

@@ -97,8 +97,6 @@ class InventoryAlertService {
       body: 'Only $stockQuantity $stockUnit remaining',
       details: notificationDetails,
     );
-
-    print('✅ DEBUG: Low stock notification sent for $medicationName');
   }
 
   /// Show refill reminder notification
@@ -140,7 +138,5 @@ class InventoryAlertService {
       body: 'Only $daysUntilEmpty days of supply left',
       details: notificationDetails,
     );
-
-    print('✅ DEBUG: Refill reminder notification sent for $medicationName');
   }
 }

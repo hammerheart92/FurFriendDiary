@@ -8,6 +8,7 @@ import '../../providers/inventory_providers.dart';
 import '../../providers/medications_provider.dart';
 import '../providers/pet_profile_provider.dart';
 import '../widgets/add_refill_dialog.dart';
+import '../../ui/widgets/medication_card.dart'; // Import for StockUnitTranslation extension
 
 class MedicationInventoryScreen extends ConsumerStatefulWidget {
   const MedicationInventoryScreen({super.key});
@@ -600,7 +601,10 @@ class _MedicationInventoryCard extends ConsumerWidget {
                       children: [
                         if (medication.stockQuantity != null) ...[
                           Text(
-                            '${medication.stockQuantity} ${medication.stockUnit ?? 'units'} left',
+                            l10n.pillsLeft(
+                              medication.stockQuantity.toString(),
+                              l10n.translateStockUnit(medication.stockUnit),
+                            ),
                             style: theme.textTheme.bodyMedium,
                           ),
                           if (daysUntilEmpty != null)

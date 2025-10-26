@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:fur_friend_diary/l10n/app_localizations.dart';
 
 class ActivityChart extends StatefulWidget {
   final Map<String, double> activityData;
@@ -40,6 +41,7 @@ class _ActivityChartState extends State<ActivityChart>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final avgFeedings = widget.activityData['avgFeedings'] ?? 0.0;
     final avgWalks = widget.activityData['avgWalks'] ?? 0.0;
     final theme = Theme.of(context);
@@ -50,7 +52,7 @@ class _ActivityChartState extends State<ActivityChart>
           padding: const EdgeInsets.all(24),
           child: Center(
             child: Text(
-              'No activity data available',
+              l10n.noDataAvailable,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
@@ -67,7 +69,7 @@ class _ActivityChartState extends State<ActivityChart>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Daily Activity Average',
+              l10n.dailyActivityAverage,
               style: theme.textTheme.titleMedium,
             ),
             const SizedBox(height: 24),
@@ -89,9 +91,9 @@ class _ActivityChartState extends State<ActivityChart>
                           tooltipPadding: const EdgeInsets.all(8),
                           getTooltipItem: (group, groupIndex, rod, rodIndex) {
                             final label =
-                                groupIndex == 0 ? 'Feedings' : 'Walks';
+                                groupIndex == 0 ? l10n.feedings : l10n.walks;
                             return BarTooltipItem(
-                              '$label\n${rod.toY.toStringAsFixed(1)} per day',
+                              '$label\n${rod.toY.toStringAsFixed(1)} ${l10n.perDay}',
                               TextStyle(
                                 color: theme.colorScheme.onInverseSurface,
                                 fontWeight: FontWeight.bold,
@@ -112,7 +114,7 @@ class _ActivityChartState extends State<ActivityChart>
                                   return Padding(
                                     padding: const EdgeInsets.only(top: 8.0),
                                     child: Text(
-                                      'Feedings',
+                                      l10n.feedings,
                                       style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,
@@ -124,7 +126,7 @@ class _ActivityChartState extends State<ActivityChart>
                                   return Padding(
                                     padding: const EdgeInsets.only(top: 8.0),
                                     child: Text(
-                                      'Walks',
+                                      l10n.walks,
                                       style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,
@@ -238,14 +240,14 @@ class _ActivityChartState extends State<ActivityChart>
               children: [
                 _buildStatCard(
                   theme,
-                  'Feedings/day',
+                  l10n.feedingsPerDay,
                   avgFeedings.toStringAsFixed(1),
                   const Color(0xFFF59E0B),
                   Icons.restaurant,
                 ),
                 _buildStatCard(
                   theme,
-                  'Walks/day',
+                  l10n.walksPerDay,
                   avgWalks.toStringAsFixed(1),
                   const Color(0xFF10B981),
                   Icons.directions_walk,

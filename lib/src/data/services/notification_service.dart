@@ -14,20 +14,14 @@ class NotificationService {
 
   Future<void> initialize() async {
     if (_initialized) {
-      print('✅ DEBUG: NotificationService already initialized');
       return;
     }
 
-    print('🔔 DEBUG: Starting NotificationService initialization');
-
     try {
       // Initialize timezone
-      print('🔔 DEBUG: Initializing timezones...');
       tz.initializeTimeZones();
       final location = tz.getLocation('Europe/Bucharest');
       tz.setLocalLocation(location);
-      print('✅ DEBUG: Timezone set to: ${tz.local.name}');
-      print('🔔 DEBUG: Current local time: ${DateTime.now()}');
 
       // Android initialization settings
       const androidSettings =
@@ -46,15 +40,12 @@ class NotificationService {
       );
 
       // Initialize plugin
-      print('🔔 DEBUG: Initializing flutter_local_notifications...');
-      final initialized = await _notifications.initialize(
+      await _notifications.initialize(
         initSettings,
         onDidReceiveNotificationResponse: (NotificationResponse response) {
-          print('🔔 DEBUG: Notification tapped! Payload: ${response.payload}');
+          // Notification tapped - handle payload if needed
         },
       );
-
-      print('✅ DEBUG: flutter_local_notifications initialized: $initialized');
 
       // CRITICAL: Create notification channel on Android
       await _createNotificationChannel();
@@ -63,18 +54,14 @@ class NotificationService {
       await _checkPermissions();
 
       _initialized = true;
-      print('✅ DEBUG: NotificationService fully initialized');
-    } catch (e, stackTrace) {
-      print('❌ DEBUG: NotificationService initialization failed: $e');
-      print('❌ DEBUG: Stack trace: $stackTrace');
+    } catch (e) {
+      print('Error: NotificationService initialization failed: $e');
       rethrow;
     }
   }
 
   /// CRITICAL: Create Android notification channel
   Future<void> _createNotificationChannel() async {
-    print('🔔 DEBUG: Creating Android notification channel...');
-
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
       'reminders', // id - MUST match the channelId in notification details
       'Reminders', // name
@@ -90,9 +77,6 @@ class NotificationService {
 
     if (androidPlugin != null) {
       await androidPlugin.createNotificationChannel(channel);
-      print('✅ DEBUG: Notification channel created successfully');
-    } else {
-      print('⚠️ DEBUG: Could not get Android plugin implementation');
     }
   }
 
@@ -103,17 +87,13 @@ class NotificationService {
 
     if (androidPlugin != null) {
       // Request permissions on Android 13+
-      final permissionGranted =
-          await androidPlugin.requestNotificationsPermission();
-      print('🔔 DEBUG: Notification permission granted: $permissionGranted');
+      await androidPlugin.requestNotificationsPermission();
 
       // Check exact alarm permission
       final canScheduleExactAlarms =
           await androidPlugin.canScheduleExactNotifications();
-      print('🔔 DEBUG: Can schedule exact alarms: $canScheduleExactAlarms');
 
       if (canScheduleExactAlarms == false) {
-        print('⚠️ WARNING: Exact alarm permission not granted!');
         // Request permission
         await androidPlugin.requestExactAlarmsPermission();
       }
@@ -121,14 +101,7 @@ class NotificationService {
   }
 
   Future<void> scheduleReminder(Reminder reminder) async {
-    print('🔔 DEBUG: scheduleReminder called for: ${reminder.title}');
-    print('🔔 DEBUG: Scheduled time: ${reminder.scheduledTime}');
-    print('🔔 DEBUG: Frequency: ${reminder.frequency}');
-    print('🔔 DEBUG: Is active: ${reminder.isActive}');
-
     if (!_initialized) {
-      print(
-          '⚠️ DEBUG: NotificationService not initialized! Initializing now...');
       await initialize();
     }
 
@@ -150,32 +123,14 @@ class NotificationService {
           await _scheduleOnce(reminder);
           break;
       }
-
-      print('✅ DEBUG: Notification scheduled successfully!');
-
-      // Verify scheduling
-      await _printPendingNotifications();
-    } catch (e, stackTrace) {
-      print('❌ DEBUG: Error scheduling notification: $e');
-      print('❌ DEBUG: Stack trace: $stackTrace');
+    } catch (e) {
+      print('Error scheduling notification: $e');
       rethrow;
     }
   }
 
   Future<void> _scheduleOnce(Reminder reminder) async {
-    print('🔔 DEBUG: _scheduleOnce called');
-    print('🔔 DEBUG: Reminder ID: ${reminder.id}');
-    print('🔔 DEBUG: Title: ${reminder.title}');
-    print('🔔 DEBUG: Scheduled DateTime: ${reminder.scheduledTime}');
-
-    final now = DateTime.now();
-    print('🔔 DEBUG: Current time: $now');
-    print(
-        '🔔 DEBUG: Time until notification: ${reminder.scheduledTime.difference(now).inSeconds} seconds');
-
     final tzDateTime = tz.TZDateTime.from(reminder.scheduledTime, tz.local);
-    print('🔔 DEBUG: TZ DateTime: $tzDateTime');
-    print('🔔 DEBUG: TZ Location: ${tz.local.name}');
 
     // CRITICAL: Complete notification details with ALL required parameters
     final androidDetails = AndroidNotificationDetails(
@@ -220,17 +175,13 @@ class NotificationService {
             UILocalNotificationDateInterpretation.absoluteTime,
         payload: reminder.id,
       );
-      print('✅ DEBUG: zonedSchedule completed successfully');
-    } catch (e, stackTrace) {
-      print('❌ DEBUG: zonedSchedule failed: $e');
-      print('❌ DEBUG: Stack trace: $stackTrace');
+    } catch (e) {
+      print('Error: zonedSchedule failed: $e');
       rethrow;
     }
   }
 
   Future<void> _scheduleDaily(Reminder reminder) async {
-    print('🔔 DEBUG: Scheduling DAILY reminder');
-
     final androidDetails = AndroidNotificationDetails(
       'reminders',
       'Reminders',
@@ -273,8 +224,6 @@ class NotificationService {
   }
 
   Future<void> _scheduleTwiceDaily(Reminder reminder) async {
-    print('🔔 DEBUG: Scheduling TWICE DAILY reminder');
-
     final androidDetails = AndroidNotificationDetails(
       'reminders',
       'Reminders',
@@ -342,8 +291,6 @@ class NotificationService {
   }
 
   Future<void> _scheduleWeekly(Reminder reminder) async {
-    print('🔔 DEBUG: Scheduling WEEKLY reminder');
-
     final androidDetails = AndroidNotificationDetails(
       'reminders',
       'Reminders',
@@ -385,16 +332,7 @@ class NotificationService {
     );
   }
 
-  Future<void> _printPendingNotifications() async {
-    final pending = await _notifications.pendingNotificationRequests();
-    print('🔔 DEBUG: Total pending notifications: ${pending.length}');
-    for (final notif in pending) {
-      print('  - ID: ${notif.id}, Title: ${notif.title}');
-    }
-  }
-
   Future<void> showTestNotification() async {
-    print('🔔 DEBUG: Showing immediate test notification');
 
     if (!_initialized) {
       await initialize();
@@ -433,18 +371,14 @@ class NotificationService {
       'If you see this, notifications are working!',
       notificationDetails,
     );
-
-    print('✅ DEBUG: Test notification shown');
   }
 
   Future<void> cancelReminder(String reminderId) async {
     await _notifications.cancel(reminderId.hashCode);
-    print('🔔 DEBUG: Cancelled notification for reminder: $reminderId');
   }
 
   Future<void> cancelAll() async {
     await _notifications.cancelAll();
-    print('🔔 DEBUG: Cancelled all notifications');
   }
 
   /// Show a notification with custom details
@@ -479,6 +413,5 @@ class NotificationService {
         );
 
     await _notifications.show(id, title, body, notificationDetails);
-    print('✅ DEBUG: Notification shown - ID: $id, Title: $title');
   }
 }

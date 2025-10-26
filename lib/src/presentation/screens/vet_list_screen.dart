@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../domain/models/vet_profile.dart';
 import '../providers/vet_provider.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../utils/specialty_helper.dart';
 
 class VetListScreen extends ConsumerStatefulWidget {
   const VetListScreen({super.key});
@@ -289,7 +290,10 @@ class _VetListScreenState extends ConsumerState<VetListScreen> {
                               if (vet.specialty != null)
                                 Chip(
                                   label: Text(
-                                    vet.specialty!,
+                                    SpecialtyHelper.getLocalizedSpecialty(
+                                      vet.specialty,
+                                      l10n,
+                                    ),
                                     style: const TextStyle(fontSize: 12),
                                   ),
                                   materialTapTargetSize:

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fur_friend_diary/l10n/app_localizations.dart';
 import '../../domain/models/appointment_entry.dart';
 import '../../domain/models/reminder.dart';
 import '../../presentation/providers/care_data_provider.dart';
@@ -216,6 +217,7 @@ class AppointmentList extends ConsumerWidget {
 
   void _showReminderDialog(
       BuildContext context, WidgetRef ref, AppointmentEntry appointment) {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -237,9 +239,9 @@ class AppointmentList extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              const Text(
-                'Set Reminder',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              Text(
+                l10n.setReminder,
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               Expanded(
@@ -248,7 +250,7 @@ class AppointmentList extends ConsumerWidget {
                   children: [
                     ListTile(
                       leading: const Icon(Icons.today, color: Colors.blue),
-                      title: const Text('1 Day Before'),
+                      title: Text(l10n.oneDayBefore),
                       subtitle: Text(_formatReminderTime(
                           appointment.appointmentDate,
                           const Duration(days: 1))),
@@ -266,7 +268,7 @@ class AppointmentList extends ConsumerWidget {
                     ListTile(
                       leading:
                           const Icon(Icons.access_time, color: Colors.orange),
-                      title: const Text('1 Hour Before'),
+                      title: Text(l10n.oneHourBefore),
                       subtitle: Text(_formatReminderTime(
                           appointment.appointmentDate,
                           const Duration(hours: 1))),
@@ -284,7 +286,7 @@ class AppointmentList extends ConsumerWidget {
                     ListTile(
                       leading:
                           const Icon(Icons.notifications, color: Colors.green),
-                      title: const Text('30 Minutes Before'),
+                      title: Text(l10n.thirtyMinutesBefore),
                       subtitle: Text(_formatReminderTime(
                           appointment.appointmentDate,
                           const Duration(minutes: 30))),

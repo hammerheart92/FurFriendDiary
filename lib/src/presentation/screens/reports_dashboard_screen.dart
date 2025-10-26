@@ -403,7 +403,7 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Based on weight stability, medication adherence, and activity levels',
+                      l10n.healthScoreDescription,
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ],
@@ -455,7 +455,7 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
                     Expanded(
                       child: _buildActivitySummaryCard(
                         context,
-                        'Total Feedings',
+                        l10n.totalFeedings,
                         levels['totalFeedings']?.toInt().toString() ?? '0',
                         Icons.restaurant,
                         Colors.orange,
@@ -465,7 +465,7 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
                     Expanded(
                       child: _buildActivitySummaryCard(
                         context,
-                        'Total Walks',
+                        l10n.totalWalks,
                         levels['totalWalks']?.toInt().toString() ?? '0',
                         Icons.pets,
                         Colors.green,
@@ -699,6 +699,7 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
         pet: pet,
         startDate: startDate,
         endDate: endDate,
+        l10n: l10n,
       );
 
       if (context.mounted) {
@@ -761,7 +762,10 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
     );
 
     try {
-      final filePath = await pdfService.generateVetSummary(pet: pet);
+      final filePath = await pdfService.generateVetSummary(
+        pet: pet,
+        l10n: l10n,
+      );
 
       if (context.mounted) {
         Navigator.of(context).pop(); // Close loading dialog
@@ -829,6 +833,7 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
         pet: pet,
         startDate: startDate,
         endDate: endDate,
+        l10n: l10n,
       );
 
       if (context.mounted) {
@@ -855,6 +860,26 @@ class _RecommendationsCard extends StatelessWidget {
     required this.recommendations,
     required this.l10n,
   });
+
+  /// Translate recommendation key to localized text
+  String _getTranslatedRecommendation(String key) {
+    switch (key) {
+      case 'recSetMedicationReminders':
+        return l10n.recSetMedicationReminders;
+      case 'recConsiderVetWeightGain':
+        return l10n.recConsiderVetWeightGain;
+      case 'recConsiderVetWeightLoss':
+        return l10n.recConsiderVetWeightLoss;
+      case 'recIncreaseDailyWalks':
+        return l10n.recIncreaseDailyWalks;
+      case 'recReviewMedicationCosts':
+        return l10n.recReviewMedicationCosts;
+      case 'recScheduleVetCheckup':
+        return l10n.recScheduleVetCheckup;
+      default:
+        return key; // Fallback to key if unknown
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -895,7 +920,7 @@ class _RecommendationsCard extends StatelessWidget {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          rec,
+                          _getTranslatedRecommendation(rec),
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),

@@ -8,6 +8,7 @@ import '../../domain/models/medication_purchase.dart';
 import '../../providers/inventory_providers.dart';
 import '../../providers/medications_provider.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../ui/widgets/medication_card.dart'; // Import for StockUnitTranslation extension
 
 class AddRefillDialog extends ConsumerStatefulWidget {
   final MedicationEntry medication;
@@ -224,7 +225,7 @@ class _AddRefillDialogState extends ConsumerState<AddRefillDialog> {
                     controller: _quantityController,
                     decoration: InputDecoration(
                       labelText: '${l10n.quantityPurchased} *',
-                      hintText: widget.medication.stockUnit ?? l10n.quantity,
+                      hintText: l10n.translateStockUnit(widget.medication.stockUnit),
                       prefixIcon: const Icon(Icons.inventory_2),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),

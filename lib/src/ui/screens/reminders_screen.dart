@@ -52,7 +52,6 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen>
             icon: const Icon(Icons.notifications_active),
             tooltip: 'Test Notification',
             onPressed: () async {
-              print('🧪 DEBUG: Test notification button pressed');
               await NotificationService().showTestNotification();
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(

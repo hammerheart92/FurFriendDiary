@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../presentation/providers/settings_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import 'reminders_screen.dart';
@@ -35,32 +36,32 @@ class SettingsScreen extends ConsumerWidget {
           const Divider(),
 
           // Pet Management Group
-          _buildSectionHeader(context, 'Pet Management'),
+          _buildSectionHeader(context, l10n.petManagement),
           ListTile(
             leading: const Icon(Icons.analytics),
             title: Text(l10n.reportsAndAnalytics),
-            subtitle: const Text('View health scores and activity metrics'),
+            subtitle: Text(l10n.viewHealthScoresAndMetrics),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push('/analytics'),
           ),
           ListTile(
             leading: const Icon(Icons.local_hospital),
             title: Text(l10n.veterinarians),
-            subtitle: const Text('Manage veterinarians and clinics'),
+            subtitle: Text(l10n.manageVeterinariansAndClinics),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push('/vet-list'),
           ),
           ListTile(
             leading: const Icon(Icons.photo_library),
-            title: const Text('Photo Gallery'),
-            subtitle: const Text('View and manage pet photos'),
+            title: Text(l10n.photoGallery),
+            subtitle: Text(l10n.viewAndManagePetPhotos),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push('/photo-gallery'),
           ),
           ListTile(
             leading: const Icon(Icons.inventory),
-            title: const Text('Medication Inventory'),
-            subtitle: const Text('Track medication stock levels'),
+            title: Text(l10n.medicationInventory),
+            subtitle: Text(l10n.trackMedicationStockLevels),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push('/medication-inventory'),
           ),
@@ -151,13 +152,75 @@ class SettingsScreen extends ConsumerWidget {
             leading: const Icon(Icons.privacy_tip_outlined),
             title: Text(l10n.privacyPolicy),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () {},
+            onTap: () async {
+              // Get current locale from app
+              final locale = Localizations.localeOf(context);
+              final isRomanian = locale.languageCode == 'ro';
+
+              // Select URL based on language
+              final urlString = isRomanian
+                  ? 'https://hammerheart92.github.io/furfrienddiary-legal/privacy-policy-ro.html'
+                  : 'https://hammerheart92.github.io/furfrienddiary-legal/privacy-policy.html';
+
+              final url = Uri.parse(urlString);
+
+              try {
+                if (await canLaunchUrl(url)) {
+                  await launchUrl(url, mode: LaunchMode.externalApplication);
+                } else {
+                  if (context.mounted) {
+                    final l10n = AppLocalizations.of(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(l10n.couldNotOpenLink)),
+                    );
+                  }
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  final l10n = AppLocalizations.of(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(l10n.couldNotOpenLink)),
+                  );
+                }
+              }
+            },
           ),
           ListTile(
             leading: const Icon(Icons.description_outlined),
             title: Text(l10n.termsOfService),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () => context.push('/terms'),
+            onTap: () async {
+              // Get current locale from app
+              final locale = Localizations.localeOf(context);
+              final isRomanian = locale.languageCode == 'ro';
+
+              // Select URL based on language
+              final urlString = isRomanian
+                  ? 'https://hammerheart92.github.io/furfrienddiary-legal/terms-of-service-ro.html'
+                  : 'https://hammerheart92.github.io/furfrienddiary-legal/terms-of-service.html';
+
+              final url = Uri.parse(urlString);
+
+              try {
+                if (await canLaunchUrl(url)) {
+                  await launchUrl(url, mode: LaunchMode.externalApplication);
+                } else {
+                  if (context.mounted) {
+                    final l10n = AppLocalizations.of(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(l10n.couldNotOpenLink)),
+                    );
+                  }
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  final l10n = AppLocalizations.of(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(l10n.couldNotOpenLink)),
+                  );
+                }
+              }
+            },
           ),
           ListTile(
             leading: const Icon(Icons.code),

@@ -347,6 +347,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pleaseEnterClinic => 'Please enter clinic name';
 
   @override
+  String get enterManually => 'Enter manually';
+
+  @override
   String get reason => 'Reason';
 
   @override
@@ -524,7 +527,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get outOf => 'out of';
 
   @override
-  String get total => 'total';
+  String get total => 'Total';
 
   @override
   String get avg => 'avg';
@@ -543,6 +546,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get totalFeedings => 'Total Feedings';
+
+  @override
+  String get totalWalks => 'Total Walks';
 
   @override
   String get dailyAverage => 'Daily Average';
@@ -842,6 +848,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get openSourceLicenses => 'Open source licenses';
 
   @override
+  String get couldNotOpenLink => 'Could not open link';
+
+  @override
   String get about => 'About';
 
   @override
@@ -995,7 +1004,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get setReminder => 'Set Reminder';
 
   @override
+  String get oneDayBefore => '1 Day Before';
+
+  @override
+  String get oneHourBefore => '1 Hour Before';
+
+  @override
+  String get thirtyMinutesBefore => '30 Minutes Before';
+
+  @override
   String get reminderSet => 'Reminder set successfully';
+
+  @override
+  String get remindDaily => 'Remind Daily';
+
+  @override
+  String get remindAllDoses => 'Remind All Doses';
+
+  @override
+  String get remindOnce => 'Remind Once';
+
+  @override
+  String get firstDose => 'First dose';
+
+  @override
+  String get customTime => 'Custom time';
+
+  @override
+  String get timesDaily => 'times daily';
 
   @override
   String remindersCreated(int count) {
@@ -1622,6 +1658,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noVetsMatchSearch => 'No veterinarians match your search';
 
   @override
+  String get contactInformation => 'Contact Information';
+
+  @override
+  String get vetNotFound => 'Vet not found';
+
+  @override
+  String get alreadyPreferred => 'This is already your preferred vet';
+
+  @override
+  String get errorOccurred => 'Error';
+
+  @override
+  String get petManagement => 'Pet Management';
+
+  @override
+  String get viewHealthScoresAndMetrics =>
+      'View health scores and activity metrics';
+
+  @override
+  String get manageVeterinariansAndClinics =>
+      'Manage veterinarians and clinics';
+
+  @override
+  String get viewAndManagePetPhotos => 'View and manage pet photos';
+
+  @override
+  String get trackMedicationStockLevels => 'Track medication stock levels';
+
+  @override
   String get reportsAndAnalytics => 'Reports & Analytics';
 
   @override
@@ -1668,6 +1733,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get activityMetrics => 'Activity Metrics';
+
+  @override
+  String get dailyActivityAverage => 'Daily Activity Average';
+
+  @override
+  String get feedingsPerDay => 'Feedings/day';
+
+  @override
+  String get walksPerDay => 'Walks/day';
 
   @override
   String get expenseMetrics => 'Expense Metrics';
@@ -1798,4 +1872,170 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trendStable => 'Stable';
+
+  @override
+  String get monthlyExpenses => 'Monthly Expenses';
+
+  @override
+  String get average => 'Average';
+
+  @override
+  String get highest => 'Highest';
+
+  @override
+  String get excellentRange => 'Excellent (80+)';
+
+  @override
+  String get goodRange => 'Good (60-79)';
+
+  @override
+  String get fairRange => 'Fair (40-59)';
+
+  @override
+  String get lowRange => 'Low (<40)';
+
+  @override
+  String get recSetMedicationReminders =>
+      'Set more medication reminders to improve adherence';
+
+  @override
+  String get recConsiderVetWeightGain =>
+      'Consider vet consultation about weight gain';
+
+  @override
+  String get recConsiderVetWeightLoss =>
+      'Consider vet consultation about weight loss';
+
+  @override
+  String get recIncreaseDailyWalks => 'Increase daily walks for better health';
+
+  @override
+  String get recReviewMedicationCosts =>
+      'Review medication costs with your vet';
+
+  @override
+  String get recScheduleVetCheckup =>
+      'Health score is low - schedule a vet checkup';
+
+  @override
+  String get healthScoreDescription =>
+      'Based on weight stability, medication adherence, and activity levels';
+
+  @override
+  String get pdfPetHealthReport => 'Pet Health Report';
+
+  @override
+  String get pdfPetInformation => 'Pet Information';
+
+  @override
+  String get pdfName => 'Name';
+
+  @override
+  String get pdfSpecies => 'Species';
+
+  @override
+  String get pdfBreed => 'Breed';
+
+  @override
+  String get pdfAge => 'Age';
+
+  @override
+  String get pdfYears => 'years';
+
+  @override
+  String get pdfCat => 'Cat';
+
+  @override
+  String get pdfDog => 'Dog';
+
+  @override
+  String get pdfUnknown => 'Unknown';
+
+  @override
+  String get pdfReportPeriod => 'Report Period';
+
+  @override
+  String get pdfFrom => 'From';
+
+  @override
+  String get pdfTo => 'To';
+
+  @override
+  String get pdfHealthMetrics => 'Health Metrics';
+
+  @override
+  String get pdfOverallHealthScore => 'Overall Health Score';
+
+  @override
+  String get pdfMedicationAdherence => 'Medication Adherence';
+
+  @override
+  String get pdfWeightTrend => 'Weight Trend';
+
+  @override
+  String get pdfStable => 'Stable';
+
+  @override
+  String get pdfGaining => 'Gaining';
+
+  @override
+  String get pdfLosing => 'Losing';
+
+  @override
+  String get pdfActivitySummary => 'Activity Summary';
+
+  @override
+  String get pdfTotalFeedings => 'Total Feedings';
+
+  @override
+  String get pdfTotalWalks => 'Total Walks';
+
+  @override
+  String get pdfAvgFeedingsPerDay => 'Avg Feedings/Day';
+
+  @override
+  String get pdfAvgWalksPerDay => 'Avg Walks/Day';
+
+  @override
+  String get pdfExpenses => 'Expenses';
+
+  @override
+  String get pdfTotalExpenses => 'Total Expenses';
+
+  @override
+  String get pdfGeneratedOn => 'Generated on';
+
+  @override
+  String get pdfFooter => 'FurFriend Diary - Pet Health Management';
+
+  @override
+  String get pdfVeterinarySummary => 'Veterinary Summary';
+
+  @override
+  String get pdfLast30DaysSummary => 'Last 30 Days Summary';
+
+  @override
+  String get pdfHealthStatus => 'Health Status';
+
+  @override
+  String get pdfHealthScore => 'Health Score';
+
+  @override
+  String get pdfMedicationCompliance => 'Medication Compliance';
+
+  @override
+  String get pdfActivityOverview => 'Activity Overview';
+
+  @override
+  String get pdfDailyFeedingsAvg => 'Daily Feedings (Avg)';
+
+  @override
+  String get pdfDailyWalksAvg => 'Daily Walks (Avg)';
+
+  @override
+  String get pdfNotes => 'Notes';
+
+  @override
+  String get pdfNotesText =>
+      'Please review the attached health data and discuss any concerns during the appointment.';
 }
