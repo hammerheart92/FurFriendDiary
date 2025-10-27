@@ -25,16 +25,6 @@ class SettingsScreen extends ConsumerWidget {
           _buildProfileSection(context),
           const Divider(height: 32),
 
-          // Premium (existing)
-          ListTile(
-            leading: const Icon(Icons.workspace_premium),
-            title: Text(l10n.premium),
-            subtitle: Text(l10n.upgradeToUnlock),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => context.push('/premium'),
-          ),
-          const Divider(),
-
           // Pet Management Group
           _buildSectionHeader(context, l10n.petManagement),
           ListTile(

@@ -35,9 +35,6 @@ dependencies:
   # Notifications
   flutter_local_notifications: 17.2.3
 
-  # Purchases
-  in_app_purchase: 3.2.1
-
   # Media & location
   image_picker: 1.1.2
   geolocator: 13.0.2

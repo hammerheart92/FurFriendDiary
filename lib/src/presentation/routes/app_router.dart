@@ -10,7 +10,6 @@ import '../../ui/screens/medication_detail_screen.dart';
 import '../../ui/screens/appointments_screen.dart';
 import '../../ui/screens/reports_screen.dart';
 import '../../ui/screens/settings_screen.dart';
-import '../../ui/screens/premium_screen.dart';
 import '../../ui/screens/profile_edit_screen.dart';
 import '../../ui/screens/terms_screen.dart';
 import '../screens/pet_profile_setup_screen.dart';
@@ -92,8 +91,6 @@ GoRouter createRouter() => GoRouter(
                 builder: (_, __) => const ReportsDashboardScreen()),
             GoRoute(
                 path: '/settings', builder: (_, __) => const SettingsScreen()),
-            GoRoute(
-                path: '/premium', builder: (_, __) => const PremiumScreen()),
             GoRoute(
                 path: '/profiles',
                 builder: (_, __) => const PetProfileScreen()),

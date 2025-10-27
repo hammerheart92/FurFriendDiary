@@ -779,13 +779,6 @@ class AppLocalizationsRo extends AppLocalizations {
   String get settings => 'Setări';
 
   @override
-  String get premium => 'Premium';
-
-  @override
-  String get upgradeToUnlock =>
-      'Actualizează pentru a debloca funcțiile avansate';
-
-  @override
   String get accountSettings => 'Setări Cont';
 
   @override

@@ -1538,18 +1538,6 @@ abstract class AppLocalizations {
   /// **'Settings'**
   String get settings;
 
-  /// No description provided for @premium.
-  ///
-  /// In en, this message translates to:
-  /// **'Premium'**
-  String get premium;
-
-  /// No description provided for @upgradeToUnlock.
-  ///
-  /// In en, this message translates to:
-  /// **'Upgrade to unlock advanced features'**
-  String get upgradeToUnlock;
-
   /// No description provided for @accountSettings.
   ///
   /// In en, this message translates to:

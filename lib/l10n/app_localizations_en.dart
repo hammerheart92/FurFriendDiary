@@ -770,12 +770,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings => 'Settings';
 
   @override
-  String get premium => 'Premium';
-
-  @override
-  String get upgradeToUnlock => 'Upgrade to unlock advanced features';
-
-  @override
   String get accountSettings => 'Account Settings';
 
   @override
