@@ -22,6 +22,10 @@ build/
 android/.gradle/
 android/local.properties
 android/app/build/
+android/key.properties
+android/app/upload-keystore.jks
+*.jks
+*.keystore
 
 # iOS
 ios/Pods/
@@ -36,3 +40,15 @@ ios/Flutter/Flutter.podspec
 # Misc
 *.iml
 *.log
+
+# Debug and documentation files (not for production)
+APPOINTMENT_REMINDER_DATE_BUG_FIX.md
+DEBUG_NOTIFICATIONS_GUIDE.md
+KEYSTORE_INFO.txt
+REMINDER_NOTIFICATIONS_DEBUG_SESSION.md
+capture_logs.bat
+capture_logs.ps1
+nul
+reminder_test.txt
+*.log
+*_test.txt

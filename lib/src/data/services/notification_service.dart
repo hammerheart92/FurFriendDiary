@@ -1,6 +1,7 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:logger/logger.dart';
 import '../../domain/models/reminder.dart';
 
 class NotificationService {
@@ -10,6 +11,7 @@ class NotificationService {
 
   final FlutterLocalNotificationsPlugin _notifications =
       FlutterLocalNotificationsPlugin();
+  final Logger _logger = Logger();
   bool _initialized = false;
 
   Future<void> initialize() async {
@@ -47,6 +49,16 @@ class NotificationService {
         },
       );
 
+      // CRITICAL: Clear any old notifications that might have been scheduled
+      // with incomplete format (prevents "Missing type parameter" error)
+      try {
+        await _notifications.cancelAll();
+        _logger.i('✅ DEBUG: Cleared old pending notifications');
+      } catch (e) {
+        _logger.w('⚠️ WARNING: Could not clear old notifications: $e');
+        // Don't fail initialization if this fails
+      }
+
       // CRITICAL: Create notification channel on Android
       await _createNotificationChannel();
 
@@ -55,7 +67,7 @@ class NotificationService {
 
       _initialized = true;
     } catch (e) {
-      print('Error: NotificationService initialization failed: $e');
+      _logger.e('❌ Error: NotificationService initialization failed: $e');
       rethrow;
     }
   }
@@ -124,13 +136,31 @@ class NotificationService {
           break;
       }
     } catch (e) {
-      print('Error scheduling notification: $e');
+      _logger.e('❌ Error scheduling notification: $e');
       rethrow;
     }
   }
 
   Future<void> _scheduleOnce(Reminder reminder) async {
+    _logger.i('\n=== SCHEDULING REMINDER (ONCE) ===');
+    _logger.i('Type: ${reminder.type}');
+    _logger.i('ID: ${reminder.id}');
+    _logger.i('Notification ID (hashCode): ${reminder.id.hashCode}');
+    _logger.i('Title: ${reminder.title}');
+    _logger.i('Description: ${reminder.description ?? 'Pet care reminder'}');
+    _logger.i('Scheduled DateTime (original): ${reminder.scheduledTime}');
+
     final tzDateTime = tz.TZDateTime.from(reminder.scheduledTime, tz.local);
+    final currentTime = DateTime.now();
+    final currentTzTime = tz.TZDateTime.now(tz.local);
+
+    _logger.i('Scheduled as TZDateTime: $tzDateTime');
+    _logger.i('TZ Location: ${tz.local.name}');
+    _logger.i('Current DateTime: $currentTime');
+    _logger.i('Current TZDateTime: $currentTzTime');
+    _logger.i('Time until notification: ${reminder.scheduledTime.difference(currentTime)}');
+    _logger.i('Is in future: ${reminder.scheduledTime.isAfter(currentTime)}');
+    _logger.i('TZ time is in future: ${tzDateTime.isAfter(currentTzTime)}');
 
     // CRITICAL: Complete notification details with ALL required parameters
     final androidDetails = AndroidNotificationDetails(
@@ -164,6 +194,7 @@ class NotificationService {
     );
 
     try {
+      _logger.i('Calling zonedSchedule...');
       await _notifications.zonedSchedule(
         reminder.id.hashCode,
         reminder.title,
@@ -175,10 +206,22 @@ class NotificationService {
             UILocalNotificationDateInterpretation.absoluteTime,
         payload: reminder.id,
       );
-    } catch (e) {
-      print('Error: zonedSchedule failed: $e');
+      _logger.i('✅ zonedSchedule completed successfully!');
+
+      // Verify it was scheduled
+      final pendingNotifications = await _notifications.pendingNotificationRequests();
+      _logger.i('📋 Total pending notifications: ${pendingNotifications.length}');
+      for (var notif in pendingNotifications) {
+        _logger.d('  - ID: ${notif.id}, Title: ${notif.title}, Body: ${notif.body}');
+      }
+      _logger.i('✓ This notification in pending list: ${pendingNotifications.any((n) => n.id == reminder.id.hashCode)}');
+
+    } catch (e, stackTrace) {
+      _logger.e('❌ ERROR scheduling notification: $e');
+      _logger.e('Stack trace: $stackTrace');
       rethrow;
     }
+    _logger.i('=== END SCHEDULING ===\n');
   }
 
   Future<void> _scheduleDaily(Reminder reminder) async {

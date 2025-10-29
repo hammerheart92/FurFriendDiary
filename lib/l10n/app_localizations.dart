@@ -3913,6 +3913,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please review the attached health data and discuss any concerns during the appointment.'**
   String get pdfNotesText;
+
+  /// Email subject when sharing health report
+  ///
+  /// In en, this message translates to:
+  /// **'Pet Health Report'**
+  String get emailSubject;
+
+  /// Email body text when sharing health report
+  ///
+  /// In en, this message translates to:
+  /// **'Here is the health report for my pet.'**
+  String get emailBody;
+
+  /// Email subject when sharing vet summary
+  ///
+  /// In en, this message translates to:
+  /// **'Veterinary Summary'**
+  String get vetSummaryEmailSubject;
+
+  /// Email body text when sharing vet summary
+  ///
+  /// In en, this message translates to:
+  /// **'Here is the veterinary summary for my pet.'**
+  String get vetSummaryEmailBody;
+
+  /// Email subject when sharing text summary
+  ///
+  /// In en, this message translates to:
+  /// **'Pet Health Summary'**
+  String get textSummaryEmailSubject;
 }
 
 class _AppLocalizationsDelegate

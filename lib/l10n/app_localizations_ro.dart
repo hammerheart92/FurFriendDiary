@@ -2049,4 +2049,21 @@ class AppLocalizationsRo extends AppLocalizations {
   @override
   String get pdfNotesText =>
       'Vă rugăm să revizuiți datele de sănătate atașate și să discutați orice preocupări în timpul programării.';
+
+  @override
+  String get emailSubject => 'Raport Sănătate Animale';
+
+  @override
+  String get emailBody =>
+      'Acesta este raportul de sănătate pentru animalul meu.';
+
+  @override
+  String get vetSummaryEmailSubject => 'Rezumat Veterinar';
+
+  @override
+  String get vetSummaryEmailBody =>
+      'Acesta este rezumatul veterinar pentru animalul meu.';
+
+  @override
+  String get textSummaryEmailSubject => 'Rezumat Sănătate Animale';
 }

@@ -869,5 +869,26 @@
   "pdfDailyFeedingsAvg": "Daily Feedings (Avg)",
   "pdfDailyWalksAvg": "Daily Walks (Avg)",
   "pdfNotes": "Notes",
-  "pdfNotesText": "Please review the attached health data and discuss any concerns during the appointment."
+  "pdfNotesText": "Please review the attached health data and discuss any concerns during the appointment.",
+
+  "emailSubject": "Pet Health Report",
+  "@emailSubject": {
+    "description": "Email subject when sharing health report"
+  },
+  "emailBody": "Here is the health report for my pet.",
+  "@emailBody": {
+    "description": "Email body text when sharing health report"
+  },
+  "vetSummaryEmailSubject": "Veterinary Summary",
+  "@vetSummaryEmailSubject": {
+    "description": "Email subject when sharing vet summary"
+  },
+  "vetSummaryEmailBody": "Here is the veterinary summary for my pet.",
+  "@vetSummaryEmailBody": {
+    "description": "Email body text when sharing vet summary"
+  },
+  "textSummaryEmailSubject": "Pet Health Summary",
+  "@textSummaryEmailSubject": {
+    "description": "Email subject when sharing text summary"
+  }
 }

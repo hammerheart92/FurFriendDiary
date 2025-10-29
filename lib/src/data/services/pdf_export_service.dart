@@ -292,12 +292,16 @@ class PDFExportService {
   }
 
   /// Share a PDF file using the native share dialog
-  Future<void> shareReport(String filePath) async {
+  Future<void> shareReport(
+    String filePath, {
+    String? subject,
+    String? text,
+  }) async {
     final file = XFile(filePath);
     await Share.shareXFiles(
       [file],
-      subject: 'Pet Health Report',
-      text: 'Here is the health report for my pet.',
+      subject: subject ?? 'Pet Health Report',
+      text: text ?? 'Here is the health report for my pet.',
     );
   }
 
@@ -349,10 +353,10 @@ class PDFExportService {
   }
 
   /// Share text summary
-  Future<void> shareTextSummary(String summary) async {
+  Future<void> shareTextSummary(String summary, {String? subject}) async {
     await Share.share(
       summary,
-      subject: 'Pet Health Summary',
+      subject: subject ?? 'Pet Health Summary',
     );
   }
 

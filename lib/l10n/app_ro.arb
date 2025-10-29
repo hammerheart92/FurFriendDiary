@@ -689,5 +689,26 @@
   "pdfDailyFeedingsAvg": "Hrăniri zilnice (medie)",
   "pdfDailyWalksAvg": "Plimbări zilnice (medie)",
   "pdfNotes": "Note",
-  "pdfNotesText": "Vă rugăm să revizuiți datele de sănătate atașate și să discutați orice preocupări în timpul programării."
+  "pdfNotesText": "Vă rugăm să revizuiți datele de sănătate atașate și să discutați orice preocupări în timpul programării.",
+
+  "emailSubject": "Raport Sănătate Animale",
+  "@emailSubject": {
+    "description": "Subiectul emailului pentru raportul de sănătate"
+  },
+  "emailBody": "Acesta este raportul de sănătate pentru animalul meu.",
+  "@emailBody": {
+    "description": "Textul emailului pentru raportul de sănătate"
+  },
+  "vetSummaryEmailSubject": "Rezumat Veterinar",
+  "@vetSummaryEmailSubject": {
+    "description": "Subiectul emailului pentru rezumatul veterinar"
+  },
+  "vetSummaryEmailBody": "Acesta este rezumatul veterinar pentru animalul meu.",
+  "@vetSummaryEmailBody": {
+    "description": "Textul emailului pentru rezumatul veterinar"
+  },
+  "textSummaryEmailSubject": "Rezumat Sănătate Animale",
+  "@textSummaryEmailSubject": {
+    "description": "Subiectul emailului pentru rezumatul text"
+  }
 }

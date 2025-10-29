@@ -492,12 +492,13 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
                       leading: const Icon(Icons.today, color: Colors.blue),
                       title: Text(l10n.oneDayBefore),
                       subtitle: Text(_formatReminderTime(
-                          appointment.appointmentDate, const Duration(days: 1))),
+                          _combineDateTime(appointment), const Duration(days: 1))),
                       onTap: () {
                         Navigator.pop(context);
+                        final appointmentDateTime = _combineDateTime(appointment);
                         _createReminder(
                           appointment,
-                          appointment.appointmentDate.subtract(const Duration(days: 1)),
+                          appointmentDateTime.subtract(const Duration(days: 1)),
                         );
                       },
                     ),
@@ -505,12 +506,13 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
                       leading: const Icon(Icons.access_time, color: Colors.orange),
                       title: Text(l10n.oneHourBefore),
                       subtitle: Text(_formatReminderTime(
-                          appointment.appointmentDate, const Duration(hours: 1))),
+                          _combineDateTime(appointment), const Duration(hours: 1))),
                       onTap: () {
                         Navigator.pop(context);
+                        final appointmentDateTime = _combineDateTime(appointment);
                         _createReminder(
                           appointment,
-                          appointment.appointmentDate.subtract(const Duration(hours: 1)),
+                          appointmentDateTime.subtract(const Duration(hours: 1)),
                         );
                       },
                     ),
@@ -518,12 +520,13 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
                       leading: const Icon(Icons.notifications, color: Colors.green),
                       title: Text(l10n.thirtyMinutesBefore),
                       subtitle: Text(_formatReminderTime(
-                          appointment.appointmentDate, const Duration(minutes: 30))),
+                          _combineDateTime(appointment), const Duration(minutes: 30))),
                       onTap: () {
                         Navigator.pop(context);
+                        final appointmentDateTime = _combineDateTime(appointment);
                         _createReminder(
                           appointment,
-                          appointment.appointmentDate.subtract(const Duration(minutes: 30)),
+                          appointmentDateTime.subtract(const Duration(minutes: 30)),
                         );
                       },
                     ),
@@ -534,6 +537,19 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
           ),
         ),
       ),
+    );
+  }
+
+  /// Combine separate date and time fields into a single DateTime
+  DateTime _combineDateTime(AppointmentEntry appointment) {
+    return DateTime(
+      appointment.appointmentDate.year,
+      appointment.appointmentDate.month,
+      appointment.appointmentDate.day,
+      appointment.appointmentTime.hour,
+      appointment.appointmentTime.minute,
+      0, // seconds
+      0, // milliseconds
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
 import 'package:fur_friend_diary/src/presentation/providers/pet_profile_provider.dart';
 import 'package:fur_friend_diary/src/presentation/providers/analytics_provider.dart';
@@ -20,6 +21,17 @@ class ReportsDashboardScreen extends ConsumerStatefulWidget {
 
 class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
     with SingleTickerProviderStateMixin {
+  final Logger _logger = Logger(
+    printer: PrettyPrinter(
+      methodCount: 0,
+      errorMethodCount: 5,
+      lineLength: 50,
+      colors: true,
+      printEmojis: true,
+      dateTimeFormat: DateTimeFormat.none,
+    ),
+  );
+
   late TabController _tabController;
   DateRange _selectedRange = DateRange.thirtyDays;
 
@@ -679,64 +691,122 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
     DateTime startDate,
     DateTime endDate,
   ) async {
-    // Show loading dialog
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        content: Row(
-          children: [
-            const CircularProgressIndicator(),
-            const SizedBox(width: 16),
-            Text(l10n.generatingReport),
-          ],
-        ),
-      ),
-    );
-
     try {
+      _logger.i('📄 Step 1: Starting PDF export...');
+
+      // Show non-blocking loading feedback using SnackBar
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Text(l10n.generatingReport),
+            ],
+          ),
+          duration: const Duration(seconds: 30), // Long duration for generation
+          backgroundColor: Colors.blue.shade700,
+        ),
+      );
+
+      _logger.i('✅ Step 2: Loading indicator shown (SnackBar)');
+
+      // Generate PDF
+      _logger.i('📄 Step 3: Generating PDF...');
       final filePath = await pdfService.generateHealthReport(
         pet: pet,
         startDate: startDate,
         endDate: endDate,
         l10n: l10n,
+      ).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          throw Exception('PDF generation timed out after 30 seconds');
+        },
       );
 
-      if (context.mounted) {
-        Navigator.of(context).pop(); // Close loading dialog
+      _logger.i('✅ Step 4: PDF generated: $filePath');
 
-        // Show success message with share option
-        final result = await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text(l10n.reportGenerated),
-            content: Text(l10n.reportSaved(filePath)),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: Text(l10n.close),
-              ),
-              FilledButton.icon(
-                onPressed: () => Navigator.of(context).pop(true),
-                icon: const Icon(Icons.share),
-                label: Text(l10n.shareReport),
+      // Dismiss loading SnackBar
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      _logger.i('🔄 Step 5: Loading indicator dismissed');
+
+      // Small delay to ensure UI is stable
+      await Future.delayed(const Duration(milliseconds: 200));
+
+      // Share PDF immediately - NO INTERMEDIATE DIALOGS
+      _logger.i('📤 Step 6: Opening share dialog...');
+
+      if (!context.mounted) return;
+      await pdfService.shareReport(
+        filePath,
+        subject: l10n.emailSubject,
+        text: l10n.emailBody,
+      );
+
+      _logger.i('✅ Step 7: Share completed');
+
+      // Show brief success message (non-blocking)
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.white),
+              const SizedBox(width: 8),
+              Text(l10n.reportGeneratedSuccessfully),
+            ],
+          ),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    } catch (e, stackTrace) {
+      _logger.e('❌ ERROR in PDF export: $e');
+      _logger.e('Stack trace: $stackTrace');
+
+      // Ensure loading is dismissed on error
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      }
+
+      // Show error message (non-blocking)
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.error, color: Colors.white),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  l10n.failedToGeneratePDF(e.toString()),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ],
           ),
-        );
-
-        // If user wants to share, share the file
-        if (result == true) {
-          await pdfService.shareReport(filePath);
-        }
-      }
-    } catch (e) {
-      if (context.mounted) {
-        Navigator.of(context).pop(); // Close loading dialog
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.failedToGeneratePDF(e.toString()))),
-        );
-      }
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 5),
+          action: SnackBarAction(
+            label: l10n.close,
+            textColor: Colors.white,
+            onPressed: () {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            },
+          ),
+        ),
+      );
     }
   }
 
@@ -746,62 +816,116 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
     dynamic pdfService,
     dynamic pet,
   ) async {
-    // Show loading dialog
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        content: Row(
-          children: [
-            const CircularProgressIndicator(),
-            const SizedBox(width: 16),
-            Text(l10n.generatingReport),
-          ],
-        ),
-      ),
-    );
-
     try {
+      _logger.i('📄 Step 1: Starting vet summary export...');
+
+      // Show non-blocking loading feedback
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Text(l10n.generatingReport),
+            ],
+          ),
+          duration: const Duration(seconds: 30),
+          backgroundColor: Colors.blue.shade700,
+        ),
+      );
+
+      _logger.i('✅ Step 2: Loading indicator shown');
+
+      // Generate vet summary PDF
+      _logger.i('📄 Step 3: Generating vet summary...');
       final filePath = await pdfService.generateVetSummary(
         pet: pet,
         l10n: l10n,
+      ).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          throw Exception('Vet summary generation timed out after 30 seconds');
+        },
       );
 
-      if (context.mounted) {
-        Navigator.of(context).pop(); // Close loading dialog
+      _logger.i('✅ Step 4: Vet summary generated: $filePath');
 
-        // Show success message with share option
-        final result = await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text(l10n.reportGenerated),
-            content: Text(l10n.reportSaved(filePath)),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: Text(l10n.close),
-              ),
-              FilledButton.icon(
-                onPressed: () => Navigator.of(context).pop(true),
-                icon: const Icon(Icons.share),
-                label: Text(l10n.shareReport),
+      // Dismiss loading
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      _logger.i('🔄 Step 5: Loading indicator dismissed');
+
+      await Future.delayed(const Duration(milliseconds: 200));
+
+      // Share immediately
+      _logger.i('📤 Step 6: Opening share dialog...');
+      if (!context.mounted) return;
+      await pdfService.shareReport(
+        filePath,
+        subject: l10n.vetSummaryEmailSubject,
+        text: l10n.vetSummaryEmailBody,
+      );
+
+      _logger.i('✅ Step 7: Share completed');
+
+      // Success message
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.white),
+              const SizedBox(width: 8),
+              Text(l10n.reportGeneratedSuccessfully),
+            ],
+          ),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    } catch (e, stackTrace) {
+      _logger.e('❌ ERROR in vet summary export: $e');
+      _logger.e('Stack trace: $stackTrace');
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      }
+
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.error, color: Colors.white),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  l10n.failedToGeneratePDF(e.toString()),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ],
           ),
-        );
-
-        // If user wants to share, share the file
-        if (result == true) {
-          await pdfService.shareReport(filePath);
-        }
-      }
-    } catch (e) {
-      if (context.mounted) {
-        Navigator.of(context).pop(); // Close loading dialog
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.failedToGeneratePDF(e.toString()))),
-        );
-      }
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 5),
+          action: SnackBarAction(
+            label: l10n.close,
+            textColor: Colors.white,
+            onPressed: () {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            },
+          ),
+        ),
+      );
     }
   }
 
@@ -813,40 +937,117 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
     DateTime startDate,
     DateTime endDate,
   ) async {
-    // Show loading dialog
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        content: Row(
-          children: [
-            const CircularProgressIndicator(),
-            const SizedBox(width: 16),
-            Text(l10n.generatingReport),
-          ],
-        ),
-      ),
-    );
-
     try {
+      _logger.i('📄 Step 1: Starting text summary export...');
+
+      // Show non-blocking loading feedback
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Text(l10n.generatingReport),
+            ],
+          ),
+          duration: const Duration(seconds: 30),
+          backgroundColor: Colors.blue.shade700,
+        ),
+      );
+
+      _logger.i('✅ Step 2: Loading indicator shown');
+
+      // Generate text summary
+      _logger.i('📄 Step 3: Generating text summary...');
       final summary = await pdfService.generateTextSummary(
         pet: pet,
         startDate: startDate,
         endDate: endDate,
         l10n: l10n,
+      ).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          throw Exception('Text summary generation timed out after 30 seconds');
+        },
       );
 
+      _logger.i('✅ Step 4: Text summary generated');
+
+      // Dismiss loading
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      _logger.i('🔄 Step 5: Loading indicator dismissed');
+
+      await Future.delayed(const Duration(milliseconds: 200));
+
+      // Share immediately
+      _logger.i('📤 Step 6: Opening share dialog...');
+      if (!context.mounted) return;
+      await pdfService.shareTextSummary(
+        summary,
+        subject: l10n.textSummaryEmailSubject,
+      );
+
+      _logger.i('✅ Step 7: Share completed');
+
+      // Success message
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.white),
+              const SizedBox(width: 8),
+              Text(l10n.reportGeneratedSuccessfully),
+            ],
+          ),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    } catch (e, stackTrace) {
+      _logger.e('❌ ERROR in text summary export: $e');
+      _logger.e('Stack trace: $stackTrace');
+
       if (context.mounted) {
-        Navigator.of(context).pop(); // Close loading dialog
-        await pdfService.shareTextSummary(summary);
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
       }
-    } catch (e) {
-      if (context.mounted) {
-        Navigator.of(context).pop(); // Close loading dialog
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.failedToShareReport)),
-        );
-      }
+
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.error, color: Colors.white),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  l10n.failedToShareReport,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 5),
+          action: SnackBarAction(
+            label: l10n.close,
+            textColor: Colors.white,
+            onPressed: () {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            },
+          ),
+        ),
+      );
     }
   }
 }

@@ -2032,4 +2032,20 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get pdfNotesText =>
       'Please review the attached health data and discuss any concerns during the appointment.';
+
+  @override
+  String get emailSubject => 'Pet Health Report';
+
+  @override
+  String get emailBody => 'Here is the health report for my pet.';
+
+  @override
+  String get vetSummaryEmailSubject => 'Veterinary Summary';
+
+  @override
+  String get vetSummaryEmailBody =>
+      'Here is the veterinary summary for my pet.';
+
+  @override
+  String get textSummaryEmailSubject => 'Pet Health Summary';
 }

@@ -432,7 +432,9 @@ class _MonthlyExpenseChartState extends State<MonthlyExpenseChart>
                       gridData: FlGridData(
                         show: true,
                         drawVerticalLine: false,
-                        horizontalInterval: maxExpense / 5,
+                        // CRITICAL FIX: Prevent zero horizontalInterval
+                        // When maxExpense is 0 or very small, interval becomes 0 causing crash
+                        horizontalInterval: math.max(1.0, maxExpense / 5),
                         getDrawingHorizontalLine: (value) {
                           return FlLine(
                             color: theme.colorScheme.outline

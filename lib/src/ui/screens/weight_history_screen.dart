@@ -188,7 +188,9 @@ class WeightHistoryScreen extends ConsumerWidget {
         sortedEntries.map((e) => e.weight).reduce((a, b) => a < b ? a : b);
     final maxWeight =
         sortedEntries.map((e) => e.weight).reduce((a, b) => a > b ? a : b);
+    // CRITICAL FIX: Prevent zero range when all weights are the same
     final weightRange = maxWeight - minWeight;
+    final safeRange = weightRange > 0 ? weightRange : 1.0;
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -243,8 +245,9 @@ class WeightHistoryScreen extends ConsumerWidget {
                         sideTitles: SideTitles(showTitles: false)),
                   ),
                   borderData: FlBorderData(show: true),
-                  minY: minWeight - (weightRange * 0.1),
-                  maxY: maxWeight + (weightRange * 0.1),
+                  // Use safeRange to prevent issues when all weights are identical
+                  minY: minWeight - (safeRange * 0.1),
+                  maxY: maxWeight + (safeRange * 0.1),
                   lineBarsData: [
                     LineChartBarData(
                       spots: spots,
