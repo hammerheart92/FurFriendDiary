@@ -17,7 +17,7 @@ class ReminderRepository {
       await _notificationService.scheduleReminder(reminder);
     }
 
-    _logger.i('Added reminder: ${reminder.title}');
+    _logger.i('Added reminder: id=${reminder.id}, type=${reminder.type}');
   }
 
   Future<void> updateReminder(Reminder reminder) async {
@@ -30,7 +30,7 @@ class ReminderRepository {
       await _notificationService.scheduleReminder(reminder);
     }
 
-    _logger.i('Updated reminder: ${reminder.title}');
+    _logger.i('Updated reminder: id=${reminder.id}, type=${reminder.type}');
   }
 
   Future<void> deleteReminder(String reminderId) async {

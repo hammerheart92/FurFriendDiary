@@ -50,5 +50,4 @@ capture_logs.bat
 capture_logs.ps1
 nul
 reminder_test.txt
-*.log
 *_test.txt

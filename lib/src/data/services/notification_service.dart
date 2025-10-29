@@ -146,21 +146,21 @@ class NotificationService {
     _logger.i('Type: ${reminder.type}');
     _logger.i('ID: ${reminder.id}');
     _logger.i('Notification ID (hashCode): ${reminder.id.hashCode}');
-    _logger.i('Title: ${reminder.title}');
-    _logger.i('Description: ${reminder.description ?? 'Pet care reminder'}');
-    _logger.i('Scheduled DateTime (original): ${reminder.scheduledTime}');
+    _logger.i('Title: [REDACTED] (len: ${reminder.title.length})');
+    _logger.i('Description: [REDACTED] (len: ${(reminder.description ?? '').length}, present: ${reminder.description != null})');
+    _logger.d('Scheduled DateTime (original): ${reminder.scheduledTime}');
 
     final tzDateTime = tz.TZDateTime.from(reminder.scheduledTime, tz.local);
     final currentTime = DateTime.now();
     final currentTzTime = tz.TZDateTime.now(tz.local);
 
-    _logger.i('Scheduled as TZDateTime: $tzDateTime');
-    _logger.i('TZ Location: ${tz.local.name}');
-    _logger.i('Current DateTime: $currentTime');
-    _logger.i('Current TZDateTime: $currentTzTime');
-    _logger.i('Time until notification: ${reminder.scheduledTime.difference(currentTime)}');
-    _logger.i('Is in future: ${reminder.scheduledTime.isAfter(currentTime)}');
-    _logger.i('TZ time is in future: ${tzDateTime.isAfter(currentTzTime)}');
+    _logger.d('Scheduled as TZDateTime: $tzDateTime');
+    _logger.d('TZ Location: ${tz.local.name}');
+    _logger.d('Current DateTime: $currentTime');
+    _logger.d('Current TZDateTime: $currentTzTime');
+    _logger.d('Time until notification: ${reminder.scheduledTime.difference(currentTime)}');
+    _logger.d('Is in future: ${reminder.scheduledTime.isAfter(currentTime)}');
+    _logger.d('TZ time is in future: ${tzDateTime.isAfter(currentTzTime)}');
 
     // CRITICAL: Complete notification details with ALL required parameters
     final androidDetails = AndroidNotificationDetails(
@@ -210,11 +210,11 @@ class NotificationService {
 
       // Verify it was scheduled
       final pendingNotifications = await _notifications.pendingNotificationRequests();
-      _logger.i('📋 Total pending notifications: ${pendingNotifications.length}');
+      _logger.d('Pending notifications: ${pendingNotifications.length} total');
       for (var notif in pendingNotifications) {
-        _logger.d('  - ID: ${notif.id}, Title: ${notif.title}, Body: ${notif.body}');
+        _logger.d('  - ID: ${notif.id} (titleLen: ${notif.title?.length ?? 0}, bodyLen: ${notif.body?.length ?? 0})');
       }
-      _logger.i('✓ This notification in pending list: ${pendingNotifications.any((n) => n.id == reminder.id.hashCode)}');
+      _logger.d('Current reminder in pending: ${pendingNotifications.any((n) => n.id == reminder.id.hashCode)}');
 
     } catch (e, stackTrace) {
       _logger.e('❌ ERROR scheduling notification: $e');

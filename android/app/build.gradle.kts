@@ -1,5 +1,6 @@
 import java.util.Properties
 import java.io.FileInputStream
+import org.gradle.api.GradleException
 
 plugins {
     id("com.android.application")
@@ -8,10 +9,23 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// Load keystore properties
+// Load keystore properties with fail-fast behavior for release builds
 val keystoreProperties = Properties()
 val keystorePropertiesFile = rootProject.file("key.properties")
-if (keystorePropertiesFile.exists()) {
+// Detect if any requested task is a release task (assembleRelease, bundleRelease, etc.)
+val isReleaseTaskRequested = gradle.startParameter.taskNames.any { it.contains("release", ignoreCase = true) }
+
+if (!keystorePropertiesFile.exists()) {
+    if (isReleaseTaskRequested) {
+        throw GradleException(
+            "Missing key.properties required for release signing. " +
+            "Create android/key.properties (or project root key.properties depending on your setup) with: " +
+            "keyAlias, keyPassword, storeFile, storePassword; or configure signing another way."
+        )
+    } else {
+        logger.lifecycle("key.properties not found; skipping release signing configuration for debug/non-release tasks.")
+    }
+} else {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
@@ -39,17 +53,38 @@ android {
     }
 
     signingConfigs {
-        create("release") {
-            keyAlias = keystoreProperties["keyAlias"] as String
-            keyPassword = keystoreProperties["keyPassword"] as String
-            storeFile = file(keystoreProperties["storeFile"] as String)
-            storePassword = keystoreProperties["storePassword"] as String
+        if (keystorePropertiesFile.exists()) {
+            create("release") {
+                // Safely retrieve properties with validation
+                val keyAlias = keystoreProperties["keyAlias"]?.toString()
+                val keyPassword = keystoreProperties["keyPassword"]?.toString()
+                val storeFilePath = keystoreProperties["storeFile"]?.toString()
+                val storePassword = keystoreProperties["storePassword"]?.toString()
+
+                // Validate required properties exist
+                requireNotNull(keyAlias) { "Missing 'keyAlias' in key.properties" }
+                requireNotNull(keyPassword) { "Missing 'keyPassword' in key.properties" }
+                requireNotNull(storeFilePath) { "Missing 'storeFile' in key.properties" }
+                requireNotNull(storePassword) { "Missing 'storePassword' in key.properties" }
+
+                // Assign validated values
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
+                this.storeFile = file(storeFilePath)
+                this.storePassword = storePassword
+            }
         }
     }
 
+
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("release")
+            if (keystorePropertiesFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            } else {
+                // Explicitly skip signing when no keystore is present (debug/non-release tasks)
+                // If a release task is actually requested, we already failed fast above.
+            }
         }
     }
 }
