@@ -1301,6 +1301,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get photoDetails => 'Photo Details';
 
   @override
+  String get photo => 'Photo';
+
+  @override
+  String get share => 'Share';
+
+  @override
+  String get setProfilePhoto => 'Set as Profile Photo';
+
+  @override
+  String setProfilePhotoConfirm(String petName) {
+    return 'Set this photo as $petName\'s profile photo?';
+  }
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get profilePhotoUpdated => 'Profile photo updated!';
+
+  @override
+  String get photoNotFound => 'Photo not found';
+
+  @override
   String get medicationInventory => 'Medication Inventory';
 
   @override

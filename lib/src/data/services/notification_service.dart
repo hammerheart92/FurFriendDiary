@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tz;
@@ -49,36 +50,49 @@ class NotificationService {
         },
       );
 
-      // CRITICAL: Clear any old notifications that might have been scheduled
-      // with incomplete format (prevents "Missing type parameter" error)
-      try {
-        await _notifications.cancelAll();
-        _logger.i('✅ DEBUG: Cleared old pending notifications');
-      } catch (e) {
-        _logger.w('⚠️ WARNING: Could not clear old notifications: $e');
-        // Don't fail initialization if this fails
-      }
+      // Note: cancelAll() removed - it was deleting scheduled reminders on app restart!
+      // The "Missing type parameter" error was fixed by adding complete AndroidNotificationDetails
+      _logger.i('✅ DEBUG: NotificationService initializing (preserving existing reminders)');
 
-      // CRITICAL: Create notification channel on Android
+      // CRITICAL: Delete old channel and create new one with correct importance
+      await _deleteOldChannel();
       await _createNotificationChannel();
 
       // Check permissions
       await _checkPermissions();
 
       _initialized = true;
+      _logger.i('✅ NotificationService fully initialized');
     } catch (e) {
       _logger.e('❌ Error: NotificationService initialization failed: $e');
       rethrow;
     }
   }
 
+  /// Force delete old notification channel to clear cached settings
+  Future<void> _deleteOldChannel() async {
+    final androidPlugin = _notifications.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
+
+    if (androidPlugin != null) {
+      try {
+        // Delete the old 'reminders' channel that was cached with Importance.high
+        await androidPlugin.deleteNotificationChannel('reminders');
+        _logger.i('🗑️ Deleted old notification channel');
+      } catch (e) {
+        // Channel might not exist, that's fine
+        _logger.d('Old channel not found (this is expected on fresh install): $e');
+      }
+    }
+  }
+
   /// CRITICAL: Create Android notification channel
   Future<void> _createNotificationChannel() async {
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
-      'reminders', // id - MUST match the channelId in notification details
-      'Reminders', // name
-      description: 'Pet care reminders and notifications',
-      importance: Importance.high,
+      'reminders_v2', // NEW channel ID to force recreation with correct importance
+      'Pet Reminders', // name
+      description: 'Critical pet care reminders and alarms',
+      importance: Importance.max, // CRITICAL: Use max for time-sensitive alarms
       playSound: true,
       enableVibration: true,
       showBadge: true,
@@ -89,28 +103,43 @@ class NotificationService {
 
     if (androidPlugin != null) {
       await androidPlugin.createNotificationChannel(channel);
+      _logger.i('✅ Notification channel "reminders_v2" created with Importance.max');
     }
   }
 
   /// Check notification permissions
-  Future<void> _checkPermissions() async {
-    final androidPlugin = _notifications.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
+/// CRITICAL FIX: Handle null values from canScheduleExactNotifications()
+Future<void> _checkPermissions() async {
+  final androidPlugin = _notifications.resolvePlatformSpecificImplementation<
+      AndroidFlutterLocalNotificationsPlugin>();
 
-    if (androidPlugin != null) {
-      // Request permissions on Android 13+
-      await androidPlugin.requestNotificationsPermission();
+  if (androidPlugin != null) {
+    // Request permissions on Android 13+
+    await androidPlugin.requestNotificationsPermission();
 
-      // Check exact alarm permission
-      final canScheduleExactAlarms =
+    // Check exact alarm permission (Android 12+/API 31+)
+    final canScheduleExactAlarms =
+        await androidPlugin.canScheduleExactNotifications();
+
+    // CRITICAL FIX: Treat null and false the same - both mean permission not granted
+    if (canScheduleExactAlarms != true) {
+      // Request permission - this opens Settings on Android 12+
+      await androidPlugin.requestExactAlarmsPermission();
+
+      // Wait a moment for settings to potentially be changed
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      // Verify again
+      final canScheduleAfterRequest =
           await androidPlugin.canScheduleExactNotifications();
 
-      if (canScheduleExactAlarms == false) {
-        // Request permission
-        await androidPlugin.requestExactAlarmsPermission();
+      if (canScheduleAfterRequest != true) {
+        _logger.e(
+            'CRITICAL: Exact alarm permission NOT granted. Scheduled reminders WILL NOT WORK until user enables this permission manually!');
       }
     }
   }
+}
 
   Future<void> scheduleReminder(Reminder reminder) async {
     if (!_initialized) {
@@ -118,6 +147,26 @@ class NotificationService {
     }
 
     try {
+      _logger.i('Attempting to schedule reminder: ${reminder.id}');
+
+      // CRITICAL: Cancel any existing notification with same ID first
+      try {
+        await _notifications.cancel(reminder.id.hashCode);
+        _logger.d(
+            'Cancelled any existing notification with ID: ${reminder.id.hashCode}');
+      } catch (e) {
+        _logger.w('Could not cancel existing notification (may not exist): $e');
+      }
+
+      // Small delay to ensure cancellation completes
+      await Future.delayed(const Duration(milliseconds: 50));
+
+      // Get pending notifications BEFORE scheduling
+      final pendingBefore = await _notifications.pendingNotificationRequests();
+      _logger.d(
+          'Pending notifications before scheduling: ${pendingBefore.length}');
+
+      // Schedule according to frequency
       switch (reminder.frequency) {
         case ReminderFrequency.once:
           await _scheduleOnce(reminder);
@@ -135,8 +184,27 @@ class NotificationService {
           await _scheduleOnce(reminder);
           break;
       }
-    } catch (e) {
-      _logger.e('❌ Error scheduling notification: $e');
+
+      // Verify it was scheduled
+      final pendingAfter = await _notifications.pendingNotificationRequests();
+      _logger.i(
+          '✅ Reminder scheduled successfully. Pending count: ${pendingAfter.length}');
+    } catch (e, stackTrace) {
+      _logger.e('❌ Failed to schedule reminder: $e');
+      _logger.e('Stack trace: $stackTrace');
+
+      // If this is the "Missing type parameter" error, clear ALL notifications
+      if (e.toString().contains('Missing type parameter')) {
+        _logger.w(
+            '⚠️ Detected "Missing type parameter" error - clearing all notifications');
+        try {
+          await _notifications.cancelAll();
+          _logger.i('✅ All notifications cleared due to format error');
+        } catch (clearError) {
+          _logger.e('❌ Could not clear notifications: $clearError');
+        }
+      }
+
       rethrow;
     }
   }
@@ -147,7 +215,8 @@ class NotificationService {
     _logger.i('ID: ${reminder.id}');
     _logger.i('Notification ID (hashCode): ${reminder.id.hashCode}');
     _logger.i('Title: [REDACTED] (len: ${reminder.title.length})');
-    _logger.i('Description: [REDACTED] (len: ${(reminder.description ?? '').length}, present: ${reminder.description != null})');
+    _logger.i(
+        'Description: [REDACTED] (len: ${(reminder.description ?? '').length}, present: ${reminder.description != null})');
     _logger.d('Scheduled DateTime (original): ${reminder.scheduledTime}');
 
     final tzDateTime = tz.TZDateTime.from(reminder.scheduledTime, tz.local);
@@ -158,20 +227,22 @@ class NotificationService {
     _logger.d('TZ Location: ${tz.local.name}');
     _logger.d('Current DateTime: $currentTime');
     _logger.d('Current TZDateTime: $currentTzTime');
-    _logger.d('Time until notification: ${reminder.scheduledTime.difference(currentTime)}');
+    _logger.d(
+        'Time until notification: ${reminder.scheduledTime.difference(currentTime)}');
     _logger.d('Is in future: ${reminder.scheduledTime.isAfter(currentTime)}');
     _logger.d('TZ time is in future: ${tzDateTime.isAfter(currentTzTime)}');
 
     // CRITICAL: Complete notification details with ALL required parameters
     final androidDetails = AndroidNotificationDetails(
-      'reminders', // MUST match channel ID created in _createNotificationChannel
-      'Reminders',
-      channelDescription: 'Pet care reminders and notifications',
-      importance: Importance.high,
+      'reminders_v2', // MUST match channel ID created in _createNotificationChannel
+      'Pet Reminders',
+      channelDescription: 'Critical pet care reminders and alarms',
+      importance: Importance.max, // CRITICAL: Must match channel importance
       priority: Priority.high,
       playSound: true,
       enableVibration: true,
       showWhen: true,
+      when: reminder.scheduledTime.millisecondsSinceEpoch,
       ticker: 'Pet Care Reminder',
       // CRITICAL: Add these to prevent "Missing type parameter" error
       icon: '@mipmap/ic_launcher',
@@ -180,6 +251,15 @@ class NotificationService {
         reminder.description ?? 'Pet care reminder',
         contentTitle: reminder.title,
       ),
+      // CRITICAL: Required fields for proper serialization
+      autoCancel: true,
+      ongoing: false,
+      onlyAlertOnce: false,
+      channelShowBadge: true,
+      enableLights: true,
+      ledColor: const Color(0xFF00FF00),
+      ledOnMs: 1000,
+      ledOffMs: 500,
     );
 
     const iosDetails = DarwinNotificationDetails(
@@ -209,13 +289,15 @@ class NotificationService {
       _logger.i('✅ zonedSchedule completed successfully!');
 
       // Verify it was scheduled
-      final pendingNotifications = await _notifications.pendingNotificationRequests();
+      final pendingNotifications =
+          await _notifications.pendingNotificationRequests();
       _logger.d('Pending notifications: ${pendingNotifications.length} total');
       for (var notif in pendingNotifications) {
-        _logger.d('  - ID: ${notif.id} (titleLen: ${notif.title?.length ?? 0}, bodyLen: ${notif.body?.length ?? 0})');
+        _logger.d(
+            '  - ID: ${notif.id} (titleLen: ${notif.title?.length ?? 0}, bodyLen: ${notif.body?.length ?? 0})');
       }
-      _logger.d('Current reminder in pending: ${pendingNotifications.any((n) => n.id == reminder.id.hashCode)}');
-
+      _logger.d(
+          'Current reminder in pending: ${pendingNotifications.any((n) => n.id == reminder.id.hashCode)}');
     } catch (e, stackTrace) {
       _logger.e('❌ ERROR scheduling notification: $e');
       _logger.e('Stack trace: $stackTrace');
@@ -226,19 +308,31 @@ class NotificationService {
 
   Future<void> _scheduleDaily(Reminder reminder) async {
     final androidDetails = AndroidNotificationDetails(
-      'reminders',
-      'Reminders',
-      channelDescription: 'Pet care reminders and notifications',
-      importance: Importance.high,
+      'reminders_v2',
+      'Pet Reminders',
+      channelDescription: 'Critical pet care reminders and alarms',
+      importance: Importance.max, // CRITICAL: Must match channel importance
       priority: Priority.high,
       playSound: true,
       enableVibration: true,
+      showWhen: true,
+      when: reminder.scheduledTime.millisecondsSinceEpoch,
+      ticker: 'Pet Care Reminder',
       icon: '@mipmap/ic_launcher',
       largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
       styleInformation: BigTextStyleInformation(
         reminder.description ?? 'Pet care reminder',
         contentTitle: reminder.title,
       ),
+      // CRITICAL: Required fields for proper serialization
+      autoCancel: true,
+      ongoing: false,
+      onlyAlertOnce: false,
+      channelShowBadge: true,
+      enableLights: true,
+      ledColor: const Color(0xFF00FF00),
+      ledOnMs: 1000,
+      ledOffMs: 500,
     );
 
     const iosDetails = DarwinNotificationDetails(
@@ -268,19 +362,31 @@ class NotificationService {
 
   Future<void> _scheduleTwiceDaily(Reminder reminder) async {
     final androidDetails = AndroidNotificationDetails(
-      'reminders',
-      'Reminders',
-      channelDescription: 'Pet care reminders and notifications',
-      importance: Importance.high,
+      'reminders_v2',
+      'Pet Reminders',
+      channelDescription: 'Critical pet care reminders and alarms',
+      importance: Importance.max, // CRITICAL: Must match channel importance
       priority: Priority.high,
       playSound: true,
       enableVibration: true,
+      showWhen: true,
+      when: reminder.scheduledTime.millisecondsSinceEpoch,
+      ticker: 'Pet Care Reminder',
       icon: '@mipmap/ic_launcher',
       largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
       styleInformation: BigTextStyleInformation(
         reminder.description ?? 'Pet care reminder',
         contentTitle: reminder.title,
       ),
+      // CRITICAL: Required fields for proper serialization
+      autoCancel: true,
+      ongoing: false,
+      onlyAlertOnce: false,
+      channelShowBadge: true,
+      enableLights: true,
+      ledColor: const Color(0xFF00FF00),
+      ledOnMs: 1000,
+      ledOffMs: 500,
     );
 
     const iosDetails = DarwinNotificationDetails(
@@ -335,19 +441,31 @@ class NotificationService {
 
   Future<void> _scheduleWeekly(Reminder reminder) async {
     final androidDetails = AndroidNotificationDetails(
-      'reminders',
-      'Reminders',
-      channelDescription: 'Pet care reminders and notifications',
-      importance: Importance.high,
+      'reminders_v2',
+      'Pet Reminders',
+      channelDescription: 'Critical pet care reminders and alarms',
+      importance: Importance.max, // CRITICAL: Must match channel importance
       priority: Priority.high,
       playSound: true,
       enableVibration: true,
+      showWhen: true,
+      when: reminder.scheduledTime.millisecondsSinceEpoch,
+      ticker: 'Pet Care Reminder',
       icon: '@mipmap/ic_launcher',
       largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
       styleInformation: BigTextStyleInformation(
         reminder.description ?? 'Pet care reminder',
         contentTitle: reminder.title,
       ),
+      // CRITICAL: Required fields for proper serialization
+      autoCancel: true,
+      ongoing: false,
+      onlyAlertOnce: false,
+      channelShowBadge: true,
+      enableLights: true,
+      ledColor: const Color(0xFF00FF00),
+      ledOnMs: 1000,
+      ledOffMs: 500,
     );
 
     const iosDetails = DarwinNotificationDetails(
@@ -376,25 +494,36 @@ class NotificationService {
   }
 
   Future<void> showTestNotification() async {
-
     if (!_initialized) {
       await initialize();
     }
 
     final androidDetails = AndroidNotificationDetails(
-      'reminders',
-      'Reminders',
-      channelDescription: 'Pet care reminders and notifications',
-      importance: Importance.high,
+      'reminders_v2',
+      'Pet Reminders',
+      channelDescription: 'Critical pet care reminders and alarms',
+      importance: Importance.max,
       priority: Priority.high,
       playSound: true,
       enableVibration: true,
+      showWhen: true,
+      when: DateTime.now().millisecondsSinceEpoch,
+      ticker: 'Test Notification',
       icon: '@mipmap/ic_launcher',
       largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
       styleInformation: const BigTextStyleInformation(
         'If you see this, notifications are working!',
         contentTitle: 'Test Notification',
       ),
+      // CRITICAL: Required fields for proper serialization
+      autoCancel: true,
+      ongoing: false,
+      onlyAlertOnce: false,
+      channelShowBadge: true,
+      enableLights: true,
+      ledColor: const Color(0xFF00FF00),
+      ledOnMs: 1000,
+      ledOffMs: 500,
     );
 
     const iosDetails = DarwinNotificationDetails(
@@ -437,18 +566,32 @@ class NotificationService {
 
     // Use provided details or default
     final notificationDetails = details ??
-        const NotificationDetails(
+        NotificationDetails(
           android: AndroidNotificationDetails(
-            'reminders',
-            'Reminders',
-            channelDescription: 'Pet care reminders and notifications',
-            importance: Importance.high,
+            'reminders_v2',
+            'Pet Reminders',
+            channelDescription: 'Critical pet care reminders and alarms',
+            importance: Importance.max,
             priority: Priority.high,
             playSound: true,
             enableVibration: true,
+            showWhen: true,
+            when: DateTime.now().millisecondsSinceEpoch,
+            ticker: 'Pet Care',
             icon: '@mipmap/ic_launcher',
+            largeIcon:
+                const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
+            // CRITICAL: Required fields for proper serialization
+            autoCancel: true,
+            ongoing: false,
+            onlyAlertOnce: false,
+            channelShowBadge: true,
+            enableLights: true,
+            ledColor: const Color(0xFF00FF00),
+            ledOnMs: 1000,
+            ledOffMs: 500,
           ),
-          iOS: DarwinNotificationDetails(
+          iOS: const DarwinNotificationDetails(
             presentAlert: true,
             presentBadge: true,
             presentSound: true,

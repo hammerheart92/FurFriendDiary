@@ -262,15 +262,34 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.photoGallery),
+        title: photosAsync.maybeWhen(
+          data: (photos) => Text('${l10n.photoGallery} (${photos.length})'),
+          orElse: () => Text(l10n.photoGallery),
+        ),
         actions: [
           if (storageAsync.hasValue)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Center(
-                child: Text(
-                  '${l10n.storageUsed}: ${_formatBytes(storageAsync.value!)}',
-                  style: Theme.of(context).textTheme.bodySmall,
+              padding: const EdgeInsets.only(right: 16.0),
+              child: Tooltip(
+                message:
+                    '${l10n.storageUsed}: ${_formatBytes(storageAsync.value!)}',
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.storage,
+                      size: 16,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      _formatBytes(storageAsync.value!),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -280,27 +299,51 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
         data: (photos) {
           if (photos.isEmpty) {
             return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.photo_library_outlined,
-                    size: 80,
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    l10n.noPhotos,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.addFirstPhoto,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.outline,
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.photo_library_outlined,
+                      size: 100,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withValues(alpha: 0.5),
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      l10n.noPhotos,
+                      style:
+                          Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      l10n.addFirstPhoto,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 32),
+                    FilledButton.icon(
+                      onPressed: _handleAddPhoto,
+                      icon: const Icon(Icons.add_a_photo),
+                      label: Text(l10n.addPhoto),
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
                         ),
-                  ),
-                ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
           }
@@ -324,23 +367,36 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
 
                 return GestureDetector(
                   onTap: () {
-                    context.push('/photo-detail/${photo.id}');
+                    // Pass all photo IDs and current index for swipe navigation
+                    final photoIds = photos.map((p) => p.id).toList();
+                    context.push(
+                      '/photo-detail/${photo.id}',
+                      extra: {
+                        'photoIds': photoIds,
+                        'initialIndex': index,
+                      },
+                    );
                   },
                   child: Hero(
                     tag: 'photo-${photo.id}',
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surfaceVariant,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest,
+                        ),
+                        child: thumbnailFile.existsSync()
+                            ? Image.file(
+                                thumbnailFile,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Icon(Icons.broken_image);
+                                },
+                              )
+                            : const Icon(Icons.broken_image),
                       ),
-                      child: thumbnailFile.existsSync()
-                          ? Image.file(
-                              thumbnailFile,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Icon(Icons.broken_image);
-                              },
-                            )
-                          : const Icon(Icons.broken_image),
                     ),
                   ),
                 );

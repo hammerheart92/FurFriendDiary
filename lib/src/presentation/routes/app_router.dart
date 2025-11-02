@@ -129,7 +129,14 @@ GoRouter createRouter() => GoRouter(
           path: '/photo-detail/:photoId',
           builder: (context, state) {
             final photoId = state.pathParameters['photoId']!;
-            return PhotoDetailScreen(photoId: photoId);
+            final extra = state.extra as Map<String, dynamic>?;
+            final photoIds = extra?['photoIds'] as List<String>? ?? [photoId];
+            final initialIndex = extra?['initialIndex'] as int? ?? 0;
+            return PhotoDetailScreen(
+              photoId: photoId,
+              photoIds: photoIds,
+              initialIndex: initialIndex,
+            );
           },
         ),
         // Settings routes

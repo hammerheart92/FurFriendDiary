@@ -4,15 +4,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 import '../providers/photo_provider.dart';
+import '../providers/pet_profile_provider.dart';
 import '../../domain/models/pet_photo.dart';
 
 class PhotoDetailScreen extends ConsumerStatefulWidget {
-  final String photoId;
+  final String photoId; // Keep for routing
+  final int initialIndex;
+  final List<String> photoIds;
 
   const PhotoDetailScreen({
     super.key,
     required this.photoId,
+    required this.initialIndex,
+    required this.photoIds,
   });
 
   @override
@@ -23,10 +29,20 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
   final TextEditingController _captionController = TextEditingController();
   bool _isEditingCaption = false;
   bool _isDeleting = false;
+  late PageController _pageController;
+  late int _currentIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+    _pageController = PageController(initialPage: widget.initialIndex);
+  }
 
   @override
   void dispose() {
     _captionController.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -35,17 +51,116 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
 
     try {
       final repository = ref.read(photoRepositoryProvider);
-      await repository.updateCaption(widget.photoId, _captionController.text);
+      final currentPhotoId = widget.photoIds[_currentIndex];
+      await repository.updateCaption(currentPhotoId, _captionController.text);
 
       // Refresh providers
       ref.invalidate(photosForCurrentPetProvider);
-      ref.invalidate(photoDetailProvider(widget.photoId));
+      ref.invalidate(photoDetailProvider(currentPhotoId));
 
       setState(() => _isEditingCaption = false);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(l10n.captionSaved)),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      }
+    }
+  }
+
+  Future<void> _sharePhoto() async {
+    final l10n = AppLocalizations.of(context)!;
+    final currentPhotoId = widget.photoIds[_currentIndex];
+    final photo = ref.read(photoDetailProvider(currentPhotoId));
+
+    if (photo == null) return;
+
+    try {
+      final file = File(photo.filePath);
+      if (!file.existsSync()) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.photoNotFound)),
+          );
+        }
+        return;
+      }
+
+      // Get current pet name for share text
+      final currentPet = ref.read(currentPetProfileProvider);
+      final petName = currentPet?.name ?? 'My pet';
+
+      final shareText = photo.caption?.isNotEmpty == true
+          ? '${photo.caption} - $petName'
+          : petName;
+
+      await Share.shareXFiles(
+        [XFile(photo.filePath)],
+        text: shareText,
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error sharing: ${e.toString()}')),
+        );
+      }
+    }
+  }
+
+  Future<void> _setAsProfilePhoto() async {
+    final l10n = AppLocalizations.of(context)!;
+    final currentPhotoId = widget.photoIds[_currentIndex];
+    final photo = ref.read(photoDetailProvider(currentPhotoId));
+    final currentPet = ref.read(currentPetProfileProvider);
+
+    if (photo == null || currentPet == null) return;
+
+    // Show confirmation dialog
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.setProfilePhoto),
+        content: Text(l10n.setProfilePhotoConfirm(currentPet.name)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.confirm),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    try {
+      final petRepository = ref.read(petProfileRepositoryProvider);
+
+      // Update pet profile with new photo path
+      final updatedPet = currentPet.copyWith(
+        photoPath: photo.filePath,
+      );
+
+      await petRepository.update(updatedPet);
+
+      // Refresh providers
+      ref.invalidate(petProfilesProvider);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.profilePhotoUpdated),
+            backgroundColor: Colors.green,
+          ),
         );
       }
     } catch (e) {
@@ -88,7 +203,8 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
 
     try {
       final repository = ref.read(photoRepositoryProvider);
-      await repository.deletePhoto(widget.photoId);
+      final currentPhotoId = widget.photoIds[_currentIndex];
+      await repository.deletePhoto(currentPhotoId);
 
       // Refresh providers
       ref.invalidate(photosForCurrentPetProvider);
@@ -96,10 +212,26 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
       ref.invalidate(storageUsedByCurrentPetProvider);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.photoDeleted)),
-        );
-        context.pop();
+        // If this was the last photo, go back to gallery
+        if (widget.photoIds.length == 1) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.photoDeleted)),
+          );
+          context.pop();
+        } else {
+          // Remove from local list and update page
+          setState(() {
+            widget.photoIds.removeAt(_currentIndex);
+            if (_currentIndex >= widget.photoIds.length) {
+              _currentIndex = widget.photoIds.length - 1;
+            }
+            _pageController.jumpToPage(_currentIndex);
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.photoDeleted)),
+          );
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -131,13 +263,14 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final photo = ref.watch(photoDetailProvider(widget.photoId));
+    final currentPhotoId = widget.photoIds[_currentIndex];
+    final photo = ref.watch(photoDetailProvider(currentPhotoId));
 
     if (photo == null) {
       return Scaffold(
         appBar: AppBar(),
-        body: const Center(
-          child: Text('Photo not found'),
+        body: Center(
+          child: Text(l10n.photoNotFound),
         ),
       );
     }
@@ -148,20 +281,34 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
       _captionController.text = photo.caption ?? '';
     }
 
-    final photoFile = File(photo.filePath);
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.photoDetails),
+        title: Text(
+          '${l10n.photo} ${_currentIndex + 1} / ${widget.photoIds.length}',
+        ),
         actions: [
           if (_isEditingCaption)
             IconButton(
               icon: const Icon(Icons.check),
               onPressed: () => _saveCaption(photo),
             )
-          else
+          else ...[
+            // Share button
+            IconButton(
+              icon: const Icon(Icons.share),
+              tooltip: l10n.share,
+              onPressed: _sharePhoto,
+            ),
+            // Set as profile photo button
+            IconButton(
+              icon: const Icon(Icons.account_circle),
+              tooltip: l10n.setProfilePhoto,
+              onPressed: _setAsProfilePhoto,
+            ),
+            // Edit button
             IconButton(
               icon: const Icon(Icons.edit),
+              tooltip: l10n.edit,
               onPressed: () {
                 setState(() {
                   _isEditingCaption = true;
@@ -169,6 +316,7 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
                 });
               },
             ),
+          ],
           if (!_isEditingCaption)
             IconButton(
               icon: _isDeleting
@@ -178,6 +326,7 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.delete),
+              tooltip: l10n.delete,
               onPressed: _isDeleting ? null : _deletePhoto,
             ),
         ],
@@ -186,39 +335,75 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Photo with zoom capability
-            Hero(
-              tag: 'photo-${photo.id}',
-              child: InteractiveViewer(
-                minScale: 0.5,
-                maxScale: 4.0,
-                child: photoFile.existsSync()
-                    ? Image.file(
-                        photoFile,
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            height: 300,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .surfaceContainerHighest,
-                            child: const Center(
-                              child: Icon(Icons.broken_image, size: 80),
+            // Photo with swipe and zoom capability
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.5,
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: widget.photoIds.length,
+                onPageChanged: (index) {
+                  setState(() {
+                    _currentIndex = index;
+                    _isEditingCaption = false; // Reset edit mode on swipe
+                  });
+                },
+                itemBuilder: (context, index) {
+                  final pagePhotoId = widget.photoIds[index];
+                  final pagePhoto = ref.watch(photoDetailProvider(pagePhotoId));
+
+                  if (pagePhoto == null) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  final pagePhotoFile = File(pagePhoto.filePath);
+
+                  return Hero(
+                    tag: 'photo-${pagePhoto.id}',
+                    child: InteractiveViewer(
+                      minScale: 0.5,
+                      maxScale: 4.0,
+                      child: pagePhotoFile.existsSync()
+                          ? Image.file(
+                              pagePhotoFile,
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .surfaceContainerHighest,
+                                  child: const Center(
+                                    child: Icon(Icons.broken_image, size: 80),
+                                  ),
+                                );
+                              },
+                            )
+                          : Container(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
+                              child: const Center(
+                                child: Icon(Icons.broken_image, size: 80),
+                              ),
                             ),
-                          );
-                        },
-                      )
-                    : Container(
-                        height: 300,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .surfaceContainerHighest,
-                        child: const Center(
-                          child: Icon(Icons.broken_image, size: 80),
-                        ),
-                      ),
+                    ),
+                  );
+                },
               ),
             ),
+
+            // Page indicator
+            if (widget.photoIds.length > 1)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12.0),
+                child: Center(
+                  child: Text(
+                    '${_currentIndex + 1} / ${widget.photoIds.length}',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                  ),
+                ),
+              ),
 
             // Photo details
             Padding(

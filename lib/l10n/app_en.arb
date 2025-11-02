@@ -571,6 +571,20 @@
   "dateAdded": "Date Added",
   "fileSize": "File Size",
   "photoDetails": "Photo Details",
+  "photo": "Photo",
+  "share": "Share",
+  "setProfilePhoto": "Set as Profile Photo",
+  "setProfilePhotoConfirm": "Set this photo as {petName}'s profile photo?",
+  "@setProfilePhotoConfirm": {
+    "placeholders": {
+      "petName": {
+        "type": "String"
+      }
+    }
+  },
+  "confirm": "Confirm",
+  "profilePhotoUpdated": "Profile photo updated!",
+  "photoNotFound": "Photo not found",
 
   "medicationInventory": "Medication Inventory",
   "lowStock": "Low Stock",

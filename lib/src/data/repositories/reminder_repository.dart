@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 import '../../domain/models/reminder.dart';
-import '../services/notification_service.dart';
+import 'package:fur_friend_diary/src/data/services/notification_service.dart';
 import '../local/hive_manager.dart';
 import 'package:logger/logger.dart';
 
@@ -103,7 +103,12 @@ class ReminderRepository {
     final activeReminders = _box.values.where((r) => r.isActive).toList();
 
     for (final reminder in activeReminders) {
-      await _notificationService.scheduleReminder(reminder);
+      try {
+        await _notificationService.scheduleReminder(reminder);
+      } catch (e) {
+        _logger.e('Failed to reschedule reminder ${reminder.id}: $e');
+        // Continue with other reminders even if one fails
+      }
     }
 
     _logger.i('Rescheduled ${activeReminders.length} active reminders');

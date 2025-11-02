@@ -85,6 +85,14 @@ android {
                 // Explicitly skip signing when no keystore is present (debug/non-release tasks)
                 // If a release task is actually requested, we already failed fast above.
             }
+
+            // Enable ProGuard for release builds
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 }

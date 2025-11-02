@@ -1310,6 +1310,29 @@ class AppLocalizationsRo extends AppLocalizations {
   String get photoDetails => 'Detalii Fotografie';
 
   @override
+  String get photo => 'Fotografie';
+
+  @override
+  String get share => 'Distribuie';
+
+  @override
+  String get setProfilePhoto => 'Setează ca Fotografie de Profil';
+
+  @override
+  String setProfilePhotoConfirm(String petName) {
+    return 'Setezi această fotografie ca fotografie de profil pentru $petName?';
+  }
+
+  @override
+  String get confirm => 'Confirmă';
+
+  @override
+  String get profilePhotoUpdated => 'Fotografia de profil a fost actualizată!';
+
+  @override
+  String get photoNotFound => 'Fotografia nu a fost găsită';
+
+  @override
   String get medicationInventory => 'Inventar Medicamente';
 
   @override

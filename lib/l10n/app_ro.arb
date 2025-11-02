@@ -435,6 +435,20 @@
   "dateAdded": "Data Adăugării",
   "fileSize": "Dimensiune Fișier",
   "photoDetails": "Detalii Fotografie",
+  "photo": "Fotografie",
+  "share": "Distribuie",
+  "setProfilePhoto": "Setează ca Fotografie de Profil",
+  "setProfilePhotoConfirm": "Setezi această fotografie ca fotografie de profil pentru {petName}?",
+  "@setProfilePhotoConfirm": {
+    "placeholders": {
+      "petName": {
+        "type": "String"
+      }
+    }
+  },
+  "confirm": "Confirmă",
+  "profilePhotoUpdated": "Fotografia de profil a fost actualizată!",
+  "photoNotFound": "Fotografia nu a fost găsită",
 
   "medicationInventory": "Inventar Medicamente",
   "lowStock": "Stoc Scăzut",

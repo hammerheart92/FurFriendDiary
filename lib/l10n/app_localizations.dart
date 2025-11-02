@@ -2492,6 +2492,48 @@ abstract class AppLocalizations {
   /// **'Photo Details'**
   String get photoDetails;
 
+  /// No description provided for @photo.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get photo;
+
+  /// No description provided for @share.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share;
+
+  /// No description provided for @setProfilePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Set as Profile Photo'**
+  String get setProfilePhoto;
+
+  /// No description provided for @setProfilePhotoConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Set this photo as {petName}\'s profile photo?'**
+  String setProfilePhotoConfirm(String petName);
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
+  /// No description provided for @profilePhotoUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile photo updated!'**
+  String get profilePhotoUpdated;
+
+  /// No description provided for @photoNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo not found'**
+  String get photoNotFound;
+
   /// No description provided for @medicationInventory.
   ///
   /// In en, this message translates to:
