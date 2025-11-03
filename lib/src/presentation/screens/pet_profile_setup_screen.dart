@@ -6,9 +6,12 @@ import 'package:logger/logger.dart';
 import 'package:fur_friend_diary/src/domain/models/pet_profile.dart';
 import 'package:fur_friend_diary/src/presentation/providers/pet_profile_provider.dart';
 import 'package:fur_friend_diary/src/services/profile_picture_service.dart';
+import 'package:fur_friend_diary/l10n/app_localizations.dart';
 
 class PetProfileSetupScreen extends ConsumerStatefulWidget {
-  const PetProfileSetupScreen({super.key});
+  final String? petId; // null = create new, non-null = edit existing
+
+  const PetProfileSetupScreen({super.key, this.petId});
 
   @override
   ConsumerState<PetProfileSetupScreen> createState() =>
@@ -27,6 +30,37 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
   DateTime? _selectedBirthday;
   String? _savedImagePath;
   bool _isLoading = false;
+  bool _isEditMode = false;
+  PetProfile? _existingProfile;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadExistingProfile();
+  }
+
+  Future<void> _loadExistingProfile() async {
+    if (widget.petId != null) {
+      // Edit mode - load existing pet data
+      final profilesAsync = ref.read(petProfilesProvider);
+      profilesAsync.whenData((profiles) {
+        final profile = profiles.where((p) => p.id == widget.petId).firstOrNull;
+        if (profile != null) {
+          setState(() {
+            _isEditMode = true;
+            _existingProfile = profile;
+            _nameController.text = profile.name;
+            _speciesController.text = profile.species;
+            _breedController.text = profile.breed ?? '';
+            _notesController.text = profile.notes ?? '';
+            _selectedBirthday = profile.birthday;
+            _savedImagePath = profile.photoPath;
+          });
+          logger.d("[PROFILE_SETUP] Edit mode - Pre-filled with existing pet data");
+        }
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -58,12 +92,13 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
   }
 
   Future<void> _selectBirthday() async {
+    final l10n = AppLocalizations.of(context);
     final picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now().subtract(const Duration(days: 365)),
       firstDate: DateTime.now().subtract(const Duration(days: 365 * 30)),
       lastDate: DateTime.now(),
-      helpText: 'Select pet birthday',
+      helpText: l10n.selectPetBirthday,
     );
     if (picked != null) {
       setState(() {
@@ -105,21 +140,34 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
         logger.d("[PROFILE_PIC] No image path to save (null)");
       }
 
-      final profile = PetProfile(
-        name: _nameController.text.trim(),
-        species: _speciesController.text.trim(),
-        breed: _breedController.text.trim().isEmpty
-            ? null
-            : _breedController.text.trim(),
-        birthday: _selectedBirthday,
-        photoPath: _savedImagePath,
-        notes: _notesController.text.trim().isEmpty
-            ? null
-            : _notesController.text.trim(),
-      );
+      final profile = _isEditMode && _existingProfile != null
+          ? _existingProfile!.copyWith(
+              name: _nameController.text.trim(),
+              species: _speciesController.text.trim(),
+              breed: _breedController.text.trim().isEmpty
+                  ? null
+                  : _breedController.text.trim(),
+              birthday: _selectedBirthday,
+              photoPath: _savedImagePath,
+              notes: _notesController.text.trim().isEmpty
+                  ? null
+                  : _notesController.text.trim(),
+            )
+          : PetProfile(
+              name: _nameController.text.trim(),
+              species: _speciesController.text.trim(),
+              breed: _breedController.text.trim().isEmpty
+                  ? null
+                  : _breedController.text.trim(),
+              birthday: _selectedBirthday,
+              photoPath: _savedImagePath,
+              notes: _notesController.text.trim().isEmpty
+                  ? null
+                  : _notesController.text.trim(),
+            );
 
       logger.d(
-          "[PROFILE_SETUP] Created profile object - Name: ${profile.name}, Species: ${profile.species}, ID: ${profile.id}");
+          "[PROFILE_SETUP] ${_isEditMode ? 'Updating' : 'Creating'} profile object - Name: ${profile.name}, Species: ${profile.species}, ID: ${profile.id}");
       logger.d("[PROFILE_SETUP] Profile photoPath: ${profile.photoPath}");
 
       logger.d("[PROFILE_SETUP] Calling provider to save profile");
@@ -127,9 +175,13 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
       logger.d("[PROFILE_SETUP] Provider save completed successfully");
 
       if (mounted) {
-        logger.d("[PROFILE_SETUP] Attempting navigation to home screen");
-        // Navigate to main screen after successful save
-        context.go('/');
+        logger.d("[PROFILE_SETUP] Attempting navigation back");
+        // Navigate back after successful save
+        if (_isEditMode) {
+          context.pop(); // Go back to previous screen (pet profiles)
+        } else {
+          context.go('/'); // First pet setup - go to home
+        }
         logger.d("[PROFILE_SETUP] Navigation initiated");
       }
     } catch (e) {
@@ -151,10 +203,11 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Setup Pet Profile'),
+        title: Text(_isEditMode ? l10n.editPetProfile : l10n.setupPetProfile),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -203,7 +256,7 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
                   onPressed: _pickImage,
                   icon: const Icon(Icons.camera_alt),
                   label: Text(
-                      _savedImagePath != null ? 'Change Photo' : 'Add Photo'),
+                      _savedImagePath != null ? l10n.changePhoto : l10n.addPhoto),
                 ),
               ),
               const SizedBox(height: 24),
@@ -211,14 +264,14 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
               // Pet name field
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Pet Name *',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.pets),
+                decoration: InputDecoration(
+                  labelText: '${l10n.petName} *',
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.pets),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Please enter your pet\'s name';
+                    return l10n.pleaseEnterPetName;
                   }
                   return null;
                 },
@@ -228,15 +281,15 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
               // Species field
               TextFormField(
                 controller: _speciesController,
-                decoration: const InputDecoration(
-                  labelText: 'Species *',
-                  hintText: 'e.g., Dog, Cat, Bird',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.category),
+                decoration: InputDecoration(
+                  labelText: '${l10n.species} *',
+                  hintText: l10n.speciesHint,
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.category),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Please enter your pet\'s species';
+                    return l10n.pleaseEnterSpecies;
                   }
                   return null;
                 },
@@ -246,11 +299,11 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
               // Breed field (optional)
               TextFormField(
                 controller: _breedController,
-                decoration: const InputDecoration(
-                  labelText: 'Breed (optional)',
-                  hintText: 'e.g., Golden Retriever, Persian',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.info_outline),
+                decoration: InputDecoration(
+                  labelText: l10n.breedOptional,
+                  hintText: l10n.breedHint,
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.info_outline),
                 ),
               ),
               const SizedBox(height: 16),
@@ -259,16 +312,16 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
               InkWell(
                 onTap: _selectBirthday,
                 child: InputDecorator(
-                  decoration: const InputDecoration(
-                    labelText: 'Birthday (optional)',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.cake),
-                    suffixIcon: Icon(Icons.calendar_today),
+                  decoration: InputDecoration(
+                    labelText: l10n.birthdayOptional,
+                    border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.cake),
+                    suffixIcon: const Icon(Icons.calendar_today),
                   ),
                   child: Text(
                     _selectedBirthday != null
                         ? '${_selectedBirthday!.day}/${_selectedBirthday!.month}/${_selectedBirthday!.year}'
-                        : 'Tap to select birthday',
+                        : l10n.tapToSelectBirthday,
                     style: _selectedBirthday != null
                         ? null
                         : TextStyle(color: theme.hintColor),
@@ -280,11 +333,11 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
               // Notes field
               TextFormField(
                 controller: _notesController,
-                decoration: const InputDecoration(
-                  labelText: 'Notes (optional)',
-                  hintText: 'Any special notes about your pet',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.note),
+                decoration: InputDecoration(
+                  labelText: l10n.notesOptional,
+                  hintText: l10n.petNotesHint,
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.note),
                 ),
                 maxLines: 3,
               ),
@@ -303,7 +356,7 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
                         width: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Save Profile'),
+                    : Text(_isEditMode ? l10n.updateProfile : l10n.saveProfile),
               ),
             ],
           ),

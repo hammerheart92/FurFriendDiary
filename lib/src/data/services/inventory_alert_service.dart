@@ -1,11 +1,28 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:ui' as ui;
 import '../../domain/repositories/medication_repository.dart';
 import '../../data/repositories/medication_repository_impl.dart';
 import 'notification_service.dart';
+import 'package:fur_friend_diary/l10n/app_localizations.dart';
+import 'package:flutter/material.dart';
 
 class InventoryAlertService {
   final NotificationService _notificationService = NotificationService();
   final MedicationRepository _medicationRepository = MedicationRepositoryImpl();
+
+  /// Helper to get the current app locale from SharedPreferences
+  Future<Locale> _getCurrentLocale() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final languageCode = prefs.getString('app_language') ??
+                           prefs.getString('language_code') ??
+                           ui.PlatformDispatcher.instance.locale.languageCode;
+      return Locale(languageCode);
+    } catch (e) {
+      return const Locale('en'); // Fallback to English
+    }
+  }
 
   /// Check for low stock medications and send notifications
   Future<void> checkLowStockAndNotify(String petId) async {
@@ -64,6 +81,17 @@ class InventoryAlertService {
     required String stockUnit,
     required bool isCritical,
   }) async {
+    // Get current locale and localization
+    final locale = await _getCurrentLocale();
+    final l10n = lookupAppLocalizations(locale);
+
+    // Use localized unit name for pills, fallback to provided unit
+    final localizedUnit = stockUnit.toLowerCase() == 'pills' ? l10n.pills : stockUnit;
+
+    // Get localized body text
+    final bodyText = l10n.lowStockBody(stockQuantity, localizedUnit);
+    final titleText = isCritical ? l10n.criticalLowStockAlert : 'Low Stock Alert';
+
     final androidDetails = AndroidNotificationDetails(
       'reminders',
       'Reminders',
@@ -75,8 +103,8 @@ class InventoryAlertService {
       icon: '@mipmap/ic_launcher',
       largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
       styleInformation: BigTextStyleInformation(
-        'Only $stockQuantity $stockUnit remaining. Time to refill!',
-        contentTitle: '${isCritical ? 'Critical: ' : ''}Low Stock Alert',
+        bodyText,
+        contentTitle: titleText,
       ),
     );
 
@@ -93,8 +121,8 @@ class InventoryAlertService {
 
     await _notificationService.showNotification(
       id: id,
-      title: '${isCritical ? '🚨 ' : '⚠️ '}Low Stock: $medicationName',
-      body: 'Only $stockQuantity $stockUnit remaining',
+      title: '${isCritical ? '🚨 ' : '⚠️ '}$medicationName',
+      body: bodyText,
       details: notificationDetails,
     );
   }

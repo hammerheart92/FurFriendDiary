@@ -25,7 +25,7 @@ class PetProfileScreen extends ConsumerWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () => context.push('/profile-setup'),
+            onPressed: () => context.push('/add-pet'),
             icon: const Icon(Icons.add),
             tooltip: l10n.addPet,
           ),
@@ -422,12 +422,7 @@ class PetProfileScreen extends ConsumerWidget {
         await _activateProfile(context, ref, profile);
         break;
       case 'edit':
-        // TODO: Navigate to edit screen (could reuse setup screen with profile data)
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(
-                  '${AppLocalizations.of(context).edit} feature coming soon!')),
-        );
+        context.push('/edit-pet/${profile.id}');
         break;
       case 'delete':
         await _deleteProfile(context, ref, profile);

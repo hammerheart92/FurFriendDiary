@@ -263,6 +263,8 @@ class ReportCard extends StatelessWidget {
     switch (report.reportType) {
       case 'Health Summary':
         return l10n.healthSummary;
+      case 'Medication History':
+        return l10n.medicationHistory;
       case 'Activity Report':
         return l10n.activityReport;
       case 'Veterinary Records':

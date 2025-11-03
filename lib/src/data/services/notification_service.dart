@@ -3,7 +3,39 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:ui' as ui;
 import '../../domain/models/reminder.dart';
+import 'package:fur_friend_diary/l10n/app_localizations.dart';
+
+/// Helper to get the current app locale from SharedPreferences
+Future<Locale> _getCurrentLocale() async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final languageCode = prefs.getString('app_language') ??
+                         prefs.getString('language_code') ??
+                         ui.PlatformDispatcher.instance.locale.languageCode;
+    return Locale(languageCode);
+  } catch (e) {
+    return const Locale('en'); // Fallback to English
+  }
+}
+
+/// Helper to format reminder frequency enum to localized string
+String _formatFrequency(ReminderFrequency frequency, AppLocalizations l10n) {
+  switch (frequency) {
+    case ReminderFrequency.once:
+      return l10n.once; // "Once" / "O dată"
+    case ReminderFrequency.daily:
+      return l10n.frequencyOnceDaily; // "Once Daily" / "O dată pe zi"
+    case ReminderFrequency.twiceDaily:
+      return l10n.frequencyTwiceDaily; // "Twice Daily" / "De două ori pe zi"
+    case ReminderFrequency.weekly:
+      return l10n.frequencyWeekly; // "Weekly" / "Săptămânal"
+    case ReminderFrequency.custom:
+      return l10n.custom; // "Custom" / "Personalizat"
+  }
+}
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -14,6 +46,42 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
   final Logger _logger = Logger();
   bool _initialized = false;
+
+  /// Generate localized notification title and body based on reminder
+  Future<Map<String, String>> _getLocalizedNotificationText(Reminder reminder) async {
+    final locale = await _getCurrentLocale();
+    final l10n = lookupAppLocalizations(locale);
+
+    // Get localized title based on reminder type
+    String title;
+    String body;
+
+    switch (reminder.type) {
+      case ReminderType.medication:
+        title = l10n.medicationReminder;
+        // Format: "Medication Name - Frequency"
+        final frequency = _formatFrequency(reminder.frequency, l10n);
+        body = l10n.medicationReminderBody(reminder.title, frequency);
+        break;
+      case ReminderType.appointment:
+        title = l10n.appointmentReminder;
+        // Format: "Title at/la Location" or just title if no description
+        body = reminder.description != null && reminder.description!.isNotEmpty
+            ? l10n.appointmentAt(reminder.title, reminder.description!)
+            : reminder.title;
+        break;
+      case ReminderType.feeding:
+        title = l10n.feedingReminder;
+        body = reminder.description ?? reminder.title;
+        break;
+      case ReminderType.walk:
+        title = l10n.walkReminder;
+        body = reminder.description ?? reminder.title;
+        break;
+    }
+
+    return {'title': title, 'body': body};
+  }
 
   Future<void> initialize() async {
     if (_initialized) {
@@ -232,6 +300,11 @@ Future<void> _checkPermissions() async {
     _logger.d('Is in future: ${reminder.scheduledTime.isAfter(currentTime)}');
     _logger.d('TZ time is in future: ${tzDateTime.isAfter(currentTzTime)}');
 
+    // Get localized notification text
+    final localizedText = await _getLocalizedNotificationText(reminder);
+    final notificationTitle = localizedText['title']!;
+    final notificationBody = localizedText['body']!;
+
     // CRITICAL: Complete notification details with ALL required parameters
     final androidDetails = AndroidNotificationDetails(
       'reminders_v2', // MUST match channel ID created in _createNotificationChannel
@@ -248,8 +321,8 @@ Future<void> _checkPermissions() async {
       icon: '@mipmap/ic_launcher',
       largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
       styleInformation: BigTextStyleInformation(
-        reminder.description ?? 'Pet care reminder',
-        contentTitle: reminder.title,
+        notificationBody,
+        contentTitle: notificationTitle,
       ),
       // CRITICAL: Required fields for proper serialization
       autoCancel: true,
@@ -277,8 +350,8 @@ Future<void> _checkPermissions() async {
       _logger.i('Calling zonedSchedule...');
       await _notifications.zonedSchedule(
         reminder.id.hashCode,
-        reminder.title,
-        reminder.description ?? 'Pet care reminder',
+        notificationTitle,
+        notificationBody,
         tzDateTime,
         notificationDetails,
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
@@ -307,6 +380,11 @@ Future<void> _checkPermissions() async {
   }
 
   Future<void> _scheduleDaily(Reminder reminder) async {
+    // Get localized notification text
+    final localizedText = await _getLocalizedNotificationText(reminder);
+    final notificationTitle = localizedText['title']!;
+    final notificationBody = localizedText['body']!;
+
     final androidDetails = AndroidNotificationDetails(
       'reminders_v2',
       'Pet Reminders',
@@ -321,8 +399,8 @@ Future<void> _checkPermissions() async {
       icon: '@mipmap/ic_launcher',
       largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
       styleInformation: BigTextStyleInformation(
-        reminder.description ?? 'Pet care reminder',
-        contentTitle: reminder.title,
+        notificationBody,
+        contentTitle: notificationTitle,
       ),
       // CRITICAL: Required fields for proper serialization
       autoCancel: true,
@@ -348,8 +426,8 @@ Future<void> _checkPermissions() async {
 
     await _notifications.zonedSchedule(
       reminder.id.hashCode,
-      reminder.title,
-      reminder.description ?? 'Pet care reminder',
+      notificationTitle,
+      notificationBody,
       tz.TZDateTime.from(reminder.scheduledTime, tz.local),
       notificationDetails,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
@@ -361,6 +439,11 @@ Future<void> _checkPermissions() async {
   }
 
   Future<void> _scheduleTwiceDaily(Reminder reminder) async {
+    // Get localized notification text
+    final localizedText = await _getLocalizedNotificationText(reminder);
+    final notificationTitle = localizedText['title']!;
+    final notificationBody = localizedText['body']!;
+
     final androidDetails = AndroidNotificationDetails(
       'reminders_v2',
       'Pet Reminders',
@@ -375,8 +458,8 @@ Future<void> _checkPermissions() async {
       icon: '@mipmap/ic_launcher',
       largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
       styleInformation: BigTextStyleInformation(
-        reminder.description ?? 'Pet care reminder',
-        contentTitle: reminder.title,
+        notificationBody,
+        contentTitle: notificationTitle,
       ),
       // CRITICAL: Required fields for proper serialization
       autoCancel: true,
@@ -408,8 +491,8 @@ Future<void> _checkPermissions() async {
 
     await _notifications.zonedSchedule(
       reminder.id.hashCode,
-      reminder.title,
-      '${reminder.description ?? 'Pet care reminder'} (Morning)',
+      notificationTitle,
+      '$notificationBody (Morning)',
       morning,
       notificationDetails,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
@@ -427,8 +510,8 @@ Future<void> _checkPermissions() async {
 
     await _notifications.zonedSchedule(
       reminder.id.hashCode + 1,
-      reminder.title,
-      '${reminder.description ?? 'Pet care reminder'} (Evening)',
+      notificationTitle,
+      '$notificationBody (Evening)',
       evening,
       notificationDetails,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
@@ -440,6 +523,11 @@ Future<void> _checkPermissions() async {
   }
 
   Future<void> _scheduleWeekly(Reminder reminder) async {
+    // Get localized notification text
+    final localizedText = await _getLocalizedNotificationText(reminder);
+    final notificationTitle = localizedText['title']!;
+    final notificationBody = localizedText['body']!;
+
     final androidDetails = AndroidNotificationDetails(
       'reminders_v2',
       'Pet Reminders',
@@ -454,8 +542,8 @@ Future<void> _checkPermissions() async {
       icon: '@mipmap/ic_launcher',
       largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
       styleInformation: BigTextStyleInformation(
-        reminder.description ?? 'Pet care reminder',
-        contentTitle: reminder.title,
+        notificationBody,
+        contentTitle: notificationTitle,
       ),
       // CRITICAL: Required fields for proper serialization
       autoCancel: true,
@@ -481,8 +569,8 @@ Future<void> _checkPermissions() async {
 
     await _notifications.zonedSchedule(
       reminder.id.hashCode,
-      reminder.title,
-      reminder.description ?? 'Pet care reminder',
+      notificationTitle,
+      notificationBody,
       tz.TZDateTime.from(reminder.scheduledTime, tz.local),
       notificationDetails,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,

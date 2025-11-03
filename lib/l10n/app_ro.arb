@@ -243,6 +243,24 @@
 
   "petProfiles": "Profile Animale",
   "addPet": "Adaugă Animal",
+  "setupPetProfile": "Configurați profilul animalului",
+  "editPetProfile": "Editați profilul animalului",
+  "petName": "Numele animalului",
+  "pleaseEnterPetName": "Vă rugăm să introduceți numele animalului",
+  "species": "Specie",
+  "speciesHint": "de ex., Câine, Pisică, Pasăre",
+  "pleaseEnterSpecies": "Vă rugăm să introduceți specia animalului",
+  "breed": "Rasă",
+  "breedOptional": "Rasă (opțional)",
+  "breedHint": "de ex., Golden Retriever, Persană",
+  "birthdayOptional": "Zi de naștere (opțional)",
+  "tapToSelectBirthday": "Atingeți pentru a selecta ziua de naștere",
+  "selectPetBirthday": "Selectați ziua de naștere a animalului",
+  "notesOptional": "Notițe (opțional)",
+  "petNotesHint": "Notițe speciale despre animalul dumneavoastră",
+  "changePhoto": "Schimbă fotografia",
+  "saveProfile": "Salvează profilul",
+  "updateProfile": "Actualizează profilul",
   "allProfiles": "Toate Profilele",
   "activeProfile": "ACTIV",
   "noPetsYet": "Niciun animal încă!",
@@ -724,5 +742,109 @@
   "textSummaryEmailSubject": "Rezumat Sănătate Animale",
   "@textSummaryEmailSubject": {
     "description": "Subiectul emailului pentru rezumatul text"
+  },
+
+  "navFeedings": "Hrănire",
+  "@navFeedings": {
+    "description": "Eticheta de navigare pentru fila Hrănire"
+  },
+  "navWalks": "Plimbări",
+  "@navWalks": {
+    "description": "Eticheta de navigare pentru fila Plimbări"
+  },
+  "navMeds": "Med.",
+  "@navMeds": {
+    "description": "Eticheta de navigare pentru fila Medicamente (prescurtată pentru a se potrivi)"
+  },
+  "navAppts": "Prog.",
+  "@navAppts": {
+    "description": "Eticheta de navigare pentru fila Programări (prescurtată pentru a se potrivi)"
+  },
+  "navReports": "Rapoarte",
+  "@navReports": {
+    "description": "Eticheta de navigare pentru fila Rapoarte"
+  },
+  "navSettings": "Setări",
+  "@navSettings": {
+    "description": "Eticheta de navigare pentru fila Setări"
+  },
+
+  "medicationReminder": "Memento Medicament",
+  "@medicationReminder": {
+    "description": "Titlul notificării pentru mementourile de medicamente"
+  },
+  "medicationReminderBody": "{medication} - {frequency}",
+  "@medicationReminderBody": {
+    "description": "Corpul notificării pentru mementourile de medicamente",
+    "placeholders": {
+      "medication": {
+        "type": "String",
+        "example": "Paracetamol"
+      },
+      "frequency": {
+        "type": "String",
+        "example": "O dată pe zi"
+      }
+    }
+  },
+  "frequencyOnceDaily": "O dată pe zi",
+  "@frequencyOnceDaily": {
+    "description": "Frecvența medicamentului: o dată pe zi"
+  },
+  "frequencyTwiceDaily": "De două ori pe zi",
+  "@frequencyTwiceDaily": {
+    "description": "Frecvența medicamentului: de două ori pe zi"
+  },
+  "frequencyThreeTimesDaily": "De trei ori pe zi",
+  "@frequencyThreeTimesDaily": {
+    "description": "Frecvența medicamentului: de trei ori pe zi"
+  },
+  "frequencyWeekly": "Săptămânal",
+  "@frequencyWeekly": {
+    "description": "Frecvența medicamentului: săptămânal"
+  },
+  "frequencyAsNeeded": "La nevoie",
+  "@frequencyAsNeeded": {
+    "description": "Frecvența medicamentului: la nevoie"
+  },
+  "criticalLowStockAlert": "Critic: Alertă stoc redus",
+  "@criticalLowStockAlert": {
+    "description": "Titlul alertei critice de stoc redus"
+  },
+  "lowStockBody": "Mai sunt doar {count} {unit}. E timpul să reumpleți stocul!",
+  "@lowStockBody": {
+    "description": "Corpul alertei de stoc redus",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      },
+      "unit": {
+        "type": "String",
+        "example": "pastile"
+      }
+    }
+  },
+  "pills": "pastile",
+  "@pills": {
+    "description": "Numele unității pentru pastile"
+  },
+  "appointmentReminder": "Memento Programare",
+  "@appointmentReminder": {
+    "description": "Titlul notificării pentru mementourile de programări"
+  },
+  "appointmentAt": "{title} la {location}",
+  "@appointmentAt": {
+    "description": "Corpul notificării pentru programări",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "Control"
+      },
+      "location": {
+        "type": "String",
+        "example": "Vet Laszlo"
+      }
+    }
   }
 }

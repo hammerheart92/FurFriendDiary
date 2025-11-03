@@ -727,6 +727,60 @@ class AppLocalizationsRo extends AppLocalizations {
   String get addPet => 'Adaugă Animal';
 
   @override
+  String get setupPetProfile => 'Configurați profilul animalului';
+
+  @override
+  String get editPetProfile => 'Editați profilul animalului';
+
+  @override
+  String get petName => 'Numele animalului';
+
+  @override
+  String get pleaseEnterPetName => 'Vă rugăm să introduceți numele animalului';
+
+  @override
+  String get species => 'Specie';
+
+  @override
+  String get speciesHint => 'de ex., Câine, Pisică, Pasăre';
+
+  @override
+  String get pleaseEnterSpecies => 'Vă rugăm să introduceți specia animalului';
+
+  @override
+  String get breed => 'Rasă';
+
+  @override
+  String get breedOptional => 'Rasă (opțional)';
+
+  @override
+  String get breedHint => 'de ex., Golden Retriever, Persană';
+
+  @override
+  String get birthdayOptional => 'Zi de naștere (opțional)';
+
+  @override
+  String get tapToSelectBirthday => 'Atingeți pentru a selecta ziua de naștere';
+
+  @override
+  String get selectPetBirthday => 'Selectați ziua de naștere a animalului';
+
+  @override
+  String get notesOptional => 'Notițe (opțional)';
+
+  @override
+  String get petNotesHint => 'Notițe speciale despre animalul dumneavoastră';
+
+  @override
+  String get changePhoto => 'Schimbă fotografia';
+
+  @override
+  String get saveProfile => 'Salvează profilul';
+
+  @override
+  String get updateProfile => 'Actualizează profilul';
+
+  @override
   String get allProfiles => 'Toate Profilele';
 
   @override
@@ -1059,7 +1113,7 @@ class AppLocalizationsRo extends AppLocalizations {
   }
 
   @override
-  String get medicationReminder => 'Memento Medicație';
+  String get medicationReminder => 'Memento Medicament';
 
   @override
   String get appointmentReminder => 'Memento Programare';
@@ -2089,4 +2143,40 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get textSummaryEmailSubject => 'Rezumat Sănătate Animale';
+
+  @override
+  String get navFeedings => 'Hrănire';
+
+  @override
+  String get navWalks => 'Plimbări';
+
+  @override
+  String get navMeds => 'Med.';
+
+  @override
+  String get navAppts => 'Prog.';
+
+  @override
+  String get navReports => 'Rapoarte';
+
+  @override
+  String get navSettings => 'Setări';
+
+  @override
+  String medicationReminderBody(String medication, String frequency) {
+    return '$medication - $frequency';
+  }
+
+  @override
+  String get criticalLowStockAlert => 'Critic: Alertă stoc redus';
+
+  @override
+  String lowStockBody(int count, String unit) {
+    return 'Mai sunt doar $count $unit. E timpul să reumpleți stocul!';
+  }
+
+  @override
+  String appointmentAt(String title, String location) {
+    return '$title la $location';
+  }
 }

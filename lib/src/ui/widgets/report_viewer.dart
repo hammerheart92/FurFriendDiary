@@ -519,7 +519,8 @@ class ReportViewer extends StatelessWidget {
             .map((med) => [
                   med['medicationName']?.toString() ?? '',
                   med['dosage']?.toString() ?? '',
-                  med['administrationMethod']?.toString() ?? '',
+                  _formatAdministrationMethod(
+                      med['administrationMethod']?.toString() ?? '', l10n),
                   DateFormat('MMM dd').format(DateTime.parse(med['startDate'])),
                   (med['isActive'] == true) ? l10n.active : l10n.inactive,
                 ])
@@ -705,12 +706,52 @@ class ReportViewer extends StatelessWidget {
     switch (report.reportType) {
       case 'Health Summary':
         return l10n.healthSummary;
+      case 'Medication History':
+        return l10n.medicationHistory;
       case 'Activity Report':
         return l10n.activityReport;
       case 'Veterinary Records':
         return l10n.veterinaryRecords;
       default:
         return report.reportType;
+    }
+  }
+
+  /// Format administration method string to localized human-readable text
+  String _formatAdministrationMethod(String method, AppLocalizations l10n) {
+    // Handle different possible formats: "Oral", "oral", "administrationMethodOral"
+    final cleanMethod = method
+        .replaceAll('administrationMethod', '')
+        .replaceAll('AdministrationMethod', '')
+        .toLowerCase()
+        .trim();
+
+    switch (cleanMethod) {
+      case 'oral':
+        return l10n.administrationMethodOral;
+      case 'topical':
+      case 'topic':
+        return l10n.administrationMethodTopical;
+      case 'injection':
+      case 'injecție':
+        return l10n.administrationMethodInjection;
+      case 'eye drops':
+      case 'eyedrops':
+        return l10n.administrationMethodEyeDrops;
+      case 'ear drops':
+      case 'eardrops':
+        return l10n.administrationMethodEarDrops;
+      case 'inhaled':
+      case 'inhalat':
+        return l10n.administrationMethodInhaled;
+      case 'other':
+      case 'altele':
+        return l10n.administrationMethodOther;
+      default:
+        // Fallback: capitalize first letter if method is not empty
+        return cleanMethod.isEmpty
+            ? method
+            : cleanMethod[0].toUpperCase() + cleanMethod.substring(1);
     }
   }
 }

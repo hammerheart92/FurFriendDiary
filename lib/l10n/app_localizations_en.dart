@@ -200,13 +200,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get frequency => 'Frequency';
 
   @override
-  String get frequencyOnceDaily => 'Once daily';
+  String get frequencyOnceDaily => 'Once Daily';
 
   @override
-  String get frequencyTwiceDaily => 'Twice daily';
+  String get frequencyTwiceDaily => 'Twice Daily';
 
   @override
-  String get frequencyThreeTimesDaily => 'Three times daily';
+  String get frequencyThreeTimesDaily => 'Three Times Daily';
 
   @override
   String get frequencyFourTimesDaily => 'Four times daily';
@@ -218,7 +218,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get frequencyWeekly => 'Weekly';
 
   @override
-  String get frequencyAsNeeded => 'As needed';
+  String get frequencyAsNeeded => 'As Needed';
 
   @override
   String get frequencyCustom => 'Custom';
@@ -716,6 +716,60 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addPet => 'Add Pet';
+
+  @override
+  String get setupPetProfile => 'Setup Pet Profile';
+
+  @override
+  String get editPetProfile => 'Edit Pet Profile';
+
+  @override
+  String get petName => 'Pet Name';
+
+  @override
+  String get pleaseEnterPetName => 'Please enter your pet\'s name';
+
+  @override
+  String get species => 'Species';
+
+  @override
+  String get speciesHint => 'e.g., Dog, Cat, Bird';
+
+  @override
+  String get pleaseEnterSpecies => 'Please enter your pet\'s species';
+
+  @override
+  String get breed => 'Breed';
+
+  @override
+  String get breedOptional => 'Breed (optional)';
+
+  @override
+  String get breedHint => 'e.g., Golden Retriever, Persian';
+
+  @override
+  String get birthdayOptional => 'Birthday (optional)';
+
+  @override
+  String get tapToSelectBirthday => 'Tap to select birthday';
+
+  @override
+  String get selectPetBirthday => 'Select pet birthday';
+
+  @override
+  String get notesOptional => 'Notes (optional)';
+
+  @override
+  String get petNotesHint => 'Any special notes about your pet';
+
+  @override
+  String get changePhoto => 'Change Photo';
+
+  @override
+  String get saveProfile => 'Save Profile';
+
+  @override
+  String get updateProfile => 'Update Profile';
 
   @override
   String get allProfiles => 'All Profiles';
@@ -2071,4 +2125,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get textSummaryEmailSubject => 'Pet Health Summary';
+
+  @override
+  String get navFeedings => 'Feedings';
+
+  @override
+  String get navWalks => 'Walks';
+
+  @override
+  String get navMeds => 'Meds';
+
+  @override
+  String get navAppts => 'Appts';
+
+  @override
+  String get navReports => 'Reports';
+
+  @override
+  String get navSettings => 'Settings';
+
+  @override
+  String medicationReminderBody(String medication, String frequency) {
+    return '$medication - $frequency';
+  }
+
+  @override
+  String get criticalLowStockAlert => 'Critical: Low Stock Alert';
+
+  @override
+  String lowStockBody(int count, String unit) {
+    return 'Only $count $unit remaining. Time to refill!';
+  }
+
+  @override
+  String appointmentAt(String title, String location) {
+    return '$title at $location';
+  }
 }

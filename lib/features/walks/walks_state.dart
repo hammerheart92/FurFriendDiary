@@ -88,7 +88,7 @@ class WalksController extends ChangeNotifier {
 
   /// Initialize walks with immediate mock data, then try to load from storage
   Future<void> _initializeWalks() async {
-    logger.i('🚀 INITIALIZING WalksController...');
+    logger.i('🚀 INITIALIZING WalksController for pet $_defaultPetId...');
 
     try {
       // First, add mock data immediately for UI responsiveness
@@ -112,13 +112,20 @@ class WalksController extends ChangeNotifier {
 
   /// Load walks from Hive storage and convert to WalkEntry
   Future<void> _loadWalksFromHive() async {
-    logger.i('🔄 ATTEMPTING to load walks from Hive...');
+    logger.i('🔄 ATTEMPTING to load walks from Hive for pet $_defaultPetId...');
     try {
       // Get the properly typed walks box
       final walkBox = HiveManager.instance.walkBox;
-      final walks = walkBox.values.toList();
 
-      logger.i('📚 DIRECT HIVE: Found ${walks.length} walks in storage');
+      // Get ALL walks first for logging
+      final allWalks = walkBox.values.toList();
+      logger.i('📚 DIRECT HIVE: Total walks in storage: ${allWalks.length}');
+
+      // Filter walks by current pet ID
+      final walks = allWalks
+          .where((walk) => walk.petId == _defaultPetId)
+          .toList();
+      logger.i('📚 FILTERED: ${walks.length} walks belong to pet $_defaultPetId');
 
       if (walks.isNotEmpty) {
         _items.clear();
@@ -130,10 +137,10 @@ class WalksController extends ChangeNotifier {
             logger.w('⚠️  Failed to convert walk: $e');
           }
         }
-        logger.i('✅ LOADED ${_items.length} walks from storage');
+        logger.i('✅ LOADED ${_items.length} walks from storage for pet $_defaultPetId');
         notifyListeners();
       } else {
-        logger.i('📝 No walks in storage, keeping mock data');
+        logger.i('📝 No walks found for pet $_defaultPetId, keeping mock data');
       }
     } catch (e) {
       logger.e('❌ Error loading from storage: $e');
@@ -143,7 +150,7 @@ class WalksController extends ChangeNotifier {
 
   /// Add mock data as fallback
   void _addMockData() {
-    logger.i('📝 Adding mock data as fallback');
+    logger.i('📝 Adding mock data for pet $_defaultPetId as fallback');
     final now = DateTime.now();
     _items.clear();
     _items.addAll([

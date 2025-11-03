@@ -101,6 +101,15 @@ class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
             Text(
                 '${l10n.date}: ${TimeOfDay.fromDateTime(feeding.dateTime).format(context)}'),
             if (feeding.amount > 0) Text('${l10n.amount}: ${feeding.amount}'),
+            if (feeding.notes != null && feeding.notes!.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(
+                '${l10n.notes}:',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 4),
+              Text(feeding.notes!),
+            ],
           ],
         ),
         actions: [

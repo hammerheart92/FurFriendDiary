@@ -74,6 +74,21 @@ GoRouter createRouter() => GoRouter(
           path: '/profile-setup',
           builder: (context, state) => const PetProfileSetupScreen(),
         ),
+        // Add/Edit pet route (bypasses setup redirect guard)
+        GoRoute(
+          path: '/add-pet',
+          builder: (context, state) {
+            final petId = state.extra as String?;
+            return PetProfileSetupScreen(petId: petId);
+          },
+        ),
+        GoRoute(
+          path: '/edit-pet/:petId',
+          builder: (context, state) {
+            final petId = state.pathParameters['petId']!;
+            return PetProfileSetupScreen(petId: petId);
+          },
+        ),
         ShellRoute(
           builder: (context, state, child) => AppShell(child: child),
           routes: [

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fur_friend_diary/l10n/app_localizations.dart';
 
 class AppShell extends StatelessWidget {
   final Widget child;
@@ -21,6 +22,8 @@ class AppShell extends StatelessWidget {
   Widget build(BuildContext context) {
     final location = GoRouterState.of(context).uri.toString();
     final index = _indexFor(location);
+    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
       body: child,
       bottomNavigationBar: NavigationBar(
@@ -36,15 +39,19 @@ class AppShell extends StatelessWidget {
           ];
           context.go(paths[i]);
         },
-        destinations: const [
+        destinations: [
           NavigationDestination(
-              icon: Icon(Icons.restaurant), label: 'Feedings'),
-          NavigationDestination(icon: Icon(Icons.pets), label: 'Walks'),
+              icon: const Icon(Icons.restaurant), label: l10n.navFeedings),
           NavigationDestination(
-              icon: Icon(Icons.medical_services), label: 'Meds'),
-          NavigationDestination(icon: Icon(Icons.event), label: 'Appts'),
-          NavigationDestination(icon: Icon(Icons.bar_chart), label: 'Reports'),
-          NavigationDestination(icon: Icon(Icons.settings), label: 'Settings'),
+              icon: const Icon(Icons.pets), label: l10n.navWalks),
+          NavigationDestination(
+              icon: const Icon(Icons.medical_services), label: l10n.navMeds),
+          NavigationDestination(
+              icon: const Icon(Icons.event), label: l10n.navAppts),
+          NavigationDestination(
+              icon: const Icon(Icons.bar_chart), label: l10n.navReports),
+          NavigationDestination(
+              icon: const Icon(Icons.settings), label: l10n.navSettings),
         ],
       ),
     );

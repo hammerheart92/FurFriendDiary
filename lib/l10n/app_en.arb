@@ -306,6 +306,78 @@
 
   "petProfiles": "Pet Profiles",
   "addPet": "Add Pet",
+  "setupPetProfile": "Setup Pet Profile",
+  "@setupPetProfile": {
+    "description": "Title for pet profile setup screen"
+  },
+  "editPetProfile": "Edit Pet Profile",
+  "@editPetProfile": {
+    "description": "Title for pet profile edit screen"
+  },
+  "petName": "Pet Name",
+  "@petName": {
+    "description": "Label for pet name field"
+  },
+  "pleaseEnterPetName": "Please enter your pet's name",
+  "@pleaseEnterPetName": {
+    "description": "Validation message for pet name"
+  },
+  "species": "Species",
+  "@species": {
+    "description": "Label for species field"
+  },
+  "speciesHint": "e.g., Dog, Cat, Bird",
+  "@speciesHint": {
+    "description": "Hint text for species field"
+  },
+  "pleaseEnterSpecies": "Please enter your pet's species",
+  "@pleaseEnterSpecies": {
+    "description": "Validation message for species"
+  },
+  "breed": "Breed",
+  "@breed": {
+    "description": "Label for breed field"
+  },
+  "breedOptional": "Breed (optional)",
+  "@breedOptional": {
+    "description": "Label for optional breed field"
+  },
+  "breedHint": "e.g., Golden Retriever, Persian",
+  "@breedHint": {
+    "description": "Hint text for breed field"
+  },
+  "birthdayOptional": "Birthday (optional)",
+  "@birthdayOptional": {
+    "description": "Label for optional birthday field"
+  },
+  "tapToSelectBirthday": "Tap to select birthday",
+  "@tapToSelectBirthday": {
+    "description": "Placeholder text for birthday field"
+  },
+  "selectPetBirthday": "Select pet birthday",
+  "@selectPetBirthday": {
+    "description": "Date picker title for birthday"
+  },
+  "notesOptional": "Notes (optional)",
+  "@notesOptional": {
+    "description": "Label for optional notes field"
+  },
+  "petNotesHint": "Any special notes about your pet",
+  "@petNotesHint": {
+    "description": "Hint text for pet notes field"
+  },
+  "changePhoto": "Change Photo",
+  "@changePhoto": {
+    "description": "Button text to change pet photo"
+  },
+  "saveProfile": "Save Profile",
+  "@saveProfile": {
+    "description": "Button text to save pet profile"
+  },
+  "updateProfile": "Update Profile",
+  "@updateProfile": {
+    "description": "Button text to update pet profile"
+  },
   "allProfiles": "All Profiles",
   "activeProfile": "ACTIVE",
   "noPetsYet": "No pets yet!",
@@ -904,5 +976,109 @@
   "textSummaryEmailSubject": "Pet Health Summary",
   "@textSummaryEmailSubject": {
     "description": "Email subject when sharing text summary"
+  },
+
+  "navFeedings": "Feedings",
+  "@navFeedings": {
+    "description": "Navigation label for Feedings tab"
+  },
+  "navWalks": "Walks",
+  "@navWalks": {
+    "description": "Navigation label for Walks tab"
+  },
+  "navMeds": "Meds",
+  "@navMeds": {
+    "description": "Navigation label for Medications tab"
+  },
+  "navAppts": "Appts",
+  "@navAppts": {
+    "description": "Navigation label for Appointments tab"
+  },
+  "navReports": "Reports",
+  "@navReports": {
+    "description": "Navigation label for Reports tab"
+  },
+  "navSettings": "Settings",
+  "@navSettings": {
+    "description": "Navigation label for Settings tab"
+  },
+
+  "medicationReminder": "Medication Reminder",
+  "@medicationReminder": {
+    "description": "Notification title for medication reminders"
+  },
+  "medicationReminderBody": "{medication} - {frequency}",
+  "@medicationReminderBody": {
+    "description": "Notification body for medication reminders",
+    "placeholders": {
+      "medication": {
+        "type": "String",
+        "example": "Paracetamol"
+      },
+      "frequency": {
+        "type": "String",
+        "example": "Once Daily"
+      }
+    }
+  },
+  "frequencyOnceDaily": "Once Daily",
+  "@frequencyOnceDaily": {
+    "description": "Medication frequency: once per day"
+  },
+  "frequencyTwiceDaily": "Twice Daily",
+  "@frequencyTwiceDaily": {
+    "description": "Medication frequency: twice per day"
+  },
+  "frequencyThreeTimesDaily": "Three Times Daily",
+  "@frequencyThreeTimesDaily": {
+    "description": "Medication frequency: three times per day"
+  },
+  "frequencyWeekly": "Weekly",
+  "@frequencyWeekly": {
+    "description": "Medication frequency: weekly"
+  },
+  "frequencyAsNeeded": "As Needed",
+  "@frequencyAsNeeded": {
+    "description": "Medication frequency: as needed"
+  },
+  "criticalLowStockAlert": "Critical: Low Stock Alert",
+  "@criticalLowStockAlert": {
+    "description": "Critical low stock alert title"
+  },
+  "lowStockBody": "Only {count} {unit} remaining. Time to refill!",
+  "@lowStockBody": {
+    "description": "Low stock alert body",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      },
+      "unit": {
+        "type": "String",
+        "example": "pills"
+      }
+    }
+  },
+  "pills": "pills",
+  "@pills": {
+    "description": "Unit name for pills"
+  },
+  "appointmentReminder": "Appointment Reminder",
+  "@appointmentReminder": {
+    "description": "Notification title for appointment reminders"
+  },
+  "appointmentAt": "{title} at {location}",
+  "@appointmentAt": {
+    "description": "Appointment notification body",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "Checkup"
+      },
+      "location": {
+        "type": "String",
+        "example": "Vet Laszlo"
+      }
+    }
   }
 }

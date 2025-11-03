@@ -464,22 +464,22 @@ abstract class AppLocalizations {
   /// **'Frequency'**
   String get frequency;
 
-  /// No description provided for @frequencyOnceDaily.
+  /// Medication frequency: once per day
   ///
   /// In en, this message translates to:
-  /// **'Once daily'**
+  /// **'Once Daily'**
   String get frequencyOnceDaily;
 
-  /// No description provided for @frequencyTwiceDaily.
+  /// Medication frequency: twice per day
   ///
   /// In en, this message translates to:
-  /// **'Twice daily'**
+  /// **'Twice Daily'**
   String get frequencyTwiceDaily;
 
-  /// No description provided for @frequencyThreeTimesDaily.
+  /// Medication frequency: three times per day
   ///
   /// In en, this message translates to:
-  /// **'Three times daily'**
+  /// **'Three Times Daily'**
   String get frequencyThreeTimesDaily;
 
   /// No description provided for @frequencyFourTimesDaily.
@@ -494,16 +494,16 @@ abstract class AppLocalizations {
   /// **'Every other day'**
   String get frequencyEveryOtherDay;
 
-  /// No description provided for @frequencyWeekly.
+  /// Medication frequency: weekly
   ///
   /// In en, this message translates to:
   /// **'Weekly'**
   String get frequencyWeekly;
 
-  /// No description provided for @frequencyAsNeeded.
+  /// Medication frequency: as needed
   ///
   /// In en, this message translates to:
-  /// **'As needed'**
+  /// **'As Needed'**
   String get frequencyAsNeeded;
 
   /// No description provided for @frequencyCustom.
@@ -1454,6 +1454,114 @@ abstract class AppLocalizations {
   /// **'Add Pet'**
   String get addPet;
 
+  /// Title for pet profile setup screen
+  ///
+  /// In en, this message translates to:
+  /// **'Setup Pet Profile'**
+  String get setupPetProfile;
+
+  /// Title for pet profile edit screen
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Pet Profile'**
+  String get editPetProfile;
+
+  /// Label for pet name field
+  ///
+  /// In en, this message translates to:
+  /// **'Pet Name'**
+  String get petName;
+
+  /// Validation message for pet name
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your pet\'s name'**
+  String get pleaseEnterPetName;
+
+  /// Label for species field
+  ///
+  /// In en, this message translates to:
+  /// **'Species'**
+  String get species;
+
+  /// Hint text for species field
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Dog, Cat, Bird'**
+  String get speciesHint;
+
+  /// Validation message for species
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your pet\'s species'**
+  String get pleaseEnterSpecies;
+
+  /// Label for breed field
+  ///
+  /// In en, this message translates to:
+  /// **'Breed'**
+  String get breed;
+
+  /// Label for optional breed field
+  ///
+  /// In en, this message translates to:
+  /// **'Breed (optional)'**
+  String get breedOptional;
+
+  /// Hint text for breed field
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Golden Retriever, Persian'**
+  String get breedHint;
+
+  /// Label for optional birthday field
+  ///
+  /// In en, this message translates to:
+  /// **'Birthday (optional)'**
+  String get birthdayOptional;
+
+  /// Placeholder text for birthday field
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to select birthday'**
+  String get tapToSelectBirthday;
+
+  /// Date picker title for birthday
+  ///
+  /// In en, this message translates to:
+  /// **'Select pet birthday'**
+  String get selectPetBirthday;
+
+  /// Label for optional notes field
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (optional)'**
+  String get notesOptional;
+
+  /// Hint text for pet notes field
+  ///
+  /// In en, this message translates to:
+  /// **'Any special notes about your pet'**
+  String get petNotesHint;
+
+  /// Button text to change pet photo
+  ///
+  /// In en, this message translates to:
+  /// **'Change Photo'**
+  String get changePhoto;
+
+  /// Button text to save pet profile
+  ///
+  /// In en, this message translates to:
+  /// **'Save Profile'**
+  String get saveProfile;
+
+  /// Button text to update pet profile
+  ///
+  /// In en, this message translates to:
+  /// **'Update Profile'**
+  String get updateProfile;
+
   /// No description provided for @allProfiles.
   ///
   /// In en, this message translates to:
@@ -2024,13 +2132,13 @@ abstract class AppLocalizations {
   /// **'Next: {time}'**
   String nextReminder(String time);
 
-  /// No description provided for @medicationReminder.
+  /// Notification title for medication reminders
   ///
   /// In en, this message translates to:
   /// **'Medication Reminder'**
   String get medicationReminder;
 
-  /// No description provided for @appointmentReminder.
+  /// Notification title for appointment reminders
   ///
   /// In en, this message translates to:
   /// **'Appointment Reminder'**
@@ -2714,7 +2822,7 @@ abstract class AppLocalizations {
   /// **'Remind me X days before empty'**
   String get refillReminderDays;
 
-  /// No description provided for @pills.
+  /// Unit name for pills
   ///
   /// In en, this message translates to:
   /// **'pills'**
@@ -3985,6 +4093,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pet Health Summary'**
   String get textSummaryEmailSubject;
+
+  /// Navigation label for Feedings tab
+  ///
+  /// In en, this message translates to:
+  /// **'Feedings'**
+  String get navFeedings;
+
+  /// Navigation label for Walks tab
+  ///
+  /// In en, this message translates to:
+  /// **'Walks'**
+  String get navWalks;
+
+  /// Navigation label for Medications tab
+  ///
+  /// In en, this message translates to:
+  /// **'Meds'**
+  String get navMeds;
+
+  /// Navigation label for Appointments tab
+  ///
+  /// In en, this message translates to:
+  /// **'Appts'**
+  String get navAppts;
+
+  /// Navigation label for Reports tab
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get navReports;
+
+  /// Navigation label for Settings tab
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get navSettings;
+
+  /// Notification body for medication reminders
+  ///
+  /// In en, this message translates to:
+  /// **'{medication} - {frequency}'**
+  String medicationReminderBody(String medication, String frequency);
+
+  /// Critical low stock alert title
+  ///
+  /// In en, this message translates to:
+  /// **'Critical: Low Stock Alert'**
+  String get criticalLowStockAlert;
+
+  /// Low stock alert body
+  ///
+  /// In en, this message translates to:
+  /// **'Only {count} {unit} remaining. Time to refill!'**
+  String lowStockBody(int count, String unit);
+
+  /// Appointment notification body
+  ///
+  /// In en, this message translates to:
+  /// **'{title} at {location}'**
+  String appointmentAt(String title, String location);
 }
 
 class _AppLocalizationsDelegate
