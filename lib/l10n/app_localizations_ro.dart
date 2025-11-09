@@ -926,7 +926,7 @@ class AppLocalizationsRo extends AppLocalizations {
   String get breedRussianBlue => 'Russian Blue';
 
   @override
-  String get breedAbyssinian => 'Abissinian';
+  String get breedAbyssinian => 'abisinian';
 
   @override
   String get breedAmericanShorthair => 'American Shorthair';
@@ -992,7 +992,7 @@ class AppLocalizationsRo extends AppLocalizations {
   String get breedDutch => 'Olandez';
 
   @override
-  String get breedOther => 'Altul (Personalizat)';
+  String get breedOther => 'Alta (Personalizată)';
 
   @override
   String get customBreed => 'Rasă Personalizată';
@@ -1073,7 +1073,7 @@ class AppLocalizationsRo extends AppLocalizations {
   String get speciesChicken => 'Găină';
 
   @override
-  String get speciesOther => 'Altul (Personalizat)';
+  String get speciesOther => 'Alta (Personalizată)';
 
   @override
   String get customSpecies => 'Specie Personalizată';
