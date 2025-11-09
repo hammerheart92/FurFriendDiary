@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../domain/models/report_entry.dart';
 import '../../presentation/providers/care_data_provider.dart';
+import '../../../l10n/app_localizations.dart';
 import 'report_card.dart';
 
 class ReportsList extends ConsumerWidget {
@@ -18,6 +19,25 @@ class ReportsList extends ConsumerWidget {
     this.onAddReport,
     this.onViewReport,
   });
+
+  /// Get localized report name based on report type
+  static String getLocalizedReportName(
+      String reportType, AppLocalizations l10n) {
+    // Map English report type constants to localized strings
+    switch (reportType) {
+      case 'Health Summary':
+        return l10n.healthSummary;
+      case 'Medication History':
+        return l10n.medicationHistory;
+      case 'Activity Report':
+        return l10n.activityReport;
+      case 'Veterinary Records':
+        return l10n.veterinaryRecords;
+      default:
+        // Fallback to original if unknown type
+        return reportType;
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -167,24 +187,32 @@ class ReportsList extends ConsumerWidget {
 
   Future<void> _showDeleteDialog(
       BuildContext context, WidgetRef ref, ReportEntry report) async {
+    final l10n = AppLocalizations.of(context);
+    final locale = Localizations.localeOf(context);
+    final formatter = DateFormat.yMMMd(locale.languageCode);
+    final formattedDate = formatter.format(report.generatedDate);
+
+    // Get localized report name
+    final localizedReportName = getLocalizedReportName(report.reportType, l10n);
+
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Report'),
+        title: Text(l10n.deleteReport),
         content: Text(
-          'Are you sure you want to delete the "${report.reportType}" report from ${DateFormat('MMM dd, yyyy').format(report.generatedDate)}?',
+          l10n.deleteReportConfirmation(localizedReportName, formattedDate),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(
-              foregroundColor: Colors.red,
+              foregroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: const Text('Delete'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -195,9 +223,9 @@ class ReportsList extends ConsumerWidget {
         await ref.read(reportProviderProvider.notifier).deleteReport(report.id);
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Report deleted successfully'),
-              backgroundColor: Colors.green,
+            SnackBar(
+              content: Text(l10n.reportDeletedSuccessfully),
+              backgroundColor: Theme.of(context).colorScheme.primary,
             ),
           );
         }

@@ -156,6 +156,39 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pleaseEnterFoodType => 'Please enter a food type';
 
   @override
+  String get foodTypeDryFood => 'Dry Food';
+
+  @override
+  String get foodTypeWetFood => 'Wet Food';
+
+  @override
+  String get foodTypeTreats => 'Treats';
+
+  @override
+  String get foodTypeRawFood => 'Raw Food';
+
+  @override
+  String get foodTypeChicken => 'Chicken';
+
+  @override
+  String get foodTypeFish => 'Fish';
+
+  @override
+  String get foodTypeTurkey => 'Turkey';
+
+  @override
+  String get foodTypeBeef => 'Beef';
+
+  @override
+  String get foodTypeVegetables => 'Vegetables';
+
+  @override
+  String get foodTypeOther => 'Other (Custom)';
+
+  @override
+  String get foodTypeCustomPlaceholder => 'Enter custom food type';
+
+  @override
   String get clear => 'Clear';
 
   @override
@@ -357,6 +390,42 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pleaseEnterReason => 'Please enter reason for appointment';
+
+  @override
+  String get appointmentReasonCheckup => 'Checkup';
+
+  @override
+  String get appointmentReasonVaccination => 'Vaccination';
+
+  @override
+  String get appointmentReasonSurgery => 'Surgery';
+
+  @override
+  String get appointmentReasonEmergency => 'Emergency';
+
+  @override
+  String get appointmentReasonFollowUp => 'Follow-up';
+
+  @override
+  String get appointmentReasonDentalCleaning => 'Dental Cleaning';
+
+  @override
+  String get appointmentReasonGrooming => 'Grooming';
+
+  @override
+  String get appointmentReasonBloodTest => 'Blood Test';
+
+  @override
+  String get appointmentReasonXRay => 'X-Ray';
+
+  @override
+  String get appointmentReasonSpayingNeutering => 'Spaying/Neutering';
+
+  @override
+  String get appointmentReasonOther => 'Other (Custom)';
+
+  @override
+  String get appointmentReasonCustomPlaceholder => 'Enter custom reason';
 
   @override
   String get appointmentDate => 'Appointment Date';
@@ -617,6 +686,17 @@ class AppLocalizationsEn extends AppLocalizations {
       'Share functionality would be implemented here';
 
   @override
+  String get deleteReport => 'Delete Report';
+
+  @override
+  String deleteReportConfirmation(String reportName, String date) {
+    return 'Are you sure you want to delete the \"$reportName\" report from $date?';
+  }
+
+  @override
+  String get reportDeletedSuccessfully => 'Report deleted successfully';
+
+  @override
   String get reportConfiguration => 'Report Configuration';
 
   @override
@@ -748,6 +828,168 @@ class AppLocalizationsEn extends AppLocalizations {
   String get breedHint => 'e.g., Golden Retriever, Persian';
 
   @override
+  String get breedLabradorRetriever => 'Labrador Retriever';
+
+  @override
+  String get breedGoldenRetriever => 'Golden Retriever';
+
+  @override
+  String get breedGermanShepherd => 'German Shepherd';
+
+  @override
+  String get breedBulldog => 'Bulldog';
+
+  @override
+  String get breedBeagle => 'Beagle';
+
+  @override
+  String get breedPoodle => 'Poodle';
+
+  @override
+  String get breedRottweiler => 'Rottweiler';
+
+  @override
+  String get breedYorkshireTerrier => 'Yorkshire Terrier';
+
+  @override
+  String get breedBoxer => 'Boxer';
+
+  @override
+  String get breedDachshund => 'Dachshund';
+
+  @override
+  String get breedSiberianHusky => 'Siberian Husky';
+
+  @override
+  String get breedChihuahua => 'Chihuahua';
+
+  @override
+  String get breedShihTzu => 'Shih Tzu';
+
+  @override
+  String get breedDobermanPinscher => 'Doberman Pinscher';
+
+  @override
+  String get breedGreatDane => 'Great Dane';
+
+  @override
+  String get breedPomeranian => 'Pomeranian';
+
+  @override
+  String get breedBorderCollie => 'Border Collie';
+
+  @override
+  String get breedCockerSpaniel => 'Cocker Spaniel';
+
+  @override
+  String get breedMaltese => 'Maltese';
+
+  @override
+  String get breedMixedBreed => 'Mixed Breed';
+
+  @override
+  String get breedPersian => 'Persian';
+
+  @override
+  String get breedMaineCoon => 'Maine Coon';
+
+  @override
+  String get breedSiamese => 'Siamese';
+
+  @override
+  String get breedRagdoll => 'Ragdoll';
+
+  @override
+  String get breedBritishShorthair => 'British Shorthair';
+
+  @override
+  String get breedSphynx => 'Sphynx';
+
+  @override
+  String get breedBengal => 'Bengal';
+
+  @override
+  String get breedScottishFold => 'Scottish Fold';
+
+  @override
+  String get breedRussianBlue => 'Russian Blue';
+
+  @override
+  String get breedAbyssinian => 'Abyssinian';
+
+  @override
+  String get breedAmericanShorthair => 'American Shorthair';
+
+  @override
+  String get breedBirman => 'Birman';
+
+  @override
+  String get breedNorwegianForest => 'Norwegian Forest';
+
+  @override
+  String get breedDomesticShorthair => 'Domestic Shorthair';
+
+  @override
+  String get breedParakeet => 'Parakeet';
+
+  @override
+  String get breedCockatiel => 'Cockatiel';
+
+  @override
+  String get breedCanary => 'Canary';
+
+  @override
+  String get breedParrot => 'Parrot';
+
+  @override
+  String get breedLovebird => 'Lovebird';
+
+  @override
+  String get breedFinch => 'Finch';
+
+  @override
+  String get breedCockatoo => 'Cockatoo';
+
+  @override
+  String get breedMacaw => 'Macaw';
+
+  @override
+  String get breedConure => 'Conure';
+
+  @override
+  String get breedAfricanGrey => 'African Grey';
+
+  @override
+  String get breedHollandLop => 'Holland Lop';
+
+  @override
+  String get breedNetherlandDwarf => 'Netherland Dwarf';
+
+  @override
+  String get breedMiniRex => 'Mini Rex';
+
+  @override
+  String get breedLionhead => 'Lionhead';
+
+  @override
+  String get breedFlemishGiant => 'Flemish Giant';
+
+  @override
+  String get breedEnglishAngora => 'English Angora';
+
+  @override
+  String get breedDutch => 'Dutch';
+
+  @override
+  String get breedOther => 'Other (Custom)';
+
+  @override
+  String get customBreed => 'Custom Breed';
+
+  @override
+  String get enterCustomBreed => 'Enter your pet\'s breed';
+
+  @override
   String get birthdayOptional => 'Birthday (optional)';
 
   @override
@@ -761,6 +1003,72 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get petNotesHint => 'Any special notes about your pet';
+
+  @override
+  String get speciesDog => 'Dog';
+
+  @override
+  String get speciesCat => 'Cat';
+
+  @override
+  String get speciesBird => 'Bird';
+
+  @override
+  String get speciesRabbit => 'Rabbit';
+
+  @override
+  String get speciesHamster => 'Hamster';
+
+  @override
+  String get speciesGuineaPig => 'Guinea Pig';
+
+  @override
+  String get speciesFish => 'Fish';
+
+  @override
+  String get speciesTurtle => 'Turtle';
+
+  @override
+  String get speciesLizard => 'Lizard';
+
+  @override
+  String get speciesSnake => 'Snake';
+
+  @override
+  String get speciesFerret => 'Ferret';
+
+  @override
+  String get speciesChinchilla => 'Chinchilla';
+
+  @override
+  String get speciesRat => 'Rat';
+
+  @override
+  String get speciesMouse => 'Mouse';
+
+  @override
+  String get speciesGerbil => 'Gerbil';
+
+  @override
+  String get speciesHedgehog => 'Hedgehog';
+
+  @override
+  String get speciesParrot => 'Parrot';
+
+  @override
+  String get speciesHorse => 'Horse';
+
+  @override
+  String get speciesChicken => 'Chicken';
+
+  @override
+  String get speciesOther => 'Other (Custom)';
+
+  @override
+  String get customSpecies => 'Custom Species';
+
+  @override
+  String get enterCustomSpecies => 'Enter your pet\'s species';
 
   @override
   String get changePhoto => 'Change Photo';

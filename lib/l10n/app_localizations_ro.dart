@@ -161,6 +161,40 @@ class AppLocalizationsRo extends AppLocalizations {
   String get pleaseEnterFoodType => 'Vă rugăm să introduceți un tip de mâncare';
 
   @override
+  String get foodTypeDryFood => 'Mâncare Uscată';
+
+  @override
+  String get foodTypeWetFood => 'Mâncare Umedă';
+
+  @override
+  String get foodTypeTreats => 'Recompense';
+
+  @override
+  String get foodTypeRawFood => 'Mâncare Crudă';
+
+  @override
+  String get foodTypeChicken => 'Pui';
+
+  @override
+  String get foodTypeFish => 'Pește';
+
+  @override
+  String get foodTypeTurkey => 'Curcan';
+
+  @override
+  String get foodTypeBeef => 'Vită';
+
+  @override
+  String get foodTypeVegetables => 'Legume';
+
+  @override
+  String get foodTypeOther => 'Altele (Personalizat)';
+
+  @override
+  String get foodTypeCustomPlaceholder =>
+      'Introduceți un tip de mâncare personalizat';
+
+  @override
   String get clear => 'Curăță';
 
   @override
@@ -364,6 +398,43 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get pleaseEnterReason => 'Vă rugăm să introduceți motivul programării';
+
+  @override
+  String get appointmentReasonCheckup => 'Control de Rutină';
+
+  @override
+  String get appointmentReasonVaccination => 'Vaccinare';
+
+  @override
+  String get appointmentReasonSurgery => 'Operație';
+
+  @override
+  String get appointmentReasonEmergency => 'Urgență';
+
+  @override
+  String get appointmentReasonFollowUp => 'Control Post-Procedură';
+
+  @override
+  String get appointmentReasonDentalCleaning => 'Curățare Dentară';
+
+  @override
+  String get appointmentReasonGrooming => 'Îngrijire';
+
+  @override
+  String get appointmentReasonBloodTest => 'Analize de Sânge';
+
+  @override
+  String get appointmentReasonXRay => 'Radiografie';
+
+  @override
+  String get appointmentReasonSpayingNeutering => 'Sterilizare';
+
+  @override
+  String get appointmentReasonOther => 'Altele (Personalizat)';
+
+  @override
+  String get appointmentReasonCustomPlaceholder =>
+      'Introduceți un motiv personalizat';
 
   @override
   String get appointmentDate => 'Data Programării';
@@ -625,6 +696,17 @@ class AppLocalizationsRo extends AppLocalizations {
       'Funcționalitatea de partajare ar fi implementată aici';
 
   @override
+  String get deleteReport => 'Șterge Raport';
+
+  @override
+  String deleteReportConfirmation(String reportName, String date) {
+    return 'Sigur doriți să ștergeți raportul \"$reportName\" din $date?';
+  }
+
+  @override
+  String get reportDeletedSuccessfully => 'Raport șters cu succes';
+
+  @override
   String get reportConfiguration => 'Configurare Raport';
 
   @override
@@ -757,6 +839,168 @@ class AppLocalizationsRo extends AppLocalizations {
   String get breedHint => 'de ex., Golden Retriever, Persană';
 
   @override
+  String get breedLabradorRetriever => 'Labrador Retriever';
+
+  @override
+  String get breedGoldenRetriever => 'Golden Retriever';
+
+  @override
+  String get breedGermanShepherd => 'Ciobănesc German';
+
+  @override
+  String get breedBulldog => 'Bulldog';
+
+  @override
+  String get breedBeagle => 'Beagle';
+
+  @override
+  String get breedPoodle => 'Pudel';
+
+  @override
+  String get breedRottweiler => 'Rottweiler';
+
+  @override
+  String get breedYorkshireTerrier => 'Yorkshire Terrier';
+
+  @override
+  String get breedBoxer => 'Boxer';
+
+  @override
+  String get breedDachshund => 'Dachshund';
+
+  @override
+  String get breedSiberianHusky => 'Husky Siberian';
+
+  @override
+  String get breedChihuahua => 'Chihuahua';
+
+  @override
+  String get breedShihTzu => 'Shih Tzu';
+
+  @override
+  String get breedDobermanPinscher => 'Doberman Pinscher';
+
+  @override
+  String get breedGreatDane => 'Dog German';
+
+  @override
+  String get breedPomeranian => 'Pomeranian';
+
+  @override
+  String get breedBorderCollie => 'Border Collie';
+
+  @override
+  String get breedCockerSpaniel => 'Cocker Spaniel';
+
+  @override
+  String get breedMaltese => 'Maltese';
+
+  @override
+  String get breedMixedBreed => 'Rasă Mixtă';
+
+  @override
+  String get breedPersian => 'Persan';
+
+  @override
+  String get breedMaineCoon => 'Maine Coon';
+
+  @override
+  String get breedSiamese => 'Siamez';
+
+  @override
+  String get breedRagdoll => 'Ragdoll';
+
+  @override
+  String get breedBritishShorthair => 'British Shorthair';
+
+  @override
+  String get breedSphynx => 'Sphynx';
+
+  @override
+  String get breedBengal => 'Bengal';
+
+  @override
+  String get breedScottishFold => 'Scottish Fold';
+
+  @override
+  String get breedRussianBlue => 'Russian Blue';
+
+  @override
+  String get breedAbyssinian => 'Abissinian';
+
+  @override
+  String get breedAmericanShorthair => 'American Shorthair';
+
+  @override
+  String get breedBirman => 'Birman';
+
+  @override
+  String get breedNorwegianForest => 'Pădure Norvegiană';
+
+  @override
+  String get breedDomesticShorthair => 'Domestic Shorthair';
+
+  @override
+  String get breedParakeet => 'Perușă';
+
+  @override
+  String get breedCockatiel => 'Nimfă';
+
+  @override
+  String get breedCanary => 'Canar';
+
+  @override
+  String get breedParrot => 'Papagal';
+
+  @override
+  String get breedLovebird => 'Agapornis';
+
+  @override
+  String get breedFinch => 'Pintene';
+
+  @override
+  String get breedCockatoo => 'Cacadu';
+
+  @override
+  String get breedMacaw => 'Ara';
+
+  @override
+  String get breedConure => 'Conure';
+
+  @override
+  String get breedAfricanGrey => 'Jako';
+
+  @override
+  String get breedHollandLop => 'Holland Lop';
+
+  @override
+  String get breedNetherlandDwarf => 'Pitic Olandez';
+
+  @override
+  String get breedMiniRex => 'Mini Rex';
+
+  @override
+  String get breedLionhead => 'Cap de Leu';
+
+  @override
+  String get breedFlemishGiant => 'Gigant Flamand';
+
+  @override
+  String get breedEnglishAngora => 'Angora Englezesc';
+
+  @override
+  String get breedDutch => 'Olandez';
+
+  @override
+  String get breedOther => 'Altul (Personalizat)';
+
+  @override
+  String get customBreed => 'Rasă Personalizată';
+
+  @override
+  String get enterCustomBreed => 'Introduceți rasa animalului';
+
+  @override
   String get birthdayOptional => 'Zi de naștere (opțional)';
 
   @override
@@ -770,6 +1014,72 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get petNotesHint => 'Notițe speciale despre animalul dumneavoastră';
+
+  @override
+  String get speciesDog => 'Câine';
+
+  @override
+  String get speciesCat => 'Pisică';
+
+  @override
+  String get speciesBird => 'Pasăre';
+
+  @override
+  String get speciesRabbit => 'Iepure';
+
+  @override
+  String get speciesHamster => 'Hamster';
+
+  @override
+  String get speciesGuineaPig => 'Cobai';
+
+  @override
+  String get speciesFish => 'Pește';
+
+  @override
+  String get speciesTurtle => 'Broască țestoasă';
+
+  @override
+  String get speciesLizard => 'Șopârlă';
+
+  @override
+  String get speciesSnake => 'Șarpe';
+
+  @override
+  String get speciesFerret => 'Dihor';
+
+  @override
+  String get speciesChinchilla => 'Chinchilla';
+
+  @override
+  String get speciesRat => 'Șobolan';
+
+  @override
+  String get speciesMouse => 'Șoarece';
+
+  @override
+  String get speciesGerbil => 'Gerbil';
+
+  @override
+  String get speciesHedgehog => 'Arici';
+
+  @override
+  String get speciesParrot => 'Papagal';
+
+  @override
+  String get speciesHorse => 'Cal';
+
+  @override
+  String get speciesChicken => 'Găină';
+
+  @override
+  String get speciesOther => 'Altul (Personalizat)';
+
+  @override
+  String get customSpecies => 'Specie Personalizată';
+
+  @override
+  String get enterCustomSpecies => 'Introduceți specia animalului';
 
   @override
   String get changePhoto => 'Schimbă fotografia';

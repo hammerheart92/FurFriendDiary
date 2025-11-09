@@ -13,8 +13,26 @@ class WeightRepository {
   }
 
   /// Get weight entries as a stream for real-time updates
+  /// Emits current state immediately, then listens for changes
   Stream<List<WeightEntry>> getWeightEntriesStream(String petId) {
-    return _box.watch().map((_) => getWeightEntriesForPet(petId));
+    return Stream<List<WeightEntry>>.multi((controller) {
+      // Emit initial state
+      final initialEntries = getWeightEntriesForPet(petId);
+      print(
+          '[WEIGHT_REPO] getWeightEntriesStream - Initial emit: ${initialEntries.length} entries for pet $petId');
+      controller.add(initialEntries);
+
+      // Listen to changes
+      final subscription = _box.watch().listen((_) {
+        final entries = getWeightEntriesForPet(petId);
+        print(
+            '[WEIGHT_REPO] getWeightEntriesStream - Change detected: ${entries.length} entries');
+        controller.add(entries);
+      });
+
+      // Cleanup
+      controller.onCancel = () => subscription.cancel();
+    });
   }
 
   /// Add a new weight entry

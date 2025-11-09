@@ -36,6 +36,7 @@ ios/Flutter/Flutter.podspec
 *.log
 
 # Debug and documentation files (not for production)
+FurFriendDiary_Project_Handoff.md
 APPOINTMENT_REMINDER_DATE_BUG_FIX.md
 DEBUG_NOTIFICATIONS_GUIDE.md
 KEYSTORE_INFO.txt

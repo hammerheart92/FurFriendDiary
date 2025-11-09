@@ -380,6 +380,72 @@ abstract class AppLocalizations {
   /// **'Please enter a food type'**
   String get pleaseEnterFoodType;
 
+  /// No description provided for @foodTypeDryFood.
+  ///
+  /// In en, this message translates to:
+  /// **'Dry Food'**
+  String get foodTypeDryFood;
+
+  /// No description provided for @foodTypeWetFood.
+  ///
+  /// In en, this message translates to:
+  /// **'Wet Food'**
+  String get foodTypeWetFood;
+
+  /// No description provided for @foodTypeTreats.
+  ///
+  /// In en, this message translates to:
+  /// **'Treats'**
+  String get foodTypeTreats;
+
+  /// No description provided for @foodTypeRawFood.
+  ///
+  /// In en, this message translates to:
+  /// **'Raw Food'**
+  String get foodTypeRawFood;
+
+  /// No description provided for @foodTypeChicken.
+  ///
+  /// In en, this message translates to:
+  /// **'Chicken'**
+  String get foodTypeChicken;
+
+  /// No description provided for @foodTypeFish.
+  ///
+  /// In en, this message translates to:
+  /// **'Fish'**
+  String get foodTypeFish;
+
+  /// No description provided for @foodTypeTurkey.
+  ///
+  /// In en, this message translates to:
+  /// **'Turkey'**
+  String get foodTypeTurkey;
+
+  /// No description provided for @foodTypeBeef.
+  ///
+  /// In en, this message translates to:
+  /// **'Beef'**
+  String get foodTypeBeef;
+
+  /// No description provided for @foodTypeVegetables.
+  ///
+  /// In en, this message translates to:
+  /// **'Vegetables'**
+  String get foodTypeVegetables;
+
+  /// No description provided for @foodTypeOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other (Custom)'**
+  String get foodTypeOther;
+
+  /// No description provided for @foodTypeCustomPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter custom food type'**
+  String get foodTypeCustomPlaceholder;
+
   /// No description provided for @clear.
   ///
   /// In en, this message translates to:
@@ -769,6 +835,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please enter reason for appointment'**
   String get pleaseEnterReason;
+
+  /// No description provided for @appointmentReasonCheckup.
+  ///
+  /// In en, this message translates to:
+  /// **'Checkup'**
+  String get appointmentReasonCheckup;
+
+  /// No description provided for @appointmentReasonVaccination.
+  ///
+  /// In en, this message translates to:
+  /// **'Vaccination'**
+  String get appointmentReasonVaccination;
+
+  /// No description provided for @appointmentReasonSurgery.
+  ///
+  /// In en, this message translates to:
+  /// **'Surgery'**
+  String get appointmentReasonSurgery;
+
+  /// No description provided for @appointmentReasonEmergency.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency'**
+  String get appointmentReasonEmergency;
+
+  /// No description provided for @appointmentReasonFollowUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow-up'**
+  String get appointmentReasonFollowUp;
+
+  /// No description provided for @appointmentReasonDentalCleaning.
+  ///
+  /// In en, this message translates to:
+  /// **'Dental Cleaning'**
+  String get appointmentReasonDentalCleaning;
+
+  /// No description provided for @appointmentReasonGrooming.
+  ///
+  /// In en, this message translates to:
+  /// **'Grooming'**
+  String get appointmentReasonGrooming;
+
+  /// No description provided for @appointmentReasonBloodTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Blood Test'**
+  String get appointmentReasonBloodTest;
+
+  /// No description provided for @appointmentReasonXRay.
+  ///
+  /// In en, this message translates to:
+  /// **'X-Ray'**
+  String get appointmentReasonXRay;
+
+  /// No description provided for @appointmentReasonSpayingNeutering.
+  ///
+  /// In en, this message translates to:
+  /// **'Spaying/Neutering'**
+  String get appointmentReasonSpayingNeutering;
+
+  /// No description provided for @appointmentReasonOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other (Custom)'**
+  String get appointmentReasonOther;
+
+  /// No description provided for @appointmentReasonCustomPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter custom reason'**
+  String get appointmentReasonCustomPlaceholder;
 
   /// No description provided for @appointmentDate.
   ///
@@ -1268,6 +1406,24 @@ abstract class AppLocalizations {
   /// **'Share functionality would be implemented here'**
   String get shareFunctionalityPlaceholder;
 
+  /// Delete report dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Report'**
+  String get deleteReport;
+
+  /// Delete report confirmation message
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete the \"{reportName}\" report from {date}?'**
+  String deleteReportConfirmation(String reportName, String date);
+
+  /// Success message after deleting report
+  ///
+  /// In en, this message translates to:
+  /// **'Report deleted successfully'**
+  String get reportDeletedSuccessfully;
+
   /// No description provided for @reportConfiguration.
   ///
   /// In en, this message translates to:
@@ -1514,6 +1670,330 @@ abstract class AppLocalizations {
   /// **'e.g., Golden Retriever, Persian'**
   String get breedHint;
 
+  /// No description provided for @breedLabradorRetriever.
+  ///
+  /// In en, this message translates to:
+  /// **'Labrador Retriever'**
+  String get breedLabradorRetriever;
+
+  /// No description provided for @breedGoldenRetriever.
+  ///
+  /// In en, this message translates to:
+  /// **'Golden Retriever'**
+  String get breedGoldenRetriever;
+
+  /// No description provided for @breedGermanShepherd.
+  ///
+  /// In en, this message translates to:
+  /// **'German Shepherd'**
+  String get breedGermanShepherd;
+
+  /// No description provided for @breedBulldog.
+  ///
+  /// In en, this message translates to:
+  /// **'Bulldog'**
+  String get breedBulldog;
+
+  /// No description provided for @breedBeagle.
+  ///
+  /// In en, this message translates to:
+  /// **'Beagle'**
+  String get breedBeagle;
+
+  /// No description provided for @breedPoodle.
+  ///
+  /// In en, this message translates to:
+  /// **'Poodle'**
+  String get breedPoodle;
+
+  /// No description provided for @breedRottweiler.
+  ///
+  /// In en, this message translates to:
+  /// **'Rottweiler'**
+  String get breedRottweiler;
+
+  /// No description provided for @breedYorkshireTerrier.
+  ///
+  /// In en, this message translates to:
+  /// **'Yorkshire Terrier'**
+  String get breedYorkshireTerrier;
+
+  /// No description provided for @breedBoxer.
+  ///
+  /// In en, this message translates to:
+  /// **'Boxer'**
+  String get breedBoxer;
+
+  /// No description provided for @breedDachshund.
+  ///
+  /// In en, this message translates to:
+  /// **'Dachshund'**
+  String get breedDachshund;
+
+  /// No description provided for @breedSiberianHusky.
+  ///
+  /// In en, this message translates to:
+  /// **'Siberian Husky'**
+  String get breedSiberianHusky;
+
+  /// No description provided for @breedChihuahua.
+  ///
+  /// In en, this message translates to:
+  /// **'Chihuahua'**
+  String get breedChihuahua;
+
+  /// No description provided for @breedShihTzu.
+  ///
+  /// In en, this message translates to:
+  /// **'Shih Tzu'**
+  String get breedShihTzu;
+
+  /// No description provided for @breedDobermanPinscher.
+  ///
+  /// In en, this message translates to:
+  /// **'Doberman Pinscher'**
+  String get breedDobermanPinscher;
+
+  /// No description provided for @breedGreatDane.
+  ///
+  /// In en, this message translates to:
+  /// **'Great Dane'**
+  String get breedGreatDane;
+
+  /// No description provided for @breedPomeranian.
+  ///
+  /// In en, this message translates to:
+  /// **'Pomeranian'**
+  String get breedPomeranian;
+
+  /// No description provided for @breedBorderCollie.
+  ///
+  /// In en, this message translates to:
+  /// **'Border Collie'**
+  String get breedBorderCollie;
+
+  /// No description provided for @breedCockerSpaniel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cocker Spaniel'**
+  String get breedCockerSpaniel;
+
+  /// No description provided for @breedMaltese.
+  ///
+  /// In en, this message translates to:
+  /// **'Maltese'**
+  String get breedMaltese;
+
+  /// No description provided for @breedMixedBreed.
+  ///
+  /// In en, this message translates to:
+  /// **'Mixed Breed'**
+  String get breedMixedBreed;
+
+  /// No description provided for @breedPersian.
+  ///
+  /// In en, this message translates to:
+  /// **'Persian'**
+  String get breedPersian;
+
+  /// No description provided for @breedMaineCoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Maine Coon'**
+  String get breedMaineCoon;
+
+  /// No description provided for @breedSiamese.
+  ///
+  /// In en, this message translates to:
+  /// **'Siamese'**
+  String get breedSiamese;
+
+  /// No description provided for @breedRagdoll.
+  ///
+  /// In en, this message translates to:
+  /// **'Ragdoll'**
+  String get breedRagdoll;
+
+  /// No description provided for @breedBritishShorthair.
+  ///
+  /// In en, this message translates to:
+  /// **'British Shorthair'**
+  String get breedBritishShorthair;
+
+  /// No description provided for @breedSphynx.
+  ///
+  /// In en, this message translates to:
+  /// **'Sphynx'**
+  String get breedSphynx;
+
+  /// No description provided for @breedBengal.
+  ///
+  /// In en, this message translates to:
+  /// **'Bengal'**
+  String get breedBengal;
+
+  /// No description provided for @breedScottishFold.
+  ///
+  /// In en, this message translates to:
+  /// **'Scottish Fold'**
+  String get breedScottishFold;
+
+  /// No description provided for @breedRussianBlue.
+  ///
+  /// In en, this message translates to:
+  /// **'Russian Blue'**
+  String get breedRussianBlue;
+
+  /// No description provided for @breedAbyssinian.
+  ///
+  /// In en, this message translates to:
+  /// **'Abyssinian'**
+  String get breedAbyssinian;
+
+  /// No description provided for @breedAmericanShorthair.
+  ///
+  /// In en, this message translates to:
+  /// **'American Shorthair'**
+  String get breedAmericanShorthair;
+
+  /// No description provided for @breedBirman.
+  ///
+  /// In en, this message translates to:
+  /// **'Birman'**
+  String get breedBirman;
+
+  /// No description provided for @breedNorwegianForest.
+  ///
+  /// In en, this message translates to:
+  /// **'Norwegian Forest'**
+  String get breedNorwegianForest;
+
+  /// No description provided for @breedDomesticShorthair.
+  ///
+  /// In en, this message translates to:
+  /// **'Domestic Shorthair'**
+  String get breedDomesticShorthair;
+
+  /// No description provided for @breedParakeet.
+  ///
+  /// In en, this message translates to:
+  /// **'Parakeet'**
+  String get breedParakeet;
+
+  /// No description provided for @breedCockatiel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cockatiel'**
+  String get breedCockatiel;
+
+  /// No description provided for @breedCanary.
+  ///
+  /// In en, this message translates to:
+  /// **'Canary'**
+  String get breedCanary;
+
+  /// No description provided for @breedParrot.
+  ///
+  /// In en, this message translates to:
+  /// **'Parrot'**
+  String get breedParrot;
+
+  /// No description provided for @breedLovebird.
+  ///
+  /// In en, this message translates to:
+  /// **'Lovebird'**
+  String get breedLovebird;
+
+  /// No description provided for @breedFinch.
+  ///
+  /// In en, this message translates to:
+  /// **'Finch'**
+  String get breedFinch;
+
+  /// No description provided for @breedCockatoo.
+  ///
+  /// In en, this message translates to:
+  /// **'Cockatoo'**
+  String get breedCockatoo;
+
+  /// No description provided for @breedMacaw.
+  ///
+  /// In en, this message translates to:
+  /// **'Macaw'**
+  String get breedMacaw;
+
+  /// No description provided for @breedConure.
+  ///
+  /// In en, this message translates to:
+  /// **'Conure'**
+  String get breedConure;
+
+  /// No description provided for @breedAfricanGrey.
+  ///
+  /// In en, this message translates to:
+  /// **'African Grey'**
+  String get breedAfricanGrey;
+
+  /// No description provided for @breedHollandLop.
+  ///
+  /// In en, this message translates to:
+  /// **'Holland Lop'**
+  String get breedHollandLop;
+
+  /// No description provided for @breedNetherlandDwarf.
+  ///
+  /// In en, this message translates to:
+  /// **'Netherland Dwarf'**
+  String get breedNetherlandDwarf;
+
+  /// No description provided for @breedMiniRex.
+  ///
+  /// In en, this message translates to:
+  /// **'Mini Rex'**
+  String get breedMiniRex;
+
+  /// No description provided for @breedLionhead.
+  ///
+  /// In en, this message translates to:
+  /// **'Lionhead'**
+  String get breedLionhead;
+
+  /// No description provided for @breedFlemishGiant.
+  ///
+  /// In en, this message translates to:
+  /// **'Flemish Giant'**
+  String get breedFlemishGiant;
+
+  /// No description provided for @breedEnglishAngora.
+  ///
+  /// In en, this message translates to:
+  /// **'English Angora'**
+  String get breedEnglishAngora;
+
+  /// No description provided for @breedDutch.
+  ///
+  /// In en, this message translates to:
+  /// **'Dutch'**
+  String get breedDutch;
+
+  /// No description provided for @breedOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other (Custom)'**
+  String get breedOther;
+
+  /// No description provided for @customBreed.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Breed'**
+  String get customBreed;
+
+  /// No description provided for @enterCustomBreed.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your pet\'s breed'**
+  String get enterCustomBreed;
+
   /// Label for optional birthday field
   ///
   /// In en, this message translates to:
@@ -1543,6 +2023,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Any special notes about your pet'**
   String get petNotesHint;
+
+  /// No description provided for @speciesDog.
+  ///
+  /// In en, this message translates to:
+  /// **'Dog'**
+  String get speciesDog;
+
+  /// No description provided for @speciesCat.
+  ///
+  /// In en, this message translates to:
+  /// **'Cat'**
+  String get speciesCat;
+
+  /// No description provided for @speciesBird.
+  ///
+  /// In en, this message translates to:
+  /// **'Bird'**
+  String get speciesBird;
+
+  /// No description provided for @speciesRabbit.
+  ///
+  /// In en, this message translates to:
+  /// **'Rabbit'**
+  String get speciesRabbit;
+
+  /// No description provided for @speciesHamster.
+  ///
+  /// In en, this message translates to:
+  /// **'Hamster'**
+  String get speciesHamster;
+
+  /// No description provided for @speciesGuineaPig.
+  ///
+  /// In en, this message translates to:
+  /// **'Guinea Pig'**
+  String get speciesGuineaPig;
+
+  /// No description provided for @speciesFish.
+  ///
+  /// In en, this message translates to:
+  /// **'Fish'**
+  String get speciesFish;
+
+  /// No description provided for @speciesTurtle.
+  ///
+  /// In en, this message translates to:
+  /// **'Turtle'**
+  String get speciesTurtle;
+
+  /// No description provided for @speciesLizard.
+  ///
+  /// In en, this message translates to:
+  /// **'Lizard'**
+  String get speciesLizard;
+
+  /// No description provided for @speciesSnake.
+  ///
+  /// In en, this message translates to:
+  /// **'Snake'**
+  String get speciesSnake;
+
+  /// No description provided for @speciesFerret.
+  ///
+  /// In en, this message translates to:
+  /// **'Ferret'**
+  String get speciesFerret;
+
+  /// No description provided for @speciesChinchilla.
+  ///
+  /// In en, this message translates to:
+  /// **'Chinchilla'**
+  String get speciesChinchilla;
+
+  /// No description provided for @speciesRat.
+  ///
+  /// In en, this message translates to:
+  /// **'Rat'**
+  String get speciesRat;
+
+  /// No description provided for @speciesMouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Mouse'**
+  String get speciesMouse;
+
+  /// No description provided for @speciesGerbil.
+  ///
+  /// In en, this message translates to:
+  /// **'Gerbil'**
+  String get speciesGerbil;
+
+  /// No description provided for @speciesHedgehog.
+  ///
+  /// In en, this message translates to:
+  /// **'Hedgehog'**
+  String get speciesHedgehog;
+
+  /// No description provided for @speciesParrot.
+  ///
+  /// In en, this message translates to:
+  /// **'Parrot'**
+  String get speciesParrot;
+
+  /// No description provided for @speciesHorse.
+  ///
+  /// In en, this message translates to:
+  /// **'Horse'**
+  String get speciesHorse;
+
+  /// No description provided for @speciesChicken.
+  ///
+  /// In en, this message translates to:
+  /// **'Chicken'**
+  String get speciesChicken;
+
+  /// No description provided for @speciesOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other (Custom)'**
+  String get speciesOther;
+
+  /// No description provided for @customSpecies.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Species'**
+  String get customSpecies;
+
+  /// No description provided for @enterCustomSpecies.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your pet\'s species'**
+  String get enterCustomSpecies;
 
   /// Button text to change pet photo
   ///

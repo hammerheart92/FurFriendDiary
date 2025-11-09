@@ -1,8 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
 import 'package:fur_friend_diary/src/domain/models/weight_entry.dart';
 import 'package:fur_friend_diary/src/data/repositories/weight_repository.dart';
 import 'package:fur_friend_diary/src/presentation/providers/pet_profile_provider.dart';
 import 'package:fur_friend_diary/src/data/local/hive_manager.dart';
+
+final _logger = Logger();
 
 /// Repository provider
 final weightRepositoryProvider = Provider<WeightRepository>((ref) {
@@ -10,17 +13,20 @@ final weightRepositoryProvider = Provider<WeightRepository>((ref) {
   return WeightRepository(box);
 });
 
-/// Weight entries for current pet
+/// Weight entries for current pet (reactive stream)
 final weightEntriesProvider =
-    FutureProvider.autoDispose<List<WeightEntry>>((ref) async {
+    StreamProvider.autoDispose<List<WeightEntry>>((ref) {
   final repository = ref.watch(weightRepositoryProvider);
   final currentPet = ref.watch(currentPetProfileProvider);
 
   if (currentPet == null) {
-    return [];
+    _logger.d('[WEIGHT_PROVIDER] No current pet, returning empty stream');
+    return Stream.value([]);
   }
 
-  return repository.getWeightEntriesForPet(currentPet.id);
+  _logger.d(
+      '[WEIGHT_PROVIDER] Listening to weight entries stream for pet: ${currentPet.id}');
+  return repository.getWeightEntriesStream(currentPet.id);
 });
 
 /// Weight entries for a specific pet (synchronous)
@@ -32,7 +38,8 @@ final weightEntriesForPetProvider =
 
 /// Latest weight for current pet
 final latestWeightProvider = Provider.autoDispose<WeightEntry?>((ref) {
-  final entries = ref.watch(weightEntriesProvider).value ?? [];
+  final entriesAsync = ref.watch(weightEntriesProvider);
+  final entries = entriesAsync.whenData((data) => data).value ?? [];
   return entries.isNotEmpty ? entries.first : null;
 });
 
@@ -45,7 +52,8 @@ final latestWeightForPetProvider =
 
 /// Weight change (difference between latest and earliest) for current pet
 final weightChangeProvider = Provider.autoDispose<double?>((ref) {
-  final entries = ref.watch(weightEntriesProvider).value ?? [];
+  final entriesAsync = ref.watch(weightEntriesProvider);
+  final entries = entriesAsync.whenData((data) => data).value ?? [];
   if (entries.length < 2) return null;
 
   final latest = entries.first.weight;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import '../../domain/models/appointment_entry.dart';
 import '../../presentation/providers/care_data_provider.dart';
 import '../../presentation/providers/pet_profile_provider.dart';
@@ -24,6 +25,7 @@ class AppointmentForm extends ConsumerStatefulWidget {
 }
 
 class _AppointmentFormState extends ConsumerState<AppointmentForm> {
+  final logger = Logger();
   final _formKey = GlobalKey<FormState>();
   final _veterinarianController = TextEditingController();
   final _clinicController = TextEditingController();
@@ -37,6 +39,24 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
   String? _selectedVetId;
   bool _useManualEntry = false;
 
+  // Common appointment reasons
+  static const List<String> _commonReasons = [
+    'checkup',
+    'vaccination',
+    'surgery',
+    'emergency',
+    'followUp',
+    'dentalCleaning',
+    'grooming',
+    'bloodTest',
+    'xRay',
+    'spayingNeutering',
+    'other',
+  ];
+
+  String? _selectedReasonKey; // Selected from dropdown (using keys)
+  bool _showCustomReasonField = false; // Show text field for custom reason
+
   @override
   void initState() {
     super.initState();
@@ -49,13 +69,23 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
     final appointment = widget.appointment!;
     _veterinarianController.text = appointment.veterinarian;
     _clinicController.text = appointment.clinic;
-    _reasonController.text = appointment.reason;
     _notesController.text = appointment.notes ?? '';
     _appointmentDate = appointment.appointmentDate;
     _appointmentTime = TimeOfDay.fromDateTime(appointment.appointmentTime);
     _isCompleted = appointment.isCompleted;
     _selectedVetId = appointment.vetId;
     _useManualEntry = appointment.vetId == null;
+
+    // Detect if existing reason matches a dropdown option
+    final existingReason = appointment.reason;
+    logger.d('[APPOINTMENT] Loading existing reason: $existingReason');
+
+    // Set the text controller with existing reason
+    // This will be used for custom reasons or initial display
+    _reasonController.text = existingReason;
+
+    // Reason key detection will happen in build method with actual localization
+    logger.d('[APPOINTMENT] Will detect reason key match in build method');
   }
 
   @override
@@ -67,10 +97,68 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
     super.dispose();
   }
 
+  /// Get localized appointment reason name
+  String _getLocalizedReason(String reasonKey, AppLocalizations l10n) {
+    switch (reasonKey) {
+      case 'checkup':
+        return l10n.appointmentReasonCheckup;
+      case 'vaccination':
+        return l10n.appointmentReasonVaccination;
+      case 'surgery':
+        return l10n.appointmentReasonSurgery;
+      case 'emergency':
+        return l10n.appointmentReasonEmergency;
+      case 'followUp':
+        return l10n.appointmentReasonFollowUp;
+      case 'dentalCleaning':
+        return l10n.appointmentReasonDentalCleaning;
+      case 'grooming':
+        return l10n.appointmentReasonGrooming;
+      case 'bloodTest':
+        return l10n.appointmentReasonBloodTest;
+      case 'xRay':
+        return l10n.appointmentReasonXRay;
+      case 'spayingNeutering':
+        return l10n.appointmentReasonSpayingNeutering;
+      case 'other':
+        return l10n.appointmentReasonOther;
+      default:
+        return reasonKey;
+    }
+  }
+
+  /// Detect which reason key matches the existing reason value
+  String? _detectReasonKey(String existingReason, AppLocalizations l10n) {
+    for (final reasonKey in _commonReasons) {
+      final localizedValue = _getLocalizedReason(reasonKey, l10n);
+      if (existingReason.toLowerCase() == localizedValue.toLowerCase()) {
+        logger.d(
+            '[APPOINTMENT] Matched existing reason "$existingReason" to key: $reasonKey');
+        return reasonKey;
+      }
+    }
+    // No match found - it's a custom reason
+    logger.d(
+        '[APPOINTMENT] No match for "$existingReason" - will use "other" with custom text');
+    return 'other';
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
+
+    // In edit mode, detect the reason key if not already set
+    if (widget.appointment != null && _selectedReasonKey == null) {
+      final detectedKey = _detectReasonKey(widget.appointment!.reason, l10n);
+      _selectedReasonKey = detectedKey;
+      _showCustomReasonField = (detectedKey == 'other');
+
+      if (detectedKey == 'other') {
+        // It's a custom reason, populate the text field
+        _reasonController.text = widget.appointment!.reason;
+      }
+    }
 
     return Form(
       key: _formKey,
@@ -97,22 +185,81 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
 
                   const SizedBox(height: 16),
 
-                  // Reason
-                  TextFormField(
-                    controller: _reasonController,
+                  // Reason dropdown
+                  DropdownButtonFormField<String>(
+                    value: _selectedReasonKey,
                     decoration: InputDecoration(
                       labelText: '${l10n.reason} *',
-                      hintText: l10n.reasonHint,
-                      prefixIcon: const Icon(Icons.medical_services),
                       border: const OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.medical_services),
                     ),
+                    items: _commonReasons.map((reasonKey) {
+                      return DropdownMenuItem(
+                        value: reasonKey == 'other' ? 'other' : reasonKey,
+                        child: Text(_getLocalizedReason(reasonKey, l10n)),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedReasonKey = value;
+                        _showCustomReasonField = (value == 'other');
+
+                        if (value != 'other') {
+                          // If user selected from dropdown, clear custom field
+                          _reasonController.clear();
+                          logger.d(
+                              '[APPOINTMENT] Reason selected from dropdown: $value');
+                        } else {
+                          logger.d(
+                              '[APPOINTMENT] Selected "Other (Custom)" - showing text field');
+                        }
+                      });
+                    },
                     validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
+                      // If dropdown has value and it's not "other", it's valid
+                      if (value != null && value != 'other') return null;
+
+                      // If "Other" is selected, check the text field
+                      if (_showCustomReasonField &&
+                          _reasonController.text.trim().isEmpty) {
                         return l10n.pleaseEnterReason;
                       }
+
+                      // If "other" is selected and text field has value, it's valid
+                      if (value == 'other' &&
+                          _reasonController.text.trim().isNotEmpty) {
+                        return null;
+                      }
+
+                      // No selection made
+                      if (value == null) {
+                        return l10n.pleaseEnterReason;
+                      }
+
                       return null;
                     },
                   ),
+
+                  // Show custom text field if "Other" is selected
+                  if (_showCustomReasonField) ...[
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _reasonController,
+                      decoration: InputDecoration(
+                        labelText: l10n.appointmentReasonCustomPlaceholder,
+                        hintText: l10n.reasonHint,
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.edit),
+                      ),
+                      validator: (value) {
+                        if (_showCustomReasonField &&
+                            (value == null || value.trim().isEmpty)) {
+                          return l10n.pleaseEnterReason;
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -366,7 +513,8 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                 ...vets.map((vet) => DropdownMenuItem(
                       value: vet.id,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 0),
                         child: Row(
                           children: [
                             const Icon(
@@ -562,6 +710,19 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
         _appointmentTime.minute,
       );
 
+      // Determine the final reason value
+      String finalReason;
+      if (_selectedReasonKey != null && _selectedReasonKey != 'other') {
+        // Use localized dropdown value
+        finalReason = _getLocalizedReason(_selectedReasonKey!, l10n);
+        logger.d(
+            '[APPOINTMENT] Saving with dropdown reason: $finalReason (key: $_selectedReasonKey)');
+      } else {
+        // Use custom text
+        finalReason = _reasonController.text.trim();
+        logger.d('[APPOINTMENT] Saving with custom reason: $finalReason');
+      }
+
       final appointment = AppointmentEntry(
         id: widget.appointment?.id,
         petId: activePet.id,
@@ -569,7 +730,7 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
         clinic: _clinicController.text.trim(),
         appointmentDate: _appointmentDate,
         appointmentTime: appointmentDateTime,
-        reason: _reasonController.text.trim(),
+        reason: finalReason,
         notes: _notesController.text.trim().isEmpty
             ? null
             : _notesController.text.trim(),

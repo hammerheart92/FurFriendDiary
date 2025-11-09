@@ -13,6 +13,7 @@ import '../../domain/models/feeding_entry.dart';
 import '../../data/repositories/feeding_repository_impl.dart';
 import '../../presentation/providers/care_data_provider.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../utils/date_helper.dart';
 
 final _logger = Logger();
 final _uuid = Uuid();
@@ -41,10 +42,16 @@ class _FeedingTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
+    // Format datetime with smart relative display
+    final formattedDateTime =
+        '${relativeDateLabel(context, item.dateTime)} ${l10n.at} ${localizedTime(context, item.dateTime)}';
+    _logger.d(
+        '[FEEDING_DISPLAY] List view - Original: ${item.dateTime}, Formatted: $formattedDateTime');
+
     return ListTile(
       leading: const Icon(Icons.pets),
       title: Text(item.foodType),
-      subtitle: Text(TimeOfDay.fromDateTime(item.dateTime).format(context)),
+      subtitle: Text(formattedDateTime),
       trailing: PopupMenuButton<String>(
         icon: const Icon(Icons.more_vert),
         onSelected: (value) {
@@ -90,6 +97,13 @@ class _FeedingTile extends StatelessWidget {
 class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
   Future<void> _showFeedingDetails(FeedingEntry feeding) async {
     final l10n = AppLocalizations.of(context);
+
+    // Format datetime with smart relative display
+    final formattedDateTime =
+        '${relativeDateLabel(context, feeding.dateTime)} ${l10n.at} ${localizedTime(context, feeding.dateTime)}';
+    _logger.d(
+        '[FEEDING_DISPLAY] Details dialog - Original: ${feeding.dateTime}, Formatted: $formattedDateTime');
+
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -98,8 +112,7 @@ class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-                '${l10n.date}: ${TimeOfDay.fromDateTime(feeding.dateTime).format(context)}'),
+            Text('${l10n.date}: $formattedDateTime'),
             if (feeding.amount > 0) Text('${l10n.amount}: ${feeding.amount}'),
             if (feeding.notes != null && feeding.notes!.isNotEmpty) ...[
               const SizedBox(height: 8),
@@ -439,6 +452,23 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
   DateTime _selectedDateTime = DateTime.now();
   bool _isEditMode = false;
 
+  // Common food types
+  static const List<String> _commonFoodTypes = [
+    'dryFood',
+    'wetFood',
+    'treats',
+    'rawFood',
+    'chicken',
+    'fish',
+    'turkey',
+    'beef',
+    'vegetables',
+    'other',
+  ];
+
+  String? _selectedFoodTypeKey; // Selected from dropdown (using keys)
+  bool _showCustomFoodTypeField = false; // Show text field for custom food type
+
   @override
   void initState() {
     super.initState();
@@ -451,8 +481,10 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
       _notesController.text = widget.feeding!.notes ?? '';
       _selectedPetId = widget.feeding!.petId;
       _selectedDateTime = widget.feeding!.dateTime;
-      _logger.i(
-          '🍽️ FEEDING FORM: Edit mode - Pre-filled with existing feeding data');
+      _logger.d(
+          '[FEEDING] Edit mode - Loading existing food type: ${widget.feeding!.foodType}');
+      // Food type key detection will happen in build method with actual localization
+      _logger.d('[FEEDING] Will detect food type key match in build method');
     } else {
       // Add mode - use draft state
       final formState = ref.read(feedingFormStateNotifierProvider);
@@ -471,6 +503,8 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
     ref.read(feedingFormStateNotifierProvider.notifier).clearForm();
     setState(() {
       _selectedDateTime = DateTime.now();
+      _selectedFoodTypeKey = null;
+      _showCustomFoodTypeField = false;
     });
     _logger.i('🍽️ FEEDING FORM: Draft state cleared');
   }
@@ -484,11 +518,67 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
     super.dispose();
   }
 
+  /// Get localized food type name
+  String _getLocalizedFoodType(String foodTypeKey, AppLocalizations l10n) {
+    switch (foodTypeKey) {
+      case 'dryFood':
+        return l10n.foodTypeDryFood;
+      case 'wetFood':
+        return l10n.foodTypeWetFood;
+      case 'treats':
+        return l10n.foodTypeTreats;
+      case 'rawFood':
+        return l10n.foodTypeRawFood;
+      case 'chicken':
+        return l10n.foodTypeChicken;
+      case 'fish':
+        return l10n.foodTypeFish;
+      case 'turkey':
+        return l10n.foodTypeTurkey;
+      case 'beef':
+        return l10n.foodTypeBeef;
+      case 'vegetables':
+        return l10n.foodTypeVegetables;
+      case 'other':
+        return l10n.foodTypeOther;
+      default:
+        return foodTypeKey;
+    }
+  }
+
+  /// Detect which food type key matches the existing food type value
+  String? _detectFoodTypeKey(String existingFoodType, AppLocalizations l10n) {
+    for (final foodTypeKey in _commonFoodTypes) {
+      final localizedValue = _getLocalizedFoodType(foodTypeKey, l10n);
+      if (existingFoodType.toLowerCase() == localizedValue.toLowerCase()) {
+        _logger.d(
+            '[FEEDING] Matched existing food type "$existingFoodType" to key: $foodTypeKey');
+        return foodTypeKey;
+      }
+    }
+    // No match found - it's a custom food type
+    _logger.d(
+        '[FEEDING] No match for "$existingFoodType" - will use "other" with custom text');
+    return 'other';
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     final petsAsync = ref.watch(petProfilesProvider);
+
+    // In edit mode, detect the food type key if not already set
+    if (widget.feeding != null && _selectedFoodTypeKey == null) {
+      final detectedKey = _detectFoodTypeKey(widget.feeding!.foodType, l10n);
+      _selectedFoodTypeKey = detectedKey;
+      _showCustomFoodTypeField = (detectedKey == 'other');
+
+      if (detectedKey == 'other') {
+        // It's a custom food type, populate the text field
+        _foodTypeController.text = widget.feeding!.foodType;
+      }
+    }
 
     if (!_isEditMode) {
       ref.listen(feedingFormStateNotifierProvider, (previous, next) {
@@ -560,29 +650,88 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
                 error: (_, __) => const SizedBox.shrink(),
               ),
 
-              // Food Type
-              TextFormField(
-                controller: _foodTypeController,
+              // Food Type Dropdown
+              DropdownButtonFormField<String>(
+                value: _selectedFoodTypeKey,
                 decoration: InputDecoration(
                   labelText: '${l10n.foodType} *',
-                  hintText: l10n.foodTypeHint,
-                  prefixIcon: const Icon(Icons.restaurant),
                   border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.restaurant),
                 ),
+                items: _commonFoodTypes.map((foodTypeKey) {
+                  return DropdownMenuItem(
+                    value: foodTypeKey == 'other' ? 'other' : foodTypeKey,
+                    child: Text(_getLocalizedFoodType(foodTypeKey, l10n)),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedFoodTypeKey = value;
+                    _showCustomFoodTypeField = (value == 'other');
+
+                    if (value != 'other') {
+                      // If user selected from dropdown, clear custom field
+                      _foodTypeController.clear();
+                      _logger.d(
+                          '[FEEDING] Food type selected from dropdown: $value');
+                    } else {
+                      _logger.d(
+                          '[FEEDING] Selected "Other (Custom)" - showing text field');
+                    }
+                  });
+                },
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  // If dropdown has value and it's not "other", it's valid
+                  if (value != null && value != 'other') return null;
+
+                  // If "Other" is selected, check the text field
+                  if (_showCustomFoodTypeField &&
+                      _foodTypeController.text.trim().isEmpty) {
                     return l10n.pleaseEnterFoodType;
                   }
+
+                  // If "other" is selected and text field has value, it's valid
+                  if (value == 'other' &&
+                      _foodTypeController.text.trim().isNotEmpty) {
+                    return null;
+                  }
+
+                  // No selection made
+                  if (value == null) {
+                    return l10n.pleaseEnterFoodType;
+                  }
+
                   return null;
                 },
-                onChanged: (value) {
-                  if (!_isEditMode) {
-                    ref
-                        .read(feedingFormStateNotifierProvider.notifier)
-                        .updateFoodType(value);
-                  }
-                },
               ),
+
+              // Show custom text field if "Other" is selected
+              if (_showCustomFoodTypeField) ...[
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _foodTypeController,
+                  decoration: InputDecoration(
+                    labelText: l10n.foodTypeCustomPlaceholder,
+                    hintText: l10n.foodTypeHint,
+                    border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.edit),
+                  ),
+                  validator: (value) {
+                    if (_showCustomFoodTypeField &&
+                        (value == null || value.trim().isEmpty)) {
+                      return l10n.pleaseEnterFoodType;
+                    }
+                    return null;
+                  },
+                  onChanged: (value) {
+                    if (!_isEditMode && _showCustomFoodTypeField) {
+                      ref
+                          .read(feedingFormStateNotifierProvider.notifier)
+                          .updateFoodType(value);
+                    }
+                  },
+                ),
+              ],
               const SizedBox(height: 16),
 
               // Amount
@@ -681,10 +830,26 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
                     child: FilledButton(
                       onPressed: () {
                         if (_form.currentState!.validate()) {
+                          // Determine the final food type value
+                          String finalFoodType;
+                          if (_selectedFoodTypeKey != null &&
+                              _selectedFoodTypeKey != 'other') {
+                            // Use localized dropdown value
+                            finalFoodType = _getLocalizedFoodType(
+                                _selectedFoodTypeKey!, l10n);
+                            _logger.d(
+                                '[FEEDING] Saving with dropdown food type: $finalFoodType (key: $_selectedFoodTypeKey)');
+                          } else {
+                            // Use custom text
+                            finalFoodType = _foodTypeController.text.trim();
+                            _logger.d(
+                                '[FEEDING] Saving with custom food type: $finalFoodType');
+                          }
+
                           final feeding = _isEditMode
                               ? widget.feeding!.copyWith(
                                   petId: _selectedPetId,
-                                  foodType: _foodTypeController.text,
+                                  foodType: finalFoodType,
                                   amount: double.parse(_amountController.text),
                                   dateTime: _selectedDateTime,
                                   notes: _notesController.text.isEmpty
@@ -694,7 +859,7 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
                               : FeedingEntry(
                                   id: _uuid.v4(),
                                   petId: _selectedPetId!,
-                                  foodType: _foodTypeController.text,
+                                  foodType: finalFoodType,
                                   amount: double.parse(_amountController.text),
                                   dateTime: _selectedDateTime,
                                   notes: _notesController.text.isEmpty
