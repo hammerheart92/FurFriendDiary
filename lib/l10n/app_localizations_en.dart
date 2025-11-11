@@ -1236,6 +1236,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get featureComingSoon => 'Feature coming soon';
 
   @override
+  String get editProfile => 'Edit Profile';
+
+  @override
+  String get profileEdit => 'Profile Edit';
+
+  @override
   String get noReportsFound => 'No reports found';
 
   @override

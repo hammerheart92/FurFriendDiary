@@ -3,6 +3,7 @@ import '../models/appointment_entry.dart';
 abstract class AppointmentRepository {
   Future<List<AppointmentEntry>> getAllAppointments();
   Future<List<AppointmentEntry>> getAppointmentsByPetId(String petId);
+  Stream<List<AppointmentEntry>> getAppointmentsByPetIdStream(String petId);
   Future<void> addAppointment(AppointmentEntry appointment);
   Future<void> updateAppointment(AppointmentEntry appointment);
   Future<void> deleteAppointment(String id);

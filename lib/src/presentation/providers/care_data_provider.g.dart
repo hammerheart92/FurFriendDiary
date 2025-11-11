@@ -728,7 +728,7 @@ class _InactiveMedicationsByPetIdProviderElement
 }
 
 String _$appointmentsByPetIdHash() =>
-    r'd13c2d0e24d37aa1a6ef3e2bd624b12db444e5f8';
+    r'79cd2cdd6eab48e677a9e30dcc87865662fa1960';
 
 /// See also [appointmentsByPetId].
 @ProviderFor(appointmentsByPetId)
@@ -775,7 +775,7 @@ class AppointmentsByPetIdFamily
 
 /// See also [appointmentsByPetId].
 class AppointmentsByPetIdProvider
-    extends AutoDisposeFutureProvider<List<AppointmentEntry>> {
+    extends AutoDisposeStreamProvider<List<AppointmentEntry>> {
   /// See also [appointmentsByPetId].
   AppointmentsByPetIdProvider(
     String petId,
@@ -810,7 +810,7 @@ class AppointmentsByPetIdProvider
 
   @override
   Override overrideWith(
-    FutureOr<List<AppointmentEntry>> Function(AppointmentsByPetIdRef provider)
+    Stream<List<AppointmentEntry>> Function(AppointmentsByPetIdRef provider)
         create,
   ) {
     return ProviderOverride(
@@ -828,7 +828,7 @@ class AppointmentsByPetIdProvider
   }
 
   @override
-  AutoDisposeFutureProviderElement<List<AppointmentEntry>> createElement() {
+  AutoDisposeStreamProviderElement<List<AppointmentEntry>> createElement() {
     return _AppointmentsByPetIdProviderElement(this);
   }
 
@@ -847,13 +847,13 @@ class AppointmentsByPetIdProvider
 }
 
 mixin AppointmentsByPetIdRef
-    on AutoDisposeFutureProviderRef<List<AppointmentEntry>> {
+    on AutoDisposeStreamProviderRef<List<AppointmentEntry>> {
   /// The parameter `petId` of this provider.
   String get petId;
 }
 
 class _AppointmentsByPetIdProviderElement
-    extends AutoDisposeFutureProviderElement<List<AppointmentEntry>>
+    extends AutoDisposeStreamProviderElement<List<AppointmentEntry>>
     with AppointmentsByPetIdRef {
   _AppointmentsByPetIdProviderElement(super.provider);
 
@@ -1029,7 +1029,7 @@ class _AppointmentsByDateRangeProviderElement
   DateTime get end => (origin as AppointmentsByDateRangeProvider).end;
 }
 
-String _$reportsByPetIdHash() => r'a1cd96508a1f0a55bd6908d6614424bcc44b80ae';
+String _$reportsByPetIdHash() => r'48c2989caf7e4e605a451bde82deb4c0263df134';
 
 /// See also [reportsByPetId].
 @ProviderFor(reportsByPetId)
@@ -1075,7 +1075,7 @@ class ReportsByPetIdFamily extends Family<AsyncValue<List<ReportEntry>>> {
 
 /// See also [reportsByPetId].
 class ReportsByPetIdProvider
-    extends AutoDisposeFutureProvider<List<ReportEntry>> {
+    extends AutoDisposeStreamProvider<List<ReportEntry>> {
   /// See also [reportsByPetId].
   ReportsByPetIdProvider(
     String petId,
@@ -1110,7 +1110,7 @@ class ReportsByPetIdProvider
 
   @override
   Override overrideWith(
-    FutureOr<List<ReportEntry>> Function(ReportsByPetIdRef provider) create,
+    Stream<List<ReportEntry>> Function(ReportsByPetIdRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -1127,7 +1127,7 @@ class ReportsByPetIdProvider
   }
 
   @override
-  AutoDisposeFutureProviderElement<List<ReportEntry>> createElement() {
+  AutoDisposeStreamProviderElement<List<ReportEntry>> createElement() {
     return _ReportsByPetIdProviderElement(this);
   }
 
@@ -1145,13 +1145,13 @@ class ReportsByPetIdProvider
   }
 }
 
-mixin ReportsByPetIdRef on AutoDisposeFutureProviderRef<List<ReportEntry>> {
+mixin ReportsByPetIdRef on AutoDisposeStreamProviderRef<List<ReportEntry>> {
   /// The parameter `petId` of this provider.
   String get petId;
 }
 
 class _ReportsByPetIdProviderElement
-    extends AutoDisposeFutureProviderElement<List<ReportEntry>>
+    extends AutoDisposeStreamProviderElement<List<ReportEntry>>
     with ReportsByPetIdRef {
   _ReportsByPetIdProviderElement(super.provider);
 
@@ -1470,6 +1470,149 @@ class _ReportsByTypeProviderElement
   String get reportType => (origin as ReportsByTypeProvider).reportType;
 }
 
+String _$walkRepositoryHash() => r'907f492e8ad2dbf591187cfa776b7c1f6a3d0161';
+
+/// See also [walkRepository].
+@ProviderFor(walkRepository)
+final walkRepositoryProvider = AutoDisposeProvider<WalkRepository>.internal(
+  walkRepository,
+  name: r'walkRepositoryProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$walkRepositoryHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef WalkRepositoryRef = AutoDisposeProviderRef<WalkRepository>;
+String _$walksByPetIdHash() => r'92da5d00930f7e5838067cd0463fe4e0a9f71d25';
+
+/// See also [walksByPetId].
+@ProviderFor(walksByPetId)
+const walksByPetIdProvider = WalksByPetIdFamily();
+
+/// See also [walksByPetId].
+class WalksByPetIdFamily extends Family<AsyncValue<List<Walk>>> {
+  /// See also [walksByPetId].
+  const WalksByPetIdFamily();
+
+  /// See also [walksByPetId].
+  WalksByPetIdProvider call(
+    String petId,
+  ) {
+    return WalksByPetIdProvider(
+      petId,
+    );
+  }
+
+  @override
+  WalksByPetIdProvider getProviderOverride(
+    covariant WalksByPetIdProvider provider,
+  ) {
+    return call(
+      provider.petId,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'walksByPetIdProvider';
+}
+
+/// See also [walksByPetId].
+class WalksByPetIdProvider extends AutoDisposeStreamProvider<List<Walk>> {
+  /// See also [walksByPetId].
+  WalksByPetIdProvider(
+    String petId,
+  ) : this._internal(
+          (ref) => walksByPetId(
+            ref as WalksByPetIdRef,
+            petId,
+          ),
+          from: walksByPetIdProvider,
+          name: r'walksByPetIdProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$walksByPetIdHash,
+          dependencies: WalksByPetIdFamily._dependencies,
+          allTransitiveDependencies:
+              WalksByPetIdFamily._allTransitiveDependencies,
+          petId: petId,
+        );
+
+  WalksByPetIdProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.petId,
+  }) : super.internal();
+
+  final String petId;
+
+  @override
+  Override overrideWith(
+    Stream<List<Walk>> Function(WalksByPetIdRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: WalksByPetIdProvider._internal(
+        (ref) => create(ref as WalksByPetIdRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        petId: petId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeStreamProviderElement<List<Walk>> createElement() {
+    return _WalksByPetIdProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is WalksByPetIdProvider && other.petId == petId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, petId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin WalksByPetIdRef on AutoDisposeStreamProviderRef<List<Walk>> {
+  /// The parameter `petId` of this provider.
+  String get petId;
+}
+
+class _WalksByPetIdProviderElement
+    extends AutoDisposeStreamProviderElement<List<Walk>> with WalksByPetIdRef {
+  _WalksByPetIdProviderElement(super.provider);
+
+  @override
+  String get petId => (origin as WalksByPetIdProvider).petId;
+}
+
 String _$feedingProviderHash() => r'943cc51ee106ccdad560573be3d9b0c9042a5b06';
 
 /// See also [FeedingProvider].
@@ -1537,5 +1680,20 @@ final reportProviderProvider = AutoDisposeAsyncNotifierProvider<ReportProvider,
 );
 
 typedef _$ReportProvider = AutoDisposeAsyncNotifier<List<ReportEntry>>;
+String _$walkProviderHash() => r'193ea3b8d129c058d9db844c3fea710d93c860d2';
+
+/// See also [WalkProvider].
+@ProviderFor(WalkProvider)
+final walkProviderProvider =
+    AutoDisposeAsyncNotifierProvider<WalkProvider, List<Walk>>.internal(
+  WalkProvider.new,
+  name: r'walkProviderProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$walkProviderHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$WalkProvider = AutoDisposeAsyncNotifier<List<Walk>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

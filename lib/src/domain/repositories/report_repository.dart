@@ -3,6 +3,7 @@ import '../models/report_entry.dart';
 abstract class ReportRepository {
   Future<List<ReportEntry>> getAllReports();
   Future<List<ReportEntry>> getReportsByPetId(String petId);
+  Stream<List<ReportEntry>> getReportsStreamByPetId(String petId);
   Future<void> addReport(ReportEntry report);
   Future<void> updateReport(ReportEntry report);
   Future<void> deleteReport(String id);

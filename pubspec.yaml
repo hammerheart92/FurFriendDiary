@@ -1,7 +1,7 @@
 name: fur_friend_diary
 description: FurFriendDiary - a friendly diary for your pet's feedings, walks, meds, and appointments.
 publish_to: "none"
-version: 1.0.6+7
+version: 1.0.7+8
 
 environment:
   sdk: ">=3.4.0 <4.0.0"
@@ -49,6 +49,7 @@ dependencies:
   json_annotation: ^4.8.1
   riverpod: ^2.5.1
   riverpod_annotation: ^2.3.5
+  package_info_plus: ^8.0.0
 
   # Charts
   fl_chart: ^0.68.0

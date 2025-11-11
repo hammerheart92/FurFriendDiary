@@ -148,6 +148,13 @@ class Walk extends HiveObject {
 
   // For backward compatibility
   double? get distanceKm => distance;
+
+  /// Calculate pace in minutes per kilometer
+  /// Returns null if distance is null or zero to avoid division by zero
+  double? get paceMinPerKm {
+    if (distance == null || distance == 0) return null;
+    return durationMinutes / distance!;
+  }
 }
 
 @HiveType(typeId: 4)

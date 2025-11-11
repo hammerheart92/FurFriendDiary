@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Package import (preferred)
 import 'package:fur_friend_diary/features/walks/walks_screen.dart' as walks;
 // Relative import fallback: import '../../../features/walks/walks_screen.dart' as walks;
-import 'package:fur_friend_diary/features/walks/walks_state.dart';
-// Relative import fallback: import '../../../features/walks/walks_state.dart';
 import 'package:fur_friend_diary/src/presentation/providers/pet_profile_provider.dart';
 import 'package:fur_friend_diary/src/providers/providers.dart';
 
@@ -17,54 +15,33 @@ class WalksScreen extends ConsumerStatefulWidget {
 
 class _WalksScreenState extends ConsumerState<WalksScreen>
     with AutomaticKeepAliveClientMixin {
-  WalksController? _controller;
-  String? _currentPetId;
-
   @override
   bool get wantKeepAlive => true;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    // Get the current pet ID from the provider
-    final currentPet = ref.watch(currentPetProfileProvider);
-    final petId = currentPet?.id;
-
-    // Initialize or reinitialize controller if pet ID changed
-    if (petId != null && petId != _currentPetId) {
-      _controller?.dispose();
-      _controller = WalksController(petId);
-      _currentPetId = petId;
-
-      // Migrate any walks with default-pet-id to the actual pet ID
-      final walksRepository = ref.read(walksRepositoryProvider);
-      walksRepository.migrateDefaultPetIdWalks(petId);
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller?.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     super.build(context); // Required for AutomaticKeepAliveClientMixin
 
-    final controller = _controller;
+    // Get the current pet ID from the provider
+    final currentPet = ref.watch(currentPetProfileProvider);
+    final petId = currentPet?.id;
 
-    // If no controller yet (no pet selected), show empty state
-    if (controller == null) {
+    // If no pet selected, show loading state
+    if (petId == null) {
       return const Center(
         child: CircularProgressIndicator(),
       );
     }
 
-    return WalksScope(
-      notifier: controller,
-      child: const walks.WalksScreen(),
-    );
+    // Migrate any walks with default-pet-id to the actual pet ID (one-time migration)
+    ref.listen(currentPetProfileProvider, (previous, next) {
+      if (next?.id != null && next?.id != previous?.id) {
+        final walksRepository = ref.read(walksRepositoryProvider);
+        walksRepository.migrateDefaultPetIdWalks(next!.id);
+      }
+    });
+
+    // Pass the pet ID directly to the feature screen
+    return walks.WalksScreen(petId: petId);
   }
 }

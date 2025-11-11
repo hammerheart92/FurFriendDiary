@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import '../../domain/models/appointment_entry.dart';
@@ -596,8 +597,8 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                 ),
                 TextButton.icon(
                   onPressed: () {
-                    // Navigate to add vet screen
-                    // Note: This would require navigation context
+                    // Navigate to veterinarian list where user can add new vet
+                    context.push('/vet-list');
                   },
                   icon: const Icon(Icons.add),
                   label: Text(l10n.addNewVet),

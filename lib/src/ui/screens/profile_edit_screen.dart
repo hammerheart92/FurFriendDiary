@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart';
 
 class ProfileEditScreen extends StatelessWidget {
   const ProfileEditScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Profile'),
+        title: Text(l10n.editProfile),
       ),
       body: Center(
         child: Padding(
@@ -22,12 +25,12 @@ class ProfileEditScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Profile Edit',
+                l10n.profileEdit,
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
               const SizedBox(height: 8),
               Text(
-                'Feature coming soon',
+                l10n.featureComingSoon,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),

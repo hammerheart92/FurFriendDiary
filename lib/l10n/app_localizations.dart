@@ -2462,6 +2462,18 @@ abstract class AppLocalizations {
   /// **'Feature coming soon'**
   String get featureComingSoon;
 
+  /// No description provided for @editProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get editProfile;
+
+  /// No description provided for @profileEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Edit'**
+  String get profileEdit;
+
   /// No description provided for @noReportsFound.
   ///
   /// In en, this message translates to:

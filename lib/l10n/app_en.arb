@@ -586,6 +586,8 @@
   "cacheCleared": "Cache cleared successfully",
   "deleteAccountConfirm": "Are you sure you want to delete your account? This action is permanent and cannot be undone. All your data will be lost.",
   "featureComingSoon": "Feature coming soon",
+  "editProfile": "Edit Profile",
+  "profileEdit": "Profile Edit",
 
   "noReportsFound": "No reports found",
   "noHealthReportsFound": "No health reports found",

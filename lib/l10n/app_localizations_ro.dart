@@ -1247,6 +1247,12 @@ class AppLocalizationsRo extends AppLocalizations {
   String get featureComingSoon => 'Funcționalitate în curând';
 
   @override
+  String get editProfile => 'Editare Profil';
+
+  @override
+  String get profileEdit => 'Editare Profil';
+
+  @override
   String get noReportsFound => 'Niciun raport găsit';
 
   @override

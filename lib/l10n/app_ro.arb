@@ -431,6 +431,8 @@
   "cacheCleared": "Memoria cache a fost ștearsă cu succes",
   "deleteAccountConfirm": "Sigur doriți să ștergeți contul? Această acțiune este permanentă și nu poate fi anulată. Toate datele tale vor fi pierdute.",
   "featureComingSoon": "Funcționalitate în curând",
+  "editProfile": "Editare Profil",
+  "profileEdit": "Editare Profil",
 
   "noReportsFound": "Niciun raport găsit",
   "noHealthReportsFound": "Niciun raport medical găsit",

@@ -3,10 +3,14 @@ import '../../domain/models/feeding_entry.dart';
 import '../../domain/models/medication_entry.dart';
 import '../../domain/models/appointment_entry.dart';
 import '../../domain/models/report_entry.dart';
+import '../../domain/models/walk.dart';
 import '../../data/repositories/feeding_repository_impl.dart';
 import '../../data/repositories/medication_repository_impl.dart';
 import '../../data/repositories/appointment_repository_impl.dart';
 import '../../data/repositories/report_repository_impl.dart';
+import '../../data/repositories/walks_repository.dart';
+import '../../data/local/hive_manager.dart';
+import '../../domain/repositories/walk_repository.dart';
 
 part 'care_data_provider.g.dart';
 
@@ -130,10 +134,10 @@ class AppointmentProvider extends _$AppointmentProvider {
 }
 
 @riverpod
-Future<List<AppointmentEntry>> appointmentsByPetId(
-    AppointmentsByPetIdRef ref, String petId) async {
+Stream<List<AppointmentEntry>> appointmentsByPetId(
+    AppointmentsByPetIdRef ref, String petId) {
   final repository = ref.watch(appointmentRepositoryProvider);
-  return await repository.getAppointmentsByPetId(petId);
+  return repository.getAppointmentsByPetIdStream(petId);
 }
 
 @riverpod
@@ -175,10 +179,10 @@ class ReportProvider extends _$ReportProvider {
 }
 
 @riverpod
-Future<List<ReportEntry>> reportsByPetId(
-    ReportsByPetIdRef ref, String petId) async {
+Stream<List<ReportEntry>> reportsByPetId(
+    ReportsByPetIdRef ref, String petId) {
   final repository = ref.watch(reportRepositoryProvider);
-  return await repository.getReportsByPetId(petId);
+  return repository.getReportsStreamByPetId(petId);
 }
 
 @riverpod
@@ -193,4 +197,44 @@ Future<List<ReportEntry>> reportsByType(
     ReportsByTypeRef ref, String petId, String reportType) async {
   final repository = ref.watch(reportRepositoryProvider);
   return await repository.getReportsByType(petId, reportType);
+}
+
+// Walk Providers
+@riverpod
+WalkRepository walkRepository(WalkRepositoryRef ref) {
+  final box = HiveManager.instance.walkBox;
+  return WalksRepository(box);
+}
+
+@riverpod
+Stream<List<Walk>> walksByPetId(WalksByPetIdRef ref, String petId) {
+  final repository = ref.watch(walkRepositoryProvider);
+  return repository.getWalksForPetStream(petId);
+}
+
+@riverpod
+class WalkProvider extends _$WalkProvider {
+  @override
+  Future<List<Walk>> build() async {
+    final repository = ref.watch(walkRepositoryProvider);
+    return repository.getAllWalks();
+  }
+
+  Future<void> addWalk(Walk walk) async {
+    final repository = ref.read(walkRepositoryProvider);
+    await repository.startWalk(walk);
+    ref.invalidateSelf();
+  }
+
+  Future<void> updateWalk(Walk walk) async {
+    final repository = ref.read(walkRepositoryProvider);
+    await repository.updateWalk(walk);
+    ref.invalidateSelf();
+  }
+
+  Future<void> deleteWalk(String id) async {
+    final repository = ref.read(walkRepositoryProvider);
+    await repository.deleteWalk(id);
+    ref.invalidateSelf();
+  }
 }

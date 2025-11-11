@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../../presentation/providers/settings_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import 'reminders_screen.dart';
@@ -222,10 +223,17 @@ class SettingsScreen extends ConsumerWidget {
           // About Section
           const Divider(height: 32),
           _buildSectionHeader(context, l10n.about),
-          ListTile(
-            leading: const Icon(Icons.info_outline),
-            title: Text(l10n.appVersion),
-            subtitle: const Text('1.0.0'),
+          FutureBuilder<PackageInfo>(
+            future: PackageInfo.fromPlatform(),
+            builder: (context, snapshot) {
+              final version = snapshot.data?.version ?? '...';
+              final buildNumber = snapshot.data?.buildNumber ?? '';
+              return ListTile(
+                leading: const Icon(Icons.info_outline),
+                title: Text(l10n.appVersion),
+                subtitle: Text('$version+$buildNumber'),
+              );
+            },
           ),
           const SizedBox(height: 16),
         ],
@@ -477,11 +485,14 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  void _showLicensePage(BuildContext context) {
-    showLicensePage(
-      context: context,
-      applicationName: 'FurFriendDiary',
-      applicationVersion: '1.0.0',
-    );
+  void _showLicensePage(BuildContext context) async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    if (context.mounted) {
+      showLicensePage(
+        context: context,
+        applicationName: 'FurFriendDiary',
+        applicationVersion: '${packageInfo.version}+${packageInfo.buildNumber}',
+      );
+    }
   }
 }

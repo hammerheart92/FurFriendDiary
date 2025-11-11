@@ -21,6 +21,30 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
   }
 
   @override
+  Stream<List<AppointmentEntry>> getAppointmentsByPetIdStream(String petId) {
+    return Stream<List<AppointmentEntry>>.multi((controller) {
+      final box = HiveBoxes.getAppointments();
+
+      // Emit initial state
+      final initialAppointments = box.values
+          .where((appointment) => appointment.petId == petId)
+          .toList();
+      controller.add(initialAppointments);
+
+      // Listen to changes
+      final subscription = box.watch().listen((_) {
+        final appointments = box.values
+            .where((appointment) => appointment.petId == petId)
+            .toList();
+        controller.add(appointments);
+      });
+
+      // Cleanup
+      controller.onCancel = () => subscription.cancel();
+    });
+  }
+
+  @override
   Future<void> addAppointment(AppointmentEntry appointment) async {
     final box = HiveBoxes.getAppointments();
     await box.put(appointment.id, appointment);

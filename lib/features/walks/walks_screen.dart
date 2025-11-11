@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'walks_state.dart';
 import '../../l10n/app_localizations.dart';
+import '../../src/presentation/providers/care_data_provider.dart';
 
-/// Drop-in Walks screen with mock data, quick filters, responsive layout,
-/// empty state, semantics, and a local-only "Add walk" sheet.
-/// No backend, no persistence. Safe to run locally.
+/// Walks screen with reactive Riverpod StreamProvider, quick filters, responsive layout,
+/// empty state, semantics, and walk management.
 
-class WalksScreen extends StatefulWidget {
-  const WalksScreen({super.key});
+class WalksScreen extends ConsumerStatefulWidget {
+  final String petId;
+
+  const WalksScreen({super.key, required this.petId});
 
   @override
-  State<WalksScreen> createState() => _WalksScreenState();
+  ConsumerState<WalksScreen> createState() => _WalksScreenState();
 }
 
-class _WalksScreenState extends State<WalksScreen>
+class _WalksScreenState extends ConsumerState<WalksScreen>
     with AutomaticKeepAliveClientMixin {
   final logger = Logger();
   WalkFilter _filter =
@@ -27,66 +30,71 @@ class _WalksScreenState extends State<WalksScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context); // Required for AutomaticKeepAliveClientMixin
-    final controller = WalksScope.of(context);
 
-    return AnimatedBuilder(
-      animation: controller,
-      builder: (context, _) {
-        final allWalks = controller.items;
-        final filtered = _filteredWalks(allWalks);
-        final isEmpty = filtered.isEmpty;
+    // Watch the walks stream for this pet
+    final walksAsync = ref.watch(walksByPetIdProvider(widget.petId));
 
-        logger.d(
-            '📱 UI REBUILD: Rendering ${allWalks.length} total walks, ${filtered.length} filtered');
-        logger.d('📱 UI FILTER: Current filter: $_filter');
-        logger.d('📱 UI EMPTY CHECK: isEmpty = $isEmpty');
+    final l10n = AppLocalizations.of(context);
 
-        if (filtered.isNotEmpty) {
-          logger.d('📱 UI WALKS LIST:');
-          for (int i = 0; i < filtered.length; i++) {
-            logger
-                .d('   ${i + 1}. ${filtered[i].note} at ${filtered[i].start}');
-          }
-        } else if (allWalks.isNotEmpty) {
-          logger.d(
-              '📱 UI NOTE: ${allWalks.length} walks exist but filtered to 0 for $_filter');
-        }
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.walks),
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            _FilterBar(
+              value: _filter,
+              onChanged: (f) => setState(() => _filter = f),
+            ),
+            Expanded(
+              child: walksAsync.when(
+                data: (walks) {
+                  // Convert Walk models to WalkEntry for UI display
+                  final allWalks = walks.map((w) => WalkEntry.fromWalk(w)).toList();
+                  final filtered = _filteredWalks(allWalks);
+                  final isEmpty = filtered.isEmpty;
 
-        final l10n = AppLocalizations.of(context);
+                  logger.d(
+                      '📱 UI REBUILD: Rendering ${allWalks.length} total walks, ${filtered.length} filtered');
+                  logger.d('📱 UI FILTER: Current filter: $_filter');
+                  logger.d('📱 UI EMPTY CHECK: isEmpty = $isEmpty');
 
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(l10n.walks),
-          ),
-          body: SafeArea(
-            child: Column(
-              children: [
-                _FilterBar(
-                  value: _filter,
-                  onChanged: (f) => setState(() => _filter = f),
-                ),
-                Expanded(
-                  child: isEmpty
+                  if (filtered.isNotEmpty) {
+                    logger.d('📱 UI WALKS LIST:');
+                    for (int i = 0; i < filtered.length; i++) {
+                      logger.d('   ${i + 1}. ${filtered[i].note} at ${filtered[i].start}');
+                    }
+                  } else if (allWalks.isNotEmpty) {
+                    logger.d(
+                        '📱 UI NOTE: ${allWalks.length} walks exist but filtered to 0 for $_filter');
+                  }
+
+                  return isEmpty
                       ? _EmptyState(onAdd: _showAddWalkSheet)
                       : _ResponsiveWalkList(
                           entries: filtered,
                           key: const PageStorageKey('walks_list'),
-                        ),
+                        );
+                },
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, stack) => Center(
+                  child: Text('Error loading walks: $error'),
                 ),
-              ],
+              ),
             ),
-          ),
-          floatingActionButton: Semantics(
-            button: true,
-            label: l10n.addWalk,
-            child: FloatingActionButton(
-              onPressed: _showAddWalkSheet,
-              child: const Icon(Icons.add),
-            ),
-          ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        );
-      },
+          ],
+        ),
+      ),
+      floatingActionButton: Semantics(
+        button: true,
+        label: l10n.addWalk,
+        child: FloatingActionButton(
+          onPressed: _showAddWalkSheet,
+          child: const Icon(Icons.add),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
@@ -130,7 +138,6 @@ class _WalksScreenState extends State<WalksScreen>
   }
 
   void _showAddWalkSheet() {
-    final controller = WalksScope.of(context);
     final l10n = AppLocalizations.of(context);
     showModalBottomSheet<void>(
       context: context,
@@ -144,7 +151,11 @@ class _WalksScreenState extends State<WalksScreen>
           logger.i('📅 Walk Date: ${entry.start}');
           logger.i('💾 SAVING TO REPOSITORY...');
 
-          await controller.add(entry);
+          // Convert WalkEntry to Walk model and save via repository
+          final walk = entry.toWalk(petId: widget.petId);
+          final repository = ref.read(walkRepositoryProvider);
+          await repository.startWalk(walk);
+
           if (context.mounted) {
             Navigator.of(context).pop();
             ScaffoldMessenger.of(context).showSnackBar(

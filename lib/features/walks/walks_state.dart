@@ -44,9 +44,7 @@ class WalkEntry {
       distanceKm: walk.distance ?? 0.0,
       note: walk.notes,
       surface: _mapWalkTypeToSurface(walk.walkType),
-      paceMinPerKm: walk.distance != null && walk.durationMinutes > 0
-          ? walk.durationMinutes / walk.distance!
-          : null,
+      paceMinPerKm: walk.paceMinPerKm,
     );
   }
 
@@ -86,22 +84,16 @@ class WalksController extends ChangeNotifier {
     _initializeWalks();
   }
 
-  /// Initialize walks with immediate mock data, then try to load from storage
+  /// Initialize walks by loading from storage
   Future<void> _initializeWalks() async {
     logger.i('🚀 INITIALIZING WalksController for pet $_defaultPetId...');
 
     try {
-      // First, add mock data immediately for UI responsiveness
-      _addMockData();
-
-      // Then try to load real data from storage
+      // Load real data from storage
       await _loadWalksFromHive();
     } catch (e) {
       logger.e('❌ Error during initialization: $e');
-      // Ensure we have at least mock data for UI testing
-      if (_items.isEmpty) {
-        _addMockData();
-      }
+      // Continue with empty state - user will see empty state UI
     }
   }
 
@@ -140,50 +132,12 @@ class WalksController extends ChangeNotifier {
         logger.i('✅ LOADED ${_items.length} walks from storage for pet $_defaultPetId');
         notifyListeners();
       } else {
-        logger.i('📝 No walks found for pet $_defaultPetId, keeping mock data');
+        logger.i('📝 No walks found for pet $_defaultPetId - empty state');
       }
     } catch (e) {
       logger.e('❌ Error loading from storage: $e');
-      logger.i('📝 Keeping mock data as fallback');
+      logger.i('📝 Continuing with empty state');
     }
-  }
-
-  /// Add mock data as fallback
-  void _addMockData() {
-    logger.i('📝 Adding mock data for pet $_defaultPetId as fallback');
-    final now = DateTime.now();
-    _items.clear();
-    _items.addAll([
-      WalkEntry(
-        start: now.subtract(const Duration(minutes: 30)), // 30 minutes ago
-        durationMin: 32,
-        distanceKm: 2.4,
-        note: 'City Park loop',
-        surface: 'paved',
-        paceMinPerKm: 13,
-      ),
-      WalkEntry(
-        start: now.subtract(const Duration(hours: 2)), // 2 hours ago (today)
-        durationMin: 45,
-        distanceKm: 3.1,
-        note: 'Evening stroll by the river',
-        surface: 'mixed',
-        paceMinPerKm: 14,
-      ),
-      WalkEntry(
-        start: now.subtract(const Duration(days: 2)), // 2 days ago (this week)
-        durationMin: 28,
-        distanceKm: 1.9,
-        note: 'Quick break between showers',
-        surface: 'gravel',
-        paceMinPerKm: 15,
-      ),
-    ]);
-    logger.i('📝 Mock data added: ${_items.length} walks with dates:');
-    for (var item in _items) {
-      logger.d('   - "${item.note}" at ${item.start}');
-    }
-    notifyListeners();
   }
 
   /// Add a new walk and save to both UI state and Hive persistence

@@ -140,6 +140,36 @@ class ReportRepositoryImpl implements ReportRepository {
       rethrow;
     }
   }
+
+  @override
+  Stream<List<ReportEntry>> getReportsStreamByPetId(String petId) {
+    return Stream<List<ReportEntry>>.multi((controller) {
+      final box = HiveBoxes.getReports();
+
+      // Emit initial state
+      final initialReports = box.values
+          .where((report) => report.petId == petId)
+          .toList()
+        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      controller.add(initialReports);
+
+      logger.i('[REPORT_REPO] getReportsStream - Initial emit: ${initialReports.length} reports for pet $petId');
+
+      // Listen to changes
+      final subscription = box.watch().listen((_) {
+        final reports = box.values
+            .where((report) => report.petId == petId)
+            .toList()
+          ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        controller.add(reports);
+
+        logger.i('[REPORT_REPO] getReportsStream - Change detected: ${reports.length} reports');
+      });
+
+      // Cleanup
+      controller.onCancel = () => subscription.cancel();
+    });
+  }
 }
 
 @riverpod
