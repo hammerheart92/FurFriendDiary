@@ -33,14 +33,37 @@ class _WalksScreenState extends ConsumerState<WalksScreen>
       );
     }
 
+  @override
+  void initState() {
+    super.initState();
+    
     // Migrate any walks with default-pet-id to the actual pet ID (one-time migration)
-    ref.listen(currentPetProfileProvider, (previous, next) {
+    ref.listenManual(currentPetProfileProvider, (previous, next) {
       if (next?.id != null && next?.id != previous?.id) {
         final walksRepository = ref.read(walksRepositoryProvider);
         walksRepository.migrateDefaultPetIdWalks(next!.id);
       }
     });
+  }
 
+  @override
+  Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
+
+    // Get the current pet ID from the provider
+    final currentPet = ref.watch(currentPetProfileProvider);
+    final petId = currentPet?.id;
+
+    // If no pet selected, show loading state
+    if (petId == null) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    // Pass the pet ID directly to the feature screen
+    return walks.WalksScreen(petId: petId);
+  }
     // Pass the pet ID directly to the feature screen
     return walks.WalksScreen(petId: petId);
   }
