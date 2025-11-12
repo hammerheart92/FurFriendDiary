@@ -53,6 +53,9 @@ class PhotoRepository {
         }
       }
 
+      // Strip EXIF data for privacy
+      image.exif.clear();
+
       // Compress to JPEG with 85% quality
       final compressedBytes = img.encodeJpg(image, quality: 85);
 
@@ -85,6 +88,9 @@ class PhotoRepository {
 
       // Create 300x300 thumbnail
       img.Image thumbnail = img.copyResizeCropSquare(image, size: 300);
+
+      // Strip EXIF data for privacy
+      thumbnail.exif.clear();
 
       // Compress thumbnail
       final thumbnailBytes = img.encodeJpg(thumbnail, quality: 80);

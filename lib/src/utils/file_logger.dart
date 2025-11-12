@@ -1,5 +1,6 @@
 // lib/src/utils/file_logger.dart
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -11,28 +12,31 @@ class FileLogger {
   static Future<Logger> getInstance() async {
     if (_instance != null) return _instance!;
 
-    // Get app documents directory
-    final appDir = await getApplicationDocumentsDirectory();
-    final logsDir = Directory('${appDir.path}/logs');
+    // Only create file logs in debug mode
+    if (kDebugMode) {
+      // Get app documents directory
+      final appDir = await getApplicationDocumentsDirectory();
+      final logsDir = Directory('${appDir.path}/logs');
 
-    // Create logs directory if it doesn't exist
-    if (!await logsDir.exists()) {
-      await logsDir.create(recursive: true);
+      // Create logs directory if it doesn't exist
+      if (!await logsDir.exists()) {
+        await logsDir.create(recursive: true);
+      }
+
+      // Create log file with timestamp
+      final timestamp =
+          DateTime.now().toIso8601String().replaceAll(':', '-').split('.')[0];
+      _logFile = File('${logsDir.path}/debug_$timestamp.log');
+
+      // Write header to file
+      await _logFile!.writeAsString('=== FurFriendDiary Debug Log ===\n');
+      await _logFile!.writeAsString('Started: ${DateTime.now()}\n');
+      await _logFile!.writeAsString('Log file: ${_logFile!.path}\n\n',
+          mode: FileMode.append);
     }
 
-    // Create log file with timestamp
-    final timestamp =
-        DateTime.now().toIso8601String().replaceAll(':', '-').split('.')[0];
-    _logFile = File('${logsDir.path}/debug_$timestamp.log');
-
-    // Write header to file
-    await _logFile!.writeAsString('=== FurFriendDiary Debug Log ===\n');
-    await _logFile!.writeAsString('Started: ${DateTime.now()}\n');
-    await _logFile!.writeAsString('Log file: ${_logFile!.path}\n\n',
-        mode: FileMode.append);
-
     _instance = Logger(
-      printer: _FileAndConsolePrinter(_logFile!),
+      printer: _FileAndConsolePrinter(_logFile),
       level: Level.debug,
     );
 
@@ -44,7 +48,7 @@ class FileLogger {
 
 /// Custom printer that writes to both console and file
 class _FileAndConsolePrinter extends LogPrinter {
-  final File logFile;
+  final File? logFile;
 
   _FileAndConsolePrinter(this.logFile);
 
@@ -56,11 +60,13 @@ class _FileAndConsolePrinter extends LogPrinter {
 
     final logLine = '[$time] $level: $message';
 
-    // Write to file asynchronously (don't await to avoid blocking)
-    logFile.writeAsString('$logLine\n', mode: FileMode.append).catchError((e) {
-      print('Error writing to log file: $e');
-      return logFile; // Return the file even on error
-    });
+    // Write to file asynchronously (don't await to avoid blocking) - only in debug mode
+    if (kDebugMode && logFile != null) {
+      logFile!.writeAsString('$logLine\n', mode: FileMode.append).catchError((e) {
+        print('Error writing to log file: $e');
+        return logFile!; // Return the file even on error
+      });
+    }
 
     // Return for console output
     return [logLine];
