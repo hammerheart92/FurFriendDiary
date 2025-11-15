@@ -1,17 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../presentation/providers/settings_provider.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../services/data_deletion_service.dart';
 import 'reminders_screen.dart';
 
-class SettingsScreen extends ConsumerWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  bool _isDeleting = false;
+
+  @override
+  Widget build(BuildContext context) {
     final themeMode = ref.watch(themeModeProvider);
     final locale = ref.watch(localeProvider);
     final notificationsEnabled = ref.watch(notificationsEnabledProvider);
@@ -20,7 +29,9 @@ class SettingsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.settings)),
-      body: ListView(
+      body: Stack(
+        children: [
+          ListView(
         children: [
           // Profile Section
           _buildProfileSection(context),
@@ -236,6 +247,16 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
           const SizedBox(height: 16),
+        ],
+      ),
+          // Loading overlay
+          if (_isDeleting)
+            Container(
+              color: Colors.black54,
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
         ],
       ),
     );
@@ -471,12 +492,57 @@ class SettingsScreen extends ConsumerWidget {
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
-            onPressed: () {
-              Navigator.pop(context);
-              final l10n = AppLocalizations.of(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.featureComingSoon)),
-              );
+            onPressed: () async {
+              Navigator.pop(context); // Close confirmation dialog
+
+              // Show loading overlay
+              setState(() {
+                _isDeleting = true;
+              });
+
+              // Execute GDPR Article 17 compliant data deletion
+              final deletionService = DataDeletionService();
+              final success = await deletionService.deleteAllUserData();
+
+              if (!mounted) return;
+
+              // Hide loading overlay
+              setState(() {
+                _isDeleting = false;
+              });
+
+              if (!mounted) return;
+
+              if (success) {
+                // Show success dialog that exits app on dismiss
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) => AlertDialog(
+                    title: Text(l10n.accountDeletedSuccessfully),
+                    content: const Text(
+                      'All your data has been permanently deleted. The app will now close. Please reopen to start fresh.',
+                    ),
+                    actions: [
+                      FilledButton(
+                        onPressed: () {
+                          // Exit the app
+                          SystemNavigator.pop();
+                        },
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                // Show error message
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(l10n.accountDeletionFailed),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
             },
             child: Text(l10n.delete),
           ),

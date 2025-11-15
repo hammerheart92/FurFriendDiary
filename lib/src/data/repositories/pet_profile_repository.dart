@@ -2,6 +2,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:logger/logger.dart';
 import 'package:fur_friend_diary/src/domain/models/pet_profile.dart';
 import '../local/hive_boxes.dart';
+import '../local/hive_manager.dart';
 
 class PetProfileRepository {
   final logger = Logger();
@@ -60,6 +61,7 @@ class PetProfileRepository {
         if (profile.isActive) {
           final updated = profile.copyWith(isActive: false);
           await _profiles.put(profile.id, updated);
+          await _profiles.flush(); // CRITICAL FIX: Flush to disk immediately
         }
       }
 
@@ -68,7 +70,9 @@ class PetProfileRepository {
       if (targetProfile != null) {
         final updated = targetProfile.copyWith(isActive: true);
         await _profiles.put(id, updated);
+        await _profiles.flush(); // CRITICAL FIX: Flush to disk immediately
         await _settings.put('hasCompletedSetup', true);
+        await _settings.flush(); // CRITICAL FIX: Flush to disk immediately
       }
     } catch (e) {
       logger.e("🚨 ERROR in setActive: $e");
@@ -101,6 +105,10 @@ class PetProfileRepository {
           "🔍 DEBUG: Profile to save - Name: ${profileToSave.name}, Active: ${profileToSave.isActive}");
 
       await box.put(profile.id, profileToSave);
+      await box.flush(); // CRITICAL FIX: Flush to disk immediately
+
+      // DIAGNOSTIC: Verify data persistence right after saving
+      await HiveManager.instance.verifyDataPersistence();
 
       logger.i("🔍 DEBUG: Profile saved successfully!");
       logger.d("🔍 DEBUG: Box now contains ${box.length} profiles");
@@ -111,6 +119,7 @@ class PetProfileRepository {
 
       if (isFirstProfile) {
         await _settings.put('hasCompletedSetup', true);
+        await _settings.flush(); // CRITICAL FIX: Flush to disk immediately
         logger.i("🔍 DEBUG: Setup completion flag set to true");
       }
     } catch (e) {
@@ -124,6 +133,7 @@ class PetProfileRepository {
   Future<void> update(PetProfile profile) async {
     final updated = profile.copyWith(updatedAt: DateTime.now());
     await _profiles.put(profile.id, updated);
+    await _profiles.flush(); // CRITICAL FIX: Flush to disk immediately
   }
 
   // Delete profile
@@ -133,6 +143,7 @@ class PetProfileRepository {
       if (profile == null) return;
 
       await _profiles.delete(id);
+      await _profiles.flush(); // CRITICAL FIX: Flush to disk immediately
 
       // If we deleted the active profile, activate another one if available
       if (profile.isActive && _profiles.isNotEmpty) {
@@ -141,6 +152,7 @@ class PetProfileRepository {
       } else if (_profiles.isEmpty) {
         // No profiles left, mark setup as incomplete
         await _settings.put('hasCompletedSetup', false);
+        await _settings.flush(); // CRITICAL FIX: Flush to disk immediately
       }
     } catch (e) {
       logger.e("🚨 ERROR in delete: $e");

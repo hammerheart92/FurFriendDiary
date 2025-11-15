@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:logger/logger.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/models/pet_profile.dart';
 import '../../domain/models/feeding_entry.dart';
 import '../../domain/models/medication_entry.dart';
@@ -15,6 +18,8 @@ import '../../domain/models/pet_photo.dart';
 import '../../domain/models/vet_profile.dart';
 import '../../domain/models/health_report.dart';
 import '../../domain/models/expense_report.dart';
+import '../../services/encryption_service.dart';
+import '../../services/data_migration_service.dart';
 
 class HiveManager {
   final logger = Logger();
@@ -73,11 +78,50 @@ class HiveManager {
       await Hive.initFlutter();
       logger.i("🔍 DEBUG: Hive.initFlutter() completed");
 
+      // Initialize encryption service
+      logger.i("🔐 DEBUG: Initializing encryption service...");
+      await EncryptionService.initialize();
+      logger.i("✅ DEBUG: Encryption service initialized successfully");
+
       // Register all adapters
       await _registerAdapters();
 
-      // Open all boxes in sequence
-      await _openAllBoxes();
+      // Check if migration is needed (existing v1.0.7 users)
+      logger.i("🔍 DEBUG: Checking if migration needed...");
+      final needsMigration = await EncryptionService.needsMigration();
+
+      if (needsMigration) {
+        logger.w("⚠️ DEBUG: Migration needed - running DataMigrationService");
+
+        final migrationService = DataMigrationService();
+        final result = await migrationService.migrateToEncrypted();
+
+        if (result.success) {
+          logger.i(
+              "✅ DEBUG: Migration completed successfully: ${result.totalRecordsMigrated} records across ${result.boxesProcessed.length} boxes in ${result.duration.inSeconds}s");
+        } else {
+          logger.e("❌ DEBUG: Migration failed: ${result.message}");
+          if (result.errors.isNotEmpty) {
+            logger.e("   Errors: ${result.errors.join(', ')}");
+          }
+          // Continue anyway - original data remains accessible
+          logger.w("⚠️ DEBUG: Continuing with unencrypted boxes - migration will retry next launch");
+        }
+      } else {
+        logger.i("ℹ️ DEBUG: No migration needed - boxes already encrypted or fresh install");
+      }
+
+      // Get encryption cipher for opening boxes
+      logger.i("🔐 DEBUG: Getting encryption cipher...");
+      final cipher = await EncryptionService.getEncryptionCipher();
+      logger.i("✅ DEBUG: Encryption cipher obtained");
+
+      // Open all boxes with encryption
+      logger.i("🔐 DEBUG: Opening all boxes with encryption enabled...");
+      await _openAllBoxes(cipher);
+
+      // Diagnostic: Verify data persistence right after opening boxes
+      await verifyDataPersistence();
 
       _isInitialized = true;
       logger.i("✅ DEBUG: HiveManager initialization completed successfully");
@@ -194,49 +238,128 @@ class HiveManager {
   }
 
   /// Open all boxes in the correct order
-  Future<void> _openAllBoxes() async {
-    logger.i("🔍 DEBUG: Opening all Hive boxes");
+  Future<void> _openAllBoxes(HiveAesCipher? cipher) async {
+    logger.i("🔍 DEBUG: Opening all Hive boxes with encryption enabled");
 
     // Open pet profiles box first (most important)
-    _petProfileBox = await _openBox<PetProfile>(petProfileBoxName);
+    _petProfileBox = await _openBox<PetProfile>(
+      petProfileBoxName,
+      encryptionCipher: cipher,
+    );
 
     // Open walks box (second most important)
-    _walkBox = await _openBox<Walk>(walkBoxName);
+    _walkBox = await _openBox<Walk>(
+      walkBoxName,
+      encryptionCipher: cipher,
+    );
 
     // Open other boxes
-    _feedingBox = await _openBox<FeedingEntry>(feedingBoxName);
-    _medicationBox = await _openBox<MedicationEntry>(medicationBoxName);
-    _medicationPurchaseBox =
-        await _openBox<MedicationPurchase>(medicationPurchaseBoxName);
-    _appointmentBox = await _openBox<AppointmentEntry>(appointmentBoxName);
-    _reportBox = await _openBox<ReportEntry>(reportBoxName);
-    _reminderBox = await _openBox<Reminder>(reminderBoxName);
-    _weightBox = await _openBox<WeightEntry>(weightBoxName);
-    _petPhotoBox = await _openBox<PetPhoto>(petPhotoBoxName);
-    _vetProfileBox = await _openBox<VetProfile>(vetProfileBoxName);
-    _healthReportBox = await _openBox<HealthReport>(healthReportBoxName);
-    _expenseReportBox = await _openBox<ExpenseReport>(expenseReportBoxName);
+    _feedingBox = await _openBox<FeedingEntry>(
+      feedingBoxName,
+      encryptionCipher: cipher,
+    );
+    _medicationBox = await _openBox<MedicationEntry>(
+      medicationBoxName,
+      encryptionCipher: cipher,
+    );
+    _medicationPurchaseBox = await _openBox<MedicationPurchase>(
+      medicationPurchaseBoxName,
+      encryptionCipher: cipher,
+    );
+    _appointmentBox = await _openBox<AppointmentEntry>(
+      appointmentBoxName,
+      encryptionCipher: cipher,
+    );
+    _reportBox = await _openBox<ReportEntry>(
+      reportBoxName,
+      encryptionCipher: cipher,
+    );
+    _reminderBox = await _openBox<Reminder>(
+      reminderBoxName,
+      encryptionCipher: cipher,
+    );
+    _weightBox = await _openBox<WeightEntry>(
+      weightBoxName,
+      encryptionCipher: cipher,
+    );
+    _petPhotoBox = await _openBox<PetPhoto>(
+      petPhotoBoxName,
+      encryptionCipher: cipher,
+    );
+    _vetProfileBox = await _openBox<VetProfile>(
+      vetProfileBoxName,
+      encryptionCipher: cipher,
+    );
+    _healthReportBox = await _openBox<HealthReport>(
+      healthReportBoxName,
+      encryptionCipher: cipher,
+    );
+    _expenseReportBox = await _openBox<ExpenseReport>(
+      expenseReportBoxName,
+      encryptionCipher: cipher,
+    );
 
     // Open settings boxes
-    _settingsBox = await _openBox(settingsBoxName);
-    _appPrefsBox = await _openBox(appPrefsBoxName);
+    _settingsBox = await _openBox(
+      settingsBoxName,
+      encryptionCipher: cipher,
+    );
+    _appPrefsBox = await _openBox(
+      appPrefsBoxName,
+      encryptionCipher: cipher,
+    );
 
-    logger.i("✅ DEBUG: All boxes opened successfully");
+    logger.i("✅ DEBUG: All boxes opened successfully with encryption");
+
+    // Mark encryption initialization complete for fresh installs
+    // (Migration sets its own flag after migrating data)
+    final prefs = await SharedPreferences.getInstance();
+    final migrationAlreadyCompleted = prefs.getBool('hive_encryption_migration_completed_v1') ?? false;
+
+    if (!migrationAlreadyCompleted) {
+      await prefs.setBool('hive_encryption_migration_completed_v1', true);
+      logger.d("✅ DEBUG: Encryption initialization flag saved");
+    }
   }
 
   /// Open a single box with error handling
-  Future<Box<T>> _openBox<T>(String boxName) async {
+  Future<Box<T>> _openBox<T>(
+    String boxName, {
+    HiveAesCipher? encryptionCipher,
+  }) async {
     try {
       logger.d("🔍 DEBUG: Opening box '$boxName'");
 
-      // Check if box is already open
+      // CRITICAL FIX: If box is already open, try to get it as the correct type
+      // If that fails (wrong type), force-close and reopen with correct type
       if (Hive.isBoxOpen(boxName)) {
-        logger.d("✅ DEBUG: Box '$boxName' already open");
-        return Hive.box<T>(boxName);
+        logger.d("⚠️  DEBUG: Box '$boxName' is already open, checking type...");
+        try {
+          final existingBox = Hive.box<T>(boxName);
+          logger.d("✅ DEBUG: Box '$boxName' already open with correct type");
+          return existingBox;
+        } catch (typeError) {
+          // Box is open but with wrong type (e.g., Box<dynamic> instead of Box<PetProfile>)
+          logger.w("⚠️  WARNING: Box '$boxName' open with wrong type: $typeError");
+          logger.w("🔧 Forcing close and reopening with encryption...");
+
+          try {
+            await Hive.box(boxName).close();
+            logger.d("✅ DEBUG: Force-closed box '$boxName'");
+          } catch (closeError) {
+            logger.e("❌ ERROR: Failed to force-close '$boxName': $closeError");
+            // Try to delete and recreate
+            await Hive.deleteBoxFromDisk(boxName);
+            logger.w("🔧 Deleted corrupted box '$boxName' from disk");
+          }
+        }
       }
 
-      // Open the box
-      final box = await Hive.openBox<T>(boxName);
+      // Open the box with encryption if cipher provided
+      final box = await Hive.openBox<T>(
+        boxName,
+        encryptionCipher: encryptionCipher,
+      );
       logger.d(
           "✅ DEBUG: Box '$boxName' opened successfully - IsOpen: ${box.isOpen}, Length: ${box.length}");
 
@@ -249,7 +372,10 @@ class HiveManager {
         logger.i(
             "🔧 DEBUG: Attempting to delete and recreate corrupted box '$boxName'");
         await Hive.deleteBoxFromDisk(boxName);
-        final box = await Hive.openBox<T>(boxName);
+        final box = await Hive.openBox<T>(
+          boxName,
+          encryptionCipher: encryptionCipher,
+        );
         logger.i("✅ DEBUG: Box '$boxName' recreated successfully");
         return box;
       } catch (e2) {
@@ -403,6 +529,115 @@ class HiveManager {
     await Hive.close();
     _isInitialized = false;
     logger.i("✅ DEBUG: All Hive boxes closed");
+  }
+
+  /// Flush all boxes to ensure data is written to disk
+  ///
+  /// CRITICAL FIX for Samsung devices: Forces Hive to write buffered data
+  /// to disk immediately instead of keeping it in memory cache.
+  ///
+  /// Should be called:
+  /// - When app goes to background (paused/detached lifecycle state)
+  /// - After critical data changes
+  /// - Before app termination
+  Future<void> flushAllBoxes() async {
+    logger.d("💾 DEBUG: Flushing all Hive boxes to disk...");
+
+    try {
+      // Flush all typed boxes
+      await _petProfileBox?.flush();
+      await _feedingBox?.flush();
+      await _medicationBox?.flush();
+      await _medicationPurchaseBox?.flush();
+      await _appointmentBox?.flush();
+      await _reportBox?.flush();
+      await _walkBox?.flush();
+      await _reminderBox?.flush();
+      await _weightBox?.flush();
+      await _petPhotoBox?.flush();
+      await _vetProfileBox?.flush();
+      await _healthReportBox?.flush();
+      await _expenseReportBox?.flush();
+
+      // Flush untyped boxes
+      await _settingsBox?.flush();
+      await _appPrefsBox?.flush();
+
+      logger.i("✅ DEBUG: All boxes flushed to disk successfully");
+    } catch (e) {
+      logger.e("🚨 ERROR: Failed to flush boxes: $e");
+      // Don't rethrow - flushing is best-effort
+    }
+  }
+
+  /// DIAGNOSTIC: Verify data persistence and file system state
+  ///
+  /// This method checks:
+  /// - Hive storage directory location
+  /// - All files in the directory
+  /// - Specific box file existence and sizes
+  /// - Box states (isOpen, length)
+  ///
+  /// Call this at critical points:
+  /// 1. After opening boxes in initialize()
+  /// 2. After saving data in repositories
+  /// 3. Before app goes to background
+  Future<void> verifyDataPersistence() async {
+    try {
+      final dir = await getApplicationDocumentsDirectory();
+      logger.w("📁 =================================");
+      logger.w("📁 DIAGNOSTIC: Hive Storage Location");
+      logger.w("📁 Directory: ${dir.path}");
+      logger.w("📁 =================================");
+
+      // List ALL files in directory
+      final files = dir.listSync();
+      logger.i("📁 Total files in directory: ${files.length}");
+
+      for (var file in files) {
+        if (file is File) {
+          final size = await file.length();
+          final name = file.path.split(Platform.pathSeparator).last;
+          logger.i("📁   - $name (${size} bytes)");
+        }
+      }
+
+      // Check specific box files
+      final boxesToCheck = [
+        'pet_profiles.hive',
+        'feedings.hive',
+        'app_prefs.hive',
+        'settings.hive',
+        'walks.hive',
+      ];
+
+      logger.w("📁 =================================");
+      logger.w("📁 CRITICAL BOX FILE STATUS:");
+      for (var boxName in boxesToCheck) {
+        final boxFile = File('${dir.path}${Platform.pathSeparator}$boxName');
+        final exists = await boxFile.exists();
+        final size = exists ? await boxFile.length() : 0;
+        logger.w(
+            "📁   $boxName: ${exists ? 'EXISTS' : 'MISSING'} (${size} bytes)");
+      }
+      logger.w("📁 =================================");
+
+      // Check box states
+      logger.i("📦 Box states:");
+      logger.i(
+          "📦   pet_profiles isOpen: ${_petProfileBox?.isOpen ?? false}, length: ${_petProfileBox?.length ?? 0}");
+      logger.i(
+          "📦   feedings isOpen: ${_feedingBox?.isOpen ?? false}, length: ${_feedingBox?.length ?? 0}");
+      logger.i(
+          "📦   walks isOpen: ${_walkBox?.isOpen ?? false}, length: ${_walkBox?.length ?? 0}");
+      logger.i(
+          "📦   settings isOpen: ${_settingsBox?.isOpen ?? false}, length: ${_settingsBox?.length ?? 0}");
+      logger.i(
+          "📦   app_prefs isOpen: ${_appPrefsBox?.isOpen ?? false}, length: ${_appPrefsBox?.length ?? 0}");
+    } catch (e, stack) {
+      logger.e("🚨 ERROR in verifyDataPersistence: $e");
+      logger.e("🚨 Stack: $stack");
+    }
   }
 
   /// Clear all data (for testing/debugging)

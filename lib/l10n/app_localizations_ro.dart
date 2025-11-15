@@ -1244,6 +1244,14 @@ class AppLocalizationsRo extends AppLocalizations {
       'Sigur doriți să ștergeți contul? Această acțiune este permanentă și nu poate fi anulată. Toate datele tale vor fi pierdute.';
 
   @override
+  String get accountDeletedSuccessfully =>
+      'Toate datele au fost șterse cu succes';
+
+  @override
+  String get accountDeletionFailed =>
+      'Eroare la ștergerea datelor. Vă rugăm să încercați din nou.';
+
+  @override
   String get featureComingSoon => 'Funcționalitate în curând';
 
   @override

@@ -2456,6 +2456,18 @@ abstract class AppLocalizations {
   /// **'Are you sure you want to delete your account? This action is permanent and cannot be undone. All your data will be lost.'**
   String get deleteAccountConfirm;
 
+  /// No description provided for @accountDeletedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'All data deleted successfully'**
+  String get accountDeletedSuccessfully;
+
+  /// No description provided for @accountDeletionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete data. Please try again.'**
+  String get accountDeletionFailed;
+
   /// No description provided for @featureComingSoon.
   ///
   /// In en, this message translates to:

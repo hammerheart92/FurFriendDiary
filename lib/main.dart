@@ -109,11 +109,54 @@ Future<void> main() async {
   );
 }
 
-class MyApp extends ConsumerWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    // Add observer to monitor app lifecycle changes
+    WidgetsBinding.instance.addObserver(this);
+    logger.i("🔍 DEBUG: App lifecycle observer registered");
+  }
+
+  @override
+  void dispose() {
+    // Remove observer when app is disposed
+    WidgetsBinding.instance.removeObserver(this);
+    logger.i("🔍 DEBUG: App lifecycle observer removed");
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    logger.i("🔄 DEBUG: App lifecycle state changed to: $state");
+
+    // CRITICAL FIX for Samsung devices: Flush all boxes when app goes to background
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached ||
+        state == AppLifecycleState.inactive) {
+      logger.w("⚠️ DEBUG: App going to background, verifying and flushing...");
+      // Don't await - let it complete asynchronously
+      HiveManager.instance.verifyDataPersistence().then((_) {
+        logger.i("✅ DEBUG: Data persistence verified");
+        return HiveManager.instance.flushAllBoxes();
+      }).then((_) {
+        logger.i("✅ DEBUG: Boxes flushed before app backgrounded");
+      }).catchError((e) {
+        logger.e("🚨 ERROR: Failed to flush boxes on background: $e");
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final themeMode = ref.watch(themeModeProvider);
     final locale = ref.watch(localeProvider);
     final router = ref.watch(routerProvider);

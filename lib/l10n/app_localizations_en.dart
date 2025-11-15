@@ -1233,6 +1233,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Are you sure you want to delete your account? This action is permanent and cannot be undone. All your data will be lost.';
 
   @override
+  String get accountDeletedSuccessfully => 'All data deleted successfully';
+
+  @override
+  String get accountDeletionFailed =>
+      'Failed to delete data. Please try again.';
+
+  @override
   String get featureComingSoon => 'Feature coming soon';
 
   @override

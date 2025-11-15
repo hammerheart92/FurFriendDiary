@@ -585,6 +585,8 @@
   "clearCacheConfirm": "Are you sure you want to clear the cache? This action cannot be undone.",
   "cacheCleared": "Cache cleared successfully",
   "deleteAccountConfirm": "Are you sure you want to delete your account? This action is permanent and cannot be undone. All your data will be lost.",
+  "accountDeletedSuccessfully": "All data deleted successfully",
+  "accountDeletionFailed": "Failed to delete data. Please try again.",
   "featureComingSoon": "Feature coming soon",
   "editProfile": "Edit Profile",
   "profileEdit": "Profile Edit",
