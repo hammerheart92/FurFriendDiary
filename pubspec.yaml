@@ -1,7 +1,7 @@
 name: fur_friend_diary
 description: FurFriendDiary - a friendly diary for your pet's feedings, walks, meds, and appointments.
 publish_to: "none"
-version: 1.0.8+9
+version: 1.1.0+10
 
 environment:
   sdk: ">=3.4.0 <4.0.0"
@@ -54,6 +54,9 @@ dependencies:
 
   # Charts
   fl_chart: ^0.68.0
+
+  # Calendar
+  table_calendar: ^3.0.9
 
   # PDF and Sharing
   pdf: ^3.10.4

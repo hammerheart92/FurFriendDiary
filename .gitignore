@@ -63,3 +63,5 @@ full_logcat.txt
 reminder_logs.txt
 *_logcat.txt
 *_logs.txt
+
+lcov.info

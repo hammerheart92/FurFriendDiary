@@ -18,6 +18,10 @@ import '../../domain/models/pet_photo.dart';
 import '../../domain/models/vet_profile.dart';
 import '../../domain/models/health_report.dart';
 import '../../domain/models/expense_report.dart';
+import '../../domain/models/protocols/vaccination_protocol.dart';
+import '../../domain/models/protocols/deworming_protocol.dart';
+import '../../domain/models/protocols/treatment_plan.dart';
+import '../../domain/models/protocols/reminder_config.dart';
 import '../../services/encryption_service.dart';
 import '../../services/data_migration_service.dart';
 
@@ -44,6 +48,10 @@ class HiveManager {
   static const String vetProfileBoxName = 'vet_profiles';
   static const String healthReportBoxName = 'health_reports';
   static const String expenseReportBoxName = 'expense_reports';
+  static const String vaccinationProtocolBoxName = 'vaccination_protocols';
+  static const String dewormingProtocolBoxName = 'deworming_protocols';
+  static const String treatmentPlanBoxName = 'treatment_plans';
+  static const String reminderConfigBoxName = 'reminder_configs';
   static const String settingsBoxName = 'settings';
   static const String appPrefsBoxName = 'app_prefs';
 
@@ -61,6 +69,10 @@ class HiveManager {
   Box<VetProfile>? _vetProfileBox;
   Box<HealthReport>? _healthReportBox;
   Box<ExpenseReport>? _expenseReportBox;
+  Box<VaccinationProtocol>? _vaccinationProtocolBox;
+  Box<DewormingProtocol>? _dewormingProtocolBox;
+  Box<TreatmentPlan>? _treatmentPlanBox;
+  Box<ReminderConfig>? _reminderConfigBox;
   Box? _settingsBox;
   Box? _appPrefsBox;
 
@@ -235,6 +247,46 @@ class HiveManager {
       Hive.registerAdapter(ExpenseReportAdapter());
       logger.d("✅ DEBUG: ExpenseReport adapter registered with typeId 21");
     }
+
+    if (!Hive.isAdapterRegistered(22)) {
+      Hive.registerAdapter(VaccinationProtocolAdapter());
+      logger.d("✅ DEBUG: VaccinationProtocol adapter registered with typeId 22");
+    }
+
+    if (!Hive.isAdapterRegistered(23)) {
+      Hive.registerAdapter(VaccinationStepAdapter());
+      logger.d("✅ DEBUG: VaccinationStep adapter registered with typeId 23");
+    }
+
+    if (!Hive.isAdapterRegistered(24)) {
+      Hive.registerAdapter(RecurringScheduleAdapter());
+      logger.d("✅ DEBUG: RecurringSchedule adapter registered with typeId 24");
+    }
+
+    if (!Hive.isAdapterRegistered(25)) {
+      Hive.registerAdapter(DewormingProtocolAdapter());
+      logger.d("✅ DEBUG: DewormingProtocol adapter registered with typeId 25");
+    }
+
+    if (!Hive.isAdapterRegistered(26)) {
+      Hive.registerAdapter(DewormingScheduleAdapter());
+      logger.d("✅ DEBUG: DewormingSchedule adapter registered with typeId 26");
+    }
+
+    if (!Hive.isAdapterRegistered(27)) {
+      Hive.registerAdapter(TreatmentPlanAdapter());
+      logger.d("✅ DEBUG: TreatmentPlan adapter registered with typeId 27");
+    }
+
+    if (!Hive.isAdapterRegistered(28)) {
+      Hive.registerAdapter(TreatmentTaskAdapter());
+      logger.d("✅ DEBUG: TreatmentTask adapter registered with typeId 28");
+    }
+
+    if (!Hive.isAdapterRegistered(29)) {
+      Hive.registerAdapter(ReminderConfigAdapter());
+      logger.d("✅ DEBUG: ReminderConfig adapter registered with typeId 29");
+    }
   }
 
   /// Open all boxes in the correct order
@@ -296,6 +348,22 @@ class HiveManager {
     );
     _expenseReportBox = await _openBox<ExpenseReport>(
       expenseReportBoxName,
+      encryptionCipher: cipher,
+    );
+    _vaccinationProtocolBox = await _openBox<VaccinationProtocol>(
+      vaccinationProtocolBoxName,
+      encryptionCipher: cipher,
+    );
+    _dewormingProtocolBox = await _openBox<DewormingProtocol>(
+      dewormingProtocolBoxName,
+      encryptionCipher: cipher,
+    );
+    _treatmentPlanBox = await _openBox<TreatmentPlan>(
+      treatmentPlanBoxName,
+      encryptionCipher: cipher,
+    );
+    _reminderConfigBox = await _openBox<ReminderConfig>(
+      reminderConfigBoxName,
       encryptionCipher: cipher,
     );
 
@@ -502,6 +570,42 @@ class HiveManager {
     return _expenseReportBox!;
   }
 
+  /// Get vaccination protocols box
+  Box<VaccinationProtocol> get vaccinationProtocolBox {
+    if (_vaccinationProtocolBox == null || !_vaccinationProtocolBox!.isOpen) {
+      throw HiveError(
+          "Vaccination protocols box is not initialized. Call HiveManager.initialize() first.");
+    }
+    return _vaccinationProtocolBox!;
+  }
+
+  /// Get deworming protocols box
+  Box<DewormingProtocol> get dewormingProtocolBox {
+    if (_dewormingProtocolBox == null || !_dewormingProtocolBox!.isOpen) {
+      throw HiveError(
+          "Deworming protocols box is not initialized. Call HiveManager.initialize() first.");
+    }
+    return _dewormingProtocolBox!;
+  }
+
+  /// Get treatment plans box
+  Box<TreatmentPlan> get treatmentPlanBox {
+    if (_treatmentPlanBox == null || !_treatmentPlanBox!.isOpen) {
+      throw HiveError(
+          "Treatment plans box is not initialized. Call HiveManager.initialize() first.");
+    }
+    return _treatmentPlanBox!;
+  }
+
+  /// Get reminder configs box
+  Box<ReminderConfig> get reminderConfigBox {
+    if (_reminderConfigBox == null || !_reminderConfigBox!.isOpen) {
+      throw HiveError(
+          "Reminder configs box is not initialized. Call HiveManager.initialize() first.");
+    }
+    return _reminderConfigBox!;
+  }
+
   /// Get settings box
   Box get settingsBox {
     if (_settingsBox == null || !_settingsBox!.isOpen) {
@@ -558,6 +662,10 @@ class HiveManager {
       await _vetProfileBox?.flush();
       await _healthReportBox?.flush();
       await _expenseReportBox?.flush();
+      await _vaccinationProtocolBox?.flush();
+      await _dewormingProtocolBox?.flush();
+      await _treatmentPlanBox?.flush();
+      await _reminderConfigBox?.flush();
 
       // Flush untyped boxes
       await _settingsBox?.flush();
@@ -671,6 +779,10 @@ class HiveManager {
       await Hive.deleteBoxFromDisk(vetProfileBoxName);
       await Hive.deleteBoxFromDisk(healthReportBoxName);
       await Hive.deleteBoxFromDisk(expenseReportBoxName);
+      await Hive.deleteBoxFromDisk(vaccinationProtocolBoxName);
+      await Hive.deleteBoxFromDisk(dewormingProtocolBoxName);
+      await Hive.deleteBoxFromDisk(treatmentPlanBoxName);
+      await Hive.deleteBoxFromDisk(reminderConfigBoxName);
       await Hive.deleteBoxFromDisk(settingsBoxName);
       await Hive.deleteBoxFromDisk(appPrefsBoxName);
 
