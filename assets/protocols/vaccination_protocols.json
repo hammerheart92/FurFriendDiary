@@ -1,0 +1,322 @@
+[
+  {
+    "id": "canine-core-ro-eu-v1",
+    "name": "Canine Core Vaccination Protocol (Romania/EU)",
+    "species": "dog",
+    "description": "Standard Romanian/EU canine vaccination protocol following WSAVA guidelines. Includes DHPPiL (Distemper, Hepatitis, Parvovirus, Parainfluenza, Leptospirosis) and Rabies vaccines. Designed for comprehensive protection against core infectious diseases.",
+    "isCustom": false,
+    "region": "Romania/EU",
+    "createdAt": "2025-01-15T10:00:00.000Z",
+    "updatedAt": null,
+    "steps": [
+      {
+        "vaccineName": "DHPPiL",
+        "ageInWeeks": 8,
+        "intervalDays": null,
+        "notes": "First puppy vaccination - Core protection",
+        "isRequired": true,
+        "recurring": null
+      },
+      {
+        "vaccineName": "DHPPiL",
+        "ageInWeeks": 12,
+        "intervalDays": null,
+        "notes": "Second puppy vaccination - Booster",
+        "isRequired": true,
+        "recurring": null
+      },
+      {
+        "vaccineName": "DHPPiL",
+        "ageInWeeks": 16,
+        "intervalDays": null,
+        "notes": "Third puppy vaccination - Final booster",
+        "isRequired": true,
+        "recurring": null
+      },
+      {
+        "vaccineName": "Rabies",
+        "ageInWeeks": 16,
+        "intervalDays": null,
+        "notes": "Legally required in Romania/EU - First dose",
+        "isRequired": true,
+        "recurring": null
+      },
+      {
+        "vaccineName": "DHPPiL",
+        "ageInWeeks": 68,
+        "intervalDays": null,
+        "notes": "Adult booster at 16 months",
+        "isRequired": true,
+        "recurring": {
+          "intervalMonths": 12,
+          "indefinitely": true,
+          "numberOfDoses": null
+        }
+      },
+      {
+        "vaccineName": "Rabies",
+        "ageInWeeks": 68,
+        "intervalDays": null,
+        "notes": "Adult rabies booster - Legally required annually",
+        "isRequired": true,
+        "recurring": {
+          "intervalMonths": 12,
+          "indefinitely": true,
+          "numberOfDoses": null
+        }
+      }
+    ]
+  },
+  {
+    "id": "canine-extended-ro-eu-v1",
+    "name": "Canine Extended Vaccination Protocol (Romania/EU)",
+    "species": "dog",
+    "description": "Extended Romanian/EU canine vaccination protocol including core vaccines (DHPPiL, Rabies) plus optional Kennel Cough (Bordetella) for dogs in high-risk environments such as kennels, dog parks, or grooming facilities.",
+    "isCustom": false,
+    "region": "Romania/EU",
+    "createdAt": "2025-01-15T10:00:00.000Z",
+    "updatedAt": null,
+    "steps": [
+      {
+        "vaccineName": "DHPPiL",
+        "ageInWeeks": 8,
+        "intervalDays": null,
+        "notes": "First puppy vaccination - Core protection",
+        "isRequired": true,
+        "recurring": null
+      },
+      {
+        "vaccineName": "DHPPiL",
+        "ageInWeeks": 12,
+        "intervalDays": null,
+        "notes": "Second puppy vaccination - Booster",
+        "isRequired": true,
+        "recurring": null
+      },
+      {
+        "vaccineName": "DHPPiL",
+        "ageInWeeks": 16,
+        "intervalDays": null,
+        "notes": "Third puppy vaccination - Final booster",
+        "isRequired": true,
+        "recurring": null
+      },
+      {
+        "vaccineName": "Rabies",
+        "ageInWeeks": 16,
+        "intervalDays": null,
+        "notes": "Legally required in Romania/EU - First dose",
+        "isRequired": true,
+        "recurring": null
+      },
+      {
+        "vaccineName": "Bordetella (Kennel Cough)",
+        "ageInWeeks": 12,
+        "intervalDays": null,
+        "notes": "Optional - Recommended for dogs in kennels or social environments",
+        "isRequired": false,
+        "recurring": null
+      },
+      {
+        "vaccineName": "DHPPiL",
+        "ageInWeeks": 68,
+        "intervalDays": null,
+        "notes": "Adult booster at 16 months",
+        "isRequired": true,
+        "recurring": {
+          "intervalMonths": 12,
+          "indefinitely": true,
+          "numberOfDoses": null
+        }
+      },
+      {
+        "vaccineName": "Rabies",
+        "ageInWeeks": 68,
+        "intervalDays": null,
+        "notes": "Adult rabies booster - Legally required annually",
+        "isRequired": true,
+        "recurring": {
+          "intervalMonths": 12,
+          "indefinitely": true,
+          "numberOfDoses": null
+        }
+      },
+      {
+        "vaccineName": "Bordetella (Kennel Cough)",
+        "ageInWeeks": 64,
+        "intervalDays": null,
+        "notes": "Optional annual booster for high-risk dogs",
+        "isRequired": false,
+        "recurring": {
+          "intervalMonths": 12,
+          "indefinitely": true,
+          "numberOfDoses": null
+        }
+      }
+    ]
+  },
+  {
+    "id": "feline-core-ro-eu-v1",
+    "name": "Feline Core Vaccination Protocol (Romania/EU)",
+    "species": "cat",
+    "description": "Standard Romanian/EU feline vaccination protocol following WSAVA guidelines. Includes FVRCP (Feline Viral Rhinotracheitis, Calicivirus, Panleukopenia) and Rabies vaccines. Essential for indoor and outdoor cats.",
+    "isCustom": false,
+    "region": "Romania/EU",
+    "createdAt": "2025-01-15T10:00:00.000Z",
+    "updatedAt": null,
+    "steps": [
+      {
+        "vaccineName": "FVRCP",
+        "ageInWeeks": 8,
+        "intervalDays": null,
+        "notes": "First kitten vaccination - Core protection",
+        "isRequired": true,
+        "recurring": null
+      },
+      {
+        "vaccineName": "FVRCP",
+        "ageInWeeks": 12,
+        "intervalDays": null,
+        "notes": "Second kitten vaccination - Booster",
+        "isRequired": true,
+        "recurring": null
+      },
+      {
+        "vaccineName": "FVRCP",
+        "ageInWeeks": 16,
+        "intervalDays": null,
+        "notes": "Third kitten vaccination - Final booster",
+        "isRequired": true,
+        "recurring": null
+      },
+      {
+        "vaccineName": "Rabies",
+        "ageInWeeks": 16,
+        "intervalDays": null,
+        "notes": "Legally required in Romania/EU - First dose",
+        "isRequired": true,
+        "recurring": null
+      },
+      {
+        "vaccineName": "FVRCP",
+        "ageInWeeks": 68,
+        "intervalDays": null,
+        "notes": "Adult booster at 16 months",
+        "isRequired": true,
+        "recurring": {
+          "intervalMonths": 12,
+          "indefinitely": true,
+          "numberOfDoses": null
+        }
+      },
+      {
+        "vaccineName": "Rabies",
+        "ageInWeeks": 68,
+        "intervalDays": null,
+        "notes": "Adult rabies booster - Legally required annually",
+        "isRequired": true,
+        "recurring": {
+          "intervalMonths": 12,
+          "indefinitely": true,
+          "numberOfDoses": null
+        }
+      }
+    ]
+  },
+  {
+    "id": "feline-extended-ro-eu-v1",
+    "name": "Feline Extended Vaccination Protocol (Romania/EU)",
+    "species": "cat",
+    "description": "Extended Romanian/EU feline vaccination protocol including core vaccines (FVRCP, Rabies) plus FeLV (Feline Leukemia Virus) for outdoor cats or multi-cat households. FeLV is highly recommended for cats with outdoor access.",
+    "isCustom": false,
+    "region": "Romania/EU",
+    "createdAt": "2025-01-15T10:00:00.000Z",
+    "updatedAt": null,
+    "steps": [
+      {
+        "vaccineName": "FVRCP",
+        "ageInWeeks": 8,
+        "intervalDays": null,
+        "notes": "First kitten vaccination - Core protection",
+        "isRequired": true,
+        "recurring": null
+      },
+      {
+        "vaccineName": "FVRCP",
+        "ageInWeeks": 12,
+        "intervalDays": null,
+        "notes": "Second kitten vaccination - Booster",
+        "isRequired": true,
+        "recurring": null
+      },
+      {
+        "vaccineName": "FeLV",
+        "ageInWeeks": 12,
+        "intervalDays": null,
+        "notes": "First FeLV dose - Recommended for outdoor cats",
+        "isRequired": false,
+        "recurring": null
+      },
+      {
+        "vaccineName": "FVRCP",
+        "ageInWeeks": 16,
+        "intervalDays": null,
+        "notes": "Third kitten vaccination - Final booster",
+        "isRequired": true,
+        "recurring": null
+      },
+      {
+        "vaccineName": "FeLV",
+        "ageInWeeks": 16,
+        "intervalDays": null,
+        "notes": "Second FeLV dose - Booster",
+        "isRequired": false,
+        "recurring": null
+      },
+      {
+        "vaccineName": "Rabies",
+        "ageInWeeks": 16,
+        "intervalDays": null,
+        "notes": "Legally required in Romania/EU - First dose",
+        "isRequired": true,
+        "recurring": null
+      },
+      {
+        "vaccineName": "FVRCP",
+        "ageInWeeks": 68,
+        "intervalDays": null,
+        "notes": "Adult booster at 16 months",
+        "isRequired": true,
+        "recurring": {
+          "intervalMonths": 12,
+          "indefinitely": true,
+          "numberOfDoses": null
+        }
+      },
+      {
+        "vaccineName": "Rabies",
+        "ageInWeeks": 68,
+        "intervalDays": null,
+        "notes": "Adult rabies booster - Legally required annually",
+        "isRequired": true,
+        "recurring": {
+          "intervalMonths": 12,
+          "indefinitely": true,
+          "numberOfDoses": null
+        }
+      },
+      {
+        "vaccineName": "FeLV",
+        "ageInWeeks": 68,
+        "intervalDays": null,
+        "notes": "FeLV annual booster for outdoor cats",
+        "isRequired": false,
+        "recurring": {
+          "intervalMonths": 12,
+          "indefinitely": true,
+          "numberOfDoses": null
+        }
+      }
+    ]
+  }
+]

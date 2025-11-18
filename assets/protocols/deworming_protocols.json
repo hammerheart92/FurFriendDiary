@@ -1,0 +1,466 @@
+[
+  {
+    "id": "canine-standard-deworming-ro-eu-v1",
+    "name": "Canine Standard Deworming Protocol (Romania/EU)",
+    "species": "dog",
+    "description": "Standard Romanian/EU canine deworming protocol covering both internal parasites (roundworms, hookworms, tapeworms) and external parasites (fleas, ticks). Follows ESCCAP (European Scientific Counsel Companion Animal Parasites) guidelines with intensive puppy treatment and regular adult maintenance.",
+    "isCustom": false,
+    "region": "Romania/EU",
+    "createdAt": "2025-01-15T10:00:00.000Z",
+    "updatedAt": null,
+    "schedules": [
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 2,
+        "intervalDays": null,
+        "notes": "First internal deworming - Early puppy treatment",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 4,
+        "intervalDays": 14,
+        "notes": "Second internal deworming",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 6,
+        "intervalDays": 14,
+        "notes": "Third internal deworming",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 8,
+        "intervalDays": 14,
+        "notes": "Fourth internal deworming",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 10,
+        "intervalDays": 14,
+        "notes": "Fifth internal deworming",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 12,
+        "intervalDays": 14,
+        "notes": "Sixth internal deworming - Last biweekly dose",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 16,
+        "intervalDays": null,
+        "notes": "Monthly deworming phase begins",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 20,
+        "intervalDays": null,
+        "notes": "Monthly deworming continues",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 24,
+        "intervalDays": null,
+        "notes": "Last monthly dose before adult schedule",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 36,
+        "intervalDays": null,
+        "notes": "Adult quarterly deworming begins at 9 months",
+        "recurring": {
+          "intervalMonths": 3,
+          "indefinitely": true,
+          "numberOfDoses": null
+        },
+        "productName": null
+      },
+      {
+        "dewormingType": "external",
+        "ageInWeeks": 8,
+        "intervalDays": null,
+        "notes": "First external parasite treatment (fleas/ticks)",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "external",
+        "ageInWeeks": 12,
+        "intervalDays": null,
+        "notes": "Second external parasite treatment",
+        "recurring": {
+          "intervalMonths": 1,
+          "indefinitely": true,
+          "numberOfDoses": null
+        },
+        "productName": null
+      }
+    ]
+  },
+  {
+    "id": "canine-intensive-deworming-ro-eu-v1",
+    "name": "Canine Intensive Deworming Protocol (Romania/EU)",
+    "species": "dog",
+    "description": "Intensive Romanian/EU canine deworming protocol for high-risk environments (rural areas, hunting dogs, outdoor dogs). Includes more frequent internal deworming for adult dogs and year-round external parasite prevention following ESCCAP recommendations.",
+    "isCustom": false,
+    "region": "Romania/EU",
+    "createdAt": "2025-01-15T10:00:00.000Z",
+    "updatedAt": null,
+    "schedules": [
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 2,
+        "intervalDays": null,
+        "notes": "First internal deworming - Early puppy treatment",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 4,
+        "intervalDays": 14,
+        "notes": "Second internal deworming",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 6,
+        "intervalDays": 14,
+        "notes": "Third internal deworming",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 8,
+        "intervalDays": 14,
+        "notes": "Fourth internal deworming",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 10,
+        "intervalDays": 14,
+        "notes": "Fifth internal deworming",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 12,
+        "intervalDays": 14,
+        "notes": "Sixth internal deworming - Last biweekly dose",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 16,
+        "intervalDays": null,
+        "notes": "Monthly deworming phase begins",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 20,
+        "intervalDays": null,
+        "notes": "Monthly deworming continues",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 24,
+        "intervalDays": null,
+        "notes": "Last monthly dose before adult schedule",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 28,
+        "intervalDays": null,
+        "notes": "Intensive adult monthly deworming for high-risk dogs",
+        "recurring": {
+          "intervalMonths": 1,
+          "indefinitely": true,
+          "numberOfDoses": null
+        },
+        "productName": null
+      },
+      {
+        "dewormingType": "external",
+        "ageInWeeks": 8,
+        "intervalDays": null,
+        "notes": "First external parasite treatment (fleas/ticks)",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "external",
+        "ageInWeeks": 12,
+        "intervalDays": null,
+        "notes": "Monthly external parasite prevention - Year-round",
+        "recurring": {
+          "intervalMonths": 1,
+          "indefinitely": true,
+          "numberOfDoses": null
+        },
+        "productName": null
+      }
+    ]
+  },
+  {
+    "id": "feline-standard-deworming-ro-eu-v1",
+    "name": "Feline Standard Deworming Protocol (Romania/EU)",
+    "species": "cat",
+    "description": "Standard Romanian/EU feline deworming protocol covering both internal parasites (roundworms, hookworms, tapeworms) and external parasites (fleas, ticks). Follows ESCCAP guidelines with intensive kitten treatment and regular adult maintenance. Suitable for indoor and outdoor cats.",
+    "isCustom": false,
+    "region": "Romania/EU",
+    "createdAt": "2025-01-15T10:00:00.000Z",
+    "updatedAt": null,
+    "schedules": [
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 2,
+        "intervalDays": null,
+        "notes": "First internal deworming - Early kitten treatment",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 4,
+        "intervalDays": 14,
+        "notes": "Second internal deworming",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 6,
+        "intervalDays": 14,
+        "notes": "Third internal deworming",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 8,
+        "intervalDays": 14,
+        "notes": "Fourth internal deworming",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 10,
+        "intervalDays": 14,
+        "notes": "Fifth internal deworming",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 12,
+        "intervalDays": 14,
+        "notes": "Sixth internal deworming - Last biweekly dose",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 16,
+        "intervalDays": null,
+        "notes": "Monthly deworming phase begins",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 20,
+        "intervalDays": null,
+        "notes": "Monthly deworming continues",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 24,
+        "intervalDays": null,
+        "notes": "Last monthly dose before adult schedule",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 36,
+        "intervalDays": null,
+        "notes": "Adult quarterly deworming begins at 9 months",
+        "recurring": {
+          "intervalMonths": 3,
+          "indefinitely": true,
+          "numberOfDoses": null
+        },
+        "productName": null
+      },
+      {
+        "dewormingType": "external",
+        "ageInWeeks": 8,
+        "intervalDays": null,
+        "notes": "First external parasite treatment (fleas/ticks)",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "external",
+        "ageInWeeks": 12,
+        "intervalDays": null,
+        "notes": "Monthly external parasite prevention",
+        "recurring": {
+          "intervalMonths": 1,
+          "indefinitely": true,
+          "numberOfDoses": null
+        },
+        "productName": null
+      }
+    ]
+  },
+  {
+    "id": "feline-outdoor-deworming-ro-eu-v1",
+    "name": "Feline Outdoor Deworming Protocol (Romania/EU)",
+    "species": "cat",
+    "description": "Intensive Romanian/EU feline deworming protocol designed for outdoor cats with high parasite exposure risk. Includes monthly internal deworming for adult cats and year-round external parasite prevention. Recommended for cats with regular outdoor access or hunting behavior.",
+    "isCustom": false,
+    "region": "Romania/EU",
+    "createdAt": "2025-01-15T10:00:00.000Z",
+    "updatedAt": null,
+    "schedules": [
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 2,
+        "intervalDays": null,
+        "notes": "First internal deworming - Early kitten treatment",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 4,
+        "intervalDays": 14,
+        "notes": "Second internal deworming",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 6,
+        "intervalDays": 14,
+        "notes": "Third internal deworming",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 8,
+        "intervalDays": 14,
+        "notes": "Fourth internal deworming",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 10,
+        "intervalDays": 14,
+        "notes": "Fifth internal deworming",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 12,
+        "intervalDays": 14,
+        "notes": "Sixth internal deworming - Last biweekly dose",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 16,
+        "intervalDays": null,
+        "notes": "Monthly deworming phase begins",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 20,
+        "intervalDays": null,
+        "notes": "Monthly deworming continues",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 24,
+        "intervalDays": null,
+        "notes": "Last monthly dose before adult schedule",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "internal",
+        "ageInWeeks": 28,
+        "intervalDays": null,
+        "notes": "Intensive adult monthly deworming for outdoor cats",
+        "recurring": {
+          "intervalMonths": 1,
+          "indefinitely": true,
+          "numberOfDoses": null
+        },
+        "productName": null
+      },
+      {
+        "dewormingType": "external",
+        "ageInWeeks": 8,
+        "intervalDays": null,
+        "notes": "First external parasite treatment (fleas/ticks)",
+        "recurring": null,
+        "productName": null
+      },
+      {
+        "dewormingType": "external",
+        "ageInWeeks": 12,
+        "intervalDays": null,
+        "notes": "Monthly external parasite prevention - Year-round for outdoor cats",
+        "recurring": {
+          "intervalMonths": 1,
+          "indefinitely": true,
+          "numberOfDoses": null
+        },
+        "productName": null
+      }
+    ]
+  }
+]

@@ -87,6 +87,7 @@ flutter:
     - assets/images/
     - assets/i18n/
     - assets/fonts/
+    - assets/protocols/
   fonts:
     - family: Roboto
       fonts:
