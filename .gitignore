@@ -36,6 +36,7 @@ ios/Flutter/Flutter.podspec
 *.log
 
 # Debug and documentation files (not for production)
+VET_FEEDBACK_IMPLEMENTATION_PLAN.md
 V1.0.7_HANDOFF.md.txt
 FurFriendDiary_Project_Handoff.md
 APPOINTMENT_REMINDER_DATE_BUG_FIX.md
@@ -54,6 +55,7 @@ logs_new_version.txt
 nul
 reminder_test.txt
 *_test.txt
+test_failure_analysis.md
 
 # Claude AI / AI assistant files
 .claude/
