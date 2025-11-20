@@ -37,7 +37,7 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get pleaseSetupPetFirst =>
-      'Vă rugăm să configurați mai întâi un profil de animal';
+      'Vă rugăm să creați mai întâi un profil de animal';
 
   @override
   String get noActiveMedications => 'Niciun medicament activ';
@@ -51,6 +51,9 @@ class AppLocalizationsRo extends AppLocalizations {
   @override
   String get noMedicationsMatchSearch =>
       'Niciun medicament nu corespunde căutării';
+
+  @override
+  String get noProtocolSelected => 'Niciun protocol de vaccinare selectat';
 
   @override
   String get tryAdjustingSearchTerms =>
@@ -196,6 +199,9 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get clear => 'Curăță';
+
+  @override
+  String get comingSoon => 'În curând';
 
   @override
   String get add => 'Adaugă';
@@ -482,6 +488,16 @@ class AppLocalizationsRo extends AppLocalizations {
   String get tomorrow => 'Mâine';
 
   @override
+  String overdueByDays(int days) {
+    return 'Întârziat cu $days zile';
+  }
+
+  @override
+  String inDays(int days) {
+    return 'În $days zile';
+  }
+
+  @override
   String get yesterday => 'Ieri';
 
   @override
@@ -541,6 +557,9 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get optional => 'Opțional';
+
+  @override
+  String get upcomingCare => 'Îngrijiri viitoare';
 
   @override
   String get required => 'Obligatoriu';
@@ -1279,6 +1298,9 @@ class AppLocalizationsRo extends AppLocalizations {
   String get errorLoadingReports => 'Eroare la încărcarea rapoartelor';
 
   @override
+  String get errorLoadingSchedule => 'Eroare la încărcarea programului';
+
+  @override
   String get overdue => 'Întârziat';
 
   @override
@@ -1385,7 +1407,7 @@ class AppLocalizationsRo extends AppLocalizations {
   String get setReminder => 'Setează Memento';
 
   @override
-  String get oneDayBefore => 'Cu o zi înainte';
+  String get oneDayBefore => 'Cu 1 zi înainte';
 
   @override
   String get oneHourBefore => 'Cu o oră înainte';
@@ -1427,6 +1449,9 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get view => 'Vizualizare';
+
+  @override
+  String get viewAll => 'Vezi tot';
 
   @override
   String get reminderDeleted => 'Memento șters';
@@ -2071,7 +2096,7 @@ class AppLocalizationsRo extends AppLocalizations {
   String get alreadyPreferred => 'Acesta este deja veterinarul preferat';
 
   @override
-  String get errorOccurred => 'Eroare';
+  String get errorOccurred => 'A apărut o eroare';
 
   @override
   String get petManagement => 'Gestionarea animalelor de companie';
@@ -2487,6 +2512,9 @@ class AppLocalizationsRo extends AppLocalizations {
   String get navSettings => 'Setări';
 
   @override
+  String get nextDue => 'Următoarea dată';
+
+  @override
   String medicationReminderBody(String medication, String frequency) {
     return '$medication - $frequency';
   }
@@ -2503,4 +2531,367 @@ class AppLocalizationsRo extends AppLocalizations {
   String appointmentAt(String title, String location) {
     return '$title la $location';
   }
+
+  @override
+  String get selectVaccinationProtocol => 'Selectează Protocolul de Vaccinare';
+
+  @override
+  String get selectProtocol => 'Selectează Protocol';
+
+  @override
+  String selectProtocolForPet(String petName) {
+    return 'Selectează protocolul de vaccinare pentru $petName';
+  }
+
+  @override
+  String get chooseProtocolMatchingNeeds =>
+      'Alege un protocol care se potrivește nevoilor de vaccinare ale animalului tău';
+
+  @override
+  String get coreProtocol => 'Esențial';
+
+  @override
+  String get extendedProtocol => 'Extins';
+
+  @override
+  String get predefinedProtocol => 'Predefinit';
+
+  @override
+  String get currentProtocol => 'Protocol curent';
+
+  @override
+  String get customProtocol => 'Personalizat';
+
+  @override
+  String vaccinationsCount(int count) {
+    return '$count vaccinări';
+  }
+
+  @override
+  String get confirmProtocolSelection => 'Confirmă selecția protocolului';
+
+  @override
+  String get applyProtocol => 'Aplică protocolul';
+
+  @override
+  String applyProtocolToPet(String protocolName, String petName) {
+    return 'Aplică $protocolName la $petName';
+  }
+
+  @override
+  String protocolAppliedSuccess(String petName) {
+    return 'Protocolul de vaccinare a fost aplicat la $petName';
+  }
+
+  @override
+  String get protocolApplyFailed =>
+      'Nu s-a putut aplica protocolul de vaccinare';
+
+  @override
+  String get noProtocolsAvailable =>
+      'Nu există protocoale de vaccinare pentru specia acestui animal';
+
+  @override
+  String noProtocolsForSpecies(String species) {
+    return 'Nu s-au găsit protocoale de vaccinare pentru $species. Consultați-vă veterinarul pentru îndrumare.';
+  }
+
+  @override
+  String get loadingProtocols => 'Se încarcă protocoalele de vaccinare...';
+
+  @override
+  String get failedToLoadProtocols => 'Nu s-au putut încărca protocoalele';
+
+  @override
+  String andXMore(int count) {
+    return '...și încă $count';
+  }
+
+  @override
+  String get requiredVaccine => 'Obligatoriu';
+
+  @override
+  String get optionalVaccine => 'Opțional';
+
+  @override
+  String atWeeksAge(int weeks) {
+    return 'la $weeks săptămâni';
+  }
+
+  @override
+  String get protocolDetails => 'Detalii protocol';
+
+  @override
+  String get viewFullDetails => 'Vezi detaliile complete';
+
+  @override
+  String get viewFullSchedule => 'Vezi programul complet';
+
+  @override
+  String get reminderSettings => 'Setări Memento-uri';
+
+  @override
+  String get configureReminders => 'Configurează Memento-uri';
+
+  @override
+  String reminderSettingsFor(String eventType) {
+    return 'Setări Memento-uri pentru $eventType';
+  }
+
+  @override
+  String get enableReminders => 'Activează Memento-uri';
+
+  @override
+  String get disableReminders => 'Dezactivează Memento-uri';
+
+  @override
+  String get notificationsActive => 'Notificările sunt active';
+
+  @override
+  String get notificationsDisabled => 'Notificările sunt dezactivate';
+
+  @override
+  String get remindMe => 'Amintește-mi:';
+
+  @override
+  String get dayOf => 'În ziua evenimentului';
+
+  @override
+  String get dayBefore => 'Cu 1 zi înainte';
+
+  @override
+  String get remindersActive => 'Memento-uri Active';
+
+  @override
+  String get reminderTiming => 'Cronologie Memento-uri';
+
+  @override
+  String selectWhenToReceiveReminders(String eventType) {
+    return 'Selectează când dorești să primești memento-uri înainte de evenimentele $eventType';
+  }
+
+  @override
+  String get threeDaysBefore => 'Cu 3 zile înainte';
+
+  @override
+  String get oneWeekBefore => 'Cu 1 săptămână înainte';
+
+  @override
+  String get twoWeeksBefore => 'Cu 2 săptămâni înainte';
+
+  @override
+  String get saveReminderSettings => 'Salvează Setările Memento-uri';
+
+  @override
+  String get reminderSettingsSaved =>
+      'Setările memento-urilor au fost salvate cu succes';
+
+  @override
+  String get reminderSettingsSaveFailed =>
+      'Salvarea setărilor memento-urilor a eșuat';
+
+  @override
+  String get noRemindersSelected => 'Niciun memento selectat';
+
+  @override
+  String get selectAtLeastOneReminder =>
+      'Selectează cel puțin un moment pentru memento';
+
+  @override
+  String get loadingReminderSettings => 'Se încarcă setările memento-urilor...';
+
+  @override
+  String get failedToLoadReminderSettings =>
+      'Încărcarea setărilor memento-urilor a eșuat';
+
+  @override
+  String get vaccinationReminders => 'Memento-uri Vaccinare';
+
+  @override
+  String get dewormingReminders => 'Memento-uri Deparazitare';
+
+  @override
+  String get appointmentReminders => 'Memento-uri Programări';
+
+  @override
+  String get medicationReminders => 'Memento-uri Medicamente';
+
+  @override
+  String get treatmentPlanViewer => 'Planuri de tratament';
+
+  @override
+  String get activeTreatmentPlans => 'Planuri de tratament active';
+
+  @override
+  String get loadingTreatmentPlans => 'Se încarcă planurile de tratament...';
+
+  @override
+  String get failedToLoadTreatmentPlans =>
+      'Nu s-au putut încărca planurile de tratament';
+
+  @override
+  String get noActiveTreatmentPlans => 'Niciun plan de tratament activ';
+
+  @override
+  String get noActiveTreatmentPlansMessage =>
+      'Nu există planuri de tratament active pentru acest animal de companie.';
+
+  @override
+  String tasksComplete(int completed, int total) {
+    return '$completed din $total sarcini finalizate';
+  }
+
+  @override
+  String get markPlanComplete => 'Marchează planul ca finalizat';
+
+  @override
+  String get planMarkedComplete =>
+      'Planul de tratament a fost marcat ca finalizat';
+
+  @override
+  String get failedToMarkPlanComplete =>
+      'Nu s-a putut marca planul ca finalizat';
+
+  @override
+  String get confirmMarkComplete => 'Confirmă finalizarea';
+
+  @override
+  String confirmMarkCompleteMessage(String planName) {
+    return 'Sigur dorești să marchezi planul \"$planName\" ca finalizat? Această acțiune nu poate fi anulată ușor.';
+  }
+
+  @override
+  String get taskUpdated => 'Sarcina a fost actualizată cu succes';
+
+  @override
+  String get taskCompletionFailed => 'Nu s-a putut actualiza sarcina';
+
+  @override
+  String get dueToday => 'Astăzi';
+
+  @override
+  String prescribedBy(String veterinarian) {
+    return 'Prescris de $veterinarian';
+  }
+
+  @override
+  String startedOn(String date) {
+    return 'Început la $date';
+  }
+
+  @override
+  String get calendarView => 'Calendar';
+
+  @override
+  String get vaccinations => 'Vaccinări';
+
+  @override
+  String get deworming => 'Deparazitări';
+
+  @override
+  String get noEventsOnThisDay => 'Niciun eveniment în această zi';
+
+  @override
+  String get selectAnotherDay =>
+      'Selectați o altă zi pentru a vedea evenimentele programate';
+
+  @override
+  String get noUpcomingCareEvents => 'Niciun eveniment viitor';
+
+  @override
+  String get setupProtocolsToSeeEvents =>
+      'Configurați protocoale de vaccinare și programări pentru a le vedea aici';
+
+  @override
+  String get setUpProtocols => 'Configurează protocoale';
+
+  @override
+  String get failedToLoadCalendar => 'Încărcarea calendarului a eșuat';
+
+  @override
+  String get loadingCalendar => 'Se încarcă calendarul...';
+
+  @override
+  String get eventSingular => 'eveniment';
+
+  @override
+  String get eventPlural => 'evenimente';
+
+  @override
+  String get vaccinationDetailsComingSoon =>
+      'Detaliile vaccinării vor fi disponibile în curând';
+
+  @override
+  String get dewormingDetailsComingSoon =>
+      'Detaliile deparazitării vor fi disponibile în curând';
+
+  @override
+  String get appointmentDetailsComingSoon =>
+      'Detaliile programării vor fi disponibile în curând';
+
+  @override
+  String get tapToViewDetails => 'Apăsați pentru a vedea detaliile';
+
+  @override
+  String eventsOnDate(int count, String date) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'evenimente',
+      one: 'eveniment',
+    );
+    return '$count $_temp0 pe $date';
+  }
+
+  @override
+  String get vaccinationStatus => 'Stare vaccinare';
+
+  @override
+  String get vaccinationProtocol => 'Protocol de Vaccinare';
+
+  @override
+  String get isThisVaccination => 'Este o vaccinare?';
+
+  @override
+  String get regularMedication => 'Urmărire medicație obișnuită';
+
+  @override
+  String get protocolBasedVaccination => 'Vaccinare bazată pe protocol';
+
+  @override
+  String get pleaseSelectVaccinationProtocol =>
+      'Selectează un protocol de vaccinare';
+
+  @override
+  String get nextDoseCalculation => 'Calcul Următoarea Doză';
+
+  @override
+  String calculatedFromProtocol(int stepIndex) {
+    return 'Calculat din pasul $stepIndex al protocolului';
+  }
+
+  @override
+  String get fromProtocol => '(din protocol)';
+
+  @override
+  String get recommendedDose => '(recomandat)';
+
+  @override
+  String get petNeedsBirthday =>
+      'Animalul necesită o dată de naștere pentru a calcula datele de vaccinare';
+
+  @override
+  String get dose => 'Doză';
+
+  @override
+  String get scheduled => 'Programat';
+
+  @override
+  String get taskCompleted => 'Sarcină finalizată';
+
+  @override
+  String get dueDate => 'Data scadentă';
+
+  @override
+  String get noTasksInPlan => 'Nicio sarcină în acest plan de tratament';
 }

@@ -15,6 +15,10 @@
   "noMedicationsFound": "No medications found",
   "noInactiveMedications": "No inactive medications",
   "noMedicationsMatchSearch": "No medications match your search",
+  "noProtocolSelected": "No vaccination protocol selected",
+  "@noProtocolSelected": {
+    "description": "Message when pet has no vaccination protocol assigned"
+  },
   "tryAdjustingSearchTerms": "Try adjusting your search terms",
   "errorLoadingMedications": "Error loading medications",
   "retry": "Retry",
@@ -83,6 +87,7 @@
   "foodTypeOther": "Other (Custom)",
   "foodTypeCustomPlaceholder": "Enter custom food type",
   "clear": "Clear",
+  "comingSoon": "Coming soon",
   "add": "Add",
   "feedingAdded": "Feeding \"{foodType}\" added",
   "@feedingAdded": {
@@ -206,6 +211,24 @@
   "walks": "Walks",
   "today": "Today",
   "tomorrow": "Tomorrow",
+  "overdueByDays": "Overdue by {days} days",
+  "@overdueByDays": {
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "inDays": "In {days} days",
+  "@inDays": {
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
   "yesterday": "Yesterday",
   "thisWeek": "This Week",
   "addWalk": "Add walk",
@@ -226,6 +249,7 @@
   "close": "Close",
   "noNotes": "No notes",
   "optional": "Optional",
+  "upcomingCare": "Upcoming Care",
   "required": "Required",
   "enterPositiveNumber": "Enter a positive number",
   "walkAddedSuccessfully": "Walk added successfully!",
@@ -597,6 +621,10 @@
   "noActivityReportsFound": "No activity reports found",
   "noReportsMatchSearch": "No reports match your search",
   "errorLoadingReports": "Error loading reports",
+  "errorLoadingSchedule": "Error loading schedule",
+  "@errorLoadingSchedule": {
+    "description": "Error message when vaccination schedule fails to load"
+  },
 
   "overdue": "Overdue",
   "justNow": "Just now",
@@ -672,6 +700,7 @@
     }
   },
   "view": "View",
+  "viewAll": "View All",
   "reminderDeleted": "Reminder deleted",
   "nextReminder": "Next: {time}",
   "@nextReminder": {
@@ -1127,6 +1156,10 @@
   "@navSettings": {
     "description": "Navigation label for Settings tab"
   },
+  "nextDue": "Next due",
+  "@nextDue": {
+    "description": "Label for next due vaccination date"
+  },
 
   "medicationReminder": "Medication Reminder",
   "@medicationReminder": {
@@ -1205,5 +1238,528 @@
         "example": "Vet Laszlo"
       }
     }
+  },
+
+  "selectVaccinationProtocol": "Select Vaccination Protocol",
+  "@selectVaccinationProtocol": {
+    "description": "Screen title for protocol selection"
+  },
+  "selectProtocol": "Select Protocol",
+  "@selectProtocol": {
+    "description": "Button text to select a vaccination protocol"
+  },
+  "selectProtocolForPet": "Select vaccination protocol for {petName}",
+  "@selectProtocolForPet": {
+    "description": "Semantic label for screen title",
+    "placeholders": {
+      "petName": {
+        "type": "String",
+        "example": "Max"
+      }
+    }
+  },
+  "chooseProtocolMatchingNeeds": "Choose a protocol that matches your pet's vaccination needs",
+  "@chooseProtocolMatchingNeeds": {
+    "description": "Helper text explaining protocol selection"
+  },
+  "coreProtocol": "Core",
+  "@coreProtocol": {
+    "description": "Badge label for core vaccination protocols"
+  },
+  "extendedProtocol": "Extended",
+  "@extendedProtocol": {
+    "description": "Badge label for extended vaccination protocols"
+  },
+  "predefinedProtocol": "Predefined",
+  "@predefinedProtocol": {
+    "description": "Badge label for predefined protocols from JSON"
+  },
+  "currentProtocol": "Current protocol",
+  "@currentProtocol": {
+    "description": "Label for current vaccination protocol"
+  },
+  "customProtocol": "Custom",
+  "@customProtocol": {
+    "description": "Badge label for user-created custom protocols"
+  },
+  "vaccinationsCount": "{count} vaccinations",
+  "@vaccinationsCount": {
+    "description": "Number of vaccines in protocol",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "6"
+      }
+    }
+  },
+  "confirmProtocolSelection": "Confirm Protocol Selection",
+  "@confirmProtocolSelection": {
+    "description": "Bottom sheet title for confirmation"
+  },
+  "applyProtocol": "Apply Protocol",
+  "@applyProtocol": {
+    "description": "Button text to confirm protocol application"
+  },
+  "applyProtocolToPet": "Apply {protocolName} to {petName}",
+  "@applyProtocolToPet": {
+    "description": "Semantic label for apply button",
+    "placeholders": {
+      "protocolName": {
+        "type": "String",
+        "example": "Canine Core Protocol"
+      },
+      "petName": {
+        "type": "String",
+        "example": "Max"
+      }
+    }
+  },
+  "protocolAppliedSuccess": "Vaccination protocol applied to {petName}",
+  "@protocolAppliedSuccess": {
+    "description": "Success message after applying protocol",
+    "placeholders": {
+      "petName": {
+        "type": "String",
+        "example": "Max"
+      }
+    }
+  },
+  "protocolApplyFailed": "Failed to apply vaccination protocol",
+  "@protocolApplyFailed": {
+    "description": "Error message when protocol application fails"
+  },
+  "noProtocolsAvailable": "No protocols available",
+  "@noProtocolsAvailable": {
+    "description": "Empty state headline"
+  },
+  "noProtocolsForSpecies": "No vaccination protocols found for {species}. Contact your veterinarian for guidance.",
+  "@noProtocolsForSpecies": {
+    "description": "Empty state body text",
+    "placeholders": {
+      "species": {
+        "type": "String",
+        "example": "Dog"
+      }
+    }
+  },
+  "loadingProtocols": "Loading vaccination protocols...",
+  "@loadingProtocols": {
+    "description": "Loading state semantic label"
+  },
+  "failedToLoadProtocols": "Failed to load protocols",
+  "@failedToLoadProtocols": {
+    "description": "Error state headline"
+  },
+  "andXMore": "...and {count} more",
+  "@andXMore": {
+    "description": "Text showing additional items not displayed",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "requiredVaccine": "Required",
+  "@requiredVaccine": {
+    "description": "Label for required vaccines in protocol"
+  },
+  "optionalVaccine": "Optional",
+  "@optionalVaccine": {
+    "description": "Label for optional vaccines in protocol"
+  },
+  "atWeeksAge": "at {weeks} weeks",
+  "@atWeeksAge": {
+    "description": "Age indicator for vaccine administration",
+    "placeholders": {
+      "weeks": {
+        "type": "int",
+        "example": "8"
+      }
+    }
+  },
+  "protocolDetails": "Protocol Details",
+  "@protocolDetails": {
+    "description": "Section header for protocol summary"
+  },
+  "viewFullDetails": "View Full Details",
+  "@viewFullDetails": {
+    "description": "Link to expand full protocol details"
+  },
+  "viewFullSchedule": "View Full Schedule",
+  "@viewFullSchedule": {
+    "description": "Button text to view full vaccination schedule"
+  },
+
+  "reminderSettings": "Reminder Settings",
+  "@reminderSettings": {
+    "description": "Screen title for reminder configuration"
+  },
+  "configureReminders": "Configure Reminders",
+  "@configureReminders": {
+    "description": "Section header for reminder configuration"
+  },
+  "reminderSettingsFor": "Reminder Settings for {eventType}",
+  "@reminderSettingsFor": {
+    "description": "Screen title with event type",
+    "placeholders": {
+      "eventType": {
+        "type": "String",
+        "example": "Vaccinations"
+      }
+    }
+  },
+  "enableReminders": "Enable Reminders",
+  "@enableReminders": {
+    "description": "Switch label to enable reminders"
+  },
+  "disableReminders": "Disable Reminders",
+  "@disableReminders": {
+    "description": "Switch label to disable reminders"
+  },
+  "notificationsActive": "Notifications are active",
+  "@notificationsActive": {
+    "description": "Subtitle when reminders are enabled"
+  },
+  "notificationsDisabled": "Notifications are disabled",
+  "@notificationsDisabled": {
+    "description": "Subtitle when reminders are disabled"
+  },
+  "remindMe": "Remind me:",
+  "@remindMe": {
+    "description": "Header for reminder timing selection"
+  },
+  "dayOf": "Day of",
+  "@dayOf": {
+    "description": "Reminder option: on the day of event"
+  },
+  "dayBefore": "1 day before",
+  "@dayBefore": {
+    "description": "Reminder option: 1 day before event"
+  },
+  "remindersActive": "Active Reminders",
+  "@remindersActive": {
+    "description": "Header for reminder summary card"
+  },
+  "reminderTiming": "Reminder Timing",
+  "@reminderTiming": {
+    "description": "Section header for timing selection"
+  },
+  "selectWhenToReceiveReminders": "Select when you'd like to receive reminders before upcoming {eventType} events",
+  "@selectWhenToReceiveReminders": {
+    "description": "Instructions for reminder timing selection",
+    "placeholders": {
+      "eventType": {
+        "type": "String",
+        "example": "vaccination"
+      }
+    }
+  },
+  "oneDayBefore": "1 day before",
+  "@oneDayBefore": {
+    "description": "Reminder offset option"
+  },
+  "threeDaysBefore": "3 days before",
+  "@threeDaysBefore": {
+    "description": "Reminder offset option"
+  },
+  "oneWeekBefore": "1 week before",
+  "@oneWeekBefore": {
+    "description": "Reminder offset option (7 days)"
+  },
+  "twoWeeksBefore": "2 weeks before",
+  "@twoWeeksBefore": {
+    "description": "Reminder offset option (14 days)"
+  },
+  "saveReminderSettings": "Save Reminder Settings",
+  "@saveReminderSettings": {
+    "description": "Button text to save changes"
+  },
+  "reminderSettingsSaved": "Reminder settings saved successfully",
+  "@reminderSettingsSaved": {
+    "description": "Success message after saving"
+  },
+  "reminderSettingsSaveFailed": "Failed to save reminder settings",
+  "@reminderSettingsSaveFailed": {
+    "description": "Error message when save fails"
+  },
+  "noRemindersSelected": "No reminders selected",
+  "@noRemindersSelected": {
+    "description": "Validation error when no offsets selected"
+  },
+  "selectAtLeastOneReminder": "Please select at least one reminder time",
+  "@selectAtLeastOneReminder": {
+    "description": "Validation message for empty selection"
+  },
+  "loadingReminderSettings": "Loading reminder settings...",
+  "@loadingReminderSettings": {
+    "description": "Loading state semantic label"
+  },
+  "failedToLoadReminderSettings": "Failed to load reminder settings",
+  "@failedToLoadReminderSettings": {
+    "description": "Error state headline"
+  },
+  "vaccinationReminders": "Vaccination Reminders",
+  "@vaccinationReminders": {
+    "description": "Title for vaccination reminder settings"
+  },
+  "dewormingReminders": "Deworming Reminders",
+  "@dewormingReminders": {
+    "description": "Title for deworming reminder settings"
+  },
+  "appointmentReminders": "Appointment Reminders",
+  "@appointmentReminders": {
+    "description": "Title for appointment reminder settings"
+  },
+  "medicationReminders": "Medication Reminders",
+  "@medicationReminders": {
+    "description": "Title for medication reminder settings"
+  },
+  "treatmentPlanViewer": "Treatment Plans",
+  "@treatmentPlanViewer": {
+    "description": "Title for treatment plan viewer screen"
+  },
+  "activeTreatmentPlans": "Active Treatment Plans",
+  "@activeTreatmentPlans": {
+    "description": "Header for active treatment plans section"
+  },
+  "loadingTreatmentPlans": "Loading treatment plans...",
+  "@loadingTreatmentPlans": {
+    "description": "Loading state message"
+  },
+  "failedToLoadTreatmentPlans": "Failed to load treatment plans",
+  "@failedToLoadTreatmentPlans": {
+    "description": "Error state headline"
+  },
+  "noActiveTreatmentPlans": "No Active Treatment Plans",
+  "@noActiveTreatmentPlans": {
+    "description": "Empty state title"
+  },
+  "noActiveTreatmentPlansMessage": "You don't have any active treatment plans for this pet.",
+  "@noActiveTreatmentPlansMessage": {
+    "description": "Empty state message"
+  },
+  "tasksComplete": "{completed} of {total} tasks complete",
+  "@tasksComplete": {
+    "description": "Progress text showing completed vs total tasks",
+    "placeholders": {
+      "completed": {
+        "type": "int",
+        "example": "5"
+      },
+      "total": {
+        "type": "int",
+        "example": "8"
+      }
+    }
+  },
+  "markPlanComplete": "Mark Plan Complete",
+  "@markPlanComplete": {
+    "description": "Button to mark treatment plan as complete"
+  },
+  "planMarkedComplete": "Treatment plan marked as complete",
+  "@planMarkedComplete": {
+    "description": "Success message after marking plan complete"
+  },
+  "failedToMarkPlanComplete": "Failed to mark plan as complete",
+  "@failedToMarkPlanComplete": {
+    "description": "Error message when marking plan complete fails"
+  },
+  "confirmMarkComplete": "Confirm Mark Complete",
+  "@confirmMarkComplete": {
+    "description": "Title for mark complete confirmation dialog"
+  },
+  "confirmMarkCompleteMessage": "Are you sure you want to mark \"{planName}\" as complete? This action cannot be easily undone.",
+  "@confirmMarkCompleteMessage": {
+    "description": "Confirmation message for marking plan complete",
+    "placeholders": {
+      "planName": {
+        "type": "String",
+        "example": "Post-Surgery Recovery"
+      }
+    }
+  },
+  "taskUpdated": "Task updated successfully",
+  "@taskUpdated": {
+    "description": "Success message after updating task completion"
+  },
+  "taskCompletionFailed": "Failed to update task",
+  "@taskCompletionFailed": {
+    "description": "Error message when task update fails"
+  },
+  "overdue": "Overdue",
+  "@overdue": {
+    "description": "Label for overdue tasks"
+  },
+  "dueToday": "Due Today",
+  "@dueToday": {
+    "description": "Label for tasks due today"
+  },
+  "prescribedBy": "Prescribed by {veterinarian}",
+  "@prescribedBy": {
+    "description": "Label showing veterinarian who prescribed the plan",
+    "placeholders": {
+      "veterinarian": {
+        "type": "String",
+        "example": "Dr. Smith"
+      }
+    }
+  },
+  "startedOn": "Started on {date}",
+  "@startedOn": {
+    "description": "Label showing plan start date",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "January 15, 2025"
+      }
+    }
+  },
+  "calendarView": "Calendar",
+  "@calendarView": {
+    "description": "Screen title for calendar view"
+  },
+  "all": "All",
+  "@all": {
+    "description": "Filter chip label for showing all events"
+  },
+  "vaccinations": "Vaccinations",
+  "@vaccinations": {
+    "description": "Filter chip label for vaccination events"
+  },
+  "deworming": "Deworming",
+  "@deworming": {
+    "description": "Filter chip label for deworming events"
+  },
+  "appointments": "Appointments",
+  "@appointments": {
+    "description": "Filter chip label for appointment events"
+  },
+  "medications": "Medications",
+  "@medications": {
+    "description": "Filter chip label for medication events"
+  },
+  "noEventsOnThisDay": "No Events on This Day",
+  "@noEventsOnThisDay": {
+    "description": "Empty state when selected day has no events"
+  },
+  "selectAnotherDay": "Select another day to view scheduled care events",
+  "@selectAnotherDay": {
+    "description": "Empty state helper text for no events on selected day"
+  },
+  "noUpcomingCareEvents": "No Upcoming Care Events",
+  "@noUpcomingCareEvents": {
+    "description": "Empty state when no events exist at all"
+  },
+  "setupProtocolsToSeeEvents": "Set up vaccination protocols and appointments to see them here",
+  "@setupProtocolsToSeeEvents": {
+    "description": "Empty state helper text for no events"
+  },
+  "setUpProtocols": "Set Up Protocols",
+  "@setUpProtocols": {
+    "description": "Button text to navigate to protocol selection"
+  },
+  "noPetSelected": "No Pet Selected",
+  "@noPetSelected": {
+    "description": "Empty state when no pet is selected"
+  },
+  "pleaseSetupPetFirst": "Please set up a pet profile first",
+  "@pleaseSetupPetFirst": {
+    "description": "Helper text for no pet selected state"
+  },
+  "errorOccurred": "An error occurred",
+  "@errorOccurred": {
+    "description": "Generic error message"
+  },
+  "failedToLoadCalendar": "Failed to load calendar events",
+  "@failedToLoadCalendar": {
+    "description": "Error message when calendar fails to load"
+  },
+  "loadingCalendar": "Loading calendar...",
+  "@loadingCalendar": {
+    "description": "Loading state message for calendar"
+  },
+  "eventSingular": "event",
+  "@eventSingular": {
+    "description": "Singular form of event count"
+  },
+  "eventPlural": "events",
+  "@eventPlural": {
+    "description": "Plural form of event count"
+  },
+  "vaccinationDetailsComingSoon": "Vaccination details coming soon",
+  "@vaccinationDetailsComingSoon": {
+    "description": "Message when vaccination detail screen not yet implemented"
+  },
+  "dewormingDetailsComingSoon": "Deworming details coming soon",
+  "@dewormingDetailsComingSoon": {
+    "description": "Message when deworming detail screen not yet implemented"
+  },
+  "appointmentDetailsComingSoon": "Appointment details coming soon",
+  "@appointmentDetailsComingSoon": {
+    "description": "Message when appointment detail screen not yet implemented"
+  },
+  "tapToViewDetails": "Tap to view details",
+  "@tapToViewDetails": {
+    "description": "Hint text for tappable event cards"
+  },
+  "eventsOnDate": "{count} {count, plural, =1{event} other{events}} on {date}",
+  "@eventsOnDate": {
+    "description": "Header showing event count for selected date",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      },
+      "date": {
+        "type": "String",
+        "example": "January 15, 2025"
+      }
+    }
+  },
+  "vaccinationStatus": "Vaccination Status",
+  "@vaccinationStatus": {
+    "description": "Title for vaccination status card"
+  },
+  "vaccinationProtocol": "Vaccination Protocol",
+  "isThisVaccination": "Is this a vaccination?",
+  "regularMedication": "Regular medication tracking",
+  "protocolBasedVaccination": "Protocol-based vaccination",
+  "selectProtocol": "Select Protocol",
+  "selectVaccinationProtocol": "Select Vaccination Protocol",
+  "pleaseSelectVaccinationProtocol": "Please select a vaccination protocol",
+  "nextDoseCalculation": "Next Dose Calculation",
+  "calculatedFromProtocol": "Calculated from protocol step {stepIndex}",
+  "@calculatedFromProtocol": {
+    "placeholders": {
+      "stepIndex": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "noProtocolsAvailable": "No vaccination protocols available for this pet's species",
+  "fromProtocol": "(from protocol)",
+  "recommendedDose": "(recommended)",
+  "petNeedsBirthday": "Pet needs a birthday to calculate vaccination dates",
+  "dose": "Dose",
+  "@dose": {
+    "description": "Label for vaccination dose number"
+  },
+  "scheduled": "Scheduled",
+  "@scheduled": {
+    "description": "Status label for scheduled vaccinations"
+  },
+  "taskCompleted": "Task completed",
+  "@taskCompleted": {
+    "description": "Label for completed task status"
+  },
+  "dueDate": "Due date",
+  "@dueDate": {
+    "description": "Label for task due date"
+  },
+  "noTasksInPlan": "No tasks in this treatment plan",
+  "@noTasksInPlan": {
+    "description": "Empty state message when treatment plan has no tasks"
   }
 }

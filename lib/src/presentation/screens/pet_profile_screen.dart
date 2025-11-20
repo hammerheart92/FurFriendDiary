@@ -7,6 +7,9 @@ import 'package:fur_friend_diary/src/domain/models/pet_profile.dart';
 import 'package:fur_friend_diary/src/presentation/providers/pet_profile_provider.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
 import 'package:fur_friend_diary/src/ui/screens/weight_history_screen.dart';
+import 'package:fur_friend_diary/src/presentation/providers/protocols/protocol_schedule_provider.dart';
+import 'package:fur_friend_diary/src/presentation/providers/protocols/vaccination_protocol_provider.dart';
+import 'package:intl/intl.dart';
 
 final _logger = Logger();
 
@@ -75,6 +78,8 @@ class PetProfileScreen extends ConsumerWidget {
         children: [
           if (currentProfile != null) ...[
             _buildActiveProfileCard(context, ref, currentProfile),
+            const SizedBox(height: 16),
+            _buildVaccinationStatusCard(context, ref, currentProfile),
             const SizedBox(height: 24),
             const Divider(),
             const SizedBox(height: 16),
@@ -258,6 +263,253 @@ class PetProfileScreen extends ConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildVaccinationStatusCard(
+    BuildContext context,
+    WidgetRef ref,
+    PetProfile profile,
+  ) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final vaccinationScheduleAsync = ref.watch(vaccinationScheduleProvider(profile.id));
+
+    return Card(
+      child: InkWell(
+        onTap: () => context.go('/calendar'),
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.vaccines,
+                    color: theme.colorScheme.primary,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    l10n.vaccinationStatus,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Spacer(),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 150),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Show loading/error/data states
+              vaccinationScheduleAsync.when(
+                data: (schedule) {
+                  // Check if pet has protocol assigned
+                  if (profile.vaccinationProtocolId == null) {
+                    return _buildNoProtocolState(context, l10n, theme);
+                  }
+
+                  // Check if schedule is empty
+                  if (schedule.isEmpty) {
+                    return _buildNoProtocolState(context, l10n, theme);
+                  }
+
+                  // Show protocol info and next due
+                  return _buildProtocolInfo(context, ref, profile, schedule, l10n, theme);
+                },
+                loading: () => const Column(
+                  children: [
+                    SizedBox(
+                      height: 60,
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
+                  ],
+                ),
+                error: (error, stack) => Column(
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      color: theme.colorScheme.error,
+                      size: 32,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '${l10n.errorLoadingSchedule}: $error',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.error,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNoProtocolState(BuildContext context, AppLocalizations l10n, ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.noProtocolSelected,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface.withValues(alpha: 180),
+          ),
+        ),
+        const SizedBox(height: 12),
+        FilledButton.tonalIcon(
+          onPressed: () => context.go('/calendar'),
+          icon: const Icon(Icons.add, size: 18),
+          label: Text(l10n.selectProtocol),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProtocolInfo(
+    BuildContext context,
+    WidgetRef ref,
+    PetProfile profile,
+    List<dynamic> schedule,
+    AppLocalizations l10n,
+    ThemeData theme,
+  ) {
+    // Get protocol name
+    final protocolAsync = ref.watch(vaccinationProtocolByIdProvider(profile.vaccinationProtocolId!));
+
+    // Find next upcoming vaccination
+    final now = DateTime.now();
+    final upcomingVaccinations = schedule.where((entry) =>
+      entry.scheduledDate.isAfter(now)
+    ).toList();
+
+    // Count completed vaccinations (past dates)
+    final completedCount = schedule.where((entry) =>
+      entry.scheduledDate.isBefore(now)
+    ).length;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Protocol name
+        protocolAsync.when(
+          data: (protocol) {
+            if (protocol != null) {
+              return Row(
+                children: [
+                  Text(
+                    '${l10n.currentProtocol}:',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 180),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      protocol.name,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              );
+            }
+            return const SizedBox.shrink();
+          },
+          loading: () => const SizedBox.shrink(),
+          error: (_, __) => const SizedBox.shrink(),
+        ),
+
+        const SizedBox(height: 12),
+
+        // Progress indicator
+        Row(
+          children: [
+            Expanded(
+              child: LinearProgressIndicator(
+                value: schedule.isEmpty ? 0 : completedCount / schedule.length,
+                backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                valueColor: AlwaysStoppedAnimation(theme.colorScheme.primary),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              '$completedCount/${schedule.length}',
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 12),
+
+        // Next due date
+        if (upcomingVaccinations.isNotEmpty) ...[
+          const Divider(),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(
+                Icons.event,
+                size: 16,
+                color: theme.colorScheme.primary,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '${l10n.nextDue}:',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 180),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                DateFormat('MMM dd, yyyy').format(upcomingVaccinations.first.scheduledDate),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Padding(
+            padding: const EdgeInsets.only(left: 24),
+            child: Text(
+              upcomingVaccinations.first.vaccineName,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withValues(alpha: 180),
+              ),
+            ),
+          ),
+        ],
+
+        const SizedBox(height: 12),
+
+        // View full schedule link
+        TextButton.icon(
+          onPressed: () => context.go('/calendar'),
+          icon: const Icon(Icons.calendar_month, size: 16),
+          label: Text(l10n.viewFullSchedule),
+          style: TextButton.styleFrom(
+            padding: EdgeInsets.zero,
+            minimumSize: const Size(0, 32),
+          ),
+        ),
+      ],
     );
   }
 

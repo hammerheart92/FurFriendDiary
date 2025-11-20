@@ -37,6 +37,12 @@ class PetProfile extends HiveObject {
   @HiveField(9)
   final bool isActive;
 
+  @HiveField(10)
+  final String? vaccinationProtocolId;
+
+  @HiveField(11)
+  final String? dewormingProtocolId;
+
   PetProfile({
     String? id,
     required this.name,
@@ -48,6 +54,8 @@ class PetProfile extends HiveObject {
     DateTime? createdAt,
     DateTime? updatedAt,
     this.isActive = false,
+    this.vaccinationProtocolId,
+    this.dewormingProtocolId,
   })  : id = id ?? const Uuid().v4(),
         createdAt = createdAt ?? DateTime.now(),
         updatedAt = updatedAt ?? DateTime.now();
@@ -78,6 +86,8 @@ class PetProfile extends HiveObject {
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? isActive,
+    String? vaccinationProtocolId,
+    String? dewormingProtocolId,
   }) {
     return PetProfile(
       id: id ?? this.id,
@@ -90,6 +100,8 @@ class PetProfile extends HiveObject {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? DateTime.now(),
       isActive: isActive ?? this.isActive,
+      vaccinationProtocolId: vaccinationProtocolId ?? this.vaccinationProtocolId,
+      dewormingProtocolId: dewormingProtocolId ?? this.dewormingProtocolId,
     );
   }
 }

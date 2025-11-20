@@ -15,6 +15,10 @@
   "noMedicationsFound": "Nu s-au găsit medicamente",
   "noInactiveMedications": "Niciun medicament inactiv",
   "noMedicationsMatchSearch": "Niciun medicament nu corespunde căutării",
+  "noProtocolSelected": "Niciun protocol de vaccinare selectat",
+  "@noProtocolSelected": {
+    "description": "Mesaj când animalul nu are un protocol de vaccinare alocat"
+  },
   "tryAdjustingSearchTerms": "Încercați să ajustați termenii de căutare",
   "errorLoadingMedications": "Eroare la încărcarea medicamentelor",
   "retry": "Reîncercare",
@@ -62,6 +66,7 @@
   "foodTypeOther": "Altele (Personalizat)",
   "foodTypeCustomPlaceholder": "Introduceți un tip de mâncare personalizat",
   "clear": "Curăță",
+  "comingSoon": "În curând",
   "add": "Adaugă",
   "feedingAdded": "Hrănire \"{foodType}\" adăugată",
   "failedToSaveFeeding": "Salvarea hrănirii a eșuat",
@@ -157,6 +162,24 @@
   "walks": "Plimbări",
   "today": "Astăzi",
   "tomorrow": "Mâine",
+  "overdueByDays": "Întârziat cu {days} zile",
+  "@overdueByDays": {
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "inDays": "În {days} zile",
+  "@inDays": {
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
   "yesterday": "Ieri",
   "thisWeek": "Săptămâna Aceasta",
   "addWalk": "Adaugă plimbare",
@@ -177,6 +200,7 @@
   "close": "Închide",
   "noNotes": "Nicio notiță",
   "optional": "Opțional",
+  "upcomingCare": "Îngrijiri viitoare",
   "required": "Obligatoriu",
   "enterPositiveNumber": "Introduceți un număr pozitiv",
   "walkAddedSuccessfully": "Plimbare adăugată cu succes!",
@@ -442,6 +466,10 @@
   "noActivityReportsFound": "Niciun raport de activitate găsit",
   "noReportsMatchSearch": "Niciun raport nu se potrivește căutării",
   "errorLoadingReports": "Eroare la încărcarea rapoartelor",
+  "errorLoadingSchedule": "Eroare la încărcarea programului",
+  "@errorLoadingSchedule": {
+    "description": "Mesaj de eroare când încărcarea programului de vaccinare eșuează"
+  },
 
   "overdue": "Întârziat",
   "justNow": "Chiar acum",
@@ -489,6 +517,7 @@
   "timesDaily": "ori pe zi",
   "remindersCreated": "{count, plural, =1{S-a creat 1 memento} other{S-au creat {count} memento-uri}}",
   "view": "Vizualizare",
+  "viewAll": "Vezi tot",
   "reminderDeleted": "Memento șters",
   "nextReminder": "Următor: {time}",
   "medicationReminder": "Memento Medicație",
@@ -893,6 +922,10 @@
   "@navSettings": {
     "description": "Eticheta de navigare pentru fila Setări"
   },
+  "nextDue": "Următoarea dată",
+  "@nextDue": {
+    "description": "Eticheta pentru următoarea dată de vaccinare"
+  },
 
   "medicationReminder": "Memento Medicament",
   "@medicationReminder": {
@@ -971,5 +1004,431 @@
         "example": "Vet Laszlo"
       }
     }
-  }
+  },
+
+  "selectProtocol": "Selectează protocol",
+  "@selectProtocol": {
+    "description": "Text buton pentru selectarea unui protocol de vaccinare"
+  },
+  "selectVaccinationProtocol": "Selectează protocolul de vaccinare",
+  "@selectVaccinationProtocol": {
+    "description": "Titlul ecranului pentru selectarea protocolului"
+  },
+  "selectProtocolForPet": "Selectează protocolul de vaccinare pentru {petName}",
+  "@selectProtocolForPet": {
+    "description": "Eticheta semantică pentru titlul ecranului",
+    "placeholders": {
+      "petName": {
+        "type": "String",
+        "example": "Max"
+      }
+    }
+  },
+  "chooseProtocolMatchingNeeds": "Alege un protocol care se potrivește nevoilor de vaccinare ale animalului tău",
+  "@chooseProtocolMatchingNeeds": {
+    "description": "Text ajutător explicând selectarea protocolului"
+  },
+  "coreProtocol": "Esențial",
+  "@coreProtocol": {
+    "description": "Eticheta insignei pentru protocoalele de vaccinare esențiale"
+  },
+  "extendedProtocol": "Extins",
+  "@extendedProtocol": {
+    "description": "Eticheta insignei pentru protocoalele de vaccinare extinse"
+  },
+  "predefinedProtocol": "Predefinit",
+  "@predefinedProtocol": {
+    "description": "Eticheta insignei pentru protocoalele predefinite din JSON"
+  },
+  "currentProtocol": "Protocol curent",
+  "@currentProtocol": {
+    "description": "Eticheta pentru protocolul de vaccinare curent"
+  },
+  "customProtocol": "Personalizat",
+  "@customProtocol": {
+    "description": "Eticheta insignei pentru protocoalele personalizate create de utilizator"
+  },
+  "vaccinationsCount": "{count} vaccinări",
+  "@vaccinationsCount": {
+    "description": "Numărul de vaccinuri din protocol",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "6"
+      }
+    }
+  },
+  "confirmProtocolSelection": "Confirmă selecția protocolului",
+  "@confirmProtocolSelection": {
+    "description": "Titlul foii de jos pentru confirmare"
+  },
+  "applyProtocol": "Aplică protocolul",
+  "@applyProtocol": {
+    "description": "Textul butonului pentru confirmarea aplicării protocolului"
+  },
+  "applyProtocolToPet": "Aplică {protocolName} la {petName}",
+  "@applyProtocolToPet": {
+    "description": "Eticheta semantică pentru butonul de aplicare",
+    "placeholders": {
+      "protocolName": {
+        "type": "String",
+        "example": "Protocol esențial canin"
+      },
+      "petName": {
+        "type": "String",
+        "example": "Max"
+      }
+    }
+  },
+  "protocolAppliedSuccess": "Protocolul de vaccinare a fost aplicat la {petName}",
+  "@protocolAppliedSuccess": {
+    "description": "Mesaj de succes după aplicarea protocolului",
+    "placeholders": {
+      "petName": {
+        "type": "String",
+        "example": "Max"
+      }
+    }
+  },
+  "protocolApplyFailed": "Nu s-a putut aplica protocolul de vaccinare",
+  "@protocolApplyFailed": {
+    "description": "Mesaj de eroare când aplicarea protocolului eșuează"
+  },
+  "noProtocolsAvailable": "Nu există protocoale disponibile",
+  "@noProtocolsAvailable": {
+    "description": "Titlul stării goale"
+  },
+  "noProtocolsForSpecies": "Nu s-au găsit protocoale de vaccinare pentru {species}. Consultați-vă veterinarul pentru îndrumare.",
+  "@noProtocolsForSpecies": {
+    "description": "Textul corpului stării goale",
+    "placeholders": {
+      "species": {
+        "type": "String",
+        "example": "Câine"
+      }
+    }
+  },
+  "loadingProtocols": "Se încarcă protocoalele de vaccinare...",
+  "@loadingProtocols": {
+    "description": "Eticheta semantică pentru starea de încărcare"
+  },
+  "failedToLoadProtocols": "Nu s-au putut încărca protocoalele",
+  "@failedToLoadProtocols": {
+    "description": "Titlul stării de eroare"
+  },
+  "andXMore": "...și încă {count}",
+  "@andXMore": {
+    "description": "Text care arată elemente suplimentare neafișate",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "requiredVaccine": "Obligatoriu",
+  "@requiredVaccine": {
+    "description": "Eticheta pentru vaccinurile obligatorii din protocol"
+  },
+  "optionalVaccine": "Opțional",
+  "@optionalVaccine": {
+    "description": "Eticheta pentru vaccinurile opționale din protocol"
+  },
+  "atWeeksAge": "la {weeks} săptămâni",
+  "@atWeeksAge": {
+    "description": "Indicator de vârstă pentru administrarea vaccinului",
+    "placeholders": {
+      "weeks": {
+        "type": "int",
+        "example": "8"
+      }
+    }
+  },
+  "protocolDetails": "Detalii protocol",
+  "@protocolDetails": {
+    "description": "Antetul secțiunii pentru rezumatul protocolului"
+  },
+  "viewFullDetails": "Vezi detaliile complete",
+  "@viewFullDetails": {
+    "description": "Link pentru extinderea detaliilor complete ale protocolului"
+  },
+  "viewFullSchedule": "Vezi programul complet",
+  "@viewFullSchedule": {
+    "description": "Text buton pentru vizualizarea programului complet de vaccinare"
+  },
+
+  "reminderSettings": "Setări memento",
+  "@reminderSettings": {
+    "description": "Titlul ecranului pentru configurarea mementoului"
+  },
+  "configureReminders": "Configurează mementouri",
+  "@configureReminders": {
+    "description": "Antetul secțiunii pentru configurarea mementoului"
+  },
+  "reminderSettingsFor": "Setări memento pentru {eventType}",
+  "@reminderSettingsFor": {
+    "description": "Titlul ecranului cu tipul de eveniment",
+    "placeholders": {
+      "eventType": {
+        "type": "String",
+        "example": "Vaccinări"
+      }
+    }
+  },
+  "enableReminders": "Activează mementouri",
+  "@enableReminders": {
+    "description": "Eticheta comutatorului pentru activarea mementourilor"
+  },
+  "disableReminders": "Dezactivează mementouri",
+  "@disableReminders": {
+    "description": "Eticheta comutatorului pentru dezactivarea mementourilor"
+  },
+  "reminderTiming": "Momentul mementoului",
+  "@reminderTiming": {
+    "description": "Antetul secțiunii pentru selectarea momentului"
+  },
+  "selectWhenToReceiveReminders": "Selectează când dorești să primești mementouri înainte de evenimentele {eventType} viitoare",
+  "@selectWhenToReceiveReminders": {
+    "description": "Instrucțiuni pentru selectarea momentului mementoului",
+    "placeholders": {
+      "eventType": {
+        "type": "String",
+        "example": "vaccinare"
+      }
+    }
+  },
+  "oneDayBefore": "Cu 1 zi înainte",
+  "@oneDayBefore": {
+    "description": "Opțiune de decalaj pentru memento"
+  },
+  "threeDaysBefore": "Cu 3 zile înainte",
+  "@threeDaysBefore": {
+    "description": "Opțiune de decalaj pentru memento"
+  },
+  "oneWeekBefore": "Cu o săptămână înainte",
+  "@oneWeekBefore": {
+    "description": "Opțiune de decalaj pentru memento (7 zile)"
+  },
+  "twoWeeksBefore": "Cu două săptămâni înainte",
+  "@twoWeeksBefore": {
+    "description": "Opțiune de decalaj pentru memento (14 zile)"
+  },
+  "saveReminderSettings": "Salvează setările mementoului",
+  "@saveReminderSettings": {
+    "description": "Text buton pentru salvarea modificărilor"
+  },
+  "reminderSettingsSaved": "Setările mementoului au fost salvate cu succes",
+  "@reminderSettingsSaved": {
+    "description": "Mesaj de succes după salvare"
+  },
+  "reminderSettingsSaveFailed": "Nu s-au putut salva setările mementoului",
+  "@reminderSettingsSaveFailed": {
+    "description": "Mesaj de eroare când salvarea eșuează"
+  },
+  "noRemindersSelected": "Niciun memento selectat",
+  "@noRemindersSelected": {
+    "description": "Eroare de validare când nu sunt selectate decalaje"
+  },
+  "selectAtLeastOneReminder": "Te rugăm să selectezi cel puțin un moment pentru memento",
+  "@selectAtLeastOneReminder": {
+    "description": "Mesaj de validare pentru selecție goală"
+  },
+  "loadingReminderSettings": "Se încarcă setările mementoului...",
+  "@loadingReminderSettings": {
+    "description": "Eticheta semantică pentru starea de încărcare"
+  },
+  "failedToLoadReminderSettings": "Nu s-au putut încărca setările mementoului",
+  "@failedToLoadReminderSettings": {
+    "description": "Titlul stării de eroare"
+  },
+  "vaccinationReminders": "Mementouri pentru vaccinări",
+  "@vaccinationReminders": {
+    "description": "Titlu pentru setările mementoului de vaccinare"
+  },
+  "dewormingReminders": "Mementouri pentru deparazitare",
+  "@dewormingReminders": {
+    "description": "Titlu pentru setările mementoului de deparazitare"
+  },
+  "appointmentReminders": "Mementouri pentru programări",
+  "@appointmentReminders": {
+    "description": "Titlu pentru setările mementoului de programări"
+  },
+  "medicationReminders": "Mementouri pentru medicație",
+  "@medicationReminders": {
+    "description": "Titlu pentru setările mementoului de medicație"
+  },
+  "treatmentPlanViewer": "Planuri de tratament",
+  "@treatmentPlanViewer": {
+    "description": "Titlu pentru ecranul de vizualizare a planurilor de tratament"
+  },
+  "activeTreatmentPlans": "Planuri de tratament active",
+  "@activeTreatmentPlans": {
+    "description": "Antet pentru secțiunea cu planuri de tratament active"
+  },
+  "loadingTreatmentPlans": "Se încarcă planurile de tratament...",
+  "@loadingTreatmentPlans": {
+    "description": "Mesaj de stare de încărcare"
+  },
+  "failedToLoadTreatmentPlans": "Nu s-au putut încărca planurile de tratament",
+  "@failedToLoadTreatmentPlans": {
+    "description": "Titlul stării de eroare"
+  },
+  "noActiveTreatmentPlans": "Niciun plan de tratament activ",
+  "@noActiveTreatmentPlans": {
+    "description": "Titlul stării goale"
+  },
+  "noActiveTreatmentPlansMessage": "Nu există planuri de tratament active pentru acest animal de companie.",
+  "@noActiveTreatmentPlansMessage": {
+    "description": "Mesajul stării goale"
+  },
+  "tasksComplete": "{completed} din {total} sarcini finalizate",
+  "@tasksComplete": {
+    "description": "Text de progres care arată sarcinile finalizate vs totalul",
+    "placeholders": {
+      "completed": {
+        "type": "int",
+        "example": "5"
+      },
+      "total": {
+        "type": "int",
+        "example": "8"
+      }
+    }
+  },
+  "markPlanComplete": "Marchează planul ca finalizat",
+  "@markPlanComplete": {
+    "description": "Buton pentru a marca planul de tratament ca finalizat"
+  },
+  "planMarkedComplete": "Planul de tratament a fost marcat ca finalizat",
+  "@planMarkedComplete": {
+    "description": "Mesaj de succes după marcarea planului ca finalizat"
+  },
+  "failedToMarkPlanComplete": "Nu s-a putut marca planul ca finalizat",
+  "@failedToMarkPlanComplete": {
+    "description": "Mesaj de eroare când marcarea planului ca finalizat eșuează"
+  },
+  "confirmMarkComplete": "Confirmă finalizarea",
+  "@confirmMarkComplete": {
+    "description": "Titlu pentru dialogul de confirmare a finalizării"
+  },
+  "confirmMarkCompleteMessage": "Sigur dorești să marchezi planul \"{planName}\" ca finalizat? Această acțiune nu poate fi anulată ușor.",
+  "@confirmMarkCompleteMessage": {
+    "description": "Mesaj de confirmare pentru marcarea planului ca finalizat",
+    "placeholders": {
+      "planName": {
+        "type": "String",
+        "example": "Recuperare post-chirurgicală"
+      }
+    }
+  },
+  "taskUpdated": "Sarcina a fost actualizată cu succes",
+  "@taskUpdated": {
+    "description": "Mesaj de succes după actualizarea finalizării sarcinii"
+  },
+  "taskCompletionFailed": "Nu s-a putut actualiza sarcina",
+  "@taskCompletionFailed": {
+    "description": "Mesaj de eroare când actualizarea sarcinii eșuează"
+  },
+  "overdue": "Întârziat",
+  "@overdue": {
+    "description": "Etichetă pentru sarcinile întârziate"
+  },
+  "dueToday": "Astăzi",
+  "@dueToday": {
+    "description": "Etichetă pentru sarcinile de astăzi"
+  },
+  "prescribedBy": "Prescris de {veterinarian}",
+  "@prescribedBy": {
+    "description": "Etichetă care arată medicul veterinar care a prescris planul",
+    "placeholders": {
+      "veterinarian": {
+        "type": "String",
+        "example": "Dr. Popescu"
+      }
+    }
+  },
+  "startedOn": "Început la {date}",
+  "@startedOn": {
+    "description": "Etichetă care arată data de început a planului",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "15 ianuarie 2025"
+      }
+    }
+  },
+  "calendarView": "Calendar",
+  "all": "Toate",
+  "vaccinations": "Vaccinări",
+  "deworming": "Deparazitări",
+  "appointments": "Programări",
+  "medications": "Medicamente",
+  "noEventsOnThisDay": "Niciun eveniment în această zi",
+  "selectAnotherDay": "Selectați o altă zi pentru a vedea evenimentele programate",
+  "noUpcomingCareEvents": "Niciun eveniment viitor",
+  "setupProtocolsToSeeEvents": "Configurați protocoale de vaccinare și programări pentru a le vedea aici",
+  "setUpProtocols": "Configurează protocoale",
+  "noPetSelected": "Niciun animal selectat",
+  "pleaseSetupPetFirst": "Vă rugăm să creați mai întâi un profil de animal",
+  "errorOccurred": "A apărut o eroare",
+  "failedToLoadCalendar": "Încărcarea calendarului a eșuat",
+  "loadingCalendar": "Se încarcă calendarul...",
+  "eventSingular": "eveniment",
+  "eventPlural": "evenimente",
+  "vaccinationDetailsComingSoon": "Detaliile vaccinării vor fi disponibile în curând",
+  "dewormingDetailsComingSoon": "Detaliile deparazitării vor fi disponibile în curând",
+  "appointmentDetailsComingSoon": "Detaliile programării vor fi disponibile în curând",
+  "tapToViewDetails": "Apăsați pentru a vedea detaliile",
+  "eventsOnDate": "{count} {count, plural, =1{eveniment} other{evenimente}} pe {date}",
+  "vaccinationStatus": "Stare vaccinare",
+  "@vaccinationStatus": {
+    "description": "Titlu pentru cardul de stare vaccinare"
+  },
+  "vaccinationProtocol": "Protocol de Vaccinare",
+  "isThisVaccination": "Este o vaccinare?",
+  "regularMedication": "Urmărire medicație obișnuită",
+  "protocolBasedVaccination": "Vaccinare bazată pe protocol",
+  "selectProtocol": "Selectează Protocol",
+  "selectVaccinationProtocol": "Selectează Protocolul de Vaccinare",
+  "pleaseSelectVaccinationProtocol": "Selectează un protocol de vaccinare",
+  "nextDoseCalculation": "Calcul Următoarea Doză",
+  "calculatedFromProtocol": "Calculat din pasul {stepIndex} al protocolului",
+  "noProtocolsAvailable": "Nu există protocoale de vaccinare pentru specia acestui animal",
+  "fromProtocol": "(din protocol)",
+  "recommendedDose": "(recomandat)",
+  "petNeedsBirthday": "Animalul necesită o dată de naștere pentru a calcula datele de vaccinare",
+  "dose": "Doză",
+  "scheduled": "Programat",
+
+  "enableReminders": "Activează Memento-uri",
+  "disableReminders": "Dezactivează Memento-uri",
+  "notificationsActive": "Notificările sunt active",
+  "notificationsDisabled": "Notificările sunt dezactivate",
+  "remindMe": "Amintește-mi:",
+  "dayOf": "În ziua evenimentului",
+  "dayBefore": "Cu 1 zi înainte",
+  "oneWeekBefore": "Cu 1 săptămână înainte",
+  "twoWeeksBefore": "Cu 2 săptămâni înainte",
+  "remindersActive": "Memento-uri Active",
+  "reminderSettings": "Setări Memento-uri",
+  "configureReminders": "Configurează Memento-uri",
+  "reminderSettingsFor": "Setări Memento-uri pentru {eventType}",
+  "reminderTiming": "Cronologie Memento-uri",
+  "selectWhenToReceiveReminders": "Selectează când dorești să primești memento-uri înainte de evenimentele {eventType}",
+  "oneDayBefore": "Cu 1 zi înainte",
+  "threeDaysBefore": "Cu 3 zile înainte",
+  "saveReminderSettings": "Salvează Setările Memento-uri",
+  "reminderSettingsSaved": "Setările memento-urilor au fost salvate cu succes",
+  "reminderSettingsSaveFailed": "Salvarea setărilor memento-urilor a eșuat",
+  "noRemindersSelected": "Niciun memento selectat",
+  "selectAtLeastOneReminder": "Selectează cel puțin un moment pentru memento",
+  "loadingReminderSettings": "Se încarcă setările memento-urilor...",
+  "failedToLoadReminderSettings": "Încărcarea setărilor memento-urilor a eșuat",
+  "vaccinationReminders": "Memento-uri Vaccinare",
+  "dewormingReminders": "Memento-uri Deparazitare",
+  "appointmentReminders": "Memento-uri Programări",
+  "medicationReminders": "Memento-uri Medicamente",
+  "taskCompleted": "Sarcină finalizată",
+  "dueDate": "Data scadentă",
+  "noTasksInPlan": "Nicio sarcină în acest plan de tratament"
 }

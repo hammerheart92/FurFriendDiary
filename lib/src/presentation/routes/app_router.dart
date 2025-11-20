@@ -22,6 +22,7 @@ import '../screens/vet_list_screen.dart';
 import '../screens/add_vet_screen.dart';
 import '../screens/vet_detail_screen.dart';
 import '../screens/reports_dashboard_screen.dart';
+import '../screens/protocols/calendar_view_screen.dart';
 import '../providers/pet_profile_provider.dart';
 
 final logger = Logger();
@@ -109,6 +110,10 @@ GoRouter createRouter() => GoRouter(
             GoRoute(
                 path: '/profiles',
                 builder: (_, __) => const PetProfileScreen()),
+            GoRoute(
+              path: '/calendar',
+              builder: (_, __) => const CalendarViewScreen(),
+            ),
           ],
         ),
         // Medication routes

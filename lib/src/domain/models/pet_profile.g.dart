@@ -27,13 +27,15 @@ class PetProfileAdapter extends TypeAdapter<PetProfile> {
       createdAt: fields[7] as DateTime?,
       updatedAt: fields[8] as DateTime?,
       isActive: fields[9] as bool,
+      vaccinationProtocolId: fields[10] as String?,
+      dewormingProtocolId: fields[11] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, PetProfile obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -53,7 +55,11 @@ class PetProfileAdapter extends TypeAdapter<PetProfile> {
       ..writeByte(8)
       ..write(obj.updatedAt)
       ..writeByte(9)
-      ..write(obj.isActive);
+      ..write(obj.isActive)
+      ..writeByte(10)
+      ..write(obj.vaccinationProtocolId)
+      ..writeByte(11)
+      ..write(obj.dewormingProtocolId);
   }
 
   @override
@@ -88,6 +94,8 @@ PetProfile _$PetProfileFromJson(Map<String, dynamic> json) => PetProfile(
           ? null
           : DateTime.parse(json['updatedAt'] as String),
       isActive: json['isActive'] as bool? ?? false,
+      vaccinationProtocolId: json['vaccinationProtocolId'] as String?,
+      dewormingProtocolId: json['dewormingProtocolId'] as String?,
     );
 
 Map<String, dynamic> _$PetProfileToJson(PetProfile instance) =>
@@ -102,4 +110,6 @@ Map<String, dynamic> _$PetProfileToJson(PetProfile instance) =>
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': instance.updatedAt.toIso8601String(),
       'isActive': instance.isActive,
+      'vaccinationProtocolId': instance.vaccinationProtocolId,
+      'dewormingProtocolId': instance.dewormingProtocolId,
     };

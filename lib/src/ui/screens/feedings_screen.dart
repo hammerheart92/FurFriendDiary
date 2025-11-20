@@ -14,6 +14,9 @@ import '../../data/repositories/feeding_repository_impl.dart';
 import '../../presentation/providers/care_data_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../utils/date_helper.dart';
+import '../../presentation/providers/protocols/protocol_schedule_provider.dart';
+import '../../presentation/models/upcoming_care_event.dart';
+import '../../presentation/widgets/upcoming_care_card_widget.dart';
 
 final _logger = Logger();
 final _uuid = Uuid();
@@ -287,6 +290,15 @@ class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
     final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
     final currentPet = ref.watch(currentPetProfileProvider);
+
+    // Watch upcoming care events for the current pet
+    final upcomingCareAsync = currentPet != null
+        ? ref.watch(upcomingCareProvider(
+            petId: currentPet.id,
+            daysAhead: 14, // Next 2 weeks for dashboard
+          ))
+        : const AsyncValue.data(<UpcomingCareEvent>[]);
+
     final feedingsAsync =
         ref.watch(feedingsByPetIdProvider(currentPet?.id ?? ''));
 
@@ -363,6 +375,89 @@ class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
                 ),
               ),
             ),
+
+            // Upcoming Care Section
+            if (currentPet != null) ...[
+              upcomingCareAsync.when(
+                data: (events) {
+                  // Show first 5 events only
+                  final displayEvents = events.take(5).toList();
+
+                  if (displayEvents.isEmpty) {
+                    return const SizedBox.shrink(); // Don't show section if no events
+                  }
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Section header with "View All" button
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            l10n.upcomingCare,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                          TextButton(
+                            onPressed: () => context.go('/calendar'),
+                            child: Text(l10n.viewAll),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Horizontal scrollable list of cards
+                      SizedBox(
+                        height: 130, // Card height
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: displayEvents.length,
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(width: 12),
+                          itemBuilder: (context, index) {
+                            final event = displayEvents[index];
+                            return UpcomingCareCardWidget(
+                              event: event,
+                              onTap: () {
+                                // Handle tap based on event type
+                                switch (event) {
+                                  case MedicationEvent(:final entry):
+                                    // Navigate to medication detail
+                                    context.go('/meds/detail/${entry.id}');
+                                    break;
+                                  case VaccinationEvent():
+                                  case DewormingEvent():
+                                  case AppointmentEvent():
+                                    // Show "Coming soon" for others
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(l10n.comingSoon),
+                                        duration: const Duration(seconds: 2),
+                                      ),
+                                    );
+                                    break;
+                                }
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                    ],
+                  );
+                },
+                loading: () => const SizedBox(
+                  height: 80,
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+                error: (error, stack) => const SizedBox.shrink(), // Hide on error
+              ),
+            ],
           ],
           // Feedings Content
           Expanded(

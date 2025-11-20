@@ -33,7 +33,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addMedication => 'Add Medication';
 
   @override
-  String get noPetSelected => 'No pet selected';
+  String get noPetSelected => 'No Pet Selected';
 
   @override
   String get pleaseSetupPetFirst => 'Please set up a pet profile first';
@@ -49,6 +49,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noMedicationsMatchSearch => 'No medications match your search';
+
+  @override
+  String get noProtocolSelected => 'No vaccination protocol selected';
 
   @override
   String get tryAdjustingSearchTerms => 'Try adjusting your search terms';
@@ -190,6 +193,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get clear => 'Clear';
+
+  @override
+  String get comingSoon => 'Coming soon';
 
   @override
   String get add => 'Add';
@@ -473,6 +479,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tomorrow => 'Tomorrow';
 
   @override
+  String overdueByDays(int days) {
+    return 'Overdue by $days days';
+  }
+
+  @override
+  String inDays(int days) {
+    return 'In $days days';
+  }
+
+  @override
   String get yesterday => 'Yesterday';
 
   @override
@@ -532,6 +548,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get optional => 'Optional';
+
+  @override
+  String get upcomingCare => 'Upcoming Care';
 
   @override
   String get required => 'Required';
@@ -1267,6 +1286,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorLoadingReports => 'Error loading reports';
 
   @override
+  String get errorLoadingSchedule => 'Error loading schedule';
+
+  @override
   String get overdue => 'Overdue';
 
   @override
@@ -1373,7 +1395,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get setReminder => 'Set Reminder';
 
   @override
-  String get oneDayBefore => '1 Day Before';
+  String get oneDayBefore => '1 day before';
 
   @override
   String get oneHourBefore => '1 Hour Before';
@@ -1415,6 +1437,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get view => 'View';
+
+  @override
+  String get viewAll => 'View All';
 
   @override
   String get reminderDeleted => 'Reminder deleted';
@@ -2059,7 +2084,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get alreadyPreferred => 'This is already your preferred vet';
 
   @override
-  String get errorOccurred => 'Error';
+  String get errorOccurred => 'An error occurred';
 
   @override
   String get petManagement => 'Pet Management';
@@ -2466,6 +2491,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navSettings => 'Settings';
 
   @override
+  String get nextDue => 'Next due';
+
+  @override
   String medicationReminderBody(String medication, String frequency) {
     return '$medication - $frequency';
   }
@@ -2482,4 +2510,357 @@ class AppLocalizationsEn extends AppLocalizations {
   String appointmentAt(String title, String location) {
     return '$title at $location';
   }
+
+  @override
+  String get selectVaccinationProtocol => 'Select Vaccination Protocol';
+
+  @override
+  String get selectProtocol => 'Select Protocol';
+
+  @override
+  String selectProtocolForPet(String petName) {
+    return 'Select vaccination protocol for $petName';
+  }
+
+  @override
+  String get chooseProtocolMatchingNeeds =>
+      'Choose a protocol that matches your pet\'s vaccination needs';
+
+  @override
+  String get coreProtocol => 'Core';
+
+  @override
+  String get extendedProtocol => 'Extended';
+
+  @override
+  String get predefinedProtocol => 'Predefined';
+
+  @override
+  String get currentProtocol => 'Current protocol';
+
+  @override
+  String get customProtocol => 'Custom';
+
+  @override
+  String vaccinationsCount(int count) {
+    return '$count vaccinations';
+  }
+
+  @override
+  String get confirmProtocolSelection => 'Confirm Protocol Selection';
+
+  @override
+  String get applyProtocol => 'Apply Protocol';
+
+  @override
+  String applyProtocolToPet(String protocolName, String petName) {
+    return 'Apply $protocolName to $petName';
+  }
+
+  @override
+  String protocolAppliedSuccess(String petName) {
+    return 'Vaccination protocol applied to $petName';
+  }
+
+  @override
+  String get protocolApplyFailed => 'Failed to apply vaccination protocol';
+
+  @override
+  String get noProtocolsAvailable =>
+      'No vaccination protocols available for this pet\'s species';
+
+  @override
+  String noProtocolsForSpecies(String species) {
+    return 'No vaccination protocols found for $species. Contact your veterinarian for guidance.';
+  }
+
+  @override
+  String get loadingProtocols => 'Loading vaccination protocols...';
+
+  @override
+  String get failedToLoadProtocols => 'Failed to load protocols';
+
+  @override
+  String andXMore(int count) {
+    return '...and $count more';
+  }
+
+  @override
+  String get requiredVaccine => 'Required';
+
+  @override
+  String get optionalVaccine => 'Optional';
+
+  @override
+  String atWeeksAge(int weeks) {
+    return 'at $weeks weeks';
+  }
+
+  @override
+  String get protocolDetails => 'Protocol Details';
+
+  @override
+  String get viewFullDetails => 'View Full Details';
+
+  @override
+  String get viewFullSchedule => 'View Full Schedule';
+
+  @override
+  String get reminderSettings => 'Reminder Settings';
+
+  @override
+  String get configureReminders => 'Configure Reminders';
+
+  @override
+  String reminderSettingsFor(String eventType) {
+    return 'Reminder Settings for $eventType';
+  }
+
+  @override
+  String get enableReminders => 'Enable Reminders';
+
+  @override
+  String get disableReminders => 'Disable Reminders';
+
+  @override
+  String get notificationsActive => 'Notifications are active';
+
+  @override
+  String get notificationsDisabled => 'Notifications are disabled';
+
+  @override
+  String get remindMe => 'Remind me:';
+
+  @override
+  String get dayOf => 'Day of';
+
+  @override
+  String get dayBefore => '1 day before';
+
+  @override
+  String get remindersActive => 'Active Reminders';
+
+  @override
+  String get reminderTiming => 'Reminder Timing';
+
+  @override
+  String selectWhenToReceiveReminders(String eventType) {
+    return 'Select when you\'d like to receive reminders before upcoming $eventType events';
+  }
+
+  @override
+  String get threeDaysBefore => '3 days before';
+
+  @override
+  String get oneWeekBefore => '1 week before';
+
+  @override
+  String get twoWeeksBefore => '2 weeks before';
+
+  @override
+  String get saveReminderSettings => 'Save Reminder Settings';
+
+  @override
+  String get reminderSettingsSaved => 'Reminder settings saved successfully';
+
+  @override
+  String get reminderSettingsSaveFailed => 'Failed to save reminder settings';
+
+  @override
+  String get noRemindersSelected => 'No reminders selected';
+
+  @override
+  String get selectAtLeastOneReminder =>
+      'Please select at least one reminder time';
+
+  @override
+  String get loadingReminderSettings => 'Loading reminder settings...';
+
+  @override
+  String get failedToLoadReminderSettings => 'Failed to load reminder settings';
+
+  @override
+  String get vaccinationReminders => 'Vaccination Reminders';
+
+  @override
+  String get dewormingReminders => 'Deworming Reminders';
+
+  @override
+  String get appointmentReminders => 'Appointment Reminders';
+
+  @override
+  String get medicationReminders => 'Medication Reminders';
+
+  @override
+  String get treatmentPlanViewer => 'Treatment Plans';
+
+  @override
+  String get activeTreatmentPlans => 'Active Treatment Plans';
+
+  @override
+  String get loadingTreatmentPlans => 'Loading treatment plans...';
+
+  @override
+  String get failedToLoadTreatmentPlans => 'Failed to load treatment plans';
+
+  @override
+  String get noActiveTreatmentPlans => 'No Active Treatment Plans';
+
+  @override
+  String get noActiveTreatmentPlansMessage =>
+      'You don\'t have any active treatment plans for this pet.';
+
+  @override
+  String tasksComplete(int completed, int total) {
+    return '$completed of $total tasks complete';
+  }
+
+  @override
+  String get markPlanComplete => 'Mark Plan Complete';
+
+  @override
+  String get planMarkedComplete => 'Treatment plan marked as complete';
+
+  @override
+  String get failedToMarkPlanComplete => 'Failed to mark plan as complete';
+
+  @override
+  String get confirmMarkComplete => 'Confirm Mark Complete';
+
+  @override
+  String confirmMarkCompleteMessage(String planName) {
+    return 'Are you sure you want to mark \"$planName\" as complete? This action cannot be easily undone.';
+  }
+
+  @override
+  String get taskUpdated => 'Task updated successfully';
+
+  @override
+  String get taskCompletionFailed => 'Failed to update task';
+
+  @override
+  String get dueToday => 'Due Today';
+
+  @override
+  String prescribedBy(String veterinarian) {
+    return 'Prescribed by $veterinarian';
+  }
+
+  @override
+  String startedOn(String date) {
+    return 'Started on $date';
+  }
+
+  @override
+  String get calendarView => 'Calendar';
+
+  @override
+  String get vaccinations => 'Vaccinations';
+
+  @override
+  String get deworming => 'Deworming';
+
+  @override
+  String get noEventsOnThisDay => 'No Events on This Day';
+
+  @override
+  String get selectAnotherDay =>
+      'Select another day to view scheduled care events';
+
+  @override
+  String get noUpcomingCareEvents => 'No Upcoming Care Events';
+
+  @override
+  String get setupProtocolsToSeeEvents =>
+      'Set up vaccination protocols and appointments to see them here';
+
+  @override
+  String get setUpProtocols => 'Set Up Protocols';
+
+  @override
+  String get failedToLoadCalendar => 'Failed to load calendar events';
+
+  @override
+  String get loadingCalendar => 'Loading calendar...';
+
+  @override
+  String get eventSingular => 'event';
+
+  @override
+  String get eventPlural => 'events';
+
+  @override
+  String get vaccinationDetailsComingSoon => 'Vaccination details coming soon';
+
+  @override
+  String get dewormingDetailsComingSoon => 'Deworming details coming soon';
+
+  @override
+  String get appointmentDetailsComingSoon => 'Appointment details coming soon';
+
+  @override
+  String get tapToViewDetails => 'Tap to view details';
+
+  @override
+  String eventsOnDate(int count, String date) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'events',
+      one: 'event',
+    );
+    return '$count $_temp0 on $date';
+  }
+
+  @override
+  String get vaccinationStatus => 'Vaccination Status';
+
+  @override
+  String get vaccinationProtocol => 'Vaccination Protocol';
+
+  @override
+  String get isThisVaccination => 'Is this a vaccination?';
+
+  @override
+  String get regularMedication => 'Regular medication tracking';
+
+  @override
+  String get protocolBasedVaccination => 'Protocol-based vaccination';
+
+  @override
+  String get pleaseSelectVaccinationProtocol =>
+      'Please select a vaccination protocol';
+
+  @override
+  String get nextDoseCalculation => 'Next Dose Calculation';
+
+  @override
+  String calculatedFromProtocol(int stepIndex) {
+    return 'Calculated from protocol step $stepIndex';
+  }
+
+  @override
+  String get fromProtocol => '(from protocol)';
+
+  @override
+  String get recommendedDose => '(recommended)';
+
+  @override
+  String get petNeedsBirthday =>
+      'Pet needs a birthday to calculate vaccination dates';
+
+  @override
+  String get dose => 'Dose';
+
+  @override
+  String get scheduled => 'Scheduled';
+
+  @override
+  String get taskCompleted => 'Task completed';
+
+  @override
+  String get dueDate => 'Due date';
+
+  @override
+  String get noTasksInPlan => 'No tasks in this treatment plan';
 }

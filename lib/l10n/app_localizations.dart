@@ -110,7 +110,7 @@ abstract class AppLocalizations {
   /// **'Hello, furry friend!'**
   String get homeGreeting;
 
-  /// No description provided for @medications.
+  /// Filter chip label for medication events
   ///
   /// In en, this message translates to:
   /// **'Medications'**
@@ -122,7 +122,7 @@ abstract class AppLocalizations {
   /// **'Active'**
   String get active;
 
-  /// No description provided for @all.
+  /// Filter chip label for showing all events
   ///
   /// In en, this message translates to:
   /// **'All'**
@@ -146,13 +146,13 @@ abstract class AppLocalizations {
   /// **'Add Medication'**
   String get addMedication;
 
-  /// No description provided for @noPetSelected.
+  /// Empty state when no pet is selected
   ///
   /// In en, this message translates to:
-  /// **'No pet selected'**
+  /// **'No Pet Selected'**
   String get noPetSelected;
 
-  /// No description provided for @pleaseSetupPetFirst.
+  /// Helper text for no pet selected state
   ///
   /// In en, this message translates to:
   /// **'Please set up a pet profile first'**
@@ -181,6 +181,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No medications match your search'**
   String get noMedicationsMatchSearch;
+
+  /// Message when pet has no vaccination protocol assigned
+  ///
+  /// In en, this message translates to:
+  /// **'No vaccination protocol selected'**
+  String get noProtocolSelected;
 
   /// No description provided for @tryAdjustingSearchTerms.
   ///
@@ -254,7 +260,7 @@ abstract class AppLocalizations {
   /// **'Failed to delete medication'**
   String get failedToDeleteMedication;
 
-  /// No description provided for @appointments.
+  /// Filter chip label for appointment events
   ///
   /// In en, this message translates to:
   /// **'Appointments'**
@@ -451,6 +457,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Clear'**
   String get clear;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get comingSoon;
 
   /// No description provided for @add.
   ///
@@ -992,6 +1004,18 @@ abstract class AppLocalizations {
   /// **'Tomorrow'**
   String get tomorrow;
 
+  /// No description provided for @overdueByDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue by {days} days'**
+  String overdueByDays(int days);
+
+  /// No description provided for @inDays.
+  ///
+  /// In en, this message translates to:
+  /// **'In {days} days'**
+  String inDays(int days);
+
   /// No description provided for @yesterday.
   ///
   /// In en, this message translates to:
@@ -1111,6 +1135,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Optional'**
   String get optional;
+
+  /// No description provided for @upcomingCare.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming Care'**
+  String get upcomingCare;
 
   /// No description provided for @required.
   ///
@@ -2522,7 +2552,13 @@ abstract class AppLocalizations {
   /// **'Error loading reports'**
   String get errorLoadingReports;
 
-  /// No description provided for @overdue.
+  /// Error message when vaccination schedule fails to load
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading schedule'**
+  String get errorLoadingSchedule;
+
+  /// Label for overdue tasks
   ///
   /// In en, this message translates to:
   /// **'Overdue'**
@@ -2684,10 +2720,10 @@ abstract class AppLocalizations {
   /// **'Set Reminder'**
   String get setReminder;
 
-  /// No description provided for @oneDayBefore.
+  /// Reminder offset option
   ///
   /// In en, this message translates to:
-  /// **'1 Day Before'**
+  /// **'1 day before'**
   String get oneDayBefore;
 
   /// No description provided for @oneHourBefore.
@@ -2755,6 +2791,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View'**
   String get view;
+
+  /// No description provided for @viewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View All'**
+  String get viewAll;
 
   /// No description provided for @reminderDeleted.
   ///
@@ -3980,10 +4022,10 @@ abstract class AppLocalizations {
   /// **'This is already your preferred vet'**
   String get alreadyPreferred;
 
-  /// No description provided for @errorOccurred.
+  /// Generic error message
   ///
   /// In en, this message translates to:
-  /// **'Error'**
+  /// **'An error occurred'**
   String get errorOccurred;
 
   /// No description provided for @petManagement.
@@ -4766,6 +4808,12 @@ abstract class AppLocalizations {
   /// **'Settings'**
   String get navSettings;
 
+  /// Label for next due vaccination date
+  ///
+  /// In en, this message translates to:
+  /// **'Next due'**
+  String get nextDue;
+
   /// Notification body for medication reminders
   ///
   /// In en, this message translates to:
@@ -4789,6 +4837,624 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{title} at {location}'**
   String appointmentAt(String title, String location);
+
+  /// Screen title for protocol selection
+  ///
+  /// In en, this message translates to:
+  /// **'Select Vaccination Protocol'**
+  String get selectVaccinationProtocol;
+
+  /// Button text to select a vaccination protocol
+  ///
+  /// In en, this message translates to:
+  /// **'Select Protocol'**
+  String get selectProtocol;
+
+  /// Semantic label for screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Select vaccination protocol for {petName}'**
+  String selectProtocolForPet(String petName);
+
+  /// Helper text explaining protocol selection
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a protocol that matches your pet\'s vaccination needs'**
+  String get chooseProtocolMatchingNeeds;
+
+  /// Badge label for core vaccination protocols
+  ///
+  /// In en, this message translates to:
+  /// **'Core'**
+  String get coreProtocol;
+
+  /// Badge label for extended vaccination protocols
+  ///
+  /// In en, this message translates to:
+  /// **'Extended'**
+  String get extendedProtocol;
+
+  /// Badge label for predefined protocols from JSON
+  ///
+  /// In en, this message translates to:
+  /// **'Predefined'**
+  String get predefinedProtocol;
+
+  /// Label for current vaccination protocol
+  ///
+  /// In en, this message translates to:
+  /// **'Current protocol'**
+  String get currentProtocol;
+
+  /// Badge label for user-created custom protocols
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get customProtocol;
+
+  /// Number of vaccines in protocol
+  ///
+  /// In en, this message translates to:
+  /// **'{count} vaccinations'**
+  String vaccinationsCount(int count);
+
+  /// Bottom sheet title for confirmation
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Protocol Selection'**
+  String get confirmProtocolSelection;
+
+  /// Button text to confirm protocol application
+  ///
+  /// In en, this message translates to:
+  /// **'Apply Protocol'**
+  String get applyProtocol;
+
+  /// Semantic label for apply button
+  ///
+  /// In en, this message translates to:
+  /// **'Apply {protocolName} to {petName}'**
+  String applyProtocolToPet(String protocolName, String petName);
+
+  /// Success message after applying protocol
+  ///
+  /// In en, this message translates to:
+  /// **'Vaccination protocol applied to {petName}'**
+  String protocolAppliedSuccess(String petName);
+
+  /// Error message when protocol application fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to apply vaccination protocol'**
+  String get protocolApplyFailed;
+
+  /// Empty state headline
+  ///
+  /// In en, this message translates to:
+  /// **'No vaccination protocols available for this pet\'s species'**
+  String get noProtocolsAvailable;
+
+  /// Empty state body text
+  ///
+  /// In en, this message translates to:
+  /// **'No vaccination protocols found for {species}. Contact your veterinarian for guidance.'**
+  String noProtocolsForSpecies(String species);
+
+  /// Loading state semantic label
+  ///
+  /// In en, this message translates to:
+  /// **'Loading vaccination protocols...'**
+  String get loadingProtocols;
+
+  /// Error state headline
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load protocols'**
+  String get failedToLoadProtocols;
+
+  /// Text showing additional items not displayed
+  ///
+  /// In en, this message translates to:
+  /// **'...and {count} more'**
+  String andXMore(int count);
+
+  /// Label for required vaccines in protocol
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get requiredVaccine;
+
+  /// Label for optional vaccines in protocol
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get optionalVaccine;
+
+  /// Age indicator for vaccine administration
+  ///
+  /// In en, this message translates to:
+  /// **'at {weeks} weeks'**
+  String atWeeksAge(int weeks);
+
+  /// Section header for protocol summary
+  ///
+  /// In en, this message translates to:
+  /// **'Protocol Details'**
+  String get protocolDetails;
+
+  /// Link to expand full protocol details
+  ///
+  /// In en, this message translates to:
+  /// **'View Full Details'**
+  String get viewFullDetails;
+
+  /// Button text to view full vaccination schedule
+  ///
+  /// In en, this message translates to:
+  /// **'View Full Schedule'**
+  String get viewFullSchedule;
+
+  /// Screen title for reminder configuration
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder Settings'**
+  String get reminderSettings;
+
+  /// Section header for reminder configuration
+  ///
+  /// In en, this message translates to:
+  /// **'Configure Reminders'**
+  String get configureReminders;
+
+  /// Screen title with event type
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder Settings for {eventType}'**
+  String reminderSettingsFor(String eventType);
+
+  /// Switch label to enable reminders
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Reminders'**
+  String get enableReminders;
+
+  /// Switch label to disable reminders
+  ///
+  /// In en, this message translates to:
+  /// **'Disable Reminders'**
+  String get disableReminders;
+
+  /// Subtitle when reminders are enabled
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are active'**
+  String get notificationsActive;
+
+  /// Subtitle when reminders are disabled
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are disabled'**
+  String get notificationsDisabled;
+
+  /// Header for reminder timing selection
+  ///
+  /// In en, this message translates to:
+  /// **'Remind me:'**
+  String get remindMe;
+
+  /// Reminder option: on the day of event
+  ///
+  /// In en, this message translates to:
+  /// **'Day of'**
+  String get dayOf;
+
+  /// Reminder option: 1 day before event
+  ///
+  /// In en, this message translates to:
+  /// **'1 day before'**
+  String get dayBefore;
+
+  /// Header for reminder summary card
+  ///
+  /// In en, this message translates to:
+  /// **'Active Reminders'**
+  String get remindersActive;
+
+  /// Section header for timing selection
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder Timing'**
+  String get reminderTiming;
+
+  /// Instructions for reminder timing selection
+  ///
+  /// In en, this message translates to:
+  /// **'Select when you\'d like to receive reminders before upcoming {eventType} events'**
+  String selectWhenToReceiveReminders(String eventType);
+
+  /// Reminder offset option
+  ///
+  /// In en, this message translates to:
+  /// **'3 days before'**
+  String get threeDaysBefore;
+
+  /// Reminder offset option (7 days)
+  ///
+  /// In en, this message translates to:
+  /// **'1 week before'**
+  String get oneWeekBefore;
+
+  /// Reminder offset option (14 days)
+  ///
+  /// In en, this message translates to:
+  /// **'2 weeks before'**
+  String get twoWeeksBefore;
+
+  /// Button text to save changes
+  ///
+  /// In en, this message translates to:
+  /// **'Save Reminder Settings'**
+  String get saveReminderSettings;
+
+  /// Success message after saving
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder settings saved successfully'**
+  String get reminderSettingsSaved;
+
+  /// Error message when save fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save reminder settings'**
+  String get reminderSettingsSaveFailed;
+
+  /// Validation error when no offsets selected
+  ///
+  /// In en, this message translates to:
+  /// **'No reminders selected'**
+  String get noRemindersSelected;
+
+  /// Validation message for empty selection
+  ///
+  /// In en, this message translates to:
+  /// **'Please select at least one reminder time'**
+  String get selectAtLeastOneReminder;
+
+  /// Loading state semantic label
+  ///
+  /// In en, this message translates to:
+  /// **'Loading reminder settings...'**
+  String get loadingReminderSettings;
+
+  /// Error state headline
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load reminder settings'**
+  String get failedToLoadReminderSettings;
+
+  /// Title for vaccination reminder settings
+  ///
+  /// In en, this message translates to:
+  /// **'Vaccination Reminders'**
+  String get vaccinationReminders;
+
+  /// Title for deworming reminder settings
+  ///
+  /// In en, this message translates to:
+  /// **'Deworming Reminders'**
+  String get dewormingReminders;
+
+  /// Title for appointment reminder settings
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment Reminders'**
+  String get appointmentReminders;
+
+  /// Title for medication reminder settings
+  ///
+  /// In en, this message translates to:
+  /// **'Medication Reminders'**
+  String get medicationReminders;
+
+  /// Title for treatment plan viewer screen
+  ///
+  /// In en, this message translates to:
+  /// **'Treatment Plans'**
+  String get treatmentPlanViewer;
+
+  /// Header for active treatment plans section
+  ///
+  /// In en, this message translates to:
+  /// **'Active Treatment Plans'**
+  String get activeTreatmentPlans;
+
+  /// Loading state message
+  ///
+  /// In en, this message translates to:
+  /// **'Loading treatment plans...'**
+  String get loadingTreatmentPlans;
+
+  /// Error state headline
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load treatment plans'**
+  String get failedToLoadTreatmentPlans;
+
+  /// Empty state title
+  ///
+  /// In en, this message translates to:
+  /// **'No Active Treatment Plans'**
+  String get noActiveTreatmentPlans;
+
+  /// Empty state message
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have any active treatment plans for this pet.'**
+  String get noActiveTreatmentPlansMessage;
+
+  /// Progress text showing completed vs total tasks
+  ///
+  /// In en, this message translates to:
+  /// **'{completed} of {total} tasks complete'**
+  String tasksComplete(int completed, int total);
+
+  /// Button to mark treatment plan as complete
+  ///
+  /// In en, this message translates to:
+  /// **'Mark Plan Complete'**
+  String get markPlanComplete;
+
+  /// Success message after marking plan complete
+  ///
+  /// In en, this message translates to:
+  /// **'Treatment plan marked as complete'**
+  String get planMarkedComplete;
+
+  /// Error message when marking plan complete fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to mark plan as complete'**
+  String get failedToMarkPlanComplete;
+
+  /// Title for mark complete confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Mark Complete'**
+  String get confirmMarkComplete;
+
+  /// Confirmation message for marking plan complete
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to mark \"{planName}\" as complete? This action cannot be easily undone.'**
+  String confirmMarkCompleteMessage(String planName);
+
+  /// Success message after updating task completion
+  ///
+  /// In en, this message translates to:
+  /// **'Task updated successfully'**
+  String get taskUpdated;
+
+  /// Error message when task update fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update task'**
+  String get taskCompletionFailed;
+
+  /// Label for tasks due today
+  ///
+  /// In en, this message translates to:
+  /// **'Due Today'**
+  String get dueToday;
+
+  /// Label showing veterinarian who prescribed the plan
+  ///
+  /// In en, this message translates to:
+  /// **'Prescribed by {veterinarian}'**
+  String prescribedBy(String veterinarian);
+
+  /// Label showing plan start date
+  ///
+  /// In en, this message translates to:
+  /// **'Started on {date}'**
+  String startedOn(String date);
+
+  /// Screen title for calendar view
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get calendarView;
+
+  /// Filter chip label for vaccination events
+  ///
+  /// In en, this message translates to:
+  /// **'Vaccinations'**
+  String get vaccinations;
+
+  /// Filter chip label for deworming events
+  ///
+  /// In en, this message translates to:
+  /// **'Deworming'**
+  String get deworming;
+
+  /// Empty state when selected day has no events
+  ///
+  /// In en, this message translates to:
+  /// **'No Events on This Day'**
+  String get noEventsOnThisDay;
+
+  /// Empty state helper text for no events on selected day
+  ///
+  /// In en, this message translates to:
+  /// **'Select another day to view scheduled care events'**
+  String get selectAnotherDay;
+
+  /// Empty state when no events exist at all
+  ///
+  /// In en, this message translates to:
+  /// **'No Upcoming Care Events'**
+  String get noUpcomingCareEvents;
+
+  /// Empty state helper text for no events
+  ///
+  /// In en, this message translates to:
+  /// **'Set up vaccination protocols and appointments to see them here'**
+  String get setupProtocolsToSeeEvents;
+
+  /// Button text to navigate to protocol selection
+  ///
+  /// In en, this message translates to:
+  /// **'Set Up Protocols'**
+  String get setUpProtocols;
+
+  /// Error message when calendar fails to load
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load calendar events'**
+  String get failedToLoadCalendar;
+
+  /// Loading state message for calendar
+  ///
+  /// In en, this message translates to:
+  /// **'Loading calendar...'**
+  String get loadingCalendar;
+
+  /// Singular form of event count
+  ///
+  /// In en, this message translates to:
+  /// **'event'**
+  String get eventSingular;
+
+  /// Plural form of event count
+  ///
+  /// In en, this message translates to:
+  /// **'events'**
+  String get eventPlural;
+
+  /// Message when vaccination detail screen not yet implemented
+  ///
+  /// In en, this message translates to:
+  /// **'Vaccination details coming soon'**
+  String get vaccinationDetailsComingSoon;
+
+  /// Message when deworming detail screen not yet implemented
+  ///
+  /// In en, this message translates to:
+  /// **'Deworming details coming soon'**
+  String get dewormingDetailsComingSoon;
+
+  /// Message when appointment detail screen not yet implemented
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment details coming soon'**
+  String get appointmentDetailsComingSoon;
+
+  /// Hint text for tappable event cards
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to view details'**
+  String get tapToViewDetails;
+
+  /// Header showing event count for selected date
+  ///
+  /// In en, this message translates to:
+  /// **'{count} {count, plural, =1{event} other{events}} on {date}'**
+  String eventsOnDate(int count, String date);
+
+  /// Title for vaccination status card
+  ///
+  /// In en, this message translates to:
+  /// **'Vaccination Status'**
+  String get vaccinationStatus;
+
+  /// No description provided for @vaccinationProtocol.
+  ///
+  /// In en, this message translates to:
+  /// **'Vaccination Protocol'**
+  String get vaccinationProtocol;
+
+  /// No description provided for @isThisVaccination.
+  ///
+  /// In en, this message translates to:
+  /// **'Is this a vaccination?'**
+  String get isThisVaccination;
+
+  /// No description provided for @regularMedication.
+  ///
+  /// In en, this message translates to:
+  /// **'Regular medication tracking'**
+  String get regularMedication;
+
+  /// No description provided for @protocolBasedVaccination.
+  ///
+  /// In en, this message translates to:
+  /// **'Protocol-based vaccination'**
+  String get protocolBasedVaccination;
+
+  /// No description provided for @pleaseSelectVaccinationProtocol.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a vaccination protocol'**
+  String get pleaseSelectVaccinationProtocol;
+
+  /// No description provided for @nextDoseCalculation.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Dose Calculation'**
+  String get nextDoseCalculation;
+
+  /// No description provided for @calculatedFromProtocol.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculated from protocol step {stepIndex}'**
+  String calculatedFromProtocol(int stepIndex);
+
+  /// No description provided for @fromProtocol.
+  ///
+  /// In en, this message translates to:
+  /// **'(from protocol)'**
+  String get fromProtocol;
+
+  /// No description provided for @recommendedDose.
+  ///
+  /// In en, this message translates to:
+  /// **'(recommended)'**
+  String get recommendedDose;
+
+  /// No description provided for @petNeedsBirthday.
+  ///
+  /// In en, this message translates to:
+  /// **'Pet needs a birthday to calculate vaccination dates'**
+  String get petNeedsBirthday;
+
+  /// Label for vaccination dose number
+  ///
+  /// In en, this message translates to:
+  /// **'Dose'**
+  String get dose;
+
+  /// Status label for scheduled vaccinations
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled'**
+  String get scheduled;
+
+  /// Label for completed task status
+  ///
+  /// In en, this message translates to:
+  /// **'Task completed'**
+  String get taskCompleted;
+
+  /// Label for task due date
+  ///
+  /// In en, this message translates to:
+  /// **'Due date'**
+  String get dueDate;
+
+  /// Empty state message when treatment plan has no tasks
+  ///
+  /// In en, this message translates to:
+  /// **'No tasks in this treatment plan'**
+  String get noTasksInPlan;
 }
 
 class _AppLocalizationsDelegate

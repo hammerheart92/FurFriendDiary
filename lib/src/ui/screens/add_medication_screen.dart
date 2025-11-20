@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,6 +6,10 @@ import 'package:intl/intl.dart';
 import '../../providers/medications_provider.dart';
 import '../../presentation/providers/pet_profile_provider.dart';
 import '../../domain/models/time_of_day_model.dart';
+import '../../domain/models/pet_profile.dart';
+import '../../domain/models/protocols/vaccination_protocol.dart';
+import '../../presentation/providers/protocols/vaccination_protocol_provider.dart';
+import '../../data/services/protocols/protocol_engine_service.dart';
 import '../../../l10n/app_localizations.dart';
 
 class AddMedicationScreen extends ConsumerStatefulWidget {
@@ -61,6 +66,12 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
   ];
 
   bool _isLoading = false;
+
+  // Vaccination protocol state
+  bool _isVaccination = false;
+  String? _selectedProtocolId;
+  VaccinationProtocol? _selectedProtocol;
+  DateTime? _nextDoseCalculatedDate;
 
   @override
   void dispose() {
@@ -208,6 +219,11 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                       ),
                     ),
                   ),
+
+                  const SizedBox(height: 16),
+
+                  // Vaccination Protocol card
+                  _buildVaccinationProtocolCard(theme, l10n),
 
                   const SizedBox(height: 16),
 
@@ -689,6 +705,28 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
         }
       }
 
+      // Prepare notes with protocol metadata if vaccination
+      String? finalNotes = _notesController.text.trim().isEmpty
+          ? null
+          : _notesController.text.trim();
+
+      if (_isVaccination && _selectedProtocolId != null && _selectedProtocol != null) {
+        // Week 2 pattern: Store protocol metadata in notes as JSON
+        final protocolMetadata = {
+          'isVaccination': true,
+          'protocolId': _selectedProtocolId,
+          'protocolStepIndex': 0, // First dose
+          'vaccineName': _selectedProtocol!.steps.isNotEmpty
+              ? _selectedProtocol!.steps[0].vaccineName
+              : _medicationNameController.text.trim(),
+        };
+
+        final metadataJson = jsonEncode(protocolMetadata);
+        finalNotes = finalNotes != null
+            ? '$finalNotes\n\nMetadata: $metadataJson'
+            : 'Metadata: $metadataJson';
+      }
+
       await ref.read(medicationsProvider.notifier).addMedication(
             petId: activePet.id,
             medicationName: _medicationNameController.text.trim(),
@@ -697,9 +735,7 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
             startDate: _startDate,
             endDate: _endDate,
             administrationMethod: _selectedAdministrationMethod,
-            notes: _notesController.text.trim().isEmpty
-                ? null
-                : _notesController.text.trim(),
+            notes: finalNotes,
             administrationTimes: administrationTimeModels,
             stockQuantity: stockQuantity,
             stockUnit: _enableInventoryTracking ? _selectedStockUnit : null,
@@ -776,6 +812,332 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
         return l10n.administrationMethodOther;
       default:
         return key;
+    }
+  }
+
+  /// Build vaccination protocol card with toggle and protocol selection
+  Widget _buildVaccinationProtocolCard(ThemeData theme, AppLocalizations l10n) {
+    final currentPet = ref.watch(currentPetProfileProvider);
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Card title with icon
+            Row(
+              children: [
+                const Icon(Icons.vaccines, size: 28, color: Colors.blue),
+                const SizedBox(width: 8),
+                Text(
+                  l10n.vaccinationProtocol,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 16),
+
+            // Toggle switch
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(l10n.isThisVaccination),
+              subtitle: Text(
+                _isVaccination
+                    ? l10n.protocolBasedVaccination
+                    : l10n.regularMedication,
+              ),
+              value: _isVaccination,
+              onChanged: (value) {
+                setState(() {
+                  _isVaccination = value;
+                  if (!value) {
+                    // Clear vaccination-related state
+                    _selectedProtocolId = null;
+                    _selectedProtocol = null;
+                    _nextDoseCalculatedDate = null;
+                  }
+                });
+              },
+            ),
+
+            // Conditional protocol dropdown and calculation
+            if (_isVaccination) ...[
+              const SizedBox(height: 16),
+              _buildProtocolDropdown(l10n, currentPet),
+
+              // Next dose calculation display
+              if (_nextDoseCalculatedDate != null) ...[
+                const SizedBox(height: 16),
+                _buildNextDoseDisplay(theme, l10n),
+              ],
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Build protocol dropdown with species filtering
+  Widget _buildProtocolDropdown(AppLocalizations l10n, PetProfile? currentPet) {
+    if (currentPet == null) {
+      return Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.orange.shade50,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.orange.shade200),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.warning_amber, color: Colors.orange.shade700),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                l10n.noActivePetFound,
+                style: TextStyle(color: Colors.orange.shade900),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Watch protocols for current pet's species using provider (loads from JSON)
+    print('DEBUG SCREEN: Building protocol dropdown for pet species: "${currentPet.species}"');
+    print('DEBUG SCREEN: Species type: ${currentPet.species.runtimeType}');
+    print('DEBUG SCREEN: Species length: ${currentPet.species.length}');
+    print('DEBUG SCREEN: Species hashCode: ${currentPet.species.hashCode}');
+
+    final protocolsAsync =
+        ref.watch(vaccinationProtocolsBySpeciesProvider(currentPet.species));
+
+    return protocolsAsync.when(
+      data: (protocols) {
+        print('DEBUG SCREEN: Received ${protocols.length} protocols for species "${currentPet.species}"');
+        if (protocols.isNotEmpty) {
+          print('DEBUG SCREEN: Available protocols:');
+          for (final p in protocols) {
+            print('  - ${p.name} (species: "${p.species}")');
+          }
+        }
+
+        if (protocols.isEmpty) {
+          return Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.blue.shade200),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.info_outline, color: Colors.blue.shade700),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    l10n.noProtocolsAvailable,
+                    style: TextStyle(color: Colors.blue.shade900),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return DropdownButtonFormField<String>(
+          value: _selectedProtocolId,
+          decoration: InputDecoration(
+            labelText: l10n.selectVaccinationProtocol,
+            prefixIcon: const Icon(Icons.medical_information),
+            border: const OutlineInputBorder(),
+          ),
+          isExpanded: true,
+          items: protocols.map((protocol) {
+            return DropdownMenuItem(
+              value: protocol.id,
+              child: Text(protocol.name),
+            );
+          }).toList(),
+          onChanged: (value) async {
+            if (value != null) {
+              final selectedProtocol =
+                  protocols.firstWhere((p) => p.id == value);
+
+              setState(() {
+                _selectedProtocolId = value;
+                _selectedProtocol = selectedProtocol;
+              });
+
+              // Calculate next dose and pre-fill fields
+              await _calculateAndPrefillVaccinationData(currentPet);
+            }
+          },
+          validator: (value) {
+            if (_isVaccination && (value == null || value.isEmpty)) {
+              return l10n.pleaseSelectVaccinationProtocol;
+            }
+            return null;
+          },
+        );
+      },
+      loading: () => const Center(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: CircularProgressIndicator(),
+        ),
+      ),
+      error: (error, stack) => Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.red.shade50,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.red.shade200),
+        ),
+        child: Text(
+          'Error: $error',
+          style: TextStyle(color: Colors.red.shade900),
+        ),
+      ),
+    );
+  }
+
+  /// Build next dose calculation display
+  Widget _buildNextDoseDisplay(ThemeData theme, AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primaryContainer.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: theme.colorScheme.primary.withOpacity(0.5),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.calculate,
+                size: 20,
+                color: theme.colorScheme.primary,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                l10n.nextDoseCalculation,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(
+                Icons.calendar_today,
+                size: 18,
+                color: theme.colorScheme.onPrimaryContainer,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                DateFormat('MMMM dd, yyyy').format(_nextDoseCalculatedDate!),
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            l10n.calculatedFromProtocol(1),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: Colors.grey[600],
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Calculate next dose and pre-fill vaccination-related fields
+  Future<void> _calculateAndPrefillVaccinationData(PetProfile pet) async {
+    if (_selectedProtocol == null) return;
+
+    final l10n = AppLocalizations.of(context)!;
+
+    // Check if pet has birthday
+    if (pet.birthday == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.petNeedsBirthday),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+      setState(() {
+        _nextDoseCalculatedDate = null;
+      });
+      return;
+    }
+
+    final protocolEngine = ref.read(protocolEngineServiceProvider);
+
+    try {
+      // Calculate for first dose (stepIndex = 0)
+      final calculatedDate = await protocolEngine.calculateNextVaccinationDate(
+        pet: pet,
+        protocol: _selectedProtocol!,
+        stepIndex: 0,
+        lastAdministeredDate: null,
+      );
+
+      if (calculatedDate != null && _selectedProtocol!.steps.isNotEmpty) {
+        final firstStep = _selectedProtocol!.steps[0];
+
+        setState(() {
+          _nextDoseCalculatedDate = calculatedDate;
+
+          // Pre-fill start date from calculation
+          _startDate = calculatedDate;
+
+          // Pre-fill end date (same day for vaccination)
+          _endDate = calculatedDate;
+          _hasEndDate = true;
+
+          // Pre-fill medication name from protocol
+          _medicationNameController.text = firstStep.vaccineName;
+
+          // Pre-fill dosage
+          _dosageController.text = 'Standard vaccine dose';
+
+          // Pre-select administration method as Injection
+          _selectedAdministrationMethod = 'administrationMethodInjection';
+
+          // Pre-select frequency as Once Daily
+          _selectedFrequency = 'frequencyOnceDaily';
+        });
+      } else {
+        setState(() {
+          _nextDoseCalculatedDate = null;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error calculating dose: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 }
