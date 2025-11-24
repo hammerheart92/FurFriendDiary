@@ -1,4 +1,4 @@
-// lib/src/ui/screens/feedings_screen.dart
+// lib/src/ui/screens/home_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -21,11 +21,11 @@ import '../../presentation/widgets/upcoming_care_card_widget.dart';
 final _logger = Logger();
 final _uuid = Uuid();
 
-class FeedingsScreen extends ConsumerStatefulWidget {
-  const FeedingsScreen({super.key});
+class HomeScreen extends ConsumerStatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  ConsumerState<FeedingsScreen> createState() => _FeedingsScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _FeedingTile extends StatelessWidget {
@@ -97,7 +97,7 @@ class _FeedingTile extends StatelessWidget {
   }
 }
 
-class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   Future<void> _showFeedingDetails(FeedingEntry feeding) async {
     final l10n = AppLocalizations.of(context);
 
@@ -304,8 +304,8 @@ class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
 
     return AppPage(
       title: currentPet != null
-          ? l10n.petFeedings(currentPet.name)
-          : l10n.feedings,
+          ? l10n.petHome(currentPet.name)
+          : l10n.home,
       body: Column(
         children: [
           // Pet Profile Display

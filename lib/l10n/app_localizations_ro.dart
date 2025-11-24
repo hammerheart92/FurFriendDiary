@@ -137,6 +137,14 @@ class AppLocalizationsRo extends AppLocalizations {
   }
 
   @override
+  String get home => 'Acasă';
+
+  @override
+  String petHome(String petName) {
+    return '$petName - Acasă';
+  }
+
+  @override
   String noFeedingsRecorded(String petName) {
     return 'Nicio hrănire înregistrată pentru $petName încă';
   }
@@ -2492,6 +2500,9 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get textSummaryEmailSubject => 'Rezumat Sănătate Animale';
+
+  @override
+  String get navHome => 'Acasă';
 
   @override
   String get navFeedings => 'Hrănire';

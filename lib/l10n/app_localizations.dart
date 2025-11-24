@@ -338,6 +338,18 @@ abstract class AppLocalizations {
   /// **'{petName} - Feedings'**
   String petFeedings(String petName);
 
+  /// No description provided for @home.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get home;
+
+  /// No description provided for @petHome.
+  ///
+  /// In en, this message translates to:
+  /// **'{petName} - Home'**
+  String petHome(String petName);
+
   /// No description provided for @noFeedingsRecorded.
   ///
   /// In en, this message translates to:
@@ -4771,6 +4783,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pet Health Summary'**
   String get textSummaryEmailSubject;
+
+  /// Navigation label for Home tab
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navHome;
 
   /// Navigation label for Feedings tab
   ///

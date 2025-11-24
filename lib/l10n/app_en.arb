@@ -60,6 +60,15 @@
       }
     }
   },
+  "home": "Home",
+  "petHome": "{petName} - Home",
+  "@petHome": {
+    "placeholders": {
+      "petName": {
+        "type": "String"
+      }
+    }
+  },
   "noFeedingsRecorded": "No feedings recorded for {petName} yet",
   "@noFeedingsRecorded": {
     "placeholders": {
@@ -1132,6 +1141,10 @@
     "description": "Email subject when sharing text summary"
   },
 
+  "navHome": "Home",
+  "@navHome": {
+    "description": "Navigation label for Home tab"
+  },
   "navFeedings": "Feedings",
   "@navFeedings": {
     "description": "Navigation label for Feedings tab"

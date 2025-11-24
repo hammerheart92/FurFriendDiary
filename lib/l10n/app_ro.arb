@@ -46,6 +46,8 @@
 
   "feedings": "Hrăniri",
   "petFeedings": "{petName} - Hrăniri",
+  "home": "Acasă",
+  "petHome": "{petName} - Acasă",
   "noFeedingsRecorded": "Nicio hrănire înregistrată pentru {petName} încă",
   "noFeedingsRecordedGeneric": "Nicio hrănire înregistrată încă",
   "addFirstFeeding": "Adaugă prima hrănire",
@@ -898,6 +900,10 @@
     "description": "Subiectul emailului pentru rezumatul text"
   },
 
+  "navHome": "Acasă",
+  "@navHome": {
+    "description": "Eticheta de navigare pentru fila Acasă"
+  },
   "navFeedings": "Hrănire",
   "@navFeedings": {
     "description": "Eticheta de navigare pentru fila Hrănire"

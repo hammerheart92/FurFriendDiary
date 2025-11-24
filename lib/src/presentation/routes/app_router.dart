@@ -2,7 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import '../../ui/shell.dart';
-import '../../ui/screens/feedings_screen.dart';
+import '../../ui/screens/home_screen.dart';
 import '../../ui/screens/walks_screen.dart';
 import '../../ui/screens/medications_screen.dart';
 import '../../ui/screens/add_medication_screen.dart';
@@ -93,7 +93,7 @@ GoRouter createRouter() => GoRouter(
         ShellRoute(
           builder: (context, state, child) => AppShell(child: child),
           routes: [
-            GoRoute(path: '/', builder: (_, __) => const FeedingsScreen()),
+            GoRoute(path: '/', builder: (_, __) => const HomeScreen()),
             GoRoute(path: '/walks', builder: (_, __) => const WalksScreen()),
             GoRoute(
                 path: '/meds', builder: (_, __) => const MedicationsScreen()),

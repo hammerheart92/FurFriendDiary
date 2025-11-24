@@ -41,7 +41,7 @@ class AppShell extends StatelessWidget {
         },
         destinations: [
           NavigationDestination(
-              icon: const Icon(Icons.restaurant), label: l10n.navFeedings),
+              icon: const Icon(Icons.home), label: l10n.navHome),
           NavigationDestination(
               icon: const Icon(Icons.pets), label: l10n.navWalks),
           NavigationDestination(

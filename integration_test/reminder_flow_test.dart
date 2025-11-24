@@ -8,6 +8,6 @@ void main() {
     await app.main();
     await tester.pumpAndSettle();
     // This is a stub for a complete flow; real device tests will request perms and schedule.
-    expect(find.text('Feedings'), findsWidgets);
+    expect(find.text('Home'), findsWidgets);
   });
 }

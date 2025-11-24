@@ -133,6 +133,14 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get home => 'Home';
+
+  @override
+  String petHome(String petName) {
+    return '$petName - Home';
+  }
+
+  @override
   String noFeedingsRecorded(String petName) {
     return 'No feedings recorded for $petName yet';
   }
@@ -2471,6 +2479,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get textSummaryEmailSubject => 'Pet Health Summary';
+
+  @override
+  String get navHome => 'Home';
 
   @override
   String get navFeedings => 'Feedings';
