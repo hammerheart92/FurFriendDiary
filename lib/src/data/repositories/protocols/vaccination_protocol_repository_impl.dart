@@ -49,17 +49,6 @@ class VaccinationProtocolRepositoryImpl
   @override
   Future<List<VaccinationProtocol>> getBySpecies(String species) async {
     try {
-      print('DEBUG REPOSITORY: getBySpecies called with species: "$species"');
-      print('DEBUG REPOSITORY: Total protocols in box: ${box.length}');
-
-      // Log all protocols in box for debugging
-      if (box.length > 0) {
-        print('DEBUG REPOSITORY: All protocols in box:');
-        for (final p in box.values) {
-          print('  - ${p.name} (species: "${p.species}")');
-        }
-      }
-
       // CRITICAL FIX: Case-insensitive comparison
       // JSON has "dog"/"cat" (lowercase), but UI may pass "Dog"/"Cat" (capitalized)
       final speciesLower = species.toLowerCase();
@@ -67,16 +56,12 @@ class VaccinationProtocolRepositoryImpl
           .where((protocol) => protocol.species.toLowerCase() == speciesLower)
           .toList();
 
-      print('DEBUG REPOSITORY: After filtering by species "$species" (case-insensitive): ${protocols.length} protocols');
-
       // Sort by name alphabetically
       protocols.sort((a, b) => a.name.compareTo(b.name));
-      logger.i(
-          "🔍 DEBUG: Retrieved ${protocols.length} vaccination protocols for species '$species'");
       return protocols;
     } catch (e) {
       logger.e(
-          "🚨 ERROR: Failed to get vaccination protocols for species '$species': $e");
+          "ERROR: Failed to get vaccination protocols for species '$species': $e");
       rethrow;
     }
   }

@@ -69,7 +69,7 @@ class InventoryAlertService {
         }
       }
     } catch (e) {
-      print('❌ ERROR: Failed to check low stock: $e');
+      // Silent failure - low stock check is a non-critical background task
     }
   }
 

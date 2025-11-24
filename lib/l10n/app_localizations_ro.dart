@@ -2847,6 +2847,24 @@ class AppLocalizationsRo extends AppLocalizations {
   String get vaccinationStatus => 'Stare vaccinare';
 
   @override
+  String get dewormingStatus => 'Stare deparazitare';
+
+  @override
+  String get noDewormingProtocol => 'Niciun protocol de deparazitare selectat';
+
+  @override
+  String get nextTreatment => 'Următorul tratament';
+
+  @override
+  String get selectDewormingProtocol => 'Selectează protocol';
+
+  @override
+  String get dewormingProtocolDetails => 'Detalii protocol';
+
+  @override
+  String get viewDewormingSchedule => 'Vizualizează program deparazitare';
+
+  @override
   String get vaccinationProtocol => 'Protocol de Vaccinare';
 
   @override

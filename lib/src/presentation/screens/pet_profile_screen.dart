@@ -80,6 +80,8 @@ class PetProfileScreen extends ConsumerWidget {
             _buildActiveProfileCard(context, ref, currentProfile),
             const SizedBox(height: 16),
             _buildVaccinationStatusCard(context, ref, currentProfile),
+            const SizedBox(height: 16),
+            _buildDewormingStatusCard(context, ref, currentProfile),
             const SizedBox(height: 24),
             const Divider(),
             const SizedBox(height: 16),
@@ -273,7 +275,8 @@ class PetProfileScreen extends ConsumerWidget {
   ) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    final vaccinationScheduleAsync = ref.watch(vaccinationScheduleProvider(profile.id));
+    final vaccinationScheduleAsync =
+        ref.watch(vaccinationScheduleProvider(profile.id));
 
     return Card(
       child: InkWell(
@@ -322,7 +325,8 @@ class PetProfileScreen extends ConsumerWidget {
                   }
 
                   // Show protocol info and next due
-                  return _buildProtocolInfo(context, ref, profile, schedule, l10n, theme);
+                  return _buildProtocolInfo(
+                      context, ref, profile, schedule, l10n, theme);
                 },
                 loading: () => const Column(
                   children: [
@@ -356,7 +360,115 @@ class PetProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildNoProtocolState(BuildContext context, AppLocalizations l10n, ThemeData theme) {
+  Widget _buildDewormingStatusCard(
+    BuildContext context,
+    WidgetRef ref,
+    PetProfile profile,
+  ) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return Card(
+      child: InkWell(
+        onTap: () => _showDewormingComingSoonDialog(context, l10n),
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.bug_report,
+                    color: theme.colorScheme.secondary,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    l10n.dewormingStatus,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Spacer(),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 150),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              _buildNoDewormingProtocolState(context, l10n, theme),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNoDewormingProtocolState(
+    BuildContext context,
+    AppLocalizations l10n,
+    ThemeData theme,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.noDewormingProtocol,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface.withValues(alpha: 180),
+          ),
+        ),
+        const SizedBox(height: 12),
+        FilledButton.tonalIcon(
+          onPressed: () => _showSelectDewormingProtocolDialog(context),
+          icon: const Icon(Icons.add, size: 18),
+          label: Text(l10n.selectDewormingProtocol),
+        ),
+      ],
+    );
+  }
+
+  void _showSelectDewormingProtocolDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context).selectDewormingProtocol),
+        content: const Text(
+          'Feature coming soon. This will allow you to select a deworming protocol like ESCCAP guidelines.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDewormingComingSoonDialog(
+      BuildContext context, AppLocalizations l10n) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.dewormingStatus),
+        content: const Text('Deworming schedule view coming soon.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNoProtocolState(
+      BuildContext context, AppLocalizations l10n, ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -385,18 +497,17 @@ class PetProfileScreen extends ConsumerWidget {
     ThemeData theme,
   ) {
     // Get protocol name
-    final protocolAsync = ref.watch(vaccinationProtocolByIdProvider(profile.vaccinationProtocolId!));
+    final protocolAsync = ref
+        .watch(vaccinationProtocolByIdProvider(profile.vaccinationProtocolId!));
 
     // Find next upcoming vaccination
     final now = DateTime.now();
-    final upcomingVaccinations = schedule.where((entry) =>
-      entry.scheduledDate.isAfter(now)
-    ).toList();
+    final upcomingVaccinations =
+        schedule.where((entry) => entry.scheduledDate.isAfter(now)).toList();
 
     // Count completed vaccinations (past dates)
-    final completedCount = schedule.where((entry) =>
-      entry.scheduledDate.isBefore(now)
-    ).length;
+    final completedCount =
+        schedule.where((entry) => entry.scheduledDate.isBefore(now)).length;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -477,7 +588,8 @@ class PetProfileScreen extends ConsumerWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                DateFormat('MMM dd, yyyy').format(upcomingVaccinations.first.scheduledDate),
+                DateFormat('MMM dd, yyyy')
+                    .format(upcomingVaccinations.first.scheduledDate),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                   color: theme.colorScheme.primary,

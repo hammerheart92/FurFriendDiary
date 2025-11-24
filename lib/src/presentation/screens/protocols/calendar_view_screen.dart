@@ -445,26 +445,28 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
     _logger.d('Navigating to event details: ${event.eventType}');
 
     switch (event) {
+      case MedicationEvent(:final entry):
+        // Navigate to medication detail screen
+        context.push('/meds/detail/${entry.id}');
+        break;
+
+      case AppointmentEvent():
+        // Navigate to Appointments tab
+        context.go('/appointments');
+        break;
+
       case VaccinationEvent():
+        // Show "Coming soon" for vaccination (deferred feature)
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(l10n.vaccinationDetailsComingSoon)),
         );
         break;
 
       case DewormingEvent():
+        // Show "Coming soon" for deworming (deferred feature)
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(l10n.dewormingDetailsComingSoon)),
         );
-        break;
-
-      case AppointmentEvent():
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.appointmentDetailsComingSoon)),
-        );
-        break;
-
-      case MedicationEvent(:final entry):
-        context.go('/meds/detail/${entry.id}');
         break;
     }
   }
@@ -725,12 +727,7 @@ class _EventListTile extends StatelessWidget {
                   color: eventColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Center(
-                  child: Text(
-                    event.icon,
-                    style: const TextStyle(fontSize: 20),
-                  ),
-                ),
+                child: _buildEventIcon(event, eventColor),
               ),
               const SizedBox(width: 12),
 
@@ -792,6 +789,50 @@ class _EventListTile extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  /// Build event icon - custom calendar for appointments, emoji for others
+  Widget _buildEventIcon(UpcomingCareEvent event, Color eventColor) {
+    // For appointments, use custom calendar icon with actual date
+    if (event is AppointmentEvent) {
+      final date = event.scheduledDate;
+      final monthAbbr = DateFormat('MMM').format(date).toUpperCase();
+      final day = DateFormat('d').format(date);
+
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Month abbreviation
+          Text(
+            monthAbbr,
+            style: TextStyle(
+              fontSize: 8,
+              fontWeight: FontWeight.bold,
+              color: eventColor,
+              height: 1.0,
+            ),
+          ),
+          // Day number
+          Text(
+            day,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: eventColor,
+              height: 1.1,
+            ),
+          ),
+        ],
+      );
+    }
+
+    // For other events, use emoji icon
+    return Center(
+      child: Text(
+        event.icon,
+        style: const TextStyle(fontSize: 20),
       ),
     );
   }

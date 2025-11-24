@@ -427,13 +427,49 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
     }
   }
 
+  /// Shows a bottom sheet to create medication reminders.
+  ///
+  /// Known Issue (Non-Critical - Deferred to v1.2.0):
+  /// - "Remind Daily" and "Remind Once" options do not auto-dismiss the bottom sheet
+  /// - Workaround: Users can tap "View" button or swipe down to manually dismiss
+  /// - "Remind All Doses" works correctly (auto-dismisses as expected)
+  ///
+  /// Fix Attempts (Week 4 Manual Testing):
+  /// 1. Attempt 1: Context renaming (builder context → bottomSheetContext)
+  ///    Result: No change
+  ///
+  /// 2. Attempt 2: Explicit Navigator.of() with rootNavigator flag
+  ///    Result: No change
+  ///
+  /// 3. Attempt 3: Added 100ms delay before Navigator.pop() to resolve gesture conflicts
+  ///    Result: No change
+  ///
+  /// 4. Attempt 4: Captured Navigator reference before delay to prevent context disposal
+  ///    Code: `final navigator = Navigator.of(bottomSheetContext);`
+  ///          `await Future.delayed(const Duration(milliseconds: 100));`
+  ///          `navigator.pop();`
+  ///    Result: Partial improvement - "Remind All Doses" works, others still require manual dismiss
+  ///
+  /// Root Cause Analysis:
+  /// - DraggableScrollableSheet + ListTile tap gesture conflict
+  /// - Manual swipe-down dismissal works correctly (proves modal config is correct)
+  /// - Context lifecycle + async operations create race condition
+  /// - Different code paths have different timing characteristics
+  ///
+  /// Current Status:
+  /// - All reminder functionality works correctly (save, fire, frequency labels)
+  /// - Only auto-dismiss UX is affected
+  /// - Acceptable workaround available (tap "View" or swipe down)
+  /// - Deferred to v1.2.0 for proper investigation (may require different bottom sheet approach)
+  ///
+  /// See also: MANUAL_TESTING_CHECKLIST.md - Scenario 5 notes
   void _showReminderDialog(MedicationEntry medication) {
     final l10n = AppLocalizations.of(context);
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (context) => DraggableScrollableSheet(
+      builder: (bottomSheetContext) => DraggableScrollableSheet(
         initialChildSize: 0.6,
         minChildSize: 0.4,
         maxChildSize: 0.9,
@@ -468,7 +504,11 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
                               '${l10n.firstDose}: ${medication.administrationTimes.first.format24Hour()}')
                           : null,
                       onTap: () async {
-                        Navigator.pop(context);
+                        // KNOWN ISSUE: Bottom sheet requires manual dismiss (swipe or tap "View")
+                        // Fix attempted: Navigator reference capture before delay
+                        final navigator = Navigator.of(bottomSheetContext);
+                        await Future.delayed(const Duration(milliseconds: 100));
+                        navigator.pop();
                         await _createReminder(
                           medication,
                           ReminderFrequency.daily,
@@ -490,7 +530,10 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
                         subtitle: Text(
                             '${medication.administrationTimes.length} ${l10n.timesDaily}'),
                         onTap: () async {
-                          Navigator.pop(context);
+                          // This option works correctly - auto-dismisses as expected
+                          final navigator = Navigator.of(bottomSheetContext);
+                          await Future.delayed(const Duration(milliseconds: 100));
+                          navigator.pop();
                           await _createMultipleReminders(medication);
                         },
                       ),
@@ -499,7 +542,11 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
                       title: Text(l10n.remindOnce),
                       subtitle: Text(l10n.customTime),
                       onTap: () async {
-                        Navigator.pop(context);
+                        // KNOWN ISSUE: Bottom sheet requires manual dismiss (swipe or tap "View")
+                        // Fix attempted: Navigator reference capture before delay
+                        final navigator = Navigator.of(bottomSheetContext);
+                        await Future.delayed(const Duration(milliseconds: 100));
+                        navigator.pop();
                         await _selectCustomReminderTime(medication);
                       },
                     ),
@@ -523,6 +570,7 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
     final successMsg = l10n.reminderSet;
     final failedMsg = l10n.failedToCreateReminder;
     final viewLabel = l10n.view;
+    final frequencyLabel = _getReminderFrequencyLabel(frequency, l10n);
 
     try {
       final now = DateTime.now();
@@ -534,7 +582,7 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
         petId: medication.petId,
         type: ReminderType.medication,
         title: medication.medicationName,
-        description: '${medication.dosage} - ${medication.frequency}',
+        description: '${medication.dosage} - $frequencyLabel',
         scheduledTime: scheduledTime,
         frequency: frequency,
         linkedEntityId: medication.id,
@@ -621,6 +669,21 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
 
     if (selectedTime != null) {
       await _createReminder(medication, ReminderFrequency.once, selectedTime);
+    }
+  }
+
+  String _getReminderFrequencyLabel(ReminderFrequency frequency, AppLocalizations l10n) {
+    switch (frequency) {
+      case ReminderFrequency.once:
+        return l10n.once;
+      case ReminderFrequency.daily:
+        return l10n.daily;
+      case ReminderFrequency.twiceDaily:
+        return l10n.twiceDaily;
+      case ReminderFrequency.weekly:
+        return l10n.weekly;
+      case ReminderFrequency.custom:
+        return l10n.custom;
     }
   }
 }

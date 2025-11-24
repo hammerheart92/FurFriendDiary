@@ -20,12 +20,8 @@ Future<void> main() async {
   // Initialize file logger
   logger = await FileLogger.getInstance();
 
-  logger.i("🚀 DEBUG: Starting FurFriendDiary app initialization");
-  logger.i("📝 DEBUG: Logs are being saved to: ${FileLogger.logFile?.path}");
-
   try {
     // Initialize HiveManager (this handles everything)
-    logger.i("🔍 DEBUG: Initializing HiveManager");
     await HiveManager.instance.initialize();
 
     // Verify initialization
@@ -33,46 +29,25 @@ Future<void> main() async {
       throw Exception("HiveManager failed to initialize properly");
     }
 
-    logger.i("✅ DEBUG: HiveManager initialized successfully");
-
-    // Verify boxes are accessible
-    final petBox = HiveManager.instance.petProfileBox;
-    final walkBox = HiveManager.instance.walkBox;
-    final settingsBox = HiveManager.instance.settingsBox;
-    final appPrefsBox = HiveManager.instance.appPrefsBox;
-
-    logger.i("✅ DEBUG: All boxes verified accessible:");
-    logger.d("   - Pet profiles: ${petBox.length} items");
-    logger.d("   - Walks: ${walkBox.length} items");
-    logger.d("   - Settings: ${settingsBox.length} items");
-    logger.d("   - App prefs: ${appPrefsBox.length} items");
-
     // Initialize NotificationService
-    logger.i("🔔 DEBUG: Initializing NotificationService");
     await NotificationService().initialize();
-    logger.i("✅ DEBUG: NotificationService initialized");
 
     // Check low stock on app startup
     try {
-      logger.i("💊 DEBUG: Checking for low stock medications");
       final petRepository = PetProfileRepository();
       final activePets = petRepository.getActive();
 
       if (activePets.isNotEmpty) {
         final currentPet = activePets.first;
-        logger.i("💊 DEBUG: Checking low stock for pet: ${currentPet.name}");
         await InventoryAlertService().checkLowStockAndNotify(currentPet.id);
-        logger.i("✅ DEBUG: Low stock check completed");
-      } else {
-        logger.d("💊 DEBUG: No active pet found, skipping low stock check");
       }
     } catch (e) {
-      logger.w("⚠️ WARNING: Low stock check failed: $e");
+      logger.w("WARNING: Low stock check failed: $e");
       // Don't throw - this is not critical for app startup
     }
   } catch (e, stackTrace) {
-    logger.e("🚨 FATAL ERROR: App initialization failed: $e");
-    logger.e("🚨 STACK TRACE: $stackTrace");
+    logger.e("FATAL ERROR: App initialization failed: $e");
+    logger.e("STACK TRACE: $stackTrace");
 
     // Show error dialog and exit
     runApp(MaterialApp(
@@ -100,8 +75,6 @@ Future<void> main() async {
     return;
   }
 
-  logger.i("🚀 DEBUG: Starting app with properly initialized Hive");
-
   runApp(
     const ProviderScope(
       child: MyApp(),
@@ -122,35 +95,28 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
     super.initState();
     // Add observer to monitor app lifecycle changes
     WidgetsBinding.instance.addObserver(this);
-    logger.i("🔍 DEBUG: App lifecycle observer registered");
   }
 
   @override
   void dispose() {
     // Remove observer when app is disposed
     WidgetsBinding.instance.removeObserver(this);
-    logger.i("🔍 DEBUG: App lifecycle observer removed");
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    logger.i("🔄 DEBUG: App lifecycle state changed to: $state");
 
     // CRITICAL FIX for Samsung devices: Flush all boxes when app goes to background
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached ||
         state == AppLifecycleState.inactive) {
-      logger.w("⚠️ DEBUG: App going to background, verifying and flushing...");
       // Don't await - let it complete asynchronously
       HiveManager.instance.verifyDataPersistence().then((_) {
-        logger.i("✅ DEBUG: Data persistence verified");
         return HiveManager.instance.flushAllBoxes();
-      }).then((_) {
-        logger.i("✅ DEBUG: Boxes flushed before app backgrounded");
       }).catchError((e) {
-        logger.e("🚨 ERROR: Failed to flush boxes on background: $e");
+        logger.e("ERROR: Failed to flush boxes on background: $e");
       });
     }
   }

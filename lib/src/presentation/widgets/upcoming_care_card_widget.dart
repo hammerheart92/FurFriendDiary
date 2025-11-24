@@ -89,12 +89,7 @@ class UpcomingCareCardWidget extends StatelessWidget {
                           color: eventColor.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Center(
-                          child: Text(
-                            event.icon,
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                        ),
+                        child: _buildEventIcon(event, eventColor, theme),
                       ),
                       const SizedBox(width: 12),
 
@@ -164,6 +159,54 @@ class UpcomingCareCardWidget extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  /// Build event icon - custom calendar for appointments, emoji for others
+  Widget _buildEventIcon(
+    UpcomingCareEvent event,
+    Color eventColor,
+    ThemeData theme,
+  ) {
+    // For appointments, use custom calendar icon with actual date
+    if (event is AppointmentEvent) {
+      final date = event.scheduledDate;
+      final monthAbbr = DateFormat('MMM').format(date).toUpperCase();
+      final day = DateFormat('d').format(date);
+
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Month abbreviation
+          Text(
+            monthAbbr,
+            style: TextStyle(
+              fontSize: 8,
+              fontWeight: FontWeight.bold,
+              color: eventColor,
+              height: 1.0,
+            ),
+          ),
+          // Day number
+          Text(
+            day,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: eventColor,
+              height: 1.1,
+            ),
+          ),
+        ],
+      );
+    }
+
+    // For other events, use emoji icon
+    return Center(
+      child: Text(
+        event.icon,
+        style: const TextStyle(fontSize: 20),
       ),
     );
   }

@@ -86,13 +86,18 @@ class ProtocolEngineService {
     // Step 2: Calculate base date
     DateTime calculatedDate;
 
-    if (stepIndex == 0 || lastAdministeredDate == null) {
-      // First dose: Calculate from birthdate + ageInWeeks
+    // Determine if this is an age-based or interval-based step
+    // Age-based steps: Calculate from birthday + ageInWeeks
+    // Interval-based steps: Calculate from last dose + intervalDays
+    final isAgeBased = step.intervalDays == null;
+
+    if (isAgeBased || lastAdministeredDate == null) {
+      // Age-based dose: Calculate from birthdate + ageInWeeks
       calculatedDate = pet.birthday!.add(Duration(days: step.ageInWeeks * 7));
       logger.d(
           'First dose calculation for ${step.vaccineName}: ${pet.birthday} + ${step.ageInWeeks} weeks = $calculatedDate');
     } else {
-      // Booster dose: Calculate from last dose + intervalDays
+      // Interval-based dose: Calculate from last dose + intervalDays
       if (step.intervalDays == null) {
         logger.e(
             'Step $stepIndex has no intervalDays for booster calculation');
@@ -162,11 +167,16 @@ class ProtocolEngineService {
         lastAdministeredDate = alreadyAdministeredDates[i];
       }
 
+      // Determine if this is an age-based or interval-based step
+      // Age-based steps have ageInWeeks defined and should calculate from birthday
+      // Interval-based steps have intervalDays defined and should calculate from last dose
+      final isIntervalBased = step.intervalDays != null;
+
       final calculatedDate = await calculateNextVaccinationDate(
         pet: pet,
         protocol: protocol,
         stepIndex: i,
-        lastAdministeredDate: lastAdministeredDate,
+        lastAdministeredDate: isIntervalBased ? lastAdministeredDate : null,
       );
 
       if (calculatedDate == null) {

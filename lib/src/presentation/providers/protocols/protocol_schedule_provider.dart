@@ -40,7 +40,11 @@ Future<List<UpcomingCareEvent>> upcomingCare(
   if (pet == null) return [];
 
   final List<UpcomingCareEvent> events = [];
-  final endDate = DateTime.now().add(Duration(days: daysAhead));
+
+  // Define date range for upcoming events
+  final now = DateTime.now();
+  final startDate = DateTime(now.year, now.month, now.day); // Today at midnight
+  final endDate = startDate.add(Duration(days: daysAhead));
 
   // 1. Generate vaccination schedule (if protocol assigned)
   if (pet.vaccinationProtocolId != null) {
@@ -57,12 +61,13 @@ Future<List<UpcomingCareEvent>> upcomingCare(
         // Convert to VaccinationEvent and filter by date range
         events.addAll(
           schedule
-              .where((entry) => entry.scheduledDate.isBefore(endDate))
+              .where((entry) =>
+                  entry.scheduledDate.isAfter(startDate.subtract(const Duration(days: 1))) &&
+                  entry.scheduledDate.isBefore(endDate))
               .map((entry) => VaccinationEvent(entry)),
         );
       } catch (e) {
-        // Log error but continue with other events
-        print('Error generating vaccination schedule: $e');
+        // Silent failure - continue with other events
       }
     }
   }
@@ -81,12 +86,13 @@ Future<List<UpcomingCareEvent>> upcomingCare(
 
         events.addAll(
           schedule
-              .where((entry) => entry.scheduledDate.isBefore(endDate))
+              .where((entry) =>
+                  entry.scheduledDate.isAfter(startDate.subtract(const Duration(days: 1))) &&
+                  entry.scheduledDate.isBefore(endDate))
               .map((entry) => DewormingEvent(entry)),
         );
       } catch (e) {
-        // Log error but continue with other events
-        print('Error generating deworming schedule: $e');
+        // Silent failure - continue with other events
       }
     }
   }
@@ -97,11 +103,13 @@ Future<List<UpcomingCareEvent>> upcomingCare(
     final appointments = await appointmentRepo.getAppointmentsByPetId(petId);
     events.addAll(
       appointments
-          .where((appt) => appt.appointmentDate.isBefore(endDate))
+          .where((appt) =>
+              appt.appointmentDate.isAfter(startDate.subtract(const Duration(days: 1))) &&
+              appt.appointmentDate.isBefore(endDate))
           .map((appt) => AppointmentEvent(appt)),
     );
   } catch (e) {
-    print('Error loading appointments: $e');
+    // Silent failure - continue with other events
   }
 
   // 4. Add upcoming medications (active medications within date range)
@@ -109,19 +117,18 @@ Future<List<UpcomingCareEvent>> upcomingCare(
     final medicationRepo = ref.watch(medicationRepositoryProvider);
     final medications = await medicationRepo.getMedicationsByPetId(petId);
 
-    // Filter active medications that end within the date range
+    // Filter active medications that start within the date range
     events.addAll(
       medications
           .where((med) =>
             med.isActive &&
-            med.endDate != null &&
-            med.endDate!.isBefore(endDate) &&
-            med.endDate!.isAfter(DateTime.now())
+            med.startDate.isAfter(startDate.subtract(const Duration(days: 1))) &&
+            med.startDate.isBefore(endDate)
           )
           .map((med) => MedicationEvent(med)),
     );
   } catch (e) {
-    print('Error loading medications: $e');
+    // Silent failure - continue with other events
   }
 
   // 5. Sort by date and return

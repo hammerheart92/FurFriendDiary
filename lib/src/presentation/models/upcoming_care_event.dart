@@ -159,12 +159,9 @@ class MedicationEvent extends UpcomingCareEvent {
 
   @override
   DateTime get scheduledDate {
-    // For active medications, use startDate
-    // TODO: Calculate next dose based on frequency and administrationTimes
-    if (entry.isActive && entry.endDate != null) {
-      // If there's an end date, use it
-      return entry.endDate!;
-    }
+    // For medications, always use startDate as the primary scheduled date
+    // This represents when the medication starts, not when it ends
+    // For single-dose medications (like vaccinations), startDate is the dose date
     return entry.startDate;
   }
 

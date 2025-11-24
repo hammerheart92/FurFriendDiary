@@ -267,8 +267,13 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                                 if (!value) {
                                   _endDate = null;
                                 } else {
-                                  _endDate =
-                                      _startDate.add(const Duration(days: 30));
+                                  // If vaccination with protocol, use next dose date
+                                  if (_isVaccination && _nextDoseCalculatedDate != null) {
+                                    _endDate = _nextDoseCalculatedDate;
+                                  } else {
+                                    // Otherwise use default 30 days
+                                    _endDate = _startDate.add(const Duration(days: 30));
+                                  }
                                 }
                               });
                             },
@@ -607,7 +612,13 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
       setState(() {
         _startDate = picked;
         if (_hasEndDate && _endDate != null && _endDate!.isBefore(_startDate)) {
-          _endDate = _startDate.add(const Duration(days: 30));
+          // If vaccination with protocol, use next dose date
+          if (_isVaccination && _nextDoseCalculatedDate != null) {
+            _endDate = _nextDoseCalculatedDate;
+          } else {
+            // Otherwise use default 30 days
+            _endDate = _startDate.add(const Duration(days: 30));
+          }
         }
       });
     }
@@ -907,23 +918,11 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
     }
 
     // Watch protocols for current pet's species using provider (loads from JSON)
-    print('DEBUG SCREEN: Building protocol dropdown for pet species: "${currentPet.species}"');
-    print('DEBUG SCREEN: Species type: ${currentPet.species.runtimeType}');
-    print('DEBUG SCREEN: Species length: ${currentPet.species.length}');
-    print('DEBUG SCREEN: Species hashCode: ${currentPet.species.hashCode}');
-
     final protocolsAsync =
         ref.watch(vaccinationProtocolsBySpeciesProvider(currentPet.species));
 
     return protocolsAsync.when(
       data: (protocols) {
-        print('DEBUG SCREEN: Received ${protocols.length} protocols for species "${currentPet.species}"');
-        if (protocols.isNotEmpty) {
-          print('DEBUG SCREEN: Available protocols:');
-          for (final p in protocols) {
-            print('  - ${p.name} (species: "${p.species}")');
-          }
-        }
 
         if (protocols.isEmpty) {
           return Container(
@@ -1055,7 +1054,7 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
           ),
           const SizedBox(height: 4),
           Text(
-            l10n.calculatedFromProtocol(1),
+            l10n.calculatedFromProtocol(2),
             style: theme.textTheme.bodySmall?.copyWith(
               color: Colors.grey[600],
               fontStyle: FontStyle.italic,
@@ -1092,25 +1091,37 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
 
     try {
       // Calculate for first dose (stepIndex = 0)
-      final calculatedDate = await protocolEngine.calculateNextVaccinationDate(
+      final currentDoseDate = await protocolEngine.calculateNextVaccinationDate(
         pet: pet,
         protocol: _selectedProtocol!,
         stepIndex: 0,
         lastAdministeredDate: null,
       );
 
-      if (calculatedDate != null && _selectedProtocol!.steps.isNotEmpty) {
+      if (currentDoseDate != null && _selectedProtocol!.steps.isNotEmpty) {
         final firstStep = _selectedProtocol!.steps[0];
 
+        // Calculate NEXT dose date (step 1) for display
+        DateTime? nextDoseDate;
+        if (_selectedProtocol!.steps.length > 1) {
+          nextDoseDate = await protocolEngine.calculateNextVaccinationDate(
+            pet: pet,
+            protocol: _selectedProtocol!,
+            stepIndex: 1,
+            lastAdministeredDate: null,
+          );
+        }
+
         setState(() {
-          _nextDoseCalculatedDate = calculatedDate;
+          _nextDoseCalculatedDate = nextDoseDate;
 
-          // Pre-fill start date from calculation
-          _startDate = calculatedDate;
+          // Pre-fill start date from CURRENT dose calculation
+          _startDate = currentDoseDate;
 
-          // Pre-fill end date (same day for vaccination)
-          _endDate = calculatedDate;
-          _hasEndDate = true;
+          // For single-dose vaccinations, start and end are the same day
+          // The current dose being logged is on currentDoseDate, NOT nextDoseDate
+          _endDate = currentDoseDate;
+          _hasEndDate = false; // Single dose - no end date needed
 
           // Pre-fill medication name from protocol
           _medicationNameController.text = firstStep.vaccineName;

@@ -2816,6 +2816,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get vaccinationStatus => 'Vaccination Status';
 
   @override
+  String get dewormingStatus => 'Deworming Status';
+
+  @override
+  String get noDewormingProtocol => 'No deworming protocol selected';
+
+  @override
+  String get nextTreatment => 'Next treatment';
+
+  @override
+  String get selectDewormingProtocol => 'Select Protocol';
+
+  @override
+  String get dewormingProtocolDetails => 'Protocol details';
+
+  @override
+  String get viewDewormingSchedule => 'View deworming schedule';
+
+  @override
   String get vaccinationProtocol => 'Vaccination Protocol';
 
   @override

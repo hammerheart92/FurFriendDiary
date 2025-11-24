@@ -1721,6 +1721,30 @@
   "@vaccinationStatus": {
     "description": "Title for vaccination status card"
   },
+  "dewormingStatus": "Deworming Status",
+  "@dewormingStatus": {
+    "description": "Title for deworming status card"
+  },
+  "noDewormingProtocol": "No deworming protocol selected",
+  "@noDewormingProtocol": {
+    "description": "Message when pet has no deworming protocol assigned"
+  },
+  "nextTreatment": "Next treatment",
+  "@nextTreatment": {
+    "description": "Label for next deworming treatment date"
+  },
+  "selectDewormingProtocol": "Select Protocol",
+  "@selectDewormingProtocol": {
+    "description": "Button text to select a deworming protocol"
+  },
+  "dewormingProtocolDetails": "Protocol details",
+  "@dewormingProtocolDetails": {
+    "description": "Label for deworming protocol details section"
+  },
+  "viewDewormingSchedule": "View deworming schedule",
+  "@viewDewormingSchedule": {
+    "description": "Button text to view full deworming schedule"
+  },
   "vaccinationProtocol": "Vaccination Protocol",
   "isThisVaccination": "Is this a vaccination?",
   "regularMedication": "Regular medication tracking",

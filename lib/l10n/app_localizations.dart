@@ -5366,6 +5366,42 @@ abstract class AppLocalizations {
   /// **'Vaccination Status'**
   String get vaccinationStatus;
 
+  /// Title for deworming status card
+  ///
+  /// In en, this message translates to:
+  /// **'Deworming Status'**
+  String get dewormingStatus;
+
+  /// Message when pet has no deworming protocol assigned
+  ///
+  /// In en, this message translates to:
+  /// **'No deworming protocol selected'**
+  String get noDewormingProtocol;
+
+  /// Label for next deworming treatment date
+  ///
+  /// In en, this message translates to:
+  /// **'Next treatment'**
+  String get nextTreatment;
+
+  /// Button text to select a deworming protocol
+  ///
+  /// In en, this message translates to:
+  /// **'Select Protocol'**
+  String get selectDewormingProtocol;
+
+  /// Label for deworming protocol details section
+  ///
+  /// In en, this message translates to:
+  /// **'Protocol details'**
+  String get dewormingProtocolDetails;
+
+  /// Button text to view full deworming schedule
+  ///
+  /// In en, this message translates to:
+  /// **'View deworming schedule'**
+  String get viewDewormingSchedule;
+
   /// No description provided for @vaccinationProtocol.
   ///
   /// In en, this message translates to:

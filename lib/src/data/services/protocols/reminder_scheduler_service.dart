@@ -652,7 +652,7 @@ class ReminderSchedulerService {
         break;
 
       case 'deworming':
-        title = '🐛 $eventTitle Due Soon';
+        title = '$eventTitle Due Soon';
         if (daysUntilEvent == 0) {
           body = 'Scheduled for today!';
         } else if (daysUntilEvent == 1) {

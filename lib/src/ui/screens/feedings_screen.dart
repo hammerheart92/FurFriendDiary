@@ -428,12 +428,15 @@ class _FeedingsScreenState extends ConsumerState<FeedingsScreen> {
                                 switch (event) {
                                   case MedicationEvent(:final entry):
                                     // Navigate to medication detail
-                                    context.go('/meds/detail/${entry.id}');
+                                    context.push('/meds/detail/${entry.id}');
+                                    break;
+                                  case AppointmentEvent():
+                                    // Navigate to Appointments tab
+                                    context.go('/appointments');
                                     break;
                                   case VaccinationEvent():
                                   case DewormingEvent():
-                                  case AppointmentEvent():
-                                    // Show "Coming soon" for others
+                                    // Show "Coming soon" for vaccination and deworming (deferred features)
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(l10n.comingSoon),

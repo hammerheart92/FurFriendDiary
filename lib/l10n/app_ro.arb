@@ -1384,6 +1384,30 @@
   "@vaccinationStatus": {
     "description": "Titlu pentru cardul de stare vaccinare"
   },
+  "dewormingStatus": "Stare deparazitare",
+  "@dewormingStatus": {
+    "description": "Titlu pentru cardul de stare deparazitare"
+  },
+  "noDewormingProtocol": "Niciun protocol de deparazitare selectat",
+  "@noDewormingProtocol": {
+    "description": "Mesaj când animalul nu are un protocol de deparazitare alocat"
+  },
+  "nextTreatment": "Următorul tratament",
+  "@nextTreatment": {
+    "description": "Etichetă pentru data următorului tratament de deparazitare"
+  },
+  "selectDewormingProtocol": "Selectează protocol",
+  "@selectDewormingProtocol": {
+    "description": "Text buton pentru selectarea unui protocol de deparazitare"
+  },
+  "dewormingProtocolDetails": "Detalii protocol",
+  "@dewormingProtocolDetails": {
+    "description": "Etichetă pentru secțiunea de detalii protocol deparazitare"
+  },
+  "viewDewormingSchedule": "Vizualizează program deparazitare",
+  "@viewDewormingSchedule": {
+    "description": "Text buton pentru vizualizarea programului complet de deparazitare"
+  },
   "vaccinationProtocol": "Protocol de Vaccinare",
   "isThisVaccination": "Este o vaccinare?",
   "regularMedication": "Urmărire medicație obișnuită",

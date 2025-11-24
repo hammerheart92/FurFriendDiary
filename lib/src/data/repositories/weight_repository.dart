@@ -18,15 +18,11 @@ class WeightRepository {
     return Stream<List<WeightEntry>>.multi((controller) {
       // Emit initial state
       final initialEntries = getWeightEntriesForPet(petId);
-      print(
-          '[WEIGHT_REPO] getWeightEntriesStream - Initial emit: ${initialEntries.length} entries for pet $petId');
       controller.add(initialEntries);
 
       // Listen to changes
       final subscription = _box.watch().listen((_) {
         final entries = getWeightEntriesForPet(petId);
-        print(
-            '[WEIGHT_REPO] getWeightEntriesStream - Change detected: ${entries.length} entries');
         controller.add(entries);
       });
 

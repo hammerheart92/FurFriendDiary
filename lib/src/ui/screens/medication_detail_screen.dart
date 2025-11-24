@@ -111,6 +111,11 @@ class _MedicationDetailScreenState
             backgroundColor: theme.colorScheme.primary,
             foregroundColor: theme.colorScheme.onPrimary,
             elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => context.pop(),
+              tooltip: 'Back',
+            ),
             actions: [
               if (_isEditing)
                 TextButton(
@@ -189,7 +194,13 @@ class _MedicationDetailScreenState
       ),
       error: (error, stack) => Scaffold(
         appBar: AppBar(
-            title: Text(AppLocalizations.of(context)!.errorLoadingMedications)),
+          title: Text(AppLocalizations.of(context).errorLoadingMedications),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => context.pop(),
+            tooltip: 'Back',
+          ),
+        ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
