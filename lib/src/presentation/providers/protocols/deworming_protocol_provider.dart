@@ -29,6 +29,14 @@ class DewormingProtocols extends _$DewormingProtocols {
     // Load predefined protocols from JSON assets
     final predefinedProtocols = await protocolData.loadDewormingProtocols();
 
+    // CRITICAL FIX: Save predefined protocols to Hive if box is empty
+    final existingPredefined = await repository.getPredefined();
+    if (existingPredefined.isEmpty && predefinedProtocols.isNotEmpty) {
+      for (final protocol in predefinedProtocols) {
+        await repository.save(protocol);
+      }
+    }
+
     // Get custom protocols from Hive
     final customProtocols = await repository.getCustom();
 
@@ -94,8 +102,16 @@ Future<List<DewormingProtocol>> dewormingProtocolsBySpecies(
   DewormingProtocolsBySpeciesRef ref,
   String species,
 ) async {
-  final repository = ref.watch(dewormingProtocolRepositoryProvider);
-  return await repository.getBySpecies(species);
+  // CRITICAL FIX: Watch main provider to ensure JSON is loaded and saved to Hive
+  final allProtocols = await ref.watch(dewormingProtocolsProvider.future);
+
+  // Filter by species (case-insensitive)
+  final speciesLower = species.toLowerCase();
+  final result = allProtocols
+      .where((p) => p.species.toLowerCase() == speciesLower)
+      .toList();
+
+  return result;
 }
 
 /// Get only predefined deworming protocols

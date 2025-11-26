@@ -186,10 +186,10 @@ class MedicationEvent extends UpcomingCareEvent {
   @override
   String get eventType => 'medication';
 
-  /// Whether this medication period has ended
+  /// Medications are never "overdue" - they're either active, completed, or upcoming
+  /// This prevents the confusing "Overdue by X days" display for ongoing treatments
   bool get isOverdue {
-    if (entry.endDate == null) return false;
-    return entry.endDate!.isBefore(DateTime.now());
+    return false;
   }
 
   /// Whether this medication ends soon (within 3 days)

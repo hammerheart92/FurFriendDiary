@@ -506,6 +506,17 @@ class AppLocalizationsRo extends AppLocalizations {
   }
 
   @override
+  String get startsTomorrow => 'Începe Mâine';
+
+  @override
+  String startsInDays(int days) {
+    return 'Începe în $days zile';
+  }
+
+  @override
+  String get treatmentCompleted => 'Finalizat';
+
+  @override
   String get yesterday => 'Ieri';
 
   @override
@@ -2876,6 +2887,30 @@ class AppLocalizationsRo extends AppLocalizations {
   String get viewDewormingSchedule => 'Vizualizează program deparazitare';
 
   @override
+  String get chooseDewormingProtocol =>
+      'Alege un protocol potrivit pentru prevenirea paraziților';
+
+  @override
+  String dewormingProtocolApplied(String petName) {
+    return 'Protocol de deparazitare aplicat pentru $petName';
+  }
+
+  @override
+  String get dewormingProtocolApplyFailed =>
+      'Nu s-a putut aplica protocolul de deparazitare';
+
+  @override
+  String treatmentsCount(int count) {
+    return '$count tratamente';
+  }
+
+  @override
+  String get internalDeworming => 'Intern';
+
+  @override
+  String get externalDeworming => 'Extern';
+
+  @override
   String get vaccinationProtocol => 'Protocol de Vaccinare';
 
   @override
@@ -2923,4 +2958,21 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get noTasksInPlan => 'Nicio sarcină în acest plan de tratament';
+
+  @override
+  String get loadingDewormingProtocols =>
+      'Se încarcă protocoalele de deparazitare...';
+
+  @override
+  String get failedToLoadDewormingProtocols =>
+      'Încărcarea protocoalelor de deparazitare a eșuat';
+
+  @override
+  String get noDewormingProtocolsAvailable =>
+      'Nu există protocoale de deparazitare disponibile pentru această specie';
+
+  @override
+  String noDewormingProtocolsForSpecies(String species) {
+    return 'Nu au fost găsite protocoale de deparazitare pentru $species. Contactează medicul veterinar pentru îndrumări.';
+  }
 }

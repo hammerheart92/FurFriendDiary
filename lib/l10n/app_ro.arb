@@ -182,6 +182,24 @@
       }
     }
   },
+  "startsTomorrow": "Începe Mâine",
+  "@startsTomorrow": {
+    "description": "Starea pentru medicamentele care încep mâine"
+  },
+  "startsInDays": "Începe în {days} zile",
+  "@startsInDays": {
+    "description": "Starea pentru medicamentele care încep în viitor",
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "treatmentCompleted": "Finalizat",
+  "@treatmentCompleted": {
+    "description": "Starea pentru medicamentele al căror tratament s-a încheiat"
+  },
   "yesterday": "Ieri",
   "thisWeek": "Săptămâna Aceasta",
   "addWalk": "Adaugă plimbare",
@@ -1414,6 +1432,42 @@
   "@viewDewormingSchedule": {
     "description": "Text buton pentru vizualizarea programului complet de deparazitare"
   },
+  "chooseDewormingProtocol": "Alege un protocol potrivit pentru prevenirea paraziților",
+  "@chooseDewormingProtocol": {
+    "description": "Text ajutător pentru ecranul de selectare protocol deparazitare"
+  },
+  "dewormingProtocolApplied": "Protocol de deparazitare aplicat pentru {petName}",
+  "@dewormingProtocolApplied": {
+    "description": "Mesaj de succes după aplicarea protocolului de deparazitare",
+    "placeholders": {
+      "petName": {
+        "type": "String",
+        "example": "Max"
+      }
+    }
+  },
+  "dewormingProtocolApplyFailed": "Nu s-a putut aplica protocolul de deparazitare",
+  "@dewormingProtocolApplyFailed": {
+    "description": "Mesaj de eroare când aplicarea protocolului de deparazitare eșuează"
+  },
+  "treatmentsCount": "{count} tratamente",
+  "@treatmentsCount": {
+    "description": "Numărul de tratamente din protocolul de deparazitare",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "12"
+      }
+    }
+  },
+  "internalDeworming": "Intern",
+  "@internalDeworming": {
+    "description": "Etichetă pentru deparazitare internă (paraziți intestinali)"
+  },
+  "externalDeworming": "Extern",
+  "@externalDeworming": {
+    "description": "Etichetă pentru deparazitare externă (purici/căpușe)"
+  },
   "vaccinationProtocol": "Protocol de Vaccinare",
   "isThisVaccination": "Este o vaccinare?",
   "regularMedication": "Urmărire medicație obișnuită",
@@ -1460,5 +1514,9 @@
   "medicationReminders": "Memento-uri Medicamente",
   "taskCompleted": "Sarcină finalizată",
   "dueDate": "Data scadentă",
-  "noTasksInPlan": "Nicio sarcină în acest plan de tratament"
+  "noTasksInPlan": "Nicio sarcină în acest plan de tratament",
+  "loadingDewormingProtocols": "Se încarcă protocoalele de deparazitare...",
+  "failedToLoadDewormingProtocols": "Încărcarea protocoalelor de deparazitare a eșuat",
+  "noDewormingProtocolsAvailable": "Nu există protocoale de deparazitare disponibile pentru această specie",
+  "noDewormingProtocolsForSpecies": "Nu au fost găsite protocoale de deparazitare pentru {species}. Contactează medicul veterinar pentru îndrumări."
 }

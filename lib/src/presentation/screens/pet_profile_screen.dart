@@ -370,7 +370,7 @@ class PetProfileScreen extends ConsumerWidget {
 
     return Card(
       child: InkWell(
-        onTap: () => _showDewormingComingSoonDialog(context, l10n),
+        onTap: () => context.go('/calendar'),
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -400,7 +400,7 @@ class PetProfileScreen extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              _buildNoDewormingProtocolState(context, l10n, theme),
+              _buildNoDewormingProtocolState(context, l10n, theme, profile),
             ],
           ),
         ),
@@ -412,6 +412,7 @@ class PetProfileScreen extends ConsumerWidget {
     BuildContext context,
     AppLocalizations l10n,
     ThemeData theme,
+    PetProfile profile,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -424,46 +425,11 @@ class PetProfileScreen extends ConsumerWidget {
         ),
         const SizedBox(height: 12),
         FilledButton.tonalIcon(
-          onPressed: () => _showSelectDewormingProtocolDialog(context),
+          onPressed: () => context.push('/deworming/select/${profile.id}', extra: profile),
           icon: const Icon(Icons.add, size: 18),
           label: Text(l10n.selectDewormingProtocol),
         ),
       ],
-    );
-  }
-
-  void _showSelectDewormingProtocolDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context).selectDewormingProtocol),
-        content: const Text(
-          'Feature coming soon. This will allow you to select a deworming protocol like ESCCAP guidelines.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showDewormingComingSoonDialog(
-      BuildContext context, AppLocalizations l10n) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.dewormingStatus),
-        content: const Text('Deworming schedule view coming soon.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
     );
   }
 

@@ -238,6 +238,24 @@
       }
     }
   },
+  "startsTomorrow": "Starts Tomorrow",
+  "@startsTomorrow": {
+    "description": "Status for medications starting tomorrow"
+  },
+  "startsInDays": "Starts in {days} days",
+  "@startsInDays": {
+    "description": "Status for medications starting in future",
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "treatmentCompleted": "Completed",
+  "@treatmentCompleted": {
+    "description": "Status for medications where treatment period has ended"
+  },
   "yesterday": "Yesterday",
   "thisWeek": "This Week",
   "addWalk": "Add walk",
@@ -1758,6 +1776,42 @@
   "@viewDewormingSchedule": {
     "description": "Button text to view full deworming schedule"
   },
+  "chooseDewormingProtocol": "Choose a protocol that matches your pet's parasite prevention needs",
+  "@chooseDewormingProtocol": {
+    "description": "Helper text for deworming protocol selection screen"
+  },
+  "dewormingProtocolApplied": "Deworming protocol applied to {petName}",
+  "@dewormingProtocolApplied": {
+    "description": "Success message after applying deworming protocol",
+    "placeholders": {
+      "petName": {
+        "type": "String",
+        "example": "Max"
+      }
+    }
+  },
+  "dewormingProtocolApplyFailed": "Failed to apply deworming protocol",
+  "@dewormingProtocolApplyFailed": {
+    "description": "Error message when deworming protocol application fails"
+  },
+  "treatmentsCount": "{count} treatments",
+  "@treatmentsCount": {
+    "description": "Number of treatments in deworming protocol",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "12"
+      }
+    }
+  },
+  "internalDeworming": "Internal",
+  "@internalDeworming": {
+    "description": "Label for internal deworming (intestinal parasites)"
+  },
+  "externalDeworming": "External",
+  "@externalDeworming": {
+    "description": "Label for external deworming (fleas/ticks)"
+  },
   "vaccinationProtocol": "Vaccination Protocol",
   "isThisVaccination": "Is this a vaccination?",
   "regularMedication": "Regular medication tracking",
@@ -1798,5 +1852,26 @@
   "noTasksInPlan": "No tasks in this treatment plan",
   "@noTasksInPlan": {
     "description": "Empty state message when treatment plan has no tasks"
+  },
+  "loadingDewormingProtocols": "Loading deworming protocols...",
+  "@loadingDewormingProtocols": {
+    "description": "Loading message for deworming protocol selection screen"
+  },
+  "failedToLoadDewormingProtocols": "Failed to load deworming protocols",
+  "@failedToLoadDewormingProtocols": {
+    "description": "Error message when deworming protocols fail to load"
+  },
+  "noDewormingProtocolsAvailable": "No deworming protocols available for this pet's species",
+  "@noDewormingProtocolsAvailable": {
+    "description": "Empty state message when no deworming protocols exist for species"
+  },
+  "noDewormingProtocolsForSpecies": "No deworming protocols found for {species}. Contact your veterinarian for guidance.",
+  "@noDewormingProtocolsForSpecies": {
+    "description": "Empty state description when no deworming protocols exist for specific species",
+    "placeholders": {
+      "species": {
+        "type": "String"
+      }
+    }
   }
 }

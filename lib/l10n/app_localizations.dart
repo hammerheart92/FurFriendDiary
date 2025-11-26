@@ -1028,6 +1028,24 @@ abstract class AppLocalizations {
   /// **'In {days} days'**
   String inDays(int days);
 
+  /// Status for medications starting tomorrow
+  ///
+  /// In en, this message translates to:
+  /// **'Starts Tomorrow'**
+  String get startsTomorrow;
+
+  /// Status for medications starting in future
+  ///
+  /// In en, this message translates to:
+  /// **'Starts in {days} days'**
+  String startsInDays(int days);
+
+  /// Status for medications where treatment period has ended
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get treatmentCompleted;
+
   /// No description provided for @yesterday.
   ///
   /// In en, this message translates to:
@@ -5420,6 +5438,42 @@ abstract class AppLocalizations {
   /// **'View deworming schedule'**
   String get viewDewormingSchedule;
 
+  /// Helper text for deworming protocol selection screen
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a protocol that matches your pet\'s parasite prevention needs'**
+  String get chooseDewormingProtocol;
+
+  /// Success message after applying deworming protocol
+  ///
+  /// In en, this message translates to:
+  /// **'Deworming protocol applied to {petName}'**
+  String dewormingProtocolApplied(String petName);
+
+  /// Error message when deworming protocol application fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to apply deworming protocol'**
+  String get dewormingProtocolApplyFailed;
+
+  /// Number of treatments in deworming protocol
+  ///
+  /// In en, this message translates to:
+  /// **'{count} treatments'**
+  String treatmentsCount(int count);
+
+  /// Label for internal deworming (intestinal parasites)
+  ///
+  /// In en, this message translates to:
+  /// **'Internal'**
+  String get internalDeworming;
+
+  /// Label for external deworming (fleas/ticks)
+  ///
+  /// In en, this message translates to:
+  /// **'External'**
+  String get externalDeworming;
+
   /// No description provided for @vaccinationProtocol.
   ///
   /// In en, this message translates to:
@@ -5509,6 +5563,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No tasks in this treatment plan'**
   String get noTasksInPlan;
+
+  /// Loading message for deworming protocol selection screen
+  ///
+  /// In en, this message translates to:
+  /// **'Loading deworming protocols...'**
+  String get loadingDewormingProtocols;
+
+  /// Error message when deworming protocols fail to load
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load deworming protocols'**
+  String get failedToLoadDewormingProtocols;
+
+  /// Empty state message when no deworming protocols exist for species
+  ///
+  /// In en, this message translates to:
+  /// **'No deworming protocols available for this pet\'s species'**
+  String get noDewormingProtocolsAvailable;
+
+  /// Empty state description when no deworming protocols exist for specific species
+  ///
+  /// In en, this message translates to:
+  /// **'No deworming protocols found for {species}. Contact your veterinarian for guidance.'**
+  String noDewormingProtocolsForSpecies(String species);
 }
 
 class _AppLocalizationsDelegate

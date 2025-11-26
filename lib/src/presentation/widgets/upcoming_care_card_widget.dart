@@ -223,8 +223,15 @@ class UpcomingCareCardWidget extends StatelessWidget {
   }
 
   /// Get relative time string (today, tomorrow, overdue, in X days)
+  /// For medications, shows treatment status instead of relative date
   String _getRelativeTime(BuildContext context, DateTime scheduledDate) {
     final l10n = AppLocalizations.of(context);
+
+    // Special handling for medications
+    if (event is MedicationEvent) {
+      return _getMedicationStatus(context, event as MedicationEvent);
+    }
+
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final tomorrow = today.add(const Duration(days: 1));
@@ -251,6 +258,49 @@ class UpcomingCareCardWidget extends StatelessWidget {
       // In X days
       return l10n.inDays(difference);
     }
+  }
+
+  /// Get medication treatment status
+  /// Returns appropriate status text based on treatment period
+  String _getMedicationStatus(BuildContext context, MedicationEvent event) {
+    final l10n = AppLocalizations.of(context);
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final startDay = DateTime(
+      event.entry.startDate.year,
+      event.entry.startDate.month,
+      event.entry.startDate.day,
+    );
+
+    // Future medication - hasn't started yet
+    if (startDay.isAfter(today)) {
+      final daysUntil = startDay.difference(today).inDays;
+      if (daysUntil == 1) {
+        return l10n.startsTomorrow;
+      } else {
+        return l10n.startsInDays(daysUntil);
+      }
+    }
+
+    // Check if medication has ended
+    if (event.entry.endDate != null) {
+      final endDay = DateTime(
+        event.entry.endDate!.year,
+        event.entry.endDate!.month,
+        event.entry.endDate!.day,
+      );
+
+      if (endDay.isBefore(today)) {
+        // Treatment ended in the past
+        return l10n.treatmentCompleted;
+      } else {
+        // Active treatment (started and not ended yet)
+        return l10n.dueToday;
+      }
+    }
+
+    // Ongoing medication (no end date, has started)
+    return l10n.dueToday;
   }
 
   /// Get color for relative time badge

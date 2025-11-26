@@ -50,7 +50,7 @@ class DewormingProtocolRepositoryImpl implements DewormingProtocolRepository {
   Future<List<DewormingProtocol>> getBySpecies(String species) async {
     try {
       final protocols =
-          box.values.where((protocol) => protocol.species == species).toList();
+          box.values.where((protocol) => protocol.species.toLowerCase() == species.toLowerCase()).toList();
       // Sort by name alphabetically
       protocols.sort((a, b) => a.name.compareTo(b.name));
       logger.i(

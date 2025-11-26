@@ -23,7 +23,10 @@ import '../screens/add_vet_screen.dart';
 import '../screens/vet_detail_screen.dart';
 import '../screens/reports_dashboard_screen.dart';
 import '../screens/protocols/calendar_view_screen.dart';
+import '../screens/protocols/deworming_protocol_selection_screen.dart';
+import '../screens/protocols/deworming_schedule_screen.dart';
 import '../providers/pet_profile_provider.dart';
+import '../../domain/models/pet_profile.dart';
 
 final logger = Logger();
 
@@ -189,6 +192,21 @@ GoRouter createRouter() => GoRouter(
           builder: (context, state) {
             final vetId = state.pathParameters['vetId']!;
             return VetDetailScreen(vetId: vetId);
+          },
+        ),
+        // Deworming protocol routes
+        GoRoute(
+          path: '/deworming/select/:petId',
+          builder: (context, state) {
+            final pet = state.extra as PetProfile;
+            return DewormingProtocolSelectionScreen(pet: pet);
+          },
+        ),
+        GoRoute(
+          path: '/deworming/schedule/:petId',
+          builder: (context, state) {
+            final pet = state.extra as PetProfile;
+            return DewormingScheduleScreen(pet: pet);
           },
         ),
       ],

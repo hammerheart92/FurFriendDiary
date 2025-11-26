@@ -497,6 +497,17 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get startsTomorrow => 'Starts Tomorrow';
+
+  @override
+  String startsInDays(int days) {
+    return 'Starts in $days days';
+  }
+
+  @override
+  String get treatmentCompleted => 'Completed';
+
+  @override
   String get yesterday => 'Yesterday';
 
   @override
@@ -2845,6 +2856,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get viewDewormingSchedule => 'View deworming schedule';
 
   @override
+  String get chooseDewormingProtocol =>
+      'Choose a protocol that matches your pet\'s parasite prevention needs';
+
+  @override
+  String dewormingProtocolApplied(String petName) {
+    return 'Deworming protocol applied to $petName';
+  }
+
+  @override
+  String get dewormingProtocolApplyFailed =>
+      'Failed to apply deworming protocol';
+
+  @override
+  String treatmentsCount(int count) {
+    return '$count treatments';
+  }
+
+  @override
+  String get internalDeworming => 'Internal';
+
+  @override
+  String get externalDeworming => 'External';
+
+  @override
   String get vaccinationProtocol => 'Vaccination Protocol';
 
   @override
@@ -2892,4 +2927,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noTasksInPlan => 'No tasks in this treatment plan';
+
+  @override
+  String get loadingDewormingProtocols => 'Loading deworming protocols...';
+
+  @override
+  String get failedToLoadDewormingProtocols =>
+      'Failed to load deworming protocols';
+
+  @override
+  String get noDewormingProtocolsAvailable =>
+      'No deworming protocols available for this pet\'s species';
+
+  @override
+  String noDewormingProtocolsForSpecies(String species) {
+    return 'No deworming protocols found for $species. Contact your veterinarian for guidance.';
+  }
 }

@@ -463,10 +463,11 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
         break;
 
       case DewormingEvent():
-        // Show "Coming soon" for deworming (deferred feature)
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.dewormingDetailsComingSoon)),
-        );
+        // Navigate to deworming schedule screen
+        final pet = ref.read(currentPetProfileProvider);
+        if (pet != null) {
+          context.push('/deworming/schedule/${pet.id}', extra: pet);
+        }
         break;
     }
   }
@@ -687,8 +688,7 @@ class _EventListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final eventColor = _getEventTypeColor(event.eventType);
-    final now = DateTime.now();
-    final isOverdue = event.scheduledDate.isBefore(now);
+    final statusInfo = _getEventStatus(event);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
@@ -748,20 +748,20 @@ class _EventListTile extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        if (isOverdue)
+                        if (statusInfo.badgeText != null)
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 6,
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.red.shade100,
+                              color: statusInfo.badgeColor,
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
-                              l10n.overdue.toUpperCase(),
+                              statusInfo.badgeText!.toUpperCase(),
                               style: theme.textTheme.labelSmall!.copyWith(
-                                color: Colors.red.shade900,
+                                color: statusInfo.badgeTextColor,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -851,4 +851,90 @@ class _EventListTile extends StatelessWidget {
         return theme.colorScheme.secondary;
     }
   }
+
+  /// Get event status info (badge text, colors)
+  /// Returns appropriate status for different event types
+  _EventStatusInfo _getEventStatus(UpcomingCareEvent event) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    // Special handling for medications
+    if (event is MedicationEvent) {
+      final startDay = DateTime(
+        event.entry.startDate.year,
+        event.entry.startDate.month,
+        event.entry.startDate.day,
+      );
+
+      // Future medication - hasn't started yet
+      if (startDay.isAfter(today)) {
+        return _EventStatusInfo(
+          badgeText: null, // No badge for future medications
+          badgeColor: Colors.transparent,
+          badgeTextColor: Colors.transparent,
+        );
+      }
+
+      // Check if medication has ended
+      if (event.entry.endDate != null) {
+        final endDay = DateTime(
+          event.entry.endDate!.year,
+          event.entry.endDate!.month,
+          event.entry.endDate!.day,
+        );
+
+        if (endDay.isBefore(today)) {
+          // Treatment ended - show completed badge
+          return _EventStatusInfo(
+            badgeText: l10n.treatmentCompleted,
+            badgeColor: Colors.green.shade100,
+            badgeTextColor: Colors.green.shade900,
+          );
+        }
+      }
+
+      // Active or ongoing medication - no badge (just show in list)
+      return _EventStatusInfo(
+        badgeText: null,
+        badgeColor: Colors.transparent,
+        badgeTextColor: Colors.transparent,
+      );
+    }
+
+    // For other event types (vaccination, deworming, appointment)
+    // Show overdue badge if scheduled date has passed
+    final scheduleDay = DateTime(
+      event.scheduledDate.year,
+      event.scheduledDate.month,
+      event.scheduledDate.day,
+    );
+
+    if (scheduleDay.isBefore(today)) {
+      return _EventStatusInfo(
+        badgeText: l10n.overdue,
+        badgeColor: Colors.red.shade100,
+        badgeTextColor: Colors.red.shade900,
+      );
+    }
+
+    // No badge for future events
+    return _EventStatusInfo(
+      badgeText: null,
+      badgeColor: Colors.transparent,
+      badgeTextColor: Colors.transparent,
+    );
+  }
+}
+
+/// Event status information data class
+class _EventStatusInfo {
+  final String? badgeText;
+  final Color badgeColor;
+  final Color badgeTextColor;
+
+  const _EventStatusInfo({
+    required this.badgeText,
+    required this.badgeColor,
+    required this.badgeTextColor,
+  });
 }
