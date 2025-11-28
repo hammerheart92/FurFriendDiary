@@ -277,15 +277,25 @@ class ProtocolEngineService {
         final startDate =
             pet.birthday!.add(Duration(days: schedule.ageInWeeks * 7));
 
-        // Generate recurring treatments
+        // Get max doses limit if specified
+        final maxDoses = schedule.recurring?.numberOfDoses;
+        int dosesGenerated = 0;
+
+        // Generate treatments starting from scheduled age
         DateTime currentDate = startDate;
         while (currentDate.isBefore(endDate)) {
+          // Stop if we've reached numberOfDoses limit
+          if (maxDoses != null && dosesGenerated >= maxDoses) {
+            break;
+          }
+
           scheduleEntries.add(DewormingScheduleEntry(
             dewormingType: schedule.dewormingType,
             scheduledDate: currentDate,
             productName: schedule.productName,
             notes: schedule.notes,
           ));
+          dosesGenerated++;
 
           // Calculate next treatment
           if (schedule.recurring != null) {
@@ -298,8 +308,21 @@ class ProtocolEngineService {
         }
       } else {
         // Pet is already within age range, calculate from now
-        // This is complex - need to find the "next" treatment in the sequence
+        // Handle one-time treatments (include even if past - for schedule display)
+        if (schedule.recurring == null && schedule.intervalDays == null) {
+          // One-time treatment - add it so it shows in schedule (as past/overdue)
+          final treatmentDate =
+              pet.birthday!.add(Duration(days: schedule.ageInWeeks * 7));
+          scheduleEntries.add(DewormingScheduleEntry(
+            dewormingType: schedule.dewormingType,
+            scheduledDate: treatmentDate,
+            productName: schedule.productName,
+            notes: schedule.notes,
+          ));
+          continue;
+        }
 
+        // Recurring treatment - calculate next upcoming treatment
         // Calculate how many treatments have passed since startAge
         final daysSinceStart = now.difference(
           pet.birthday!.add(Duration(days: schedule.ageInWeeks * 7)),
@@ -308,10 +331,8 @@ class ProtocolEngineService {
         int intervalDays;
         if (schedule.recurring != null) {
           intervalDays = schedule.recurring!.intervalMonths * 30;
-        } else if (schedule.intervalDays != null) {
-          intervalDays = schedule.intervalDays!;
         } else {
-          continue; // One-time treatment already passed
+          intervalDays = schedule.intervalDays!;
         }
 
         final treatmentsPassed = daysSinceStart ~/ intervalDays;
@@ -319,15 +340,25 @@ class ProtocolEngineService {
             .add(Duration(days: schedule.ageInWeeks * 7))
             .add(Duration(days: (treatmentsPassed + 1) * intervalDays));
 
+        // Get max doses limit if specified
+        final maxDoses = schedule.recurring?.numberOfDoses;
+        int dosesGenerated = treatmentsPassed + 1;
+
         // Generate from next treatment onwards
         DateTime currentDate = nextTreatmentDate;
         while (currentDate.isBefore(endDate)) {
+          // Stop if we've reached numberOfDoses limit
+          if (maxDoses != null && dosesGenerated >= maxDoses) {
+            break;
+          }
+
           scheduleEntries.add(DewormingScheduleEntry(
             dewormingType: schedule.dewormingType,
             scheduledDate: currentDate,
             productName: schedule.productName,
             notes: schedule.notes,
           ));
+          dosesGenerated++;
 
           currentDate = currentDate.add(Duration(days: intervalDays));
         }

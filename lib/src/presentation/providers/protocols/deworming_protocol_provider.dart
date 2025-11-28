@@ -29,12 +29,19 @@ class DewormingProtocols extends _$DewormingProtocols {
     // Load predefined protocols from JSON assets
     final predefinedProtocols = await protocolData.loadDewormingProtocols();
 
-    // CRITICAL FIX: Save predefined protocols to Hive if box is empty
-    final existingPredefined = await repository.getPredefined();
-    if (existingPredefined.isEmpty && predefinedProtocols.isNotEmpty) {
-      for (final protocol in predefinedProtocols) {
-        await repository.save(protocol);
+    // VERSION CHECK: Update Hive protocols when JSON has newer updatedAt
+    // This ensures protocol updates from app releases are applied to existing users
+    for (final jsonProtocol in predefinedProtocols) {
+      final hiveProtocol = await repository.getById(jsonProtocol.id);
+
+      if (hiveProtocol == null) {
+        // Protocol doesn't exist in Hive - save it
+        await repository.save(jsonProtocol);
+      } else if (_isJsonNewer(jsonProtocol.updatedAt, hiveProtocol.updatedAt)) {
+        // JSON protocol is newer - update Hive
+        await repository.save(jsonProtocol);
       }
+      // Otherwise: Hive is current, no action needed
     }
 
     // Get custom protocols from Hive
@@ -82,6 +89,21 @@ class DewormingProtocols extends _$DewormingProtocols {
     final protocolData = ref.read(protocolDataProviderProvider);
     await protocolData.reloadProtocols();
     ref.invalidateSelf();
+  }
+
+  /// Compare timestamps to determine if JSON protocol is newer than Hive version
+  ///
+  /// Returns true if JSON should replace Hive data.
+  /// Conservative approach: if JSON has no timestamp, don't update.
+  bool _isJsonNewer(DateTime? jsonUpdatedAt, DateTime? hiveUpdatedAt) {
+    // If JSON has no timestamp, don't update (can't verify it's newer)
+    if (jsonUpdatedAt == null) return false;
+
+    // If Hive has no timestamp but JSON does, JSON is newer
+    if (hiveUpdatedAt == null) return true;
+
+    // Compare timestamps
+    return jsonUpdatedAt.isAfter(hiveUpdatedAt);
   }
 }
 
