@@ -1649,6 +1649,60 @@ void main() {
           );
         }
       });
+
+      test('should generate events for young pet with adult protocol (ageInWeeks: 52)', () async {
+        // Arrange: 8-month-old dog (34 weeks), adult protocol starts at 52 weeks
+        // This tests the scenario where a pet is too young for an adult protocol
+        // but events should still be generated for when the pet reaches the protocol age
+        final birthday = DateTime(2025, 3, 28); // ~8 months old from Nov 28, 2025
+        final pet = PetProfile(
+          id: 'test-pet',
+          name: 'Young Dog',
+          species: 'dog',
+          birthday: birthday,
+        );
+
+        final protocol = DewormingProtocol(
+          id: 'canine-intensive-deworming-ro-eu-v1',
+          name: 'Canine Intensive Deworming Protocol (Romania/EU)',
+          species: 'dog',
+          description: 'Annual deworming starting at 1 year',
+          schedules: [
+            DewormingSchedule(
+              dewormingType: 'internal',
+              ageInWeeks: 52, // 1 year old
+              recurring: RecurringSchedule(
+                intervalMonths: 12,
+                indefinitely: false,
+                numberOfDoses: 10,
+              ),
+              productName: null,
+            ),
+          ],
+          isCustom: false,
+        );
+
+        // Act
+        final result = await service.generateDewormingSchedule(
+          pet: pet,
+          protocol: protocol,
+          lookAheadMonths: 24, // Look ahead 2 years to catch multiple doses
+        );
+
+        // Assert
+        expect(result, isNotEmpty, reason: 'Should generate events for future adult protocol');
+        expect(result.length, greaterThan(0), reason: 'Should generate at least 1 event');
+
+        // First event should be when dog turns 52 weeks (1 year) old
+        final expectedFirstDate = birthday.add(const Duration(days: 52 * 7));
+        expect(result.first.scheduledDate, equals(expectedFirstDate));
+
+        // Should generate multiple annual doses within lookAhead period
+        expect(result.length, lessThanOrEqualTo(10), reason: 'Should respect numberOfDoses limit');
+
+        // Should have exactly 2 events in 24-month window (at 12 months and 24 months)
+        expect(result.length, equals(2), reason: 'Should generate 2 annual events within 24 months');
+      });
     });
 
     // ========================================================================

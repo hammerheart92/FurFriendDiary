@@ -307,6 +307,7 @@ class ProtocolEngineService {
           }
         }
       } else {
+
         // Pet is already within age range, calculate from now
         // Handle one-time treatments (include even if past - for schedule display)
         if (schedule.recurring == null && schedule.intervalDays == null) {

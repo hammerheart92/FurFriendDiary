@@ -30,7 +30,7 @@ part 'protocol_schedule_provider.g.dart';
 Future<List<UpcomingCareEvent>> upcomingCare(
   UpcomingCareRef ref, {
   required String petId,
-  int daysAhead = 90,
+  int daysAhead = 365,
 }) async {
   final protocolEngine = ref.watch(protocolEngineServiceProvider);
 
@@ -79,9 +79,13 @@ Future<List<UpcomingCareEvent>> upcomingCare(
 
     if (protocol != null) {
       try {
+        // Convert daysAhead to months (rounded up) for protocol engine
+        final lookAheadMonths = (daysAhead / 30).ceil();
+
         final schedule = await protocolEngine.generateDewormingSchedule(
           protocol: protocol,
           pet: pet,
+          lookAheadMonths: lookAheadMonths,
         );
 
         events.addAll(
@@ -194,9 +198,12 @@ Future<List<DewormingScheduleEntry>> dewormingSchedule(
   final protocol = await dewormingRepo.getById(pet.dewormingProtocolId!);
   if (protocol == null) return [];
 
+  // Generate full schedule with extended lookAhead to ensure future events are included
+  // Using 24 months ensures protocols starting beyond current pet age are captured
   return await protocolEngine.generateDewormingSchedule(
     protocol: protocol,
     pet: pet,
+    lookAheadMonths: 24,
   );
 }
 
@@ -243,7 +250,7 @@ Future<List<UpcomingCareEvent>> upcomingCareByType(
   UpcomingCareByTypeRef ref, {
   required String petId,
   required String eventType,
-  int daysAhead = 90,
+  int daysAhead = 365,
 }) async {
   final allEvents = await ref.watch(upcomingCareProvider(
     petId: petId,
