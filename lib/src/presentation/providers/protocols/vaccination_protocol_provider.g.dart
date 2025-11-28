@@ -7,7 +7,7 @@ part of 'vaccination_protocol_provider.dart';
 // **************************************************************************
 
 String _$vaccinationProtocolsBySpeciesHash() =>
-    r'd0159a4a3326df941ba6120c12bc9be4389d743c';
+    r'75a0e166e50dd27741723a73f7a3b4db9965b6a2';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -463,7 +463,7 @@ class _VaccinationProtocolByIdProviderElement
 }
 
 String _$vaccinationProtocolsHash() =>
-    r'a402c6070e74a715baa086c8003369d4058cfaac';
+    r'7267414d8f435ff679af3168039fd7797d5bee1d';
 
 /// Main vaccination protocol provider - manages all protocols (predefined + custom)
 ///

@@ -6,7 +6,7 @@ part of 'protocol_schedule_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$upcomingCareHash() => r'd7007748c0f7c855555b0b779a946051075406ef';
+String _$upcomingCareHash() => r'a77ef910297cbfb5df5d37f65ff543fab946f56a';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -93,7 +93,7 @@ class UpcomingCareFamily extends Family<AsyncValue<List<UpcomingCareEvent>>> {
   /// Copied from [upcomingCare].
   UpcomingCareProvider call({
     required String petId,
-    int daysAhead = 90,
+    int daysAhead = 365,
   }) {
     return UpcomingCareProvider(
       petId: petId,
@@ -158,7 +158,7 @@ class UpcomingCareProvider
   /// Copied from [upcomingCare].
   UpcomingCareProvider({
     required String petId,
-    int daysAhead = 90,
+    int daysAhead = 365,
   }) : this._internal(
           (ref) => upcomingCare(
             ref as UpcomingCareRef,
@@ -448,7 +448,7 @@ class _VaccinationScheduleProviderElement
   String get petId => (origin as VaccinationScheduleProvider).petId;
 }
 
-String _$dewormingScheduleHash() => r'ea512229f21397e6b967fcc7428733a4f78a03ee';
+String _$dewormingScheduleHash() => r'3d695c9a933dd08027ab9a473b95ec176d8faa1b';
 
 /// Generate deworming schedule for a specific pet
 ///
@@ -840,7 +840,7 @@ class _AppointmentSuggestionsProviderElement
 }
 
 String _$upcomingCareByTypeHash() =>
-    r'f8ea6f1e01c4bd669e6fb03ce2451b83c3e86c72';
+    r'da02806fe7f7bb9e76a303e2111cd6deb8c413a3';
 
 /// Get upcoming care events filtered by event type
 ///
@@ -896,7 +896,7 @@ class UpcomingCareByTypeFamily
   UpcomingCareByTypeProvider call({
     required String petId,
     required String eventType,
-    int daysAhead = 90,
+    int daysAhead = 365,
   }) {
     return UpcomingCareByTypeProvider(
       petId: petId,
@@ -958,7 +958,7 @@ class UpcomingCareByTypeProvider
   UpcomingCareByTypeProvider({
     required String petId,
     required String eventType,
-    int daysAhead = 90,
+    int daysAhead = 365,
   }) : this._internal(
           (ref) => upcomingCareByType(
             ref as UpcomingCareByTypeRef,

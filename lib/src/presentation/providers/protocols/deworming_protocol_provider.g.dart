@@ -7,7 +7,7 @@ part of 'deworming_protocol_provider.dart';
 // **************************************************************************
 
 String _$dewormingProtocolsBySpeciesHash() =>
-    r'1e780a25951a6d58c88d72354140b5c19e9ce68e';
+    r'f8b7908b78081f212284a3e4cd419582f8d4f2cb';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -461,7 +461,7 @@ class _DewormingProtocolByIdProviderElement
 }
 
 String _$dewormingProtocolsHash() =>
-    r'91fe84e35f9deec4ad47d563c202f2350677d286';
+    r'74df4e7ece7ea5ef71c994dbec53c0d5a4764871';
 
 /// Main deworming protocol provider - manages all protocols (predefined + custom)
 ///

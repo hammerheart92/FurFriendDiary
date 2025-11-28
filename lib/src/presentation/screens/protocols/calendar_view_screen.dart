@@ -90,7 +90,7 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
     final upcomingCareAsync = ref.watch(
       upcomingCareProvider(
         petId: petId,
-        daysAhead: 90, // 3 months ahead
+        daysAhead: 365, // 12 months ahead for annual protocols
       ),
     );
 
