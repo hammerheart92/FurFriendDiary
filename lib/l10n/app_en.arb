@@ -1873,5 +1873,93 @@
         "type": "String"
       }
     }
+  },
+  "goBack": "Go back",
+  "@goBack": {
+    "description": "Button text to navigate back to previous screen"
+  },
+  "noBirthdaySet": "No birthday set",
+  "@noBirthdaySet": {
+    "description": "Message when pet has no birthday configured"
+  },
+  "addBirthdayToViewSchedule": "Add your pet's birthday to view their deworming schedule",
+  "@addBirthdayToViewSchedule": {
+    "description": "Helper text prompting user to add birthday"
+  },
+  "noScheduleAvailable": "No schedule available",
+  "@noScheduleAvailable": {
+    "description": "Message when protocol has no scheduled treatments"
+  },
+  "protocolMayNotApplyYet": "This protocol may not apply to your pet yet",
+  "@protocolMayNotApplyYet": {
+    "description": "Explanation for empty schedule"
+  },
+  "allTreatmentsCompleted": "All treatments completed!",
+  "@allTreatmentsCompleted": {
+    "description": "Success message when all treatments done"
+  },
+  "completedAllScheduledTreatments": "Your pet has completed all scheduled treatments in this protocol",
+  "@completedAllScheduledTreatments": {
+    "description": "Detailed message for completed treatments"
+  },
+  "treatmentHistory": "Treatment History",
+  "@treatmentHistory": {
+    "description": "Section header for past treatments"
+  },
+  "treatmentNumber": "Treatment {number}",
+  "@treatmentNumber": {
+    "description": "Label for treatment with number",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "regionLabel": "Region: {region}",
+  "@regionLabel": {
+    "description": "Label showing protocol region",
+    "placeholders": {
+      "region": {
+        "type": "String",
+        "example": "Europe"
+      }
+    }
+  },
+  "birthDateLabel": "Birth date: {date}",
+  "@birthDateLabel": {
+    "description": "Label showing pet birth date",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "Jan 15, 2023"
+      }
+    }
+  },
+  "dewormingTreatment": "Deworming Treatment",
+  "@dewormingTreatment": {
+    "description": "Title for deworming treatment event"
+  },
+  "doseNumber": "Dose {number}",
+  "@doseNumber": {
+    "description": "Label for dose with number",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "vaccination": "Vaccination",
+  "@vaccination": {
+    "description": "Label for vaccination event type"
+  },
+  "veterinaryAppointment": "Veterinary Appointment",
+  "@veterinaryAppointment": {
+    "description": "Label for appointment event type"
+  },
+  "medication": "Medication",
+  "@medication": {
+    "description": "Label for medication event type"
   }
 }

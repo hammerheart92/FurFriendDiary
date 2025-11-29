@@ -5587,6 +5587,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No deworming protocols found for {species}. Contact your veterinarian for guidance.'**
   String noDewormingProtocolsForSpecies(String species);
+
+  /// Button text to navigate back to previous screen
+  ///
+  /// In en, this message translates to:
+  /// **'Go back'**
+  String get goBack;
+
+  /// Message when pet has no birthday configured
+  ///
+  /// In en, this message translates to:
+  /// **'No birthday set'**
+  String get noBirthdaySet;
+
+  /// Helper text prompting user to add birthday
+  ///
+  /// In en, this message translates to:
+  /// **'Add your pet\'s birthday to view their deworming schedule'**
+  String get addBirthdayToViewSchedule;
+
+  /// Message when protocol has no scheduled treatments
+  ///
+  /// In en, this message translates to:
+  /// **'No schedule available'**
+  String get noScheduleAvailable;
+
+  /// Explanation for empty schedule
+  ///
+  /// In en, this message translates to:
+  /// **'This protocol may not apply to your pet yet'**
+  String get protocolMayNotApplyYet;
+
+  /// Success message when all treatments done
+  ///
+  /// In en, this message translates to:
+  /// **'All treatments completed!'**
+  String get allTreatmentsCompleted;
+
+  /// Detailed message for completed treatments
+  ///
+  /// In en, this message translates to:
+  /// **'Your pet has completed all scheduled treatments in this protocol'**
+  String get completedAllScheduledTreatments;
+
+  /// Section header for past treatments
+  ///
+  /// In en, this message translates to:
+  /// **'Treatment History'**
+  String get treatmentHistory;
+
+  /// Label for treatment with number
+  ///
+  /// In en, this message translates to:
+  /// **'Treatment {number}'**
+  String treatmentNumber(int number);
+
+  /// Label showing protocol region
+  ///
+  /// In en, this message translates to:
+  /// **'Region: {region}'**
+  String regionLabel(String region);
+
+  /// Label showing pet birth date
+  ///
+  /// In en, this message translates to:
+  /// **'Birth date: {date}'**
+  String birthDateLabel(String date);
+
+  /// Title for deworming treatment event
+  ///
+  /// In en, this message translates to:
+  /// **'Deworming Treatment'**
+  String get dewormingTreatment;
+
+  /// Label for dose with number
+  ///
+  /// In en, this message translates to:
+  /// **'Dose {number}'**
+  String doseNumber(int number);
+
+  /// Label for vaccination event type
+  ///
+  /// In en, this message translates to:
+  /// **'Vaccination'**
+  String get vaccination;
+
+  /// Label for appointment event type
+  ///
+  /// In en, this message translates to:
+  /// **'Veterinary Appointment'**
+  String get veterinaryAppointment;
+
+  /// Label for medication event type
+  ///
+  /// In en, this message translates to:
+  /// **'Medication'**
+  String get medication;
 }
 
 class _AppLocalizationsDelegate

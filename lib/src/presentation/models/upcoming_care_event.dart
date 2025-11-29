@@ -34,14 +34,15 @@ class VaccinationEvent extends UpcomingCareEvent {
   @override
   String get description {
     final parts = <String>[];
-    parts.add('Dose ${entry.stepIndex + 1}');
+    // Note: This string will be localized in the UI layer
+    parts.add('Dose ${entry.stepIndex + 1}'); // Will use l10n.doseNumber() in UI
     if (entry.notes != null && entry.notes!.isNotEmpty) {
       parts.add(entry.notes!);
     }
     if (entry.isRequired) {
-      parts.add('Required');
+      parts.add('Required'); // Will use l10n.requiredVaccine in UI
     }
-    return parts.isEmpty ? 'Vaccination' : parts.join(' - ');
+    return parts.isEmpty ? 'Vaccination' : parts.join(' - '); // Will use l10n.vaccination in UI
   }
 
   @override
@@ -71,7 +72,7 @@ class DewormingEvent extends UpcomingCareEvent {
   DateTime get scheduledDate => entry.scheduledDate;
 
   @override
-  String get title => 'Deworming Treatment';
+  String get title => 'Deworming Treatment'; // Will use l10n.dewormingTreatment in UI
 
   @override
   String get description {
@@ -126,7 +127,7 @@ class AppointmentEvent extends UpcomingCareEvent {
     if (entry.notes != null && entry.notes!.isNotEmpty) {
       parts.add(entry.notes!);
     }
-    return parts.isEmpty ? 'Veterinary Appointment' : parts.join(' - ');
+    return parts.isEmpty ? 'Veterinary Appointment' : parts.join(' - '); // Will use l10n.veterinaryAppointment in UI
   }
 
   @override
@@ -177,7 +178,7 @@ class MedicationEvent extends UpcomingCareEvent {
     if (entry.frequency.isNotEmpty) {
       parts.add(entry.frequency);
     }
-    return parts.isEmpty ? 'Medication' : parts.join(' - ');
+    return parts.isEmpty ? 'Medication' : parts.join(' - '); // Will use l10n.medication in UI
   }
 
   @override

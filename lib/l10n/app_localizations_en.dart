@@ -2943,4 +2943,63 @@ class AppLocalizationsEn extends AppLocalizations {
   String noDewormingProtocolsForSpecies(String species) {
     return 'No deworming protocols found for $species. Contact your veterinarian for guidance.';
   }
+
+  @override
+  String get goBack => 'Go back';
+
+  @override
+  String get noBirthdaySet => 'No birthday set';
+
+  @override
+  String get addBirthdayToViewSchedule =>
+      'Add your pet\'s birthday to view their deworming schedule';
+
+  @override
+  String get noScheduleAvailable => 'No schedule available';
+
+  @override
+  String get protocolMayNotApplyYet =>
+      'This protocol may not apply to your pet yet';
+
+  @override
+  String get allTreatmentsCompleted => 'All treatments completed!';
+
+  @override
+  String get completedAllScheduledTreatments =>
+      'Your pet has completed all scheduled treatments in this protocol';
+
+  @override
+  String get treatmentHistory => 'Treatment History';
+
+  @override
+  String treatmentNumber(int number) {
+    return 'Treatment $number';
+  }
+
+  @override
+  String regionLabel(String region) {
+    return 'Region: $region';
+  }
+
+  @override
+  String birthDateLabel(String date) {
+    return 'Birth date: $date';
+  }
+
+  @override
+  String get dewormingTreatment => 'Deworming Treatment';
+
+  @override
+  String doseNumber(int number) {
+    return 'Dose $number';
+  }
+
+  @override
+  String get vaccination => 'Vaccination';
+
+  @override
+  String get veterinaryAppointment => 'Veterinary Appointment';
+
+  @override
+  String get medication => 'Medication';
 }

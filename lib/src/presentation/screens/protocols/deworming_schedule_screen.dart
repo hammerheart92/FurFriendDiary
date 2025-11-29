@@ -198,7 +198,7 @@ class DewormingScheduleScreen extends ConsumerWidget {
           if (protocol.region != null) ...[
             const SizedBox(height: 4),
             Text(
-              'Region: ${protocol.region}',  // TODO: Add l10n.region
+              l10n.regionLabel(protocol.region!),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: Colors.orange.shade700,
                 fontStyle: FontStyle.italic,
@@ -251,7 +251,10 @@ class DewormingScheduleScreen extends ConsumerWidget {
                   if (pet.birthday != null) ...[
                     const SizedBox(height: 4),
                     Text(
-                      'Birth Date: ${DateFormat('MMM dd, yyyy').format(pet.birthday!)}',  // TODO: Add l10n.birthDate
+                      l10n.birthDateLabel(
+                        DateFormat.yMMMd(Localizations.localeOf(context).languageCode)
+                            .format(pet.birthday!),
+                      ),
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurface.withOpacity(0.6),
                       ),
@@ -282,7 +285,7 @@ class DewormingScheduleScreen extends ConsumerWidget {
     final statusConfig = _getStatusConfig(theme, status);
 
     return Semantics(
-      label: 'Treatment $treatmentNumber: ${_getTreatmentTypeLabel(l10n, entry.dewormingType)}, '  // TODO: Add l10n.treatment
+      label: '${l10n.treatmentNumber(treatmentNumber)}: ${_getTreatmentTypeLabel(l10n, entry.dewormingType)}, '
           '${_getStatusLabel(l10n, status, entry)}',
       child: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
@@ -368,7 +371,7 @@ class DewormingScheduleScreen extends ConsumerWidget {
                           Row(
                             children: [
                               Text(
-                                'Treatment $treatmentNumber',  // TODO: Add l10n.treatment
+                                l10n.treatmentNumber(treatmentNumber),
                                 style: theme.textTheme.titleSmall?.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: status == TreatmentStatus.next
@@ -511,7 +514,7 @@ class DewormingScheduleScreen extends ConsumerWidget {
             FilledButton.icon(
               onPressed: () => Navigator.of(context).pop(),
               icon: const Icon(Icons.arrow_back),
-              label: const Text('Go Back'),  // TODO: Add l10n.goBack
+              label: Text(l10n.goBack),
             ),
           ],
         ),
@@ -537,13 +540,13 @@ class DewormingScheduleScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'No Birthday Set',  // TODO: Add l10n.noBirthdaySet
+              l10n.noBirthdaySet,
               style: theme.textTheme.titleLarge,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
-              'Please add a birthday to view the deworming schedule',  // TODO: Add l10n.addBirthdayToViewSchedule
+              l10n.addBirthdayToViewSchedule,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.7),
               ),
@@ -579,13 +582,13 @@ class DewormingScheduleScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'No Schedule Available',  // TODO: Add l10n.noScheduleAvailable
+              l10n.noScheduleAvailable,
               style: theme.textTheme.titleLarge,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
-              'The protocol may not apply to your pet yet',  // TODO: Add l10n.protocolMayNotApplyYet
+              l10n.protocolMayNotApplyYet,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.7),
               ),
@@ -616,7 +619,7 @@ class DewormingScheduleScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Text(
-              'All Treatments Completed!',  // TODO: Add l10n.allTreatmentsCompleted
+              l10n.allTreatmentsCompleted,
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Colors.green.shade700,
@@ -628,7 +631,7 @@ class DewormingScheduleScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Text(
-              'Your pet has completed all scheduled treatments',  // TODO: Add l10n.completedAllScheduledTreatments
+              l10n.completedAllScheduledTreatments,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.7),
               ),
@@ -641,7 +644,7 @@ class DewormingScheduleScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              'Treatment History',  // TODO: Add l10n.treatmentHistory
+              l10n.treatmentHistory,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -680,13 +683,14 @@ class DewormingScheduleScreen extends ConsumerWidget {
         ),
         title: Row(
           children: [
-            Text('Treatment $number'),  // TODO: Add l10n.treatment
+            Text(l10n.treatmentNumber(number)),
             const SizedBox(width: 8),
             _buildTypeChip(l10n, theme, entry.dewormingType),
           ],
         ),
         subtitle: Text(
-          DateFormat('MMM dd, yyyy').format(entry.scheduledDate),
+          DateFormat.yMMMd(Localizations.localeOf(context).languageCode)
+              .format(entry.scheduledDate),
           style: theme.textTheme.bodySmall,
         ),
         trailing: Icon(
@@ -734,7 +738,7 @@ class DewormingScheduleScreen extends ConsumerWidget {
             FilledButton.icon(
               onPressed: () => Navigator.of(context).pop(),
               icon: const Icon(Icons.arrow_back),
-              label: const Text('Go Back'),  // TODO: Add l10n.goBack
+              label: Text(l10n.goBack),
             ),
           ],
         ),
@@ -857,7 +861,8 @@ class DewormingScheduleScreen extends ConsumerWidget {
     DewormingScheduleEntry entry,
     TreatmentStatus status,
   ) {
-    final formattedDate = DateFormat('MMM dd, yyyy').format(entry.scheduledDate);
+    // Use the intl package's current locale
+    final formattedDate = DateFormat.yMMMd().format(entry.scheduledDate);
 
     switch (status) {
       case TreatmentStatus.completed:
@@ -876,7 +881,7 @@ class DewormingScheduleScreen extends ConsumerWidget {
     TreatmentStatus status,
     DewormingScheduleEntry entry,
   ) {
-    final formattedDate = DateFormat('MMMM dd, yyyy').format(entry.scheduledDate);
+    final formattedDate = DateFormat.yMMMMd().format(entry.scheduledDate);
 
     switch (status) {
       case TreatmentStatus.completed:

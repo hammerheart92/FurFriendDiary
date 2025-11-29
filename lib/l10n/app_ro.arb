@@ -1518,5 +1518,49 @@
   "loadingDewormingProtocols": "Se încarcă protocoalele de deparazitare...",
   "failedToLoadDewormingProtocols": "Încărcarea protocoalelor de deparazitare a eșuat",
   "noDewormingProtocolsAvailable": "Nu există protocoale de deparazitare disponibile pentru această specie",
-  "noDewormingProtocolsForSpecies": "Nu au fost găsite protocoale de deparazitare pentru {species}. Contactează medicul veterinar pentru îndrumări."
+  "noDewormingProtocolsForSpecies": "Nu au fost găsite protocoale de deparazitare pentru {species}. Contactează medicul veterinar pentru îndrumări.",
+  "goBack": "Înapoi",
+  "noBirthdaySet": "Data nașterii nu este setată",
+  "addBirthdayToViewSchedule": "Adaugă data nașterii animalului pentru a vedea programul de deparazitare",
+  "noScheduleAvailable": "Niciun program disponibil",
+  "protocolMayNotApplyYet": "Acest protocol s-ar putea să nu se aplice încă animalului tău",
+  "allTreatmentsCompleted": "Toate tratamentele finalizate!",
+  "completedAllScheduledTreatments": "Animalul tău a finalizat toate tratamentele programate în acest protocol",
+  "treatmentHistory": "Istoric Tratamente",
+  "treatmentNumber": "Tratamentul {number}",
+  "@treatmentNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "regionLabel": "Regiune: {region}",
+  "@regionLabel": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      }
+    }
+  },
+  "birthDateLabel": "Data nașterii: {date}",
+  "@birthDateLabel": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "dewormingTreatment": "Tratament Deparazitare",
+  "doseNumber": "Doza {number}",
+  "@doseNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "vaccination": "Vaccinare",
+  "veterinaryAppointment": "Programare Veterinar",
+  "medication": "Medicament"
 }

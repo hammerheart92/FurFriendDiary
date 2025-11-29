@@ -269,19 +269,9 @@ class ProtocolEngineService {
     // Use addMonths() for accurate month arithmetic instead of approximating with 30 days
     final endDate = addMonths(now, lookAheadMonths);
 
-    // DEBUG PRINTS - START
-    print('🐕 generateDewormingSchedule START');
-    print('🐕 Pet: ${pet.name}, Birthday: ${pet.birthday}, Age weeks: $petAgeWeeks');
-    print('🐕 Protocol: ${protocol.id}, Schedules: ${protocol.schedules.length}');
-    print('🐕 now: $now, endDate: $endDate, lookAheadMonths: $lookAheadMonths');
-
     final scheduleEntries = <DewormingScheduleEntry>[];
 
     for (final schedule in protocol.schedules) {
-      // DEBUG PRINTS - SCHEDULE LOOP
-      print('🐕 --- Schedule: ageInWeeks=${schedule.ageInWeeks}, type=${schedule.dewormingType}');
-      print('🐕 Has recurring: ${schedule.recurring != null}, intervalMonths: ${schedule.recurring?.intervalMonths}, numberOfDoses: ${schedule.recurring?.numberOfDoses}');
-      print('🐕 Branch: ${petAgeWeeks < schedule.ageInWeeks ? "A (pet too young)" : "B (pet old enough)"}');
       // Check if pet is within age range for this schedule
       if (petAgeWeeks < schedule.ageInWeeks) {
         // Schedule starts in the future (pet is too young)
@@ -318,9 +308,6 @@ class ProtocolEngineService {
           }
         }
       } else {
-        // DEBUG PRINTS - BRANCH B START
-        print('🐕 BRANCH B ENTERED');
-
         // Pet is already within age range, calculate from now
         // Handle one-time treatments (include even if past - for schedule display)
         if (schedule.recurring == null && schedule.intervalDays == null) {
@@ -338,12 +325,10 @@ class ProtocolEngineService {
 
         // Recurring treatment - calculate next upcoming treatment
         final startDate = pet.birthday!.add(Duration(days: schedule.ageInWeeks * 7));
-        print('🐕 B: startDate (birthday + ageInWeeks*7): $startDate');
 
         // Get max doses limit if specified
         final maxDoses = schedule.recurring?.numberOfDoses;
         int dosesGenerated = 0;
-        print('🐕 B: maxDoses: $maxDoses');
 
         // Find the next upcoming treatment date
         // Start from the schedule start date and iterate forward
@@ -352,14 +337,12 @@ class ProtocolEngineService {
         // Fast-forward to approximate current position
         // This avoids iterating through potentially hundreds of past treatments
         if (startDate.isBefore(now)) {
-          print('🐕 B: startDate.isBefore(now) = true, fast-forwarding...');
           if (schedule.recurring != null) {
             // Month-based interval: calculate approximately how many treatments have passed
             final monthsSinceStart = (now.year - startDate.year) * 12 +
                                      (now.month - startDate.month);
             final intervalMonths = schedule.recurring!.intervalMonths;
             final dosesPassed = (monthsSinceStart / intervalMonths).floor();
-            print('🐕 B: monthsSinceStart: $monthsSinceStart, intervalMonths: $intervalMonths, dosesPassed: $dosesPassed');
 
             if (dosesPassed > 0) {
               // Jump forward to approximately current position (clamped to dose limit)
@@ -368,7 +351,6 @@ class ProtocolEngineService {
                   : dosesPassed;
               currentDate = addMonths(startDate, jumpToDose * intervalMonths);
               dosesGenerated = jumpToDose;
-              print('🐕 B: After fast-forward: jumpToDose=$jumpToDose, currentDate=$currentDate, dosesGenerated=$dosesGenerated');
             }
           } else if (schedule.intervalDays != null) {
             // Day-based interval
@@ -386,8 +368,6 @@ class ProtocolEngineService {
         }
 
         // Fine-tune: advance until we find a treatment date >= now
-        print('🐕 B: Before fine-tune: currentDate=$currentDate, dosesGenerated=$dosesGenerated');
-        print('🐕 B: Fine-tune loop condition: currentDate.isBefore(now) = ${currentDate.isBefore(now)}');
         while (currentDate.isBefore(now)) {
           // Stop if we've exhausted all doses
           if (maxDoses != null && dosesGenerated >= maxDoses - 1) {
@@ -410,17 +390,12 @@ class ProtocolEngineService {
         }
 
         // Generate from next treatment onwards (only future dates in lookahead window)
-        print('🐕 B: Before generate loop: currentDate=$currentDate, dosesGenerated=$dosesGenerated, endDate=$endDate');
-        print('🐕 B: Generate loop condition: currentDate.isBefore(endDate) = ${currentDate.isBefore(endDate)}');
-        print('🐕 B: Doses check: maxDoses=$maxDoses, dosesGenerated=$dosesGenerated, wouldBreak=${maxDoses != null && dosesGenerated >= maxDoses}');
         while (currentDate.isBefore(endDate)) {
           // Stop if we've reached numberOfDoses limit
           if (maxDoses != null && dosesGenerated >= maxDoses) {
-            print('🐕 B: BREAKING - reached maxDoses limit');
             break;
           }
 
-          print('🐕 B: ADDING entry: date=$currentDate, dose=${dosesGenerated + 1}');
           scheduleEntries.add(DewormingScheduleEntry(
             dewormingType: schedule.dewormingType,
             scheduledDate: currentDate,
@@ -443,13 +418,6 @@ class ProtocolEngineService {
 
     // Sort by date
     scheduleEntries.sort((a, b) => a.scheduledDate.compareTo(b.scheduledDate));
-
-    // DEBUG PRINTS - END
-    print('🐕 generateDewormingSchedule END');
-    print('🐕 RESULT: ${scheduleEntries.length} entries generated');
-    for (final entry in scheduleEntries) {
-      print('🐕   - ${entry.scheduledDate}: ${entry.dewormingType}');
-    }
 
     logger.i(
         'Generated ${scheduleEntries.length} deworming schedule entries for pet ${pet.id} using protocol ${protocol.name}');

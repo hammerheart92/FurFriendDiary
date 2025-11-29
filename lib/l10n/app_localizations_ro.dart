@@ -2975,4 +2975,63 @@ class AppLocalizationsRo extends AppLocalizations {
   String noDewormingProtocolsForSpecies(String species) {
     return 'Nu au fost găsite protocoale de deparazitare pentru $species. Contactează medicul veterinar pentru îndrumări.';
   }
+
+  @override
+  String get goBack => 'Înapoi';
+
+  @override
+  String get noBirthdaySet => 'Data nașterii nu este setată';
+
+  @override
+  String get addBirthdayToViewSchedule =>
+      'Adaugă data nașterii animalului pentru a vedea programul de deparazitare';
+
+  @override
+  String get noScheduleAvailable => 'Niciun program disponibil';
+
+  @override
+  String get protocolMayNotApplyYet =>
+      'Acest protocol s-ar putea să nu se aplice încă animalului tău';
+
+  @override
+  String get allTreatmentsCompleted => 'Toate tratamentele finalizate!';
+
+  @override
+  String get completedAllScheduledTreatments =>
+      'Animalul tău a finalizat toate tratamentele programate în acest protocol';
+
+  @override
+  String get treatmentHistory => 'Istoric Tratamente';
+
+  @override
+  String treatmentNumber(int number) {
+    return 'Tratamentul $number';
+  }
+
+  @override
+  String regionLabel(String region) {
+    return 'Regiune: $region';
+  }
+
+  @override
+  String birthDateLabel(String date) {
+    return 'Data nașterii: $date';
+  }
+
+  @override
+  String get dewormingTreatment => 'Tratament Deparazitare';
+
+  @override
+  String doseNumber(int number) {
+    return 'Doza $number';
+  }
+
+  @override
+  String get vaccination => 'Vaccinare';
+
+  @override
+  String get veterinaryAppointment => 'Programare Veterinar';
+
+  @override
+  String get medication => 'Medicament';
 }
