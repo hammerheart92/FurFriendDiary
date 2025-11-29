@@ -18,6 +18,10 @@ class DewormingProtocol extends HiveObject {
   @HiveField(1)
   final String name;
 
+  /// Romanian name of the protocol (optional, for localization)
+  @HiveField(9)
+  final String? nameRo;
+
   /// Species this protocol applies to ('dog', 'cat', 'other')
   @HiveField(2)
   final String species;
@@ -29,6 +33,10 @@ class DewormingProtocol extends HiveObject {
   /// Detailed description of the protocol
   @HiveField(4)
   final String description;
+
+  /// Romanian description of the protocol (optional, for localization)
+  @HiveField(10)
+  final String? descriptionRo;
 
   /// Whether this is a user-created protocol (true) or predefined (false)
   @HiveField(5)
@@ -49,9 +57,11 @@ class DewormingProtocol extends HiveObject {
   DewormingProtocol({
     required this.id,
     required this.name,
+    this.nameRo,
     required this.species,
     required this.schedules,
     required this.description,
+    this.descriptionRo,
     required this.isCustom,
     this.region,
     DateTime? createdAt,
@@ -62,9 +72,11 @@ class DewormingProtocol extends HiveObject {
   DewormingProtocol copyWith({
     String? id,
     String? name,
+    String? nameRo,
     String? species,
     List<DewormingSchedule>? schedules,
     String? description,
+    String? descriptionRo,
     bool? isCustom,
     String? region,
     DateTime? createdAt,
@@ -73,9 +85,11 @@ class DewormingProtocol extends HiveObject {
     return DewormingProtocol(
       id: id ?? this.id,
       name: name ?? this.name,
+      nameRo: nameRo ?? this.nameRo,
       species: species ?? this.species,
       schedules: schedules ?? this.schedules,
       description: description ?? this.description,
+      descriptionRo: descriptionRo ?? this.descriptionRo,
       isCustom: isCustom ?? this.isCustom,
       region: region ?? this.region,
       createdAt: createdAt ?? this.createdAt,
@@ -88,9 +102,11 @@ class DewormingProtocol extends HiveObject {
     return {
       'id': id,
       'name': name,
+      'nameRo': nameRo,
       'species': species,
       'schedules': schedules.map((schedule) => schedule.toJson()).toList(),
       'description': description,
+      'descriptionRo': descriptionRo,
       'isCustom': isCustom,
       'region': region,
       'createdAt': createdAt.toIso8601String(),
@@ -103,12 +119,14 @@ class DewormingProtocol extends HiveObject {
     return DewormingProtocol(
       id: json['id'] as String,
       name: json['name'] as String,
+      nameRo: json['nameRo'] as String?,
       species: json['species'] as String,
       schedules: (json['schedules'] as List<dynamic>)
           .map((scheduleJson) =>
               DewormingSchedule.fromJson(scheduleJson as Map<String, dynamic>))
           .toList(),
       description: json['description'] as String,
+      descriptionRo: json['descriptionRo'] as String?,
       isCustom: json['isCustom'] as bool,
       region: json['region'] as String?,
       createdAt: DateTime.parse(json['createdAt'] as String),
@@ -172,6 +190,10 @@ class DewormingSchedule {
   @HiveField(3)
   final String? notes;
 
+  /// Romanian translation of notes (optional, for localization)
+  @HiveField(6)
+  final String? notesRo;
+
   /// Recurring schedule for periodic treatments (e.g., monthly, quarterly)
   @HiveField(4)
   final RecurringSchedule? recurring;
@@ -185,6 +207,7 @@ class DewormingSchedule {
     required this.ageInWeeks,
     this.intervalDays,
     this.notes,
+    this.notesRo,
     this.recurring,
     this.productName,
   }) : assert(
@@ -198,6 +221,7 @@ class DewormingSchedule {
     int? ageInWeeks,
     int? intervalDays,
     String? notes,
+    String? notesRo,
     RecurringSchedule? recurring,
     String? productName,
   }) {
@@ -206,6 +230,7 @@ class DewormingSchedule {
       ageInWeeks: ageInWeeks ?? this.ageInWeeks,
       intervalDays: intervalDays ?? this.intervalDays,
       notes: notes ?? this.notes,
+      notesRo: notesRo ?? this.notesRo,
       recurring: recurring ?? this.recurring,
       productName: productName ?? this.productName,
     );
@@ -218,6 +243,7 @@ class DewormingSchedule {
       'ageInWeeks': ageInWeeks,
       'intervalDays': intervalDays,
       'notes': notes,
+      'notesRo': notesRo,
       'recurring': recurring?.toJson(),
       'productName': productName,
     };
@@ -230,6 +256,7 @@ class DewormingSchedule {
       ageInWeeks: json['ageInWeeks'] as int,
       intervalDays: json['intervalDays'] as int?,
       notes: json['notes'] as String?,
+      notesRo: json['notesRo'] as String?,
       recurring: json['recurring'] != null
           ? RecurringSchedule.fromJson(json['recurring'] as Map<String, dynamic>)
           : null,

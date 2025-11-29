@@ -1562,5 +1562,32 @@
   },
   "vaccination": "Vaccinare",
   "veterinaryAppointment": "Programare Veterinar",
-  "medication": "Medicament"
+  "medication": "Medicament",
+  "ageMonthsShort": "{count, plural, =1{1 lună} few{{count} luni} other{{count} luni}}",
+  "@ageMonthsShort": {
+    "description": "Format scurt pentru vârsta în luni",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ageYearsShort": "{count, plural, =1{1 an} few{{count} ani} other{{count} ani}}",
+  "@ageYearsShort": {
+    "description": "Format scurt pentru vârsta în ani",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ageWeeksShort": "{count, plural, =1{1 săpt.} few{{count} săpt.} other{{count} săpt.}}",
+  "@ageWeeksShort": {
+    "description": "Format scurt pentru vârsta în săptămâni",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

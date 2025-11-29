@@ -295,6 +295,7 @@ class ProtocolEngineService {
             scheduledDate: currentDate,
             productName: schedule.productName,
             notes: schedule.notes,
+            notesRo: schedule.notesRo,
           ));
           dosesGenerated++;
 
@@ -319,6 +320,7 @@ class ProtocolEngineService {
             scheduledDate: treatmentDate,
             productName: schedule.productName,
             notes: schedule.notes,
+            notesRo: schedule.notesRo,
           ));
           continue;
         }
@@ -401,6 +403,7 @@ class ProtocolEngineService {
             scheduledDate: currentDate,
             productName: schedule.productName,
             notes: schedule.notes,
+            notesRo: schedule.notesRo,
           ));
           dosesGenerated++;
 

@@ -3034,4 +3034,40 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get medication => 'Medicament';
+
+  @override
+  String ageMonthsShort(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count luni',
+      few: '$count luni',
+      one: '1 lună',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ageYearsShort(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ani',
+      few: '$count ani',
+      one: '1 an',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ageWeeksShort(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count săpt.',
+      few: '$count săpt.',
+      one: '1 săpt.',
+    );
+    return '$_temp0';
+  }
 }

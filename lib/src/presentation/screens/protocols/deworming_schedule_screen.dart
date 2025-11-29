@@ -157,6 +157,16 @@ class DewormingScheduleScreen extends ConsumerWidget {
     ThemeData theme,
     protocol,
   ) {
+    // Use Romanian name/description if locale is Romanian and they exist
+    final locale = Localizations.localeOf(context);
+    final isRomanian = locale.languageCode == 'ro';
+    final displayName = (isRomanian && protocol.nameRo != null)
+        ? protocol.nameRo!
+        : protocol.name;
+    final displayDescription = (isRomanian && protocol.descriptionRo != null)
+        ? protocol.descriptionRo!
+        : protocol.description;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -179,7 +189,7 @@ class DewormingScheduleScreen extends ConsumerWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  protocol.name,
+                  displayName,
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Colors.orange.shade900,
@@ -190,7 +200,7 @@ class DewormingScheduleScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            protocol.description,
+            displayDescription,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: Colors.orange.shade800,
             ),
@@ -286,7 +296,7 @@ class DewormingScheduleScreen extends ConsumerWidget {
 
     return Semantics(
       label: '${l10n.treatmentNumber(treatmentNumber)}: ${_getTreatmentTypeLabel(l10n, entry.dewormingType)}, '
-          '${_getStatusLabel(l10n, status, entry)}',
+          '${_getStatusLabel(l10n, status, entry, context)}',
       child: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
         child: IntrinsicHeight(
@@ -398,7 +408,7 @@ class DewormingScheduleScreen extends ConsumerWidget {
                               const SizedBox(width: 6),
                               Expanded(
                                 child: Text(
-                                  _formatDateDisplay(l10n, entry, status),
+                                  _formatDateDisplay(l10n, entry, status, context),
                                   style: theme.textTheme.bodyMedium?.copyWith(
                                     color: statusConfig.iconColor,
                                     fontWeight: FontWeight.w500,
@@ -432,35 +442,44 @@ class DewormingScheduleScreen extends ConsumerWidget {
                             ),
                           ],
 
-                          // Notes
+                          // Notes (use Romanian if available and locale matches)
                           if (entry.notes != null && entry.notes!.isNotEmpty) ...[
                             const SizedBox(height: 8),
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Icon(
-                                    Icons.info_outline,
-                                    size: 14,
-                                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                            Builder(
+                              builder: (context) {
+                                final locale = Localizations.localeOf(context);
+                                final isRomanian = locale.languageCode == 'ro';
+                                final displayNotes = (isRomanian && entry.notesRo != null && entry.notesRo!.isNotEmpty)
+                                    ? entry.notesRo!
+                                    : entry.notes!;
+                                return Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
-                                  const SizedBox(width: 6),
-                                  Expanded(
-                                    child: Text(
-                                      entry.notes!,
-                                      style: theme.textTheme.bodySmall?.copyWith(
-                                        fontSize: 12,
-                                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Icon(
+                                        Icons.info_outline,
+                                        size: 14,
+                                        color: theme.colorScheme.onSurface.withOpacity(0.6),
                                       ),
-                                    ),
+                                      const SizedBox(width: 6),
+                                      Expanded(
+                                        child: Text(
+                                          displayNotes,
+                                          style: theme.textTheme.bodySmall?.copyWith(
+                                            fontSize: 12,
+                                            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                );
+                              },
                             ),
                           ],
                         ],
@@ -860,9 +879,11 @@ class DewormingScheduleScreen extends ConsumerWidget {
     AppLocalizations l10n,
     DewormingScheduleEntry entry,
     TreatmentStatus status,
+    BuildContext context,
   ) {
     // Use the intl package's current locale
-    final formattedDate = DateFormat.yMMMd().format(entry.scheduledDate);
+    final locale = Localizations.localeOf(context).languageCode;
+    final formattedDate = DateFormat.yMMMd(locale).format(entry.scheduledDate);
 
     switch (status) {
       case TreatmentStatus.completed:
@@ -880,8 +901,10 @@ class DewormingScheduleScreen extends ConsumerWidget {
     AppLocalizations l10n,
     TreatmentStatus status,
     DewormingScheduleEntry entry,
+    BuildContext context,
   ) {
-    final formattedDate = DateFormat.yMMMMd().format(entry.scheduledDate);
+    final locale = Localizations.localeOf(context).languageCode;
+    final formattedDate = DateFormat.yMMMMd(locale).format(entry.scheduledDate);
 
     switch (status) {
       case TreatmentStatus.completed:

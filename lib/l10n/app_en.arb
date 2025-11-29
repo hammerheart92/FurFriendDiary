@@ -1961,5 +1961,32 @@
   "medication": "Medication",
   "@medication": {
     "description": "Label for medication event type"
+  },
+  "ageMonthsShort": "{count} mos",
+  "@ageMonthsShort": {
+    "description": "Short format for age in months",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ageYearsShort": "{count} yrs",
+  "@ageYearsShort": {
+    "description": "Short format for age in years",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ageWeeksShort": "{count} wks",
+  "@ageWeeksShort": {
+    "description": "Short format for age in weeks",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

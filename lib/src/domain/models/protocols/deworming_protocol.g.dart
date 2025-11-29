@@ -19,9 +19,11 @@ class DewormingProtocolAdapter extends TypeAdapter<DewormingProtocol> {
     return DewormingProtocol(
       id: fields[0] as String,
       name: fields[1] as String,
+      nameRo: fields[9] as String?,
       species: fields[2] as String,
       schedules: (fields[3] as List).cast<DewormingSchedule>(),
       description: fields[4] as String,
+      descriptionRo: fields[10] as String?,
       isCustom: fields[5] as bool,
       region: fields[6] as String?,
       createdAt: fields[7] as DateTime?,
@@ -32,17 +34,21 @@ class DewormingProtocolAdapter extends TypeAdapter<DewormingProtocol> {
   @override
   void write(BinaryWriter writer, DewormingProtocol obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
       ..write(obj.name)
+      ..writeByte(9)
+      ..write(obj.nameRo)
       ..writeByte(2)
       ..write(obj.species)
       ..writeByte(3)
       ..write(obj.schedules)
       ..writeByte(4)
       ..write(obj.description)
+      ..writeByte(10)
+      ..write(obj.descriptionRo)
       ..writeByte(5)
       ..write(obj.isCustom)
       ..writeByte(6)
@@ -79,6 +85,7 @@ class DewormingScheduleAdapter extends TypeAdapter<DewormingSchedule> {
       ageInWeeks: fields[1] as int,
       intervalDays: fields[2] as int?,
       notes: fields[3] as String?,
+      notesRo: fields[6] as String?,
       recurring: fields[4] as RecurringSchedule?,
       productName: fields[5] as String?,
     );
@@ -87,7 +94,7 @@ class DewormingScheduleAdapter extends TypeAdapter<DewormingSchedule> {
   @override
   void write(BinaryWriter writer, DewormingSchedule obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.dewormingType)
       ..writeByte(1)
@@ -96,6 +103,8 @@ class DewormingScheduleAdapter extends TypeAdapter<DewormingSchedule> {
       ..write(obj.intervalDays)
       ..writeByte(3)
       ..write(obj.notes)
+      ..writeByte(6)
+      ..write(obj.notesRo)
       ..writeByte(4)
       ..write(obj.recurring)
       ..writeByte(5)

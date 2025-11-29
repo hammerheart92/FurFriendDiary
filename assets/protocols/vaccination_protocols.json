@@ -2,8 +2,10 @@
   {
     "id": "canine-core-ro-eu-v1",
     "name": "Canine Core Vaccination Protocol (Romania/EU)",
+    "nameRo": "Protocol de Vaccinare de Bază Canină (România/UE)",
     "species": "dog",
     "description": "Standard Romanian/EU canine vaccination protocol following WSAVA guidelines. Includes DHPPiL (Distemper, Hepatitis, Parvovirus, Parainfluenza, Leptospirosis) and Rabies vaccines. Designed for comprehensive protection against core infectious diseases.",
+    "descriptionRo": "Protocol standard de vaccinare canină pentru România/UE conform ghidurilor WSAVA. Include vaccinurile DHPPiL (Distemper, Hepatită, Parvovirusă, Parainfluenza, Leptospiroză) și Rabies. Conceput pentru protecție cuprinzătoare împotriva bolilor infecțioase de bază.",
     "isCustom": false,
     "region": "Romania/EU",
     "createdAt": "2025-01-15T10:00:00.000Z",
@@ -70,8 +72,10 @@
   {
     "id": "canine-extended-ro-eu-v1",
     "name": "Canine Extended Vaccination Protocol (Romania/EU)",
+    "nameRo": "Protocol Extins de Vaccinare Canină (România/UE)",
     "species": "dog",
     "description": "Extended Romanian/EU canine vaccination protocol including core vaccines (DHPPiL, Rabies) plus optional Kennel Cough (Bordetella) for dogs in high-risk environments such as kennels, dog parks, or grooming facilities.",
+    "descriptionRo": "Protocol extins de vaccinare canină pentru România/UE incluzând vaccinurile de bază (DHPPiL, Rabies) plus Bordetella opțional (Tuse de Canisă) pentru câinii în medii cu risc ridicat, cum ar fi pensiunile, parcurile pentru câini sau saloanele de toaletaj.",
     "isCustom": false,
     "region": "Romania/EU",
     "createdAt": "2025-01-15T10:00:00.000Z",
@@ -158,8 +162,10 @@
   {
     "id": "feline-core-ro-eu-v1",
     "name": "Feline Core Vaccination Protocol (Romania/EU)",
+    "nameRo": "Protocol de Vaccinare de Bază Felină (România/UE)",
     "species": "cat",
     "description": "Standard Romanian/EU feline vaccination protocol following WSAVA guidelines. Includes FVRCP (Feline Viral Rhinotracheitis, Calicivirus, Panleukopenia) and Rabies vaccines. Essential for indoor and outdoor cats.",
+    "descriptionRo": "Protocol standard de vaccinare felină pentru România/UE conform ghidurilor WSAVA. Include vaccinurile FVRCP (Rinotraheită Virală Felină, Calicivirus, Panleucopenie) și Rabies. Esențial pentru pisicile de interior și exterior.",
     "isCustom": false,
     "region": "Romania/EU",
     "createdAt": "2025-01-15T10:00:00.000Z",
@@ -226,8 +232,10 @@
   {
     "id": "feline-extended-ro-eu-v1",
     "name": "Feline Extended Vaccination Protocol (Romania/EU)",
+    "nameRo": "Protocol Extins de Vaccinare Felină (România/UE)",
     "species": "cat",
     "description": "Extended Romanian/EU feline vaccination protocol including core vaccines (FVRCP, Rabies) plus FeLV (Feline Leukemia Virus) for outdoor cats or multi-cat households. FeLV is highly recommended for cats with outdoor access.",
+    "descriptionRo": "Protocol extins de vaccinare felină pentru România/UE incluzând vaccinurile de bază (FVRCP, Rabies) plus FeLV (Virus Leucemie Felină) pentru pisicile de exterior sau gospodăriile cu mai multe pisici. FeLV este foarte recomandat pentru pisicile cu acces în exterior.",
     "isCustom": false,
     "region": "Romania/EU",
     "createdAt": "2025-01-15T10:00:00.000Z",

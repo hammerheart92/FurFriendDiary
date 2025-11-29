@@ -19,9 +19,11 @@ class VaccinationProtocolAdapter extends TypeAdapter<VaccinationProtocol> {
     return VaccinationProtocol(
       id: fields[0] as String,
       name: fields[1] as String,
+      nameRo: fields[9] as String?,
       species: fields[2] as String,
       steps: (fields[3] as List).cast<VaccinationStep>(),
       description: fields[4] as String,
+      descriptionRo: fields[10] as String?,
       isCustom: fields[5] as bool,
       region: fields[6] as String?,
       createdAt: fields[7] as DateTime?,
@@ -32,17 +34,21 @@ class VaccinationProtocolAdapter extends TypeAdapter<VaccinationProtocol> {
   @override
   void write(BinaryWriter writer, VaccinationProtocol obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
       ..write(obj.name)
+      ..writeByte(9)
+      ..write(obj.nameRo)
       ..writeByte(2)
       ..write(obj.species)
       ..writeByte(3)
       ..write(obj.steps)
       ..writeByte(4)
       ..write(obj.description)
+      ..writeByte(10)
+      ..write(obj.descriptionRo)
       ..writeByte(5)
       ..write(obj.isCustom)
       ..writeByte(6)

@@ -111,6 +111,9 @@ class DewormingScheduleEntry {
   /// Optional notes from the protocol schedule
   final String? notes;
 
+  /// Romanian translation of notes (optional, for localization)
+  final String? notesRo;
+
   /// Helper: True if the scheduled date is in the past
   bool get isInPast => scheduledDate.isBefore(DateTime.now());
 
@@ -129,6 +132,7 @@ class DewormingScheduleEntry {
     required this.scheduledDate,
     this.productName,
     this.notes,
+    this.notesRo,
   });
 
   /// Create a copy with modified fields
@@ -137,12 +141,14 @@ class DewormingScheduleEntry {
     DateTime? scheduledDate,
     String? productName,
     String? notes,
+    String? notesRo,
   }) {
     return DewormingScheduleEntry(
       dewormingType: dewormingType ?? this.dewormingType,
       scheduledDate: scheduledDate ?? this.scheduledDate,
       productName: productName ?? this.productName,
       notes: notes ?? this.notes,
+      notesRo: notesRo ?? this.notesRo,
     );
   }
 
@@ -163,7 +169,8 @@ class DewormingScheduleEntry {
         other.dewormingType == dewormingType &&
         other.scheduledDate == scheduledDate &&
         other.productName == productName &&
-        other.notes == notes;
+        other.notes == notes &&
+        other.notesRo == notesRo;
   }
 
   @override
@@ -171,7 +178,8 @@ class DewormingScheduleEntry {
     return dewormingType.hashCode ^
         scheduledDate.hashCode ^
         productName.hashCode ^
-        notes.hashCode;
+        notes.hashCode ^
+        notesRo.hashCode;
   }
 }
 

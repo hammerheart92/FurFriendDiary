@@ -17,6 +17,10 @@ class VaccinationProtocol extends HiveObject {
   @HiveField(1)
   final String name;
 
+  /// Romanian name of the protocol (optional, for localization)
+  @HiveField(9)
+  final String? nameRo;
+
   /// Species this protocol applies to ('dog', 'cat', 'other')
   @HiveField(2)
   final String species;
@@ -28,6 +32,10 @@ class VaccinationProtocol extends HiveObject {
   /// Detailed description of the protocol
   @HiveField(4)
   final String description;
+
+  /// Romanian description of the protocol (optional, for localization)
+  @HiveField(10)
+  final String? descriptionRo;
 
   /// Whether this is a user-created protocol (true) or predefined (false)
   @HiveField(5)
@@ -48,9 +56,11 @@ class VaccinationProtocol extends HiveObject {
   VaccinationProtocol({
     required this.id,
     required this.name,
+    this.nameRo,
     required this.species,
     required this.steps,
     required this.description,
+    this.descriptionRo,
     required this.isCustom,
     this.region,
     DateTime? createdAt,
@@ -61,9 +71,11 @@ class VaccinationProtocol extends HiveObject {
   VaccinationProtocol copyWith({
     String? id,
     String? name,
+    String? nameRo,
     String? species,
     List<VaccinationStep>? steps,
     String? description,
+    String? descriptionRo,
     bool? isCustom,
     String? region,
     DateTime? createdAt,
@@ -72,9 +84,11 @@ class VaccinationProtocol extends HiveObject {
     return VaccinationProtocol(
       id: id ?? this.id,
       name: name ?? this.name,
+      nameRo: nameRo ?? this.nameRo,
       species: species ?? this.species,
       steps: steps ?? this.steps,
       description: description ?? this.description,
+      descriptionRo: descriptionRo ?? this.descriptionRo,
       isCustom: isCustom ?? this.isCustom,
       region: region ?? this.region,
       createdAt: createdAt ?? this.createdAt,
@@ -87,9 +101,11 @@ class VaccinationProtocol extends HiveObject {
     return {
       'id': id,
       'name': name,
+      'nameRo': nameRo,
       'species': species,
       'steps': steps.map((step) => step.toJson()).toList(),
       'description': description,
+      'descriptionRo': descriptionRo,
       'isCustom': isCustom,
       'region': region,
       'createdAt': createdAt.toIso8601String(),
@@ -102,11 +118,13 @@ class VaccinationProtocol extends HiveObject {
     return VaccinationProtocol(
       id: json['id'] as String,
       name: json['name'] as String,
+      nameRo: json['nameRo'] as String?,
       species: json['species'] as String,
       steps: (json['steps'] as List<dynamic>)
           .map((stepJson) => VaccinationStep.fromJson(stepJson as Map<String, dynamic>))
           .toList(),
       description: json['description'] as String,
+      descriptionRo: json['descriptionRo'] as String?,
       isCustom: json['isCustom'] as bool,
       region: json['region'] as String?,
       createdAt: DateTime.parse(json['createdAt'] as String),

@@ -2,18 +2,21 @@
   {
     "id": "canine-standard-deworming-ro-eu-v1",
     "name": "Canine Standard Deworming Protocol (Romania/EU)",
+    "nameRo": "Protocol Standard de Deparazitare Canină (România/UE)",
     "species": "dog",
     "description": "Standard Romanian/EU canine deworming protocol for puppies. Follows ESCCAP (European Scientific Counsel Companion Animal Parasites) guidelines with 4 doses at weeks 3, 5, 8, and 11.",
+    "descriptionRo": "Protocol standard de deparazitare canină pentru căței din România/UE. Urmează ghidurile ESCCAP (European Scientific Counsel Companion Animal Parasites) cu 4 doze la săptămânile 3, 5, 8 și 11.",
     "isCustom": false,
     "region": "Romania/EU",
     "createdAt": "2025-01-15T10:00:00.000Z",
-    "updatedAt": "2025-11-28T10:00:00.000Z",
+    "updatedAt": "2025-11-29T12:00:00.000Z",
     "schedules": [
       {
         "dewormingType": "internal",
         "ageInWeeks": 3,
         "intervalDays": null,
         "notes": "First internal deworming - 3 weeks old",
+        "notesRo": "Prima deparazitare internă - 3 săptămâni",
         "recurring": null,
         "productName": null
       },
@@ -22,6 +25,7 @@
         "ageInWeeks": 5,
         "intervalDays": null,
         "notes": "Second internal deworming - 5 weeks old",
+        "notesRo": "A doua deparazitare internă - 5 săptămâni",
         "recurring": null,
         "productName": null
       },
@@ -30,6 +34,7 @@
         "ageInWeeks": 8,
         "intervalDays": null,
         "notes": "Third internal deworming - 8 weeks old",
+        "notesRo": "A treia deparazitare internă - 8 săptămâni",
         "recurring": null,
         "productName": null
       },
@@ -38,6 +43,7 @@
         "ageInWeeks": 11,
         "intervalDays": null,
         "notes": "Fourth internal deworming - 11 weeks old (last puppy dose)",
+        "notesRo": "A patra deparazitare internă - 11 săptămâni (ultima doză pentru cățeluș)",
         "recurring": null,
         "productName": null
       }
@@ -46,18 +52,21 @@
   {
     "id": "canine-intensive-deworming-ro-eu-v1",
     "name": "Canine Intensive Deworming Protocol (Romania/EU)",
+    "nameRo": "Protocol Intensiv de Deparazitare Canină (România/UE)",
     "species": "dog",
     "description": "Annual deworming protocol for adult dogs following ESCCAP Romania/EU guidelines. Covers 10 years of annual treatments starting at 1 year of age.",
+    "descriptionRo": "Protocol anual de deparazitare pentru câini adulți urmând ghidurile ESCCAP România/UE. Acoperă 10 ani de tratamente anuale începând de la 1 an.",
     "isCustom": false,
     "region": "Romania/EU",
     "createdAt": "2025-01-15T10:00:00.000Z",
-    "updatedAt": "2025-11-28T10:00:00.000Z",
+    "updatedAt": "2025-11-29T12:00:00.000Z",
     "schedules": [
       {
         "dewormingType": "internal",
         "ageInWeeks": 52,
         "intervalDays": null,
         "notes": "Annual internal deworming - starting at 1 year old",
+        "notesRo": "Deparazitare internă anuală - începând de la vârsta de 1 an",
         "recurring": {
           "intervalMonths": 12,
           "indefinitely": false,
@@ -70,18 +79,21 @@
   {
     "id": "feline-standard-deworming-ro-eu-v1",
     "name": "Feline Standard Deworming Protocol (Romania/EU)",
+    "nameRo": "Protocol Standard de Deparazitare Felină (România/UE)",
     "species": "cat",
     "description": "Standard Romanian/EU feline deworming protocol for kittens. Follows ESCCAP guidelines with 5 doses at weeks 3, 5, 7, 9, and 11.",
+    "descriptionRo": "Protocol standard de deparazitare felină pentru pisoi din România/UE. Urmează ghidurile ESCCAP cu 5 doze la săptămânile 3, 5, 7, 9 și 11.",
     "isCustom": false,
     "region": "Romania/EU",
     "createdAt": "2025-01-15T10:00:00.000Z",
-    "updatedAt": "2025-11-28T10:00:00.000Z",
+    "updatedAt": "2025-11-29T12:00:00.000Z",
     "schedules": [
       {
         "dewormingType": "internal",
         "ageInWeeks": 3,
         "intervalDays": null,
         "notes": "First internal deworming - 3 weeks old",
+        "notesRo": "Prima deparazitare internă - 3 săptămâni",
         "recurring": null,
         "productName": null
       },
@@ -90,6 +102,7 @@
         "ageInWeeks": 5,
         "intervalDays": null,
         "notes": "Second internal deworming - 5 weeks old",
+        "notesRo": "A doua deparazitare internă - 5 săptămâni",
         "recurring": null,
         "productName": null
       },
@@ -98,6 +111,7 @@
         "ageInWeeks": 7,
         "intervalDays": null,
         "notes": "Third internal deworming - 7 weeks old",
+        "notesRo": "A treia deparazitare internă - 7 săptămâni",
         "recurring": null,
         "productName": null
       },
@@ -106,6 +120,7 @@
         "ageInWeeks": 9,
         "intervalDays": null,
         "notes": "Fourth internal deworming - 9 weeks old",
+        "notesRo": "A patra deparazitare internă - 9 săptămâni",
         "recurring": null,
         "productName": null
       },
@@ -114,6 +129,7 @@
         "ageInWeeks": 11,
         "intervalDays": null,
         "notes": "Fifth internal deworming - 11 weeks old (last kitten dose)",
+        "notesRo": "A cincea deparazitare internă - 11 săptămâni (ultima doză pentru pisoi)",
         "recurring": null,
         "productName": null
       }
@@ -122,18 +138,21 @@
   {
     "id": "feline-outdoor-deworming-ro-eu-v1",
     "name": "Feline Outdoor Deworming Protocol (Romania/EU)",
+    "nameRo": "Protocol de Deparazitare Felină pentru Exterior (România/UE)",
     "species": "cat",
     "description": "Quarterly deworming protocol for adult cats following ESCCAP Romania/EU guidelines. Covers 10 years of quarterly treatments (40 doses) starting at 12 weeks.",
+    "descriptionRo": "Protocol trimestrial de deparazitare pentru pisici adulte urmând ghidurile ESCCAP România/UE. Acoperă 10 ani de tratamente trimestriale (40 doze) începând de la 12 săptămâni.",
     "isCustom": false,
     "region": "Romania/EU",
     "createdAt": "2025-01-15T10:00:00.000Z",
-    "updatedAt": "2025-11-28T10:00:00.000Z",
+    "updatedAt": "2025-11-29T12:00:00.000Z",
     "schedules": [
       {
         "dewormingType": "internal",
         "ageInWeeks": 12,
         "intervalDays": null,
         "notes": "Quarterly internal deworming - starting at 12 weeks old",
+        "notesRo": "Deparazitare internă trimestrială - începând de la 12 săptămâni",
         "recurring": {
           "intervalMonths": 3,
           "indefinitely": false,

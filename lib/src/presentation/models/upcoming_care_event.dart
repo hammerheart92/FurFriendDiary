@@ -72,10 +72,13 @@ class DewormingEvent extends UpcomingCareEvent {
   DateTime get scheduledDate => entry.scheduledDate;
 
   @override
-  String get title => 'Deworming Treatment'; // Will use l10n.dewormingTreatment in UI
+  String get title => 'Deworming Treatment'; // Placeholder - UI layer should use l10n.dewormingTreatment
 
   @override
   String get description {
+    // Note: dewormingType and notes are displayed as-is from JSON
+    // For locale-aware display, the UI layer should check locale and use
+    // appropriate translations from protocol JSON (descriptionRo field)
     final parts = <String>[entry.dewormingType];
     if (entry.productName != null && entry.productName!.isNotEmpty) {
       parts.add(entry.productName!);

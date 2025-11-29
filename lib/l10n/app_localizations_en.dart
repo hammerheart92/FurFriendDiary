@@ -3002,4 +3002,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get medication => 'Medication';
+
+  @override
+  String ageMonthsShort(int count) {
+    return '$count mos';
+  }
+
+  @override
+  String ageYearsShort(int count) {
+    return '$count yrs';
+  }
+
+  @override
+  String ageWeeksShort(int count) {
+    return '$count wks';
+  }
 }

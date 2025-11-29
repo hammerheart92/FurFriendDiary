@@ -290,6 +290,19 @@ class _PetInfoHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    // Localize species display
+    String getLocalizedSpecies(String species) {
+      final lowerSpecies = species.toLowerCase();
+      if (lowerSpecies == 'dog' || lowerSpecies == 'câine') {
+        return l10n.speciesDog;
+      } else if (lowerSpecies == 'cat' || lowerSpecies == 'pisică') {
+        return l10n.speciesCat;
+      }
+      return species; // Fallback to original if not recognized
+    }
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
@@ -327,7 +340,7 @@ class _PetInfoHeader extends StatelessWidget {
                 Row(
                   children: [
                     Chip(
-                      label: Text(pet.species),
+                      label: Text(getLocalizedSpecies(pet.species)),
                       padding: EdgeInsets.zero,
                       visualDensity: VisualDensity.compact,
                       backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
@@ -337,7 +350,7 @@ class _PetInfoHeader extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      _formatAge(pet.birthday),
+                      _formatAge(pet.birthday, l10n),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Theme.of(context)
                                 .colorScheme
@@ -355,20 +368,20 @@ class _PetInfoHeader extends StatelessWidget {
     );
   }
 
-  String _formatAge(DateTime? birthday) {
-    if (birthday == null) return 'Unknown';
+  String _formatAge(DateTime? birthday, AppLocalizations l10n) {
+    if (birthday == null) return l10n.noBirthdaySet;
     final now = DateTime.now();
     final age = now.difference(birthday);
     final years = age.inDays ~/ 365;
     final months = (age.inDays % 365) ~/ 30;
 
     if (years > 0) {
-      return '$years yr${years > 1 ? 's' : ''}';
+      return l10n.ageYearsShort(years);
     } else if (months > 0) {
-      return '$months mo${months > 1 ? 's' : ''}';
+      return l10n.ageMonthsShort(months);
     } else {
       final weeks = age.inDays ~/ 7;
-      return '$weeks wk${weeks > 1 ? 's' : ''}';
+      return l10n.ageWeeksShort(weeks);
     }
   }
 }
@@ -389,9 +402,19 @@ class _ProtocolCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context);
+    final isRomanian = locale.languageCode == 'ro';
+
+    // Use Romanian translations if available
+    final displayName = isRomanian && protocol.nameRo != null
+        ? protocol.nameRo!
+        : protocol.name;
+    final displayDescription = isRomanian && protocol.descriptionRo != null
+        ? protocol.descriptionRo!
+        : protocol.description;
 
     return Semantics(
-      label: '${protocol.name}, '
+      label: '$displayName, '
           '${_isStandard ? l10n.coreProtocol : l10n.extendedProtocol}, '
           '${l10n.treatmentsCount(protocol.schedules.length)}, '
           '${protocol.region ?? 'Unknown'}',
@@ -417,7 +440,7 @@ class _ProtocolCard extends StatelessWidget {
                         children: [
                           Flexible(
                             child: Text(
-                              protocol.name,
+                              displayName,
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                           ),
@@ -472,7 +495,7 @@ class _ProtocolCard extends StatelessWidget {
 
                       // Description
                       Text(
-                        protocol.description,
+                        displayDescription,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: Theme.of(context)
                                   .colorScheme
@@ -567,6 +590,13 @@ class _ConfirmationBottomSheetState extends State<_ConfirmationBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context);
+    final isRomanian = locale.languageCode == 'ro';
+
+    // Use Romanian translations if available
+    final displayName = isRomanian && widget.protocol.nameRo != null
+        ? widget.protocol.nameRo!
+        : widget.protocol.name;
 
     return SafeArea(
       child: Padding(
@@ -592,7 +622,7 @@ class _ConfirmationBottomSheetState extends State<_ConfirmationBottomSheet> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.protocol.name,
+                      displayName,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const Divider(height: 16),
@@ -661,7 +691,7 @@ class _ConfirmationBottomSheetState extends State<_ConfirmationBottomSheet> {
                 Expanded(
                   child: Semantics(
                     label: l10n.applyProtocolToPet(
-                      widget.protocol.name,
+                      displayName,
                       widget.pet.name,
                     ),
                     button: true,

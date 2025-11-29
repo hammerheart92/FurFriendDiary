@@ -5683,6 +5683,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Medication'**
   String get medication;
+
+  /// Short format for age in months
+  ///
+  /// In en, this message translates to:
+  /// **'{count} mos'**
+  String ageMonthsShort(int count);
+
+  /// Short format for age in years
+  ///
+  /// In en, this message translates to:
+  /// **'{count} yrs'**
+  String ageYearsShort(int count);
+
+  /// Short format for age in weeks
+  ///
+  /// In en, this message translates to:
+  /// **'{count} wks'**
+  String ageWeeksShort(int count);
 }
 
 class _AppLocalizationsDelegate

@@ -327,7 +327,7 @@ class _PetInfoHeader extends StatelessWidget {
                 Row(
                   children: [
                     Chip(
-                      label: Text(pet.species),
+                      label: Text(_getLocalizedSpecies(context, pet.species)),
                       padding: EdgeInsets.zero,
                       visualDensity: VisualDensity.compact,
                       backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
@@ -353,6 +353,28 @@ class _PetInfoHeader extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  /// Get localized species name
+  String _getLocalizedSpecies(BuildContext context, String species) {
+    final l10n = AppLocalizations.of(context)!;
+
+    // Map species to localized strings
+    switch (species.toLowerCase()) {
+      case 'dog':
+      case 'câine':
+        return l10n.speciesDog;
+      case 'cat':
+      case 'pisică':
+        return l10n.speciesCat;
+      case 'bird':
+        return l10n.speciesBird;
+      case 'rabbit':
+        return l10n.speciesRabbit;
+      default:
+        // Return as-is if no translation available
+        return species;
+    }
   }
 
   String _formatAge(DateTime? birthday) {
@@ -389,9 +411,19 @@ class _ProtocolCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context);
+    final isRomanian = locale.languageCode == 'ro';
+
+    // Use Romanian name/description if available and locale is Romanian
+    final displayName = (isRomanian && protocol.nameRo != null && protocol.nameRo!.isNotEmpty)
+        ? protocol.nameRo!
+        : protocol.name;
+    final displayDescription = (isRomanian && protocol.descriptionRo != null && protocol.descriptionRo!.isNotEmpty)
+        ? protocol.descriptionRo!
+        : protocol.description;
 
     return Semantics(
-      label: '${protocol.name}, '
+      label: '$displayName, '
           '${_isCore ? l10n.coreProtocol : l10n.extendedProtocol}, '
           '${l10n.vaccinationsCount(protocol.steps.length)}, '
           '${protocol.region ?? 'Unknown'}',
@@ -417,7 +449,7 @@ class _ProtocolCard extends StatelessWidget {
                         children: [
                           Flexible(
                             child: Text(
-                              protocol.name,
+                              displayName,
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                           ),
@@ -472,7 +504,7 @@ class _ProtocolCard extends StatelessWidget {
 
                       // Description
                       Text(
-                        protocol.description,
+                        displayDescription,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: Theme.of(context)
                                   .colorScheme
@@ -567,6 +599,13 @@ class _ConfirmationBottomSheetState extends State<_ConfirmationBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context);
+    final isRomanian = locale.languageCode == 'ro';
+
+    // Use Romanian name if available and locale is Romanian
+    final displayName = (isRomanian && widget.protocol.nameRo != null && widget.protocol.nameRo!.isNotEmpty)
+        ? widget.protocol.nameRo!
+        : widget.protocol.name;
 
     return SafeArea(
       child: Padding(
@@ -592,7 +631,7 @@ class _ConfirmationBottomSheetState extends State<_ConfirmationBottomSheet> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.protocol.name,
+                      displayName,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const Divider(height: 16),
@@ -664,7 +703,7 @@ class _ConfirmationBottomSheetState extends State<_ConfirmationBottomSheet> {
                 Expanded(
                   child: Semantics(
                     label: l10n.applyProtocolToPet(
-                      widget.protocol.name,
+                      displayName,
                       widget.pet.name,
                     ),
                     button: true,

@@ -117,6 +117,7 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
 
             // Calendar
             TableCalendar<UpcomingCareEvent>(
+              locale: Localizations.localeOf(context).languageCode,
               firstDay: DateTime.now().subtract(const Duration(days: 365)),
               lastDay: DateTime.now().add(const Duration(days: 365)),
               focusedDay: _focusedDay,
@@ -382,7 +383,8 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
       return _buildEmptyDayState(l10n, theme);
     }
 
-    final dateFormat = DateFormat.yMMMMd();
+    final locale = Localizations.localeOf(context).languageCode;
+    final dateFormat = DateFormat.yMMMMd(locale);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -685,6 +687,53 @@ class _EventListTile extends StatelessWidget {
     required this.onTap,
   });
 
+  /// Get localized title for the event
+  String _getLocalizedTitle() {
+    if (event is DewormingEvent) {
+      return l10n.dewormingTreatment;
+    } else if (event is VaccinationEvent) {
+      return l10n.vaccination;
+    } else if (event is MedicationEvent) {
+      return l10n.medication;
+    } else if (event is AppointmentEvent) {
+      return l10n.veterinaryAppointment;
+    }
+    return event.title;
+  }
+
+  /// Get localized type label for deworming events
+  String _getLocalizedDescription(BuildContext context) {
+    if (event is DewormingEvent) {
+      final dewormingEvent = event as DewormingEvent;
+      final parts = <String>[];
+
+      // Translate deworming type
+      final typeLabel = dewormingEvent.entry.dewormingType == 'internal'
+          ? l10n.internalDeworming
+          : l10n.externalDeworming;
+      parts.add(typeLabel);
+
+      // Add product name if available
+      if (dewormingEvent.entry.productName != null &&
+          dewormingEvent.entry.productName!.isNotEmpty) {
+        parts.add(dewormingEvent.entry.productName!);
+      }
+
+      // Add notes if available (use Romanian if locale matches)
+      final locale = Localizations.localeOf(context);
+      final isRomanian = locale.languageCode == 'ro';
+      final notes = (isRomanian && dewormingEvent.entry.notesRo != null && dewormingEvent.entry.notesRo!.isNotEmpty)
+          ? dewormingEvent.entry.notesRo!
+          : dewormingEvent.entry.notes;
+      if (notes != null && notes.isNotEmpty) {
+        parts.add(notes);
+      }
+
+      return parts.join(' - ');
+    }
+    return event.description;
+  }
+
   @override
   Widget build(BuildContext context) {
     final eventColor = _getEventTypeColor(event.eventType);
@@ -727,7 +776,7 @@ class _EventListTile extends StatelessWidget {
                   color: eventColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: _buildEventIcon(event, eventColor),
+                child: _buildEventIcon(context, event, eventColor),
               ),
               const SizedBox(width: 12),
 
@@ -740,7 +789,7 @@ class _EventListTile extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            event.title,
+                            _getLocalizedTitle(),
                             style: theme.textTheme.titleSmall!.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
@@ -770,7 +819,7 @@ class _EventListTile extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      event.description,
+                      _getLocalizedDescription(context),
                       style: theme.textTheme.bodySmall!.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -794,12 +843,13 @@ class _EventListTile extends StatelessWidget {
   }
 
   /// Build event icon - custom calendar for appointments, emoji for others
-  Widget _buildEventIcon(UpcomingCareEvent event, Color eventColor) {
+  Widget _buildEventIcon(BuildContext context, UpcomingCareEvent event, Color eventColor) {
     // For appointments, use custom calendar icon with actual date
     if (event is AppointmentEvent) {
       final date = event.scheduledDate;
-      final monthAbbr = DateFormat('MMM').format(date).toUpperCase();
-      final day = DateFormat('d').format(date);
+      final locale = Localizations.localeOf(context).languageCode;
+      final monthAbbr = DateFormat('MMM', locale).format(date).toUpperCase();
+      final day = DateFormat('d', locale).format(date);
 
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,

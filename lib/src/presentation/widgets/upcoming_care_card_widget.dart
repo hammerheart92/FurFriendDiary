@@ -48,8 +48,9 @@ class UpcomingCareCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final locale = Localizations.localeOf(context);
     final eventColor = _getEventColor(event);
-    final dateFormat = DateFormat.yMMMMd();
+    final dateFormat = DateFormat.yMMMMd(locale.languageCode);
     final relativeTime = _getRelativeTime(context, event.scheduledDate);
 
     return SizedBox(
@@ -96,7 +97,7 @@ class UpcomingCareCardWidget extends StatelessWidget {
                       // Title
                       Expanded(
                         child: Text(
-                          event.title,
+                          _getLocalizedTitle(context, event),
                           style: theme.textTheme.titleSmall!.copyWith(
                             fontWeight: FontWeight.w600,
                             color: theme.colorScheme.onSurface,
@@ -161,6 +162,21 @@ class UpcomingCareCardWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// Get localized title for event
+  String _getLocalizedTitle(BuildContext context, UpcomingCareEvent event) {
+    final l10n = AppLocalizations.of(context);
+
+    // For deworming events, use localized string
+    if (event is DewormingEvent) {
+      return l10n.dewormingTreatment;
+    }
+
+    // For other events, use the title from the event
+    // (VaccinationEvent uses vaccine name, AppointmentEvent uses reason,
+    //  MedicationEvent uses medication name - these are user/protocol data)
+    return event.title;
   }
 
   /// Build event icon - custom calendar for appointments, emoji for others
