@@ -5701,6 +5701,252 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} wks'**
   String ageWeeksShort(int count);
+
+  /// No description provided for @addVaccination.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Vaccination'**
+  String get addVaccination;
+
+  /// No description provided for @editVaccination.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Vaccination'**
+  String get editVaccination;
+
+  /// No description provided for @vaccinationInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Vaccination Information'**
+  String get vaccinationInformation;
+
+  /// No description provided for @vaccineType.
+  ///
+  /// In en, this message translates to:
+  /// **'Vaccine Type'**
+  String get vaccineType;
+
+  /// No description provided for @selectVaccineType.
+  ///
+  /// In en, this message translates to:
+  /// **'Select vaccine type'**
+  String get selectVaccineType;
+
+  /// No description provided for @pleaseSelectVaccineType.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a vaccine type'**
+  String get pleaseSelectVaccineType;
+
+  /// No description provided for @petSpecies.
+  ///
+  /// In en, this message translates to:
+  /// **'Pet Species'**
+  String get petSpecies;
+
+  /// No description provided for @vaccinesFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Vaccines for'**
+  String get vaccinesFor;
+
+  /// No description provided for @dates.
+  ///
+  /// In en, this message translates to:
+  /// **'Dates'**
+  String get dates;
+
+  /// No description provided for @administeredDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Administered Date'**
+  String get administeredDate;
+
+  /// No description provided for @nextDueDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Due Date'**
+  String get nextDueDate;
+
+  /// No description provided for @veterinaryDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Veterinary Details'**
+  String get veterinaryDetails;
+
+  /// No description provided for @optionalFields.
+  ///
+  /// In en, this message translates to:
+  /// **'All fields below are optional'**
+  String get optionalFields;
+
+  /// No description provided for @batchNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Batch Number'**
+  String get batchNumber;
+
+  /// No description provided for @batchNumberHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., BN12345'**
+  String get batchNumberHint;
+
+  /// No description provided for @veterinarianName.
+  ///
+  /// In en, this message translates to:
+  /// **'Veterinarian Name'**
+  String get veterinarianName;
+
+  /// No description provided for @veterinarianNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Dr. Smith'**
+  String get veterinarianNameHint;
+
+  /// No description provided for @clinicNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., City Vet Clinic'**
+  String get clinicNameHint;
+
+  /// No description provided for @certificatePhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Vaccination Certificate'**
+  String get certificatePhotos;
+
+  /// No description provided for @optionalCertificateHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload photos of vaccination certificates for your records'**
+  String get optionalCertificateHint;
+
+  /// No description provided for @vaccinationNotesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Pet tolerated vaccination well, no adverse reactions'**
+  String get vaccinationNotesHint;
+
+  /// No description provided for @saveVaccination.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Vaccination'**
+  String get saveVaccination;
+
+  /// No description provided for @updateVaccination.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Vaccination'**
+  String get updateVaccination;
+
+  /// No description provided for @vaccinationAddedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Vaccination added successfully'**
+  String get vaccinationAddedSuccessfully;
+
+  /// No description provided for @vaccinationUpdatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Vaccination updated successfully'**
+  String get vaccinationUpdatedSuccessfully;
+
+  /// No description provided for @failedToAddVaccination.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to add vaccination: {error}'**
+  String failedToAddVaccination(String error);
+
+  /// No description provided for @failedToUpdateVaccination.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update vaccination: {error}'**
+  String failedToUpdateVaccination(String error);
+
+  /// Title for vaccination detail screen
+  ///
+  /// In en, this message translates to:
+  /// **'Vaccination Details'**
+  String get vaccinationDetails;
+
+  /// Title for delete vaccination confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Vaccination'**
+  String get deleteVaccination;
+
+  /// Confirmation message for deleting a vaccination
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this {vaccineType} vaccination? This action cannot be undone.'**
+  String deleteVaccinationConfirm(String vaccineType);
+
+  /// Success message after deleting a vaccination
+  ///
+  /// In en, this message translates to:
+  /// **'Vaccination deleted successfully'**
+  String get vaccinationDeletedSuccessfully;
+
+  /// Error message when vaccination deletion fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete vaccination'**
+  String get failedToDeleteVaccination;
+
+  /// Error message when vaccination is not found
+  ///
+  /// In en, this message translates to:
+  /// **'Vaccination not found'**
+  String get vaccinationNotFound;
+
+  /// Label indicating vaccination was auto-generated from a protocol
+  ///
+  /// In en, this message translates to:
+  /// **'Generated from Protocol'**
+  String get generatedFromProtocol;
+
+  /// Section title for protocol-related information
+  ///
+  /// In en, this message translates to:
+  /// **'Protocol Information'**
+  String get protocolInformation;
+
+  /// Label for vaccination due status
+  ///
+  /// In en, this message translates to:
+  /// **'Due Status'**
+  String get dueStatus;
+
+  /// Status label for administered vaccination
+  ///
+  /// In en, this message translates to:
+  /// **'Administered'**
+  String get administered;
+
+  /// Message when pet has no vaccination records
+  ///
+  /// In en, this message translates to:
+  /// **'No vaccinations yet'**
+  String get noVaccinations;
+
+  /// Helper text for empty vaccination state
+  ///
+  /// In en, this message translates to:
+  /// **'Keep track of your pet\'s vaccination history and upcoming boosters'**
+  String get trackVaccinationRecords;
+
+  /// Error message when vaccination data fails to load
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading vaccinations'**
+  String get errorLoadingVaccinations;
+
+  /// Accessibility hint for tapping to view details
+  ///
+  /// In en, this message translates to:
+  /// **'View details'**
+  String get viewDetails;
 }
 
 class _AppLocalizationsDelegate

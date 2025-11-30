@@ -1988,5 +1988,110 @@
         "type": "int"
       }
     }
+  },
+
+  "addVaccination": "Add Vaccination",
+  "editVaccination": "Edit Vaccination",
+  "vaccinationInformation": "Vaccination Information",
+  "vaccineType": "Vaccine Type",
+  "selectVaccineType": "Select vaccine type",
+  "pleaseSelectVaccineType": "Please select a vaccine type",
+  "petSpecies": "Pet Species",
+  "vaccinesFor": "Vaccines for",
+  "dates": "Dates",
+  "administeredDate": "Administered Date",
+  "nextDueDate": "Next Due Date",
+  "veterinaryDetails": "Veterinary Details",
+  "optionalFields": "All fields below are optional",
+  "batchNumber": "Batch Number",
+  "batchNumberHint": "e.g., BN12345",
+  "veterinarianName": "Veterinarian Name",
+  "veterinarianNameHint": "e.g., Dr. Smith",
+  "clinicName": "Clinic Name",
+  "clinicNameHint": "e.g., City Vet Clinic",
+  "certificatePhotos": "Vaccination Certificate",
+  "addPhoto": "Add Photo",
+  "optionalCertificateHint": "Upload photos of vaccination certificates for your records",
+  "vaccinationNotesHint": "e.g., Pet tolerated vaccination well, no adverse reactions",
+  "saveVaccination": "Save Vaccination",
+  "updateVaccination": "Update Vaccination",
+  "vaccinationAddedSuccessfully": "Vaccination added successfully",
+  "vaccinationUpdatedSuccessfully": "Vaccination updated successfully",
+  "failedToAddVaccination": "Failed to add vaccination: {error}",
+  "@failedToAddVaccination": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToUpdateVaccination": "Failed to update vaccination: {error}",
+  "@failedToUpdateVaccination": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "vaccinationDetails": "Vaccination Details",
+  "@vaccinationDetails": {
+    "description": "Title for vaccination detail screen"
+  },
+  "deleteVaccination": "Delete Vaccination",
+  "@deleteVaccination": {
+    "description": "Title for delete vaccination confirmation dialog"
+  },
+  "deleteVaccinationConfirm": "Are you sure you want to delete this {vaccineType} vaccination? This action cannot be undone.",
+  "@deleteVaccinationConfirm": {
+    "description": "Confirmation message for deleting a vaccination",
+    "placeholders": {
+      "vaccineType": {
+        "type": "String"
+      }
+    }
+  },
+  "vaccinationDeletedSuccessfully": "Vaccination deleted successfully",
+  "@vaccinationDeletedSuccessfully": {
+    "description": "Success message after deleting a vaccination"
+  },
+  "failedToDeleteVaccination": "Failed to delete vaccination",
+  "@failedToDeleteVaccination": {
+    "description": "Error message when vaccination deletion fails"
+  },
+  "vaccinationNotFound": "Vaccination not found",
+  "@vaccinationNotFound": {
+    "description": "Error message when vaccination is not found"
+  },
+  "generatedFromProtocol": "Generated from Protocol",
+  "@generatedFromProtocol": {
+    "description": "Label indicating vaccination was auto-generated from a protocol"
+  },
+  "protocolInformation": "Protocol Information",
+  "@protocolInformation": {
+    "description": "Section title for protocol-related information"
+  },
+  "dueStatus": "Due Status",
+  "@dueStatus": {
+    "description": "Label for vaccination due status"
+  },
+  "administered": "Administered",
+  "@administered": {
+    "description": "Status label for administered vaccination"
+  },
+  "noVaccinations": "No vaccinations yet",
+  "@noVaccinations": {
+    "description": "Message when pet has no vaccination records"
+  },
+  "trackVaccinationRecords": "Keep track of your pet's vaccination history and upcoming boosters",
+  "@trackVaccinationRecords": {
+    "description": "Helper text for empty vaccination state"
+  },
+  "errorLoadingVaccinations": "Error loading vaccinations",
+  "@errorLoadingVaccinations": {
+    "description": "Error message when vaccination data fails to load"
+  },
+  "viewDetails": "View details",
+  "@viewDetails": {
+    "description": "Accessibility hint for tapping to view details"
   }
 }

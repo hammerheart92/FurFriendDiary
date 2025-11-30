@@ -3070,4 +3070,137 @@ class AppLocalizationsRo extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get addVaccination => 'Adaugă Vaccinare';
+
+  @override
+  String get editVaccination => 'Editează Vaccinare';
+
+  @override
+  String get vaccinationInformation => 'Informații Vaccinare';
+
+  @override
+  String get vaccineType => 'Tip Vaccin';
+
+  @override
+  String get selectVaccineType => 'Selectează tipul de vaccin';
+
+  @override
+  String get pleaseSelectVaccineType => 'Vă rugăm selectați un tip de vaccin';
+
+  @override
+  String get petSpecies => 'Specia Animalului';
+
+  @override
+  String get vaccinesFor => 'Vaccinuri pentru';
+
+  @override
+  String get dates => 'Date';
+
+  @override
+  String get administeredDate => 'Data Administrării';
+
+  @override
+  String get nextDueDate => 'Data Următorului Rapel';
+
+  @override
+  String get veterinaryDetails => 'Detalii Veterinare';
+
+  @override
+  String get optionalFields => 'Toate câmpurile de mai jos sunt opționale';
+
+  @override
+  String get batchNumber => 'Număr Lot';
+
+  @override
+  String get batchNumberHint => 'de ex., BN12345';
+
+  @override
+  String get veterinarianName => 'Nume Veterinar';
+
+  @override
+  String get veterinarianNameHint => 'de ex., Dr. Popescu';
+
+  @override
+  String get clinicNameHint => 'de ex., Clinica Veterinară Centrală';
+
+  @override
+  String get certificatePhotos => 'Certificat de Vaccinare';
+
+  @override
+  String get optionalCertificateHint =>
+      'Încărcați fotografii ale certificatelor de vaccinare pentru evidența dumneavoastră';
+
+  @override
+  String get vaccinationNotesHint =>
+      'de ex., Animalul a tolerat bine vaccinarea, fără reacții adverse';
+
+  @override
+  String get saveVaccination => 'Salvează Vaccinarea';
+
+  @override
+  String get updateVaccination => 'Actualizează Vaccinarea';
+
+  @override
+  String get vaccinationAddedSuccessfully => 'Vaccinare adăugată cu succes';
+
+  @override
+  String get vaccinationUpdatedSuccessfully =>
+      'Vaccinare actualizată cu succes';
+
+  @override
+  String failedToAddVaccination(String error) {
+    return 'Eroare la adăugarea vaccinării: $error';
+  }
+
+  @override
+  String failedToUpdateVaccination(String error) {
+    return 'Eroare la actualizarea vaccinării: $error';
+  }
+
+  @override
+  String get vaccinationDetails => 'Detalii Vaccinare';
+
+  @override
+  String get deleteVaccination => 'Șterge Vaccinarea';
+
+  @override
+  String deleteVaccinationConfirm(String vaccineType) {
+    return 'Sigur doriți să ștergeți această vaccinare $vaccineType? Această acțiune nu poate fi anulată.';
+  }
+
+  @override
+  String get vaccinationDeletedSuccessfully => 'Vaccinare ștearsă cu succes';
+
+  @override
+  String get failedToDeleteVaccination => 'Eroare la ștergerea vaccinării';
+
+  @override
+  String get vaccinationNotFound => 'Vaccinare negăsită';
+
+  @override
+  String get generatedFromProtocol => 'Generată din Protocol';
+
+  @override
+  String get protocolInformation => 'Informații Protocol';
+
+  @override
+  String get dueStatus => 'Stare Scadență';
+
+  @override
+  String get administered => 'Administrat';
+
+  @override
+  String get noVaccinations => 'Nu există vaccinări încă';
+
+  @override
+  String get trackVaccinationRecords =>
+      'Păstrați evidența istoricului de vaccinare și a rapelurilor viitoare ale animalului';
+
+  @override
+  String get errorLoadingVaccinations => 'Eroare la încărcarea vaccinărilor';
+
+  @override
+  String get viewDetails => 'Vizualizează detalii';
 }

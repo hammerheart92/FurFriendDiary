@@ -22,6 +22,7 @@ import '../../domain/models/protocols/vaccination_protocol.dart';
 import '../../domain/models/protocols/deworming_protocol.dart';
 import '../../domain/models/protocols/treatment_plan.dart';
 import '../../domain/models/protocols/reminder_config.dart';
+import '../../domain/models/vaccination_event.dart';
 import '../../services/encryption_service.dart';
 import '../../services/data_migration_service.dart';
 
@@ -52,6 +53,7 @@ class HiveManager {
   static const String dewormingProtocolBoxName = 'deworming_protocols';
   static const String treatmentPlanBoxName = 'treatment_plans';
   static const String reminderConfigBoxName = 'reminder_configs';
+  static const String vaccinationEventBoxName = 'vaccination_events';
   static const String settingsBoxName = 'settings';
   static const String appPrefsBoxName = 'app_prefs';
 
@@ -73,6 +75,7 @@ class HiveManager {
   Box<DewormingProtocol>? _dewormingProtocolBox;
   Box<TreatmentPlan>? _treatmentPlanBox;
   Box<ReminderConfig>? _reminderConfigBox;
+  Box<VaccinationEvent>? _vaccinationEventBox;
   Box? _settingsBox;
   Box? _appPrefsBox;
 
@@ -287,6 +290,11 @@ class HiveManager {
       Hive.registerAdapter(ReminderConfigAdapter());
       logger.d("✅ DEBUG: ReminderConfig adapter registered with typeId 29");
     }
+
+    if (!Hive.isAdapterRegistered(30)) {
+      Hive.registerAdapter(VaccinationEventAdapter());
+      logger.d("✅ DEBUG: VaccinationEvent adapter registered with typeId 30");
+    }
   }
 
   /// Open all boxes in the correct order
@@ -364,6 +372,10 @@ class HiveManager {
     );
     _reminderConfigBox = await _openBox<ReminderConfig>(
       reminderConfigBoxName,
+      encryptionCipher: cipher,
+    );
+    _vaccinationEventBox = await _openBox<VaccinationEvent>(
+      vaccinationEventBoxName,
       encryptionCipher: cipher,
     );
 
@@ -606,6 +618,15 @@ class HiveManager {
     return _reminderConfigBox!;
   }
 
+  /// Get vaccination events box
+  Box<VaccinationEvent> get vaccinationEventBox {
+    if (_vaccinationEventBox == null || !_vaccinationEventBox!.isOpen) {
+      throw HiveError(
+          "Vaccination events box is not initialized. Call HiveManager.initialize() first.");
+    }
+    return _vaccinationEventBox!;
+  }
+
   /// Get settings box
   Box get settingsBox {
     if (_settingsBox == null || !_settingsBox!.isOpen) {
@@ -666,6 +687,7 @@ class HiveManager {
       await _dewormingProtocolBox?.flush();
       await _treatmentPlanBox?.flush();
       await _reminderConfigBox?.flush();
+      await _vaccinationEventBox?.flush();
 
       // Flush untyped boxes
       await _settingsBox?.flush();
@@ -783,6 +805,7 @@ class HiveManager {
       await Hive.deleteBoxFromDisk(dewormingProtocolBoxName);
       await Hive.deleteBoxFromDisk(treatmentPlanBoxName);
       await Hive.deleteBoxFromDisk(reminderConfigBoxName);
+      await Hive.deleteBoxFromDisk(vaccinationEventBoxName);
       await Hive.deleteBoxFromDisk(settingsBoxName);
       await Hive.deleteBoxFromDisk(appPrefsBoxName);
 

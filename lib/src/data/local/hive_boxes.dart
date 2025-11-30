@@ -6,6 +6,7 @@ import '../../domain/models/medication_entry.dart';
 import '../../domain/models/appointment_entry.dart';
 import '../../domain/models/report_entry.dart';
 import '../../domain/models/walk.dart';
+import '../../domain/models/vaccination_event.dart';
 import 'hive_manager.dart';
 
 class HiveBoxes {
@@ -86,6 +87,15 @@ class HiveBoxes {
       return HiveManager.instance.appPrefsBox;
     } catch (e) {
       logger.e("🚨 ERROR: getAppPrefs() failed: $e");
+      rethrow;
+    }
+  }
+
+  static Box<VaccinationEvent> getVaccinationEvents() {
+    try {
+      return HiveManager.instance.vaccinationEventBox;
+    } catch (e) {
+      logger.e("🚨 ERROR: getVaccinationEvents() failed: $e");
       rethrow;
     }
   }

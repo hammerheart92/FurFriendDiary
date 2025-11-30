@@ -255,6 +255,12 @@ class PetProfileScreen extends ConsumerWidget {
                   ),
                   _buildQuickActionChip(
                     context,
+                    icon: Icons.vaccines,
+                    label: l10n.vaccinations,
+                    onTap: () => context.push('/vaccinations'),
+                  ),
+                  _buildQuickActionChip(
+                    context,
                     icon: Icons.event,
                     label: l10n.appointments,
                     onTap: () => context.go('/appointments'),

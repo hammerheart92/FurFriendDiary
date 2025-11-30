@@ -3017,4 +3017,138 @@ class AppLocalizationsEn extends AppLocalizations {
   String ageWeeksShort(int count) {
     return '$count wks';
   }
+
+  @override
+  String get addVaccination => 'Add Vaccination';
+
+  @override
+  String get editVaccination => 'Edit Vaccination';
+
+  @override
+  String get vaccinationInformation => 'Vaccination Information';
+
+  @override
+  String get vaccineType => 'Vaccine Type';
+
+  @override
+  String get selectVaccineType => 'Select vaccine type';
+
+  @override
+  String get pleaseSelectVaccineType => 'Please select a vaccine type';
+
+  @override
+  String get petSpecies => 'Pet Species';
+
+  @override
+  String get vaccinesFor => 'Vaccines for';
+
+  @override
+  String get dates => 'Dates';
+
+  @override
+  String get administeredDate => 'Administered Date';
+
+  @override
+  String get nextDueDate => 'Next Due Date';
+
+  @override
+  String get veterinaryDetails => 'Veterinary Details';
+
+  @override
+  String get optionalFields => 'All fields below are optional';
+
+  @override
+  String get batchNumber => 'Batch Number';
+
+  @override
+  String get batchNumberHint => 'e.g., BN12345';
+
+  @override
+  String get veterinarianName => 'Veterinarian Name';
+
+  @override
+  String get veterinarianNameHint => 'e.g., Dr. Smith';
+
+  @override
+  String get clinicNameHint => 'e.g., City Vet Clinic';
+
+  @override
+  String get certificatePhotos => 'Vaccination Certificate';
+
+  @override
+  String get optionalCertificateHint =>
+      'Upload photos of vaccination certificates for your records';
+
+  @override
+  String get vaccinationNotesHint =>
+      'e.g., Pet tolerated vaccination well, no adverse reactions';
+
+  @override
+  String get saveVaccination => 'Save Vaccination';
+
+  @override
+  String get updateVaccination => 'Update Vaccination';
+
+  @override
+  String get vaccinationAddedSuccessfully => 'Vaccination added successfully';
+
+  @override
+  String get vaccinationUpdatedSuccessfully =>
+      'Vaccination updated successfully';
+
+  @override
+  String failedToAddVaccination(String error) {
+    return 'Failed to add vaccination: $error';
+  }
+
+  @override
+  String failedToUpdateVaccination(String error) {
+    return 'Failed to update vaccination: $error';
+  }
+
+  @override
+  String get vaccinationDetails => 'Vaccination Details';
+
+  @override
+  String get deleteVaccination => 'Delete Vaccination';
+
+  @override
+  String deleteVaccinationConfirm(String vaccineType) {
+    return 'Are you sure you want to delete this $vaccineType vaccination? This action cannot be undone.';
+  }
+
+  @override
+  String get vaccinationDeletedSuccessfully =>
+      'Vaccination deleted successfully';
+
+  @override
+  String get failedToDeleteVaccination => 'Failed to delete vaccination';
+
+  @override
+  String get vaccinationNotFound => 'Vaccination not found';
+
+  @override
+  String get generatedFromProtocol => 'Generated from Protocol';
+
+  @override
+  String get protocolInformation => 'Protocol Information';
+
+  @override
+  String get dueStatus => 'Due Status';
+
+  @override
+  String get administered => 'Administered';
+
+  @override
+  String get noVaccinations => 'No vaccinations yet';
+
+  @override
+  String get trackVaccinationRecords =>
+      'Keep track of your pet\'s vaccination history and upcoming boosters';
+
+  @override
+  String get errorLoadingVaccinations => 'Error loading vaccinations';
+
+  @override
+  String get viewDetails => 'View details';
 }

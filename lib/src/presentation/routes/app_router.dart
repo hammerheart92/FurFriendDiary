@@ -25,8 +25,12 @@ import '../screens/reports_dashboard_screen.dart';
 import '../screens/protocols/calendar_view_screen.dart';
 import '../screens/protocols/deworming_protocol_selection_screen.dart';
 import '../screens/protocols/deworming_schedule_screen.dart';
+import '../screens/vaccinations/vaccination_form_screen.dart';
+import '../screens/vaccinations/vaccination_timeline_screen.dart';
+import '../screens/vaccinations/vaccination_detail_screen.dart';
 import '../providers/pet_profile_provider.dart';
 import '../../domain/models/pet_profile.dart';
+import '../../domain/models/vaccination_event.dart';
 
 final logger = Logger();
 
@@ -207,6 +211,35 @@ GoRouter createRouter() => GoRouter(
           builder: (context, state) {
             final pet = state.extra as PetProfile;
             return DewormingScheduleScreen(pet: pet);
+          },
+        ),
+        // Vaccination routes
+        GoRoute(
+          path: '/vaccinations',
+          builder: (context, state) => VaccinationTimelineScreen(),
+        ),
+        GoRoute(
+          path: '/vaccinations/add/:petId',
+          builder: (context, state) {
+            final petId = state.pathParameters['petId']!;
+            return VaccinationFormScreen(petId: petId);
+          },
+        ),
+        GoRoute(
+          path: '/vaccinations/edit/:vaccinationId',
+          builder: (context, state) {
+            final event = state.extra as VaccinationEvent;
+            return VaccinationFormScreen(
+              petId: event.petId,
+              existingEvent: event,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/vaccinations/detail/:vaccinationId',
+          builder: (context, state) {
+            final vaccinationId = state.pathParameters['vaccinationId']!;
+            return VaccinationDetailScreen(vaccinationId: vaccinationId);
           },
         ),
       ],
