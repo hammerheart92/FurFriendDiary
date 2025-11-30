@@ -79,6 +79,9 @@ android {
 
     buildTypes {
         release {
+            // Prevent debugging tools from attaching to release builds
+            isDebuggable = false
+
             if (keystorePropertiesFile.exists()) {
                 signingConfig = signingConfigs.getByName("release")
             } else {
