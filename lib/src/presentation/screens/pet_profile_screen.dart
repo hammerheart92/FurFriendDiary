@@ -488,6 +488,12 @@ class PetProfileScreen extends ConsumerWidget {
         protocolAsync.when(
           data: (protocol) {
             if (protocol != null) {
+              // ISSUE 1 FIX: Use protocol.nameRo when locale is Romanian
+              final locale = Localizations.localeOf(context);
+              final protocolName = locale.languageCode == 'ro' && protocol.nameRo != null
+                  ? protocol.nameRo!
+                  : protocol.name;
+
               return Row(
                 children: [
                   Text(
@@ -499,7 +505,7 @@ class PetProfileScreen extends ConsumerWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      protocol.name,
+                      protocolName,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w500,
                       ),

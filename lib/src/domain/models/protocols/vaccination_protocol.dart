@@ -188,6 +188,10 @@ class VaccinationStep {
   @HiveField(3)
   final String? notes;
 
+  /// Romanian translation of notes (optional, for localization)
+  @HiveField(6)
+  final String? notesRo;
+
   /// Whether this is a core/required vaccine (true) or optional (false)
   @HiveField(4)
   final bool isRequired;
@@ -201,6 +205,7 @@ class VaccinationStep {
     required this.ageInWeeks,
     this.intervalDays,
     this.notes,
+    this.notesRo,
     this.isRequired = true,
     this.recurring,
   });
@@ -211,6 +216,7 @@ class VaccinationStep {
     int? ageInWeeks,
     int? intervalDays,
     String? notes,
+    String? notesRo,
     bool? isRequired,
     RecurringSchedule? recurring,
   }) {
@@ -219,6 +225,7 @@ class VaccinationStep {
       ageInWeeks: ageInWeeks ?? this.ageInWeeks,
       intervalDays: intervalDays ?? this.intervalDays,
       notes: notes ?? this.notes,
+      notesRo: notesRo ?? this.notesRo,
       isRequired: isRequired ?? this.isRequired,
       recurring: recurring ?? this.recurring,
     );
@@ -231,6 +238,7 @@ class VaccinationStep {
       'ageInWeeks': ageInWeeks,
       'intervalDays': intervalDays,
       'notes': notes,
+      'notesRo': notesRo,
       'isRequired': isRequired,
       'recurring': recurring?.toJson(),
     };
@@ -243,6 +251,7 @@ class VaccinationStep {
       ageInWeeks: json['ageInWeeks'] as int,
       intervalDays: json['intervalDays'] as int?,
       notes: json['notes'] as String?,
+      notesRo: json['notesRo'] as String?,
       isRequired: json['isRequired'] as bool? ?? true,
       recurring: json['recurring'] != null
           ? RecurringSchedule.fromJson(json['recurring'] as Map<String, dynamic>)

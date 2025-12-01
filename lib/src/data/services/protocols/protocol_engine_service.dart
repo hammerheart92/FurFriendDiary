@@ -190,6 +190,7 @@ class ProtocolEngineService {
         vaccineName: step.vaccineName,
         scheduledDate: calculatedDate,
         notes: step.notes,
+        notesRo: step.notesRo,
         isRequired: step.isRequired,
       ));
 

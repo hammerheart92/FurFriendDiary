@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
 import '../../../domain/models/vaccination_event.dart';
+import '../../../domain/constants/vaccine_type_translations.dart';
 import '../../providers/vaccinations_provider.dart';
 
 class VaccinationDetailScreen extends ConsumerWidget {
@@ -208,8 +209,12 @@ class VaccinationDetailScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Vaccine type as title
+                  // ISSUE 3 FIX: Display translated vaccine type name
                   Text(
-                    vaccination.vaccineType,
+                    VaccineTypeTranslations.getDisplayName(
+                      vaccination.vaccineType,
+                      Localizations.localeOf(context).languageCode,
+                    ),
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -553,7 +558,7 @@ class VaccinationDetailScreen extends ConsumerWidget {
             if (vaccination.protocolStepIndex != null) ...[
               const SizedBox(height: 8),
               Text(
-                'Dose ${vaccination.protocolStepIndex! + 1}',
+                l10n.doseNumber(vaccination.protocolStepIndex! + 1),
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: Colors.grey[600],
                 ),

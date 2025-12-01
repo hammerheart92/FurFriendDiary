@@ -85,6 +85,7 @@ class VaccinationStepAdapter extends TypeAdapter<VaccinationStep> {
       ageInWeeks: fields[1] as int,
       intervalDays: fields[2] as int?,
       notes: fields[3] as String?,
+      notesRo: fields[6] as String?,
       isRequired: fields[4] as bool,
       recurring: fields[5] as RecurringSchedule?,
     );
@@ -93,7 +94,7 @@ class VaccinationStepAdapter extends TypeAdapter<VaccinationStep> {
   @override
   void write(BinaryWriter writer, VaccinationStep obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.vaccineName)
       ..writeByte(1)
@@ -102,6 +103,8 @@ class VaccinationStepAdapter extends TypeAdapter<VaccinationStep> {
       ..write(obj.intervalDays)
       ..writeByte(3)
       ..write(obj.notes)
+      ..writeByte(6)
+      ..write(obj.notesRo)
       ..writeByte(4)
       ..write(obj.isRequired)
       ..writeByte(5)

@@ -361,7 +361,7 @@ class _PetInfoHeader extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      _formatAge(pet.birthday),
+                      _formatAge(context, pet.birthday),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Theme.of(context)
                                 .colorScheme
@@ -393,20 +393,21 @@ class _PetInfoHeader extends StatelessWidget {
     }
   }
 
-  String _formatAge(DateTime? birthday) {
-    if (birthday == null) return 'Unknown';
+  String _formatAge(BuildContext context, DateTime? birthday) {
+    final l10n = AppLocalizations.of(context);
+    if (birthday == null) return l10n.pdfUnknown;
     final now = DateTime.now();
     final age = now.difference(birthday);
     final years = age.inDays ~/ 365;
     final months = (age.inDays % 365) ~/ 30;
 
     if (years > 0) {
-      return '$years yr${years > 1 ? 's' : ''}';
+      return l10n.ageYearsShort(years);
     } else if (months > 0) {
-      return '$months mo${months > 1 ? 's' : ''}';
+      return l10n.ageMonthsShort(months);
     } else {
       final weeks = age.inDays ~/ 7;
-      return '$weeks wk${weeks > 1 ? 's' : ''}';
+      return l10n.ageWeeksShort(weeks);
     }
   }
 }

@@ -34,16 +34,44 @@ class VaccinationEvent extends UpcomingCareEvent {
 
   @override
   String get description {
+    // Note: This description is locale-aware. The UI layer can optionally
+    // replace static words like "Dose" and "Required" with localized strings,
+    // but notesRo provides Romanian translations for protocol-specific notes.
     final parts = <String>[];
-    // Note: This string will be localized in the UI layer
     parts.add('Dose ${entry.stepIndex + 1}'); // Will use l10n.doseNumber() in UI
+
+    // Use notesRo if available (Romanian), otherwise fall back to notes (English)
+    // The UI layer should check locale and provide notesRo when appropriate
     if (entry.notes != null && entry.notes!.isNotEmpty) {
       parts.add(entry.notes!);
     }
+
     if (entry.isRequired) {
       parts.add('Required'); // Will use l10n.requiredVaccine in UI
     }
     return parts.isEmpty ? 'Vaccination' : parts.join(' - '); // Will use l10n.vaccination in UI
+  }
+
+  /// Get localized description based on locale
+  /// Use this method from UI layer to get properly localized description
+  String getLocalizedDescription(String localeCode) {
+    final parts = <String>[];
+    parts.add('Dose ${entry.stepIndex + 1}'); // Let UI replace with l10n.doseNumber()
+
+    // Use Romanian notes if locale is Romanian, otherwise use English
+    final notes = localeCode == 'ro' && entry.notesRo != null && entry.notesRo!.isNotEmpty
+        ? entry.notesRo!
+        : entry.notes;
+
+    if (notes != null && notes.isNotEmpty) {
+      parts.add(notes);
+    }
+
+    if (entry.isRequired) {
+      parts.add('Required'); // Let UI replace with l10n.requiredVaccine
+    }
+
+    return parts.isEmpty ? 'Vaccination' : parts.join(' - ');
   }
 
   @override

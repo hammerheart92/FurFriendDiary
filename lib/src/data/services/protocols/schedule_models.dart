@@ -21,6 +21,9 @@ class VaccinationScheduleEntry {
   /// Optional notes from the protocol step or calculated information
   final String? notes;
 
+  /// Romanian translation of notes (optional, for localization)
+  final String? notesRo;
+
   /// Whether this vaccination is required (core) or optional (non-core)
   final bool isRequired;
 
@@ -42,6 +45,7 @@ class VaccinationScheduleEntry {
     required this.vaccineName,
     required this.scheduledDate,
     this.notes,
+    this.notesRo,
     required this.isRequired,
   });
 
@@ -51,6 +55,7 @@ class VaccinationScheduleEntry {
     String? vaccineName,
     DateTime? scheduledDate,
     String? notes,
+    String? notesRo,
     bool? isRequired,
   }) {
     return VaccinationScheduleEntry(
@@ -58,6 +63,7 @@ class VaccinationScheduleEntry {
       vaccineName: vaccineName ?? this.vaccineName,
       scheduledDate: scheduledDate ?? this.scheduledDate,
       notes: notes ?? this.notes,
+      notesRo: notesRo ?? this.notesRo,
       isRequired: isRequired ?? this.isRequired,
     );
   }
@@ -81,6 +87,7 @@ class VaccinationScheduleEntry {
         other.vaccineName == vaccineName &&
         other.scheduledDate == scheduledDate &&
         other.notes == notes &&
+        other.notesRo == notesRo &&
         other.isRequired == isRequired;
   }
 
@@ -90,6 +97,7 @@ class VaccinationScheduleEntry {
         vaccineName.hashCode ^
         scheduledDate.hashCode ^
         notes.hashCode ^
+        notesRo.hashCode ^
         isRequired.hashCode;
   }
 }

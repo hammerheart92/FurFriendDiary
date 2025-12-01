@@ -13,6 +13,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
+import '../../domain/constants/vaccine_type_translations.dart';
 import '../models/upcoming_care_event.dart';
 
 /// A reusable card widget for displaying upcoming care events (vaccinations,
@@ -167,15 +168,21 @@ class UpcomingCareCardWidget extends StatelessWidget {
   /// Get localized title for event
   String _getLocalizedTitle(BuildContext context, UpcomingCareEvent event) {
     final l10n = AppLocalizations.of(context);
+    final locale = Localizations.localeOf(context).languageCode;
 
     // For deworming events, use localized string
     if (event is DewormingEvent) {
       return l10n.dewormingTreatment;
     }
 
+    // ISSUE 3 FIX: For vaccination events, translate vaccine type
+    if (event is VaccinationEvent || event is VaccinationRecordEvent) {
+      final vaccineType = event.title; // This is the vaccine type (e.g., "Rabies")
+      return VaccineTypeTranslations.getDisplayName(vaccineType, locale);
+    }
+
     // For other events, use the title from the event
-    // (VaccinationEvent uses vaccine name, AppointmentEvent uses reason,
-    //  MedicationEvent uses medication name - these are user/protocol data)
+    // (AppointmentEvent uses reason, MedicationEvent uses medication name - user data)
     return event.title;
   }
 

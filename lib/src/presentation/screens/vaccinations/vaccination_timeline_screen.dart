@@ -13,6 +13,7 @@ import 'package:logger/logger.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
 import '../../../domain/models/vaccination_event.dart';
 import '../../../domain/models/pet_profile.dart';
+import '../../../domain/constants/vaccine_type_translations.dart';
 import '../../providers/vaccinations_provider.dart';
 import '../../providers/pet_profile_provider.dart';
 
@@ -441,7 +442,7 @@ class VaccinationTimelineScreen extends ConsumerWidget {
     final locale = Localizations.localeOf(context).languageCode;
 
     return Semantics(
-      label: '${vaccination.vaccineType}, ${_getStatusLabel(l10n, status)}, '
+      label: '${VaccineTypeTranslations.getDisplayName(vaccination.vaccineType, locale)}, ${_getStatusLabel(l10n, status)}, '
           '${_formatDateForStatus(l10n, vaccination, status, locale)}',
       button: true,
       onTapHint: l10n.viewDetails,
@@ -499,8 +500,12 @@ class VaccinationTimelineScreen extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Vaccine type (primary info)
+                          // ISSUE 3 FIX: Display translated vaccine type name
                           Text(
-                            vaccination.vaccineType,
+                            VaccineTypeTranslations.getDisplayName(
+                              vaccination.vaccineType,
+                              locale,
+                            ),
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: status == VaccinationStatus.overdue

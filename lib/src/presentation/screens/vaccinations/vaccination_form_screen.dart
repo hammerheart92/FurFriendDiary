@@ -20,6 +20,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
 import '../../../domain/models/vaccination_event.dart';
 import '../../../domain/models/pet_profile.dart';
+import '../../../domain/constants/vaccine_type_translations.dart';
 import '../../providers/vaccinations_provider.dart';
 import '../../providers/pet_profile_provider.dart';
 
@@ -217,6 +218,7 @@ class _VaccinationFormScreenState
             const SizedBox(height: 16),
 
             // Vaccine Type Dropdown (Required)
+            // ISSUE 3 FIX: Display translated vaccine type names but store English values
             DropdownButtonFormField<String>(
               value: _selectedVaccineType,
               decoration: InputDecoration(
@@ -230,9 +232,15 @@ class _VaccinationFormScreenState
               ),
               isExpanded: true,
               items: availableVaccineTypes.map((type) {
+                // Get locale for display name translation
+                final locale = Localizations.localeOf(context);
+                final displayName = VaccineTypeTranslations.getDisplayName(
+                  type,
+                  locale.languageCode,
+                );
                 return DropdownMenuItem(
-                  value: type,
-                  child: Text(type),
+                  value: type, // Store English value in database
+                  child: Text(displayName), // Display translated name
                 );
               }).toList(),
               onChanged: (value) {

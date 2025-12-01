@@ -1633,5 +1633,10 @@
   "noVaccinations": "Nu există vaccinări încă",
   "trackVaccinationRecords": "Păstrați evidența istoricului de vaccinare și a rapelurilor viitoare ale animalului",
   "errorLoadingVaccinations": "Eroare la încărcarea vaccinărilor",
-  "viewDetails": "Vizualizează detalii"
+  "viewDetails": "Vizualizează detalii",
+
+  "protocolBasedVaccination": "Vaccinare bazată pe protocol",
+  "@protocolBasedVaccination": {
+    "description": "Etichetă pentru vaccinările generate din protocoale"
+  }
 }
