@@ -12,6 +12,7 @@ import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
 import '../../../domain/models/vaccination_event.dart';
+import '../../../domain/models/pet_profile.dart';
 import '../../providers/vaccinations_provider.dart';
 import '../../providers/pet_profile_provider.dart';
 
@@ -75,7 +76,7 @@ class VaccinationTimelineScreen extends ConsumerWidget {
         data: (vaccinations) {
           // Edge case: No vaccinations
           if (vaccinations.isEmpty) {
-            return _buildEmptyState(context, l10n, theme, currentPet.id);
+            return _buildEmptyState(context, ref, l10n, theme, currentPet);
           }
 
           // Organize vaccinations by status
@@ -117,6 +118,7 @@ class VaccinationTimelineScreen extends ConsumerWidget {
             upcoming: upcoming,
             completed: completed,
             petName: currentPet.name,
+            currentPet: currentPet,
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -149,7 +151,12 @@ class VaccinationTimelineScreen extends ConsumerWidget {
     required List<VaccinationEvent> upcoming,
     required List<VaccinationEvent> completed,
     required String petName,
+    required PetProfile currentPet,
   }) {
+    // Check if any protocol-based vaccinations exist
+    final hasProtocolBasedVaccinations = [...overdue, ...upcoming, ...completed]
+        .any((v) => v.isFromProtocol);
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,6 +164,10 @@ class VaccinationTimelineScreen extends ConsumerWidget {
           // Pet info header
           _buildPetInfoHeader(context, l10n, theme, petName),
           const SizedBox(height: 16),
+
+          // Protocol selection card (show only if no protocol-based vaccinations exist)
+          if (!hasProtocolBasedVaccinations)
+            _buildProtocolSelectionCard(context, ref, l10n, theme, currentPet),
 
           // Overdue section
           if (overdue.isNotEmpty) ...[
@@ -280,6 +291,76 @@ class VaccinationTimelineScreen extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildProtocolSelectionCard(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+    ThemeData theme,
+    PetProfile currentPet,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Card(
+        elevation: 2,
+        color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.science,
+                    color: theme.colorScheme.primary,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      l10n.noProtocolSelected,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.onPrimaryContainer,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                l10n.chooseProtocolMatchingNeeds,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onPrimaryContainer.withValues(alpha: 0.8),
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.tonalIcon(
+                  onPressed: () => _navigateToProtocolSelection(context, currentPet),
+                  icon: const Icon(Icons.add),
+                  label: Text(l10n.selectProtocol),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _navigateToProtocolSelection(
+    BuildContext context,
+    PetProfile pet,
+  ) {
+    context.push(
+      '/vaccinations/protocol-selection',
+      extra: pet,
+    );
+    // The vaccinations provider will automatically refresh when we return
   }
 
   Widget _buildSectionHeader({
@@ -598,43 +679,53 @@ class VaccinationTimelineScreen extends ConsumerWidget {
 
   Widget _buildEmptyState(
     BuildContext context,
+    WidgetRef ref,
     AppLocalizations l10n,
     ThemeData theme,
-    String petId,
+    PetProfile currentPet,
   ) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.vaccines_outlined,
-              size: 80,
-              color: theme.colorScheme.primary.withValues(alpha: 0.5),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          const SizedBox(height: 24),
+          // Protocol selection card - prominently shown on empty state
+          _buildProtocolSelectionCard(context, ref, l10n, theme, currentPet),
+          const SizedBox(height: 24),
+          // Empty state message
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.vaccines_outlined,
+                  size: 80,
+                  color: theme.colorScheme.primary.withValues(alpha: 0.5),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  l10n.noVaccinations,
+                  style: theme.textTheme.titleLarge,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  l10n.trackVaccinationRecords,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                FilledButton.icon(
+                  onPressed: () => context.push('/vaccinations/add/${currentPet.id}'),
+                  icon: const Icon(Icons.add),
+                  label: Text(l10n.add),
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            Text(
-              l10n.noVaccinations,
-              style: theme.textTheme.titleLarge,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              l10n.trackVaccinationRecords,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            FilledButton.icon(
-              onPressed: () => context.push('/vaccinations/add/$petId'),
-              icon: const Icon(Icons.add),
-              label: Text(l10n.add),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

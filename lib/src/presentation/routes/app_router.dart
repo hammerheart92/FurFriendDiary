@@ -28,6 +28,7 @@ import '../screens/protocols/deworming_schedule_screen.dart';
 import '../screens/vaccinations/vaccination_form_screen.dart';
 import '../screens/vaccinations/vaccination_timeline_screen.dart';
 import '../screens/vaccinations/vaccination_detail_screen.dart';
+import '../screens/vaccinations/vaccination_protocol_selection_screen.dart';
 import '../providers/pet_profile_provider.dart';
 import '../../domain/models/pet_profile.dart';
 import '../../domain/models/vaccination_event.dart';
@@ -240,6 +241,13 @@ GoRouter createRouter() => GoRouter(
           builder: (context, state) {
             final vaccinationId = state.pathParameters['vaccinationId']!;
             return VaccinationDetailScreen(vaccinationId: vaccinationId);
+          },
+        ),
+        GoRoute(
+          path: '/vaccinations/protocol-selection',
+          builder: (context, state) {
+            final pet = state.extra as PetProfile;
+            return VaccinationProtocolSelectionScreen(pet: pet);
           },
         ),
       ],

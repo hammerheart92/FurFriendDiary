@@ -2,13 +2,11 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:logger/logger.dart';
 import '../../domain/models/vaccination_event.dart';
 import '../../domain/models/pet_profile.dart';
-import '../../domain/models/protocols/vaccination_protocol.dart';
 import '../../domain/repositories/vaccination_repository.dart';
 import '../../domain/repositories/protocols/vaccination_protocol_repository.dart';
 import '../repositories/vaccination_repository_impl.dart';
 import '../repositories/protocols/vaccination_protocol_repository_impl.dart';
 import 'protocols/protocol_engine_service.dart';
-import 'protocols/schedule_models.dart';
 
 part 'vaccination_service.g.dart';
 
@@ -104,13 +102,22 @@ class VaccinationService {
 
       // Convert to VaccinationEvent objects
       final events = <VaccinationEvent>[];
+
       for (int i = 0; i < filteredEntries.length; i++) {
         final entry = filteredEntries[i];
+
+        // Determine if this vaccination is in the past (already should have been given)
+        final isPast = entry.scheduledDate.isBefore(now);
+
         final event = VaccinationEvent(
           petId: pet.id,
           vaccineType: entry.vaccineName,
-          administeredDate: entry.scheduledDate,
-          nextDueDate: _calculateNextDueDate(entry, protocol),
+          // For upcoming vaccinations: administeredDate is null (not yet given)
+          // For past vaccinations: set to scheduled date (assume it was given on time)
+          administeredDate: isPast ? entry.scheduledDate : DateTime.now(),
+          // nextDueDate is when this vaccination is DUE (the scheduled date for upcoming,
+          // or the next booster date for past vaccinations)
+          nextDueDate: isPast ? null : entry.scheduledDate,
           notes: entry.notes,
           isFromProtocol: true,
           protocolId: protocolId,
@@ -131,33 +138,6 @@ class VaccinationService {
     }
   }
 
-  /// Calculate next due date based on protocol step
-  DateTime? _calculateNextDueDate(
-    VaccinationScheduleEntry entry,
-    VaccinationProtocol protocol,
-  ) {
-    if (entry.stepIndex >= protocol.steps.length) return null;
-
-    final step = protocol.steps[entry.stepIndex];
-
-    // If there's a recurring schedule, use that
-    if (step.recurring != null) {
-      return protocolEngine.addMonths(
-        entry.scheduledDate,
-        step.recurring!.intervalMonths,
-      );
-    }
-
-    // If there's a next step, use that date
-    if (entry.stepIndex + 1 < protocol.steps.length) {
-      final nextStep = protocol.steps[entry.stepIndex + 1];
-      if (nextStep.intervalDays != null) {
-        return entry.scheduledDate.add(Duration(days: nextStep.intervalDays!));
-      }
-    }
-
-    return null;
-  }
 
   // ============================================================================
   // CORE METHOD 2: Mark Vaccination as Completed
