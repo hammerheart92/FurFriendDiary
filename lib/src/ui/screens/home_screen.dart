@@ -434,15 +434,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     // Navigate to Appointments tab
                                     context.go('/appointments');
                                     break;
+                                  case VaccinationRecordEvent():
+                                    // Navigate to specific vaccination detail
+                                    context.push('/vaccinations/detail/${event.id}');
+                                    break;
                                   case VaccinationEvent():
+                                    // Navigate to vaccination timeline (protocol schedule)
+                                    context.push('/vaccinations');
+                                    break;
                                   case DewormingEvent():
-                                    // Show "Coming soon" for vaccination and deworming (deferred features)
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(l10n.comingSoon),
-                                        duration: const Duration(seconds: 2),
-                                      ),
-                                    );
+                                    // Navigate to deworming schedule
+                                    context.push('/deworming/schedule/${currentPet.id}',
+                                        extra: currentPet);
                                     break;
                                 }
                               },

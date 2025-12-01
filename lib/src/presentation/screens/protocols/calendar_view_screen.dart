@@ -360,6 +360,7 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
   Color _getEventTypeColor(String eventType, ThemeData theme) {
     switch (eventType) {
       case 'vaccination':
+      case 'vaccination_record':
         return Colors.red.shade600; // Red
       case 'deworming':
         return Colors.amber.shade700; // Yellow/Amber
@@ -458,10 +459,13 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
         break;
 
       case VaccinationEvent():
-        // Show "Coming soon" for vaccination (deferred feature)
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.vaccinationDetailsComingSoon)),
-        );
+        // Navigate to vaccination timeline screen
+        context.push('/vaccinations');
+        break;
+
+      case VaccinationRecordEvent():
+        // Navigate to specific vaccination detail
+        context.push('/vaccinations/detail/${event.id}');
         break;
 
       case DewormingEvent():

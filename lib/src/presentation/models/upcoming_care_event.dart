@@ -1,5 +1,6 @@
 import '../../domain/models/appointment_entry.dart';
 import '../../domain/models/medication_entry.dart';
+import '../../domain/models/vaccination_event.dart' as domain;
 import '../../data/services/protocols/schedule_models.dart';
 
 /// Sealed class hierarchy for type-safe upcoming care events
@@ -58,6 +59,61 @@ class VaccinationEvent extends UpcomingCareEvent {
   bool get isUpcomingSoon {
     final now = DateTime.now();
     final diff = scheduledDate.difference(now).inDays;
+    return diff >= 0 && diff <= 7;
+  }
+}
+
+/// Vaccination record event from actual repository records
+///
+/// Unlike VaccinationEvent (protocol schedules), this represents actual
+/// vaccination records stored in the repository with a nextDueDate.
+/// This allows navigation to specific vaccination detail screens.
+class VaccinationRecordEvent extends UpcomingCareEvent {
+  final domain.VaccinationEvent record;
+
+  VaccinationRecordEvent(this.record);
+
+  @override
+  DateTime get scheduledDate => record.nextDueDate ?? record.administeredDate;
+
+  @override
+  String get title => record.vaccineType;
+
+  @override
+  String get description {
+    final parts = <String>[];
+    if (record.veterinarianName != null && record.veterinarianName!.isNotEmpty) {
+      parts.add('Dr. ${record.veterinarianName}');
+    }
+    if (record.clinicName != null && record.clinicName!.isNotEmpty) {
+      parts.add(record.clinicName!);
+    }
+    if (record.notes != null && record.notes!.isNotEmpty) {
+      parts.add(record.notes!);
+    }
+    return parts.isEmpty ? 'Vaccination' : parts.join(' - ');
+  }
+
+  @override
+  String get icon => '💉';
+
+  @override
+  String get eventType => 'vaccination_record';
+
+  /// The unique ID for navigation to detail screen
+  String get id => record.id;
+
+  /// Whether this vaccination is overdue
+  bool get isOverdue {
+    if (record.nextDueDate == null) return false;
+    return record.nextDueDate!.isBefore(DateTime.now());
+  }
+
+  /// Whether this is coming up soon (within 7 days)
+  bool get isUpcomingSoon {
+    if (record.nextDueDate == null) return false;
+    final now = DateTime.now();
+    final diff = record.nextDueDate!.difference(now).inDays;
     return diff >= 0 && diff <= 7;
   }
 }

@@ -232,6 +232,7 @@ class UpcomingCareCardWidget extends StatelessWidget {
     // Use pattern matching on sealed class
     return switch (event) {
       VaccinationEvent() => Colors.red.shade600,
+      VaccinationRecordEvent() => Colors.red.shade600,
       DewormingEvent() => Colors.orange.shade700,
       AppointmentEvent() => Colors.blue.shade600,
       MedicationEvent() => Colors.green.shade600,

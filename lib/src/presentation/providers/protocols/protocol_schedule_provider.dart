@@ -6,6 +6,7 @@ import '../../../data/repositories/protocols/vaccination_protocol_repository_imp
 import '../../../data/repositories/protocols/deworming_protocol_repository_impl.dart';
 import '../../../data/repositories/medication_repository_impl.dart';
 import '../../../data/repositories/appointment_repository_impl.dart';
+import '../../../data/repositories/vaccination_repository_impl.dart';
 import '../../../data/local/hive_manager.dart';
 
 part 'protocol_schedule_provider.g.dart';
@@ -135,7 +136,27 @@ Future<List<UpcomingCareEvent>> upcomingCare(
     // Silent failure - continue with other events
   }
 
-  // 5. Sort by date and return
+  // 5. Add upcoming vaccination records (actual records with nextDueDate)
+  // These are separate from protocol-generated schedules and include manually added vaccinations
+  try {
+    final vaccinationRepo = ref.watch(vaccinationRepositoryProvider);
+    final vaccinations = await vaccinationRepo.getUpcomingVaccinations(petId);
+
+    // Filter vaccinations with nextDueDate within the date range
+    events.addAll(
+      vaccinations
+          .where((vax) =>
+            vax.nextDueDate != null &&
+            vax.nextDueDate!.isAfter(startDate.subtract(const Duration(days: 1))) &&
+            vax.nextDueDate!.isBefore(endDate)
+          )
+          .map((vax) => VaccinationRecordEvent(vax)),
+    );
+  } catch (e) {
+    // Silent failure - continue with other events
+  }
+
+  // 6. Sort by date and return
   events.sort((a, b) => a.scheduledDate.compareTo(b.scheduledDate));
   return events;
 }
