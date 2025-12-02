@@ -26,15 +26,17 @@ class VaccinationProtocols extends _$VaccinationProtocols {
     final repository = ref.watch(vaccinationProtocolRepositoryProvider);
     final protocolData = ref.watch(protocolDataProviderProvider);
 
-    // Load predefined protocols from JSON assets
+    // Load predefined protocols from JSON assets (always has latest translations)
     final predefinedProtocols = await protocolData.loadVaccinationProtocols();
 
-    // CRITICAL FIX: Save predefined protocols to Hive if box is empty
-    final existingPredefined = await repository.getPredefined();
-    if (existingPredefined.isEmpty && predefinedProtocols.isNotEmpty) {
+    // CRITICAL FIX v1.2.0: Always update predefined protocols in Hive from JSON
+    // This ensures notesRo and other localization fields are synced from JSON
+    // Old approach only saved when Hive was empty - now we always sync
+    if (predefinedProtocols.isNotEmpty) {
       for (final protocol in predefinedProtocols) {
         await repository.save(protocol);
       }
+      print('🔄 [PROTOCOLS] Synced ${predefinedProtocols.length} predefined protocols from JSON to Hive');
     }
 
     // Get custom protocols from Hive
