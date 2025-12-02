@@ -46,6 +46,10 @@ class VaccinationEvent extends HiveObject {
   @HiveField(8)
   final String? notes;
 
+  /// Romanian translation of notes (optional, for localization)
+  @HiveField(15)
+  final String? notesRo;
+
   /// Whether this event was auto-generated from a protocol
   @HiveField(9)
   final bool isFromProtocol;
@@ -80,6 +84,7 @@ class VaccinationEvent extends HiveObject {
     this.veterinarianName,
     this.clinicName,
     this.notes,
+    this.notesRo,
     this.isFromProtocol = false,
     this.protocolId,
     this.protocolStepIndex,
@@ -100,6 +105,7 @@ class VaccinationEvent extends HiveObject {
     String? veterinarianName,
     String? clinicName,
     String? notes,
+    String? notesRo,
     bool? isFromProtocol,
     String? protocolId,
     int? protocolStepIndex,
@@ -117,6 +123,7 @@ class VaccinationEvent extends HiveObject {
       veterinarianName: veterinarianName ?? this.veterinarianName,
       clinicName: clinicName ?? this.clinicName,
       notes: notes ?? this.notes,
+      notesRo: notesRo ?? this.notesRo,
       isFromProtocol: isFromProtocol ?? this.isFromProtocol,
       protocolId: protocolId ?? this.protocolId,
       protocolStepIndex: protocolStepIndex ?? this.protocolStepIndex,
@@ -138,6 +145,7 @@ class VaccinationEvent extends HiveObject {
       'veterinarianName': veterinarianName,
       'clinicName': clinicName,
       'notes': notes,
+      'notesRo': notesRo,
       'isFromProtocol': isFromProtocol,
       'protocolId': protocolId,
       'protocolStepIndex': protocolStepIndex,
@@ -161,6 +169,7 @@ class VaccinationEvent extends HiveObject {
       veterinarianName: json['veterinarianName'] as String?,
       clinicName: json['clinicName'] as String?,
       notes: json['notes'] as String?,
+      notesRo: json['notesRo'] as String?,
       isFromProtocol: json['isFromProtocol'] as bool? ?? false,
       protocolId: json['protocolId'] as String?,
       protocolStepIndex: json['protocolStepIndex'] as int?,

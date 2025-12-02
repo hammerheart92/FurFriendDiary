@@ -9,6 +9,7 @@ import 'package:fur_friend_diary/l10n/app_localizations.dart';
 import 'package:fur_friend_diary/src/ui/screens/weight_history_screen.dart';
 import 'package:fur_friend_diary/src/presentation/providers/protocols/protocol_schedule_provider.dart';
 import 'package:fur_friend_diary/src/presentation/providers/protocols/vaccination_protocol_provider.dart';
+import 'package:fur_friend_diary/src/domain/constants/species_translations.dart';
 import 'package:intl/intl.dart';
 
 final _logger = Logger();
@@ -181,12 +182,20 @@ class PetProfileScreen extends ConsumerWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Text(
-                          '${profile.species}${profile.breed != null ? ' • ${profile.breed}' : ''}',
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            color: theme.colorScheme.onPrimaryContainer
-                                .withValues(alpha: 255 * 0.8),
-                          ),
+                        Builder(
+                          builder: (context) {
+                            final locale = Localizations.localeOf(context);
+                            print('🐾 [SPECIES] Raw species: ${profile.species}');
+                            print('🐾 [SPECIES] Locale: ${locale.languageCode}');
+                            print('🐾 [SPECIES] Translated: ${SpeciesTranslations.getDisplayName(profile.species, locale.languageCode)}');
+                            return Text(
+                              '${SpeciesTranslations.getDisplayName(profile.species, locale.languageCode)}${profile.breed != null ? ' • ${profile.breed}' : ''}',
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                color: theme.colorScheme.onPrimaryContainer
+                                    .withValues(alpha: 255 * 0.8),
+                              ),
+                            );
+                          },
                         ),
                         if (profile.age > 0)
                           Text(
@@ -490,6 +499,10 @@ class PetProfileScreen extends ConsumerWidget {
             if (protocol != null) {
               // ISSUE 1 FIX: Use protocol.nameRo when locale is Romanian
               final locale = Localizations.localeOf(context);
+              print('🇷🇴 [LOCALE] Pet Profile: ${locale.languageCode} (${locale.countryCode})');
+              print('🇷🇴 [PROTOCOL] Name EN: ${protocol.name}');
+              print('🇷🇴 [PROTOCOL] Name RO: ${protocol.nameRo}');
+              print('🇷🇴 [PROTOCOL] Using: ${locale.languageCode == "ro" && protocol.nameRo != null ? protocol.nameRo : protocol.name}');
               final protocolName = locale.languageCode == 'ro' && protocol.nameRo != null
                   ? protocol.nameRo!
                   : protocol.name;
@@ -655,8 +668,16 @@ class PetProfileScreen extends ConsumerWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-                '${profile.species}${profile.breed != null ? ' • ${profile.breed}' : ''}'),
+            Builder(
+              builder: (context) {
+                final locale = Localizations.localeOf(context);
+                print('🐾 [SPECIES-LIST] Raw species: ${profile.species}');
+                print('🐾 [SPECIES-LIST] Locale: ${locale.languageCode}');
+                print('🐾 [SPECIES-LIST] Translated: ${SpeciesTranslations.getDisplayName(profile.species, locale.languageCode)}');
+                return Text(
+                    '${SpeciesTranslations.getDisplayName(profile.species, locale.languageCode)}${profile.breed != null ? ' • ${profile.breed}' : ''}');
+              },
+            ),
             if (profile.age > 0)
               Text(l10n.yearsOld(profile.age, profile.age != 1 ? 's' : '')),
           ],

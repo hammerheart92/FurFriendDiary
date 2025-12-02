@@ -109,6 +109,10 @@ class VaccinationService {
         // Determine if this vaccination is in the past (already should have been given)
         final isPast = entry.scheduledDate.isBefore(now);
 
+        print('⚙️ [SERVICE] Generating vaccination for: ${entry.vaccineName}');
+        print('⚙️ [SERVICE] notes: ${entry.notes}');
+        print('⚙️ [SERVICE] notesRo: ${entry.notesRo}');
+
         final event = VaccinationEvent(
           petId: pet.id,
           vaccineType: entry.vaccineName,
@@ -119,6 +123,7 @@ class VaccinationService {
           // or the next booster date for past vaccinations)
           nextDueDate: isPast ? null : entry.scheduledDate,
           notes: entry.notes,
+          notesRo: entry.notesRo,
           isFromProtocol: true,
           protocolId: protocolId,
           protocolStepIndex: entry.stepIndex,

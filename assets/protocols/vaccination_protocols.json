@@ -16,6 +16,7 @@
         "ageInWeeks": 8,
         "intervalDays": null,
         "notes": "First puppy vaccination - Core protection",
+        "notesRo": "Prima vaccinare a cățelușului - Protecție de bază",
         "isRequired": true,
         "recurring": null
       },
@@ -24,6 +25,7 @@
         "ageInWeeks": 12,
         "intervalDays": null,
         "notes": "Second puppy vaccination - Booster",
+        "notesRo": "A doua vaccinare a cățelușului - Rapel",
         "isRequired": true,
         "recurring": null
       },
@@ -32,6 +34,7 @@
         "ageInWeeks": 16,
         "intervalDays": null,
         "notes": "Third puppy vaccination - Final booster",
+        "notesRo": "A treia vaccinare a cățelușului - Rapel final",
         "isRequired": true,
         "recurring": null
       },
@@ -40,6 +43,7 @@
         "ageInWeeks": 16,
         "intervalDays": null,
         "notes": "Legally required in Romania/EU - First dose",
+        "notesRo": "Obligatoriu legal în România/UE - Prima doză",
         "isRequired": true,
         "recurring": null
       },
@@ -48,6 +52,7 @@
         "ageInWeeks": 68,
         "intervalDays": null,
         "notes": "Adult booster at 16 months",
+        "notesRo": "Rapel pentru adulți la 16 luni",
         "isRequired": true,
         "recurring": {
           "intervalMonths": 12,
@@ -60,6 +65,7 @@
         "ageInWeeks": 68,
         "intervalDays": null,
         "notes": "Adult rabies booster - Legally required annually",
+        "notesRo": "Rapel rabies pentru adulți - Obligatoriu anual",
         "isRequired": true,
         "recurring": {
           "intervalMonths": 12,
@@ -86,6 +92,7 @@
         "ageInWeeks": 8,
         "intervalDays": null,
         "notes": "First puppy vaccination - Core protection",
+        "notesRo": "Prima vaccinare a cățelușului - Protecție de bază",
         "isRequired": true,
         "recurring": null
       },
@@ -94,6 +101,7 @@
         "ageInWeeks": 12,
         "intervalDays": null,
         "notes": "Second puppy vaccination - Booster",
+        "notesRo": "A doua vaccinare a cățelușului - Rapel",
         "isRequired": true,
         "recurring": null
       },
@@ -102,6 +110,7 @@
         "ageInWeeks": 16,
         "intervalDays": null,
         "notes": "Third puppy vaccination - Final booster",
+        "notesRo": "A treia vaccinare a cățelușului - Rapel final",
         "isRequired": true,
         "recurring": null
       },
@@ -110,6 +119,7 @@
         "ageInWeeks": 16,
         "intervalDays": null,
         "notes": "Legally required in Romania/EU - First dose",
+        "notesRo": "Obligatoriu legal în România/UE - Prima doză",
         "isRequired": true,
         "recurring": null
       },
@@ -118,6 +128,7 @@
         "ageInWeeks": 12,
         "intervalDays": null,
         "notes": "Optional - Recommended for dogs in kennels or social environments",
+        "notesRo": "Opțional - Recomandat pentru câinii în pensiuni sau medii sociale",
         "isRequired": false,
         "recurring": null
       },
@@ -126,6 +137,7 @@
         "ageInWeeks": 68,
         "intervalDays": null,
         "notes": "Adult booster at 16 months",
+        "notesRo": "Rapel pentru adulți la 16 luni",
         "isRequired": true,
         "recurring": {
           "intervalMonths": 12,
@@ -138,6 +150,7 @@
         "ageInWeeks": 68,
         "intervalDays": null,
         "notes": "Adult rabies booster - Legally required annually",
+        "notesRo": "Rapel rabies pentru adulți - Obligatoriu anual",
         "isRequired": true,
         "recurring": {
           "intervalMonths": 12,
@@ -150,6 +163,7 @@
         "ageInWeeks": 64,
         "intervalDays": null,
         "notes": "Optional annual booster for high-risk dogs",
+        "notesRo": "Rapel anual opțional pentru câinii cu risc ridicat",
         "isRequired": false,
         "recurring": {
           "intervalMonths": 12,
@@ -176,6 +190,7 @@
         "ageInWeeks": 8,
         "intervalDays": null,
         "notes": "First kitten vaccination - Core protection",
+        "notesRo": "Prima vaccinare a pisicuței - Protecție de bază",
         "isRequired": true,
         "recurring": null
       },
@@ -184,6 +199,7 @@
         "ageInWeeks": 12,
         "intervalDays": null,
         "notes": "Second kitten vaccination - Booster",
+        "notesRo": "A doua vaccinare a pisicuței - Rapel",
         "isRequired": true,
         "recurring": null
       },
@@ -192,6 +208,7 @@
         "ageInWeeks": 16,
         "intervalDays": null,
         "notes": "Third kitten vaccination - Final booster",
+        "notesRo": "A treia vaccinare a pisicuței - Rapel final",
         "isRequired": true,
         "recurring": null
       },
@@ -200,6 +217,7 @@
         "ageInWeeks": 16,
         "intervalDays": null,
         "notes": "Legally required in Romania/EU - First dose",
+        "notesRo": "Obligatoriu legal în România/UE - Prima doză",
         "isRequired": true,
         "recurring": null
       },
@@ -208,6 +226,7 @@
         "ageInWeeks": 68,
         "intervalDays": null,
         "notes": "Adult booster at 16 months",
+        "notesRo": "Rapel pentru adulți la 16 luni",
         "isRequired": true,
         "recurring": {
           "intervalMonths": 12,
@@ -220,6 +239,7 @@
         "ageInWeeks": 68,
         "intervalDays": null,
         "notes": "Adult rabies booster - Legally required annually",
+        "notesRo": "Rapel rabies pentru adulți - Obligatoriu anual",
         "isRequired": true,
         "recurring": {
           "intervalMonths": 12,
@@ -246,6 +266,7 @@
         "ageInWeeks": 8,
         "intervalDays": null,
         "notes": "First kitten vaccination - Core protection",
+        "notesRo": "Prima vaccinare a pisicuței - Protecție de bază",
         "isRequired": true,
         "recurring": null
       },
@@ -254,6 +275,7 @@
         "ageInWeeks": 12,
         "intervalDays": null,
         "notes": "Second kitten vaccination - Booster",
+        "notesRo": "A doua vaccinare a pisicuței - Rapel",
         "isRequired": true,
         "recurring": null
       },
@@ -262,6 +284,7 @@
         "ageInWeeks": 12,
         "intervalDays": null,
         "notes": "First FeLV dose - Recommended for outdoor cats",
+        "notesRo": "Prima doză FeLV - Recomandat pentru pisicile de exterior",
         "isRequired": false,
         "recurring": null
       },
@@ -270,6 +293,7 @@
         "ageInWeeks": 16,
         "intervalDays": null,
         "notes": "Third kitten vaccination - Final booster",
+        "notesRo": "A treia vaccinare a pisicuței - Rapel final",
         "isRequired": true,
         "recurring": null
       },
@@ -278,6 +302,7 @@
         "ageInWeeks": 16,
         "intervalDays": null,
         "notes": "Second FeLV dose - Booster",
+        "notesRo": "A doua doză FeLV - Rapel",
         "isRequired": false,
         "recurring": null
       },
@@ -286,6 +311,7 @@
         "ageInWeeks": 16,
         "intervalDays": null,
         "notes": "Legally required in Romania/EU - First dose",
+        "notesRo": "Obligatoriu legal în România/UE - Prima doză",
         "isRequired": true,
         "recurring": null
       },
@@ -294,6 +320,7 @@
         "ageInWeeks": 68,
         "intervalDays": null,
         "notes": "Adult booster at 16 months",
+        "notesRo": "Rapel pentru adulți la 16 luni",
         "isRequired": true,
         "recurring": {
           "intervalMonths": 12,
@@ -306,6 +333,7 @@
         "ageInWeeks": 68,
         "intervalDays": null,
         "notes": "Adult rabies booster - Legally required annually",
+        "notesRo": "Rapel rabies pentru adulți - Obligatoriu anual",
         "isRequired": true,
         "recurring": {
           "intervalMonths": 12,
@@ -318,6 +346,7 @@
         "ageInWeeks": 68,
         "intervalDays": null,
         "notes": "FeLV annual booster for outdoor cats",
+        "notesRo": "Rapel anual FeLV pentru pisicile de exterior",
         "isRequired": false,
         "recurring": {
           "intervalMonths": 12,

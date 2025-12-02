@@ -26,6 +26,7 @@ class VaccinationEventAdapter extends TypeAdapter<VaccinationEvent> {
       veterinarianName: fields[6] as String?,
       clinicName: fields[7] as String?,
       notes: fields[8] as String?,
+      notesRo: fields[15] as String?,
       isFromProtocol: fields[9] as bool,
       protocolId: fields[10] as String?,
       protocolStepIndex: fields[11] as int?,
@@ -38,7 +39,7 @@ class VaccinationEventAdapter extends TypeAdapter<VaccinationEvent> {
   @override
   void write(BinaryWriter writer, VaccinationEvent obj) {
     writer
-      ..writeByte(15)
+      ..writeByte(16)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -57,6 +58,8 @@ class VaccinationEventAdapter extends TypeAdapter<VaccinationEvent> {
       ..write(obj.clinicName)
       ..writeByte(8)
       ..write(obj.notes)
+      ..writeByte(15)
+      ..write(obj.notesRo)
       ..writeByte(9)
       ..write(obj.isFromProtocol)
       ..writeByte(10)

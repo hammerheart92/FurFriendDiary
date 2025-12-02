@@ -159,7 +159,7 @@ class VaccinationDetailScreen extends ConsumerWidget {
 
           // Notes Card (if notes exist)
           if (vaccination.notes != null && vaccination.notes!.isNotEmpty)
-            _buildNotesCard(context, theme, l10n, vaccination.notes!),
+            _buildNotesCard(context, theme, l10n, vaccination),
 
           if (vaccination.notes != null && vaccination.notes!.isNotEmpty)
             const SizedBox(height: 16),
@@ -464,14 +464,25 @@ class VaccinationDetailScreen extends ConsumerWidget {
   }
 
   // ============================================================================
-  // Notes Card: Display notes text
+  // Notes Card: Display notes text with locale-aware translation
   // ============================================================================
   Widget _buildNotesCard(
     BuildContext context,
     ThemeData theme,
     AppLocalizations l10n,
-    String notes,
+    VaccinationEvent vaccination,
   ) {
+    // Use Romanian notes if locale is Romanian and notesRo is available
+    final locale = Localizations.localeOf(context);
+    final isRomanian = locale.languageCode == 'ro';
+    print('💉 [DETAIL] Locale: ${locale.languageCode}');
+    print('💉 [DETAIL] notes: ${vaccination.notes}');
+    print('💉 [DETAIL] notesRo: ${vaccination.notesRo}');
+    print('💉 [DETAIL] Displaying: ${isRomanian && vaccination.notesRo != null && vaccination.notesRo!.isNotEmpty ? vaccination.notesRo : vaccination.notes}');
+    final notes = (isRomanian && vaccination.notesRo != null && vaccination.notesRo!.isNotEmpty)
+        ? vaccination.notesRo!
+        : vaccination.notes!;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),

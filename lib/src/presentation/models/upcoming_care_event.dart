@@ -55,23 +55,39 @@ class VaccinationEvent extends UpcomingCareEvent {
   /// Get localized description based on locale
   /// Use this method from UI layer to get properly localized description
   String getLocalizedDescription(String localeCode) {
+    print('📦 [MODEL] VaccinationEvent.getLocalizedDescription called');
+    print('📦 [MODEL] localeCode: $localeCode');
+    print('📦 [MODEL] entry.notes: ${entry.notes}');
+    print('📦 [MODEL] entry.notesRo: ${entry.notesRo}');
+
+    final isRomanian = localeCode == 'ro';
     final parts = <String>[];
-    parts.add('Dose ${entry.stepIndex + 1}'); // Let UI replace with l10n.doseNumber()
+
+    // Localized dose label
+    final doseLabel = isRomanian ? 'Doza ${entry.stepIndex + 1}' : 'Dose ${entry.stepIndex + 1}';
+    parts.add(doseLabel);
 
     // Use Romanian notes if locale is Romanian, otherwise use English
-    final notes = localeCode == 'ro' && entry.notesRo != null && entry.notesRo!.isNotEmpty
+    final notes = isRomanian && entry.notesRo != null && entry.notesRo!.isNotEmpty
         ? entry.notesRo!
         : entry.notes;
+
+    print('📦 [MODEL] Selected notes: $notes');
 
     if (notes != null && notes.isNotEmpty) {
       parts.add(notes);
     }
 
     if (entry.isRequired) {
-      parts.add('Required'); // Let UI replace with l10n.requiredVaccine
+      // Localized required label
+      final requiredLabel = isRomanian ? 'Obligatoriu' : 'Required';
+      parts.add(requiredLabel);
     }
 
-    return parts.isEmpty ? 'Vaccination' : parts.join(' - ');
+    final defaultLabel = isRomanian ? 'Vaccinare' : 'Vaccination';
+    final result = parts.isEmpty ? defaultLabel : parts.join(' - ');
+    print('📦 [MODEL] Final description: $result');
+    return result;
   }
 
   @override
@@ -120,6 +136,43 @@ class VaccinationRecordEvent extends UpcomingCareEvent {
       parts.add(record.notes!);
     }
     return parts.isEmpty ? 'Vaccination' : parts.join(' - ');
+  }
+
+  /// Get localized description based on locale
+  /// Use this method from UI layer to get properly localized description
+  String getLocalizedDescription(String localeCode) {
+    print('📦 [MODEL] VaccinationRecordEvent.getLocalizedDescription called');
+    print('📦 [MODEL] localeCode: $localeCode');
+    print('📦 [MODEL] record.notes: ${record.notes}');
+    print('📦 [MODEL] record.notesRo: ${record.notesRo}');
+
+    final parts = <String>[];
+
+    // Add veterinarian name if available
+    if (record.veterinarianName != null && record.veterinarianName!.isNotEmpty) {
+      parts.add('Dr. ${record.veterinarianName}');
+    }
+
+    // Add clinic name if available
+    if (record.clinicName != null && record.clinicName!.isNotEmpty) {
+      parts.add(record.clinicName!);
+    }
+
+    // Use Romanian notes if locale is Romanian and notesRo is available
+    final notes = localeCode == 'ro' && record.notesRo != null && record.notesRo!.isNotEmpty
+        ? record.notesRo!
+        : record.notes;
+
+    print('📦 [MODEL] Selected notes: $notes');
+
+    if (notes != null && notes.isNotEmpty) {
+      parts.add(notes);
+    }
+
+    final defaultLabel = localeCode == 'ro' ? 'Vaccinare' : 'Vaccination';
+    final result = parts.isEmpty ? defaultLabel : parts.join(' - ');
+    print('📦 [MODEL] Final description: $result');
+    return result;
   }
 
   @override

@@ -705,8 +705,31 @@ class _EventListTile extends StatelessWidget {
     return event.title;
   }
 
-  /// Get localized type label for deworming events
+  /// Get localized description for events (vaccination, deworming, etc.)
   String _getLocalizedDescription(BuildContext context) {
+    final locale = Localizations.localeOf(context);
+    final isRomanian = locale.languageCode == 'ro';
+
+    print('📅 [CALENDAR] Event type: ${event.runtimeType}');
+    print('📅 [CALENDAR] Locale: ${locale.languageCode}');
+
+    // Handle VaccinationEvent with Romanian localization (protocol-generated scheduled events)
+    if (event is VaccinationEvent) {
+      final vaccinationEvent = event as VaccinationEvent;
+      print('📅 [VACCINATION] notes: ${vaccinationEvent.entry.notes}');
+      print('📅 [VACCINATION] notesRo: ${vaccinationEvent.entry.notesRo}');
+      return vaccinationEvent.getLocalizedDescription(locale.languageCode);
+    }
+
+    // Handle VaccinationRecordEvent with Romanian localization (stored records)
+    if (event is VaccinationRecordEvent) {
+      final recordEvent = event as VaccinationRecordEvent;
+      print('📅 [VACCINATION_RECORD] notes: ${recordEvent.record.notes}');
+      print('📅 [VACCINATION_RECORD] notesRo: ${recordEvent.record.notesRo}');
+      return recordEvent.getLocalizedDescription(locale.languageCode);
+    }
+
+    // Handle DewormingEvent with Romanian localization
     if (event is DewormingEvent) {
       final dewormingEvent = event as DewormingEvent;
       final parts = <String>[];
@@ -724,8 +747,6 @@ class _EventListTile extends StatelessWidget {
       }
 
       // Add notes if available (use Romanian if locale matches)
-      final locale = Localizations.localeOf(context);
-      final isRomanian = locale.languageCode == 'ro';
       final notes = (isRomanian && dewormingEvent.entry.notesRo != null && dewormingEvent.entry.notesRo!.isNotEmpty)
           ? dewormingEvent.entry.notesRo!
           : dewormingEvent.entry.notes;
