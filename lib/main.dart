@@ -10,6 +10,8 @@ import 'src/data/services/inventory_alert_service.dart';
 import 'src/data/repositories/pet_profile_repository.dart';
 import 'src/presentation/providers/settings_provider.dart';
 import 'src/utils/file_logger.dart';
+import 'src/data/services/vaccination_localization_migration.dart';
+import 'src/data/services/protocols/protocol_data_provider.dart';
 import 'theme/theme.dart';
 
 late final Logger logger;
@@ -31,6 +33,16 @@ Future<void> main() async {
 
     // Initialize NotificationService
     await NotificationService().initialize();
+
+    // Run vaccination localization migration (v1.2.0)
+    try {
+      final protocolProvider = ProtocolDataProvider();
+      final migration = VaccinationLocalizationMigration(protocolProvider);
+      await migration.migrateIfNeeded();
+    } catch (e) {
+      logger.w("WARNING: Vaccination migration failed: $e");
+      // Don't crash app if migration fails
+    }
 
     // Check low stock on app startup
     try {
