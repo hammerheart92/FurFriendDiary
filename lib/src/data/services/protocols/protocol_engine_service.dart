@@ -185,11 +185,6 @@ class ProtocolEngineService {
         continue;
       }
 
-      print('🔧 [ENGINE] Protocol: ${protocol.name}');
-      print('🔧 [ENGINE] Step ${i + 1}: ${step.vaccineName}');
-      print('🔧 [ENGINE] notes: ${step.notes}');
-      print('🔧 [ENGINE] notesRo: ${step.notesRo}');
-
       scheduleEntries.add(VaccinationScheduleEntry(
         stepIndex: i,
         vaccineName: step.vaccineName,

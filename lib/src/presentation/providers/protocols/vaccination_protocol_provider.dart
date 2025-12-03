@@ -36,7 +36,6 @@ class VaccinationProtocols extends _$VaccinationProtocols {
       for (final protocol in predefinedProtocols) {
         await repository.save(protocol);
       }
-      print('🔄 [PROTOCOLS] Synced ${predefinedProtocols.length} predefined protocols from JSON to Hive');
     }
 
     // Get custom protocols from Hive

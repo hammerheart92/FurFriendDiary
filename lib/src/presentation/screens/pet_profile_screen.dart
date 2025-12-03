@@ -185,9 +185,6 @@ class PetProfileScreen extends ConsumerWidget {
                         Builder(
                           builder: (context) {
                             final locale = Localizations.localeOf(context);
-                            print('🐾 [SPECIES] Raw species: ${profile.species}');
-                            print('🐾 [SPECIES] Locale: ${locale.languageCode}');
-                            print('🐾 [SPECIES] Translated: ${SpeciesTranslations.getDisplayName(profile.species, locale.languageCode)}');
                             return Text(
                               '${SpeciesTranslations.getDisplayName(profile.species, locale.languageCode)}${profile.breed != null ? ' • ${profile.breed}' : ''}',
                               style: theme.textTheme.bodyLarge?.copyWith(
@@ -497,12 +494,8 @@ class PetProfileScreen extends ConsumerWidget {
         protocolAsync.when(
           data: (protocol) {
             if (protocol != null) {
-              // ISSUE 1 FIX: Use protocol.nameRo when locale is Romanian
+              // Use protocol.nameRo when locale is Romanian
               final locale = Localizations.localeOf(context);
-              print('🇷🇴 [LOCALE] Pet Profile: ${locale.languageCode} (${locale.countryCode})');
-              print('🇷🇴 [PROTOCOL] Name EN: ${protocol.name}');
-              print('🇷🇴 [PROTOCOL] Name RO: ${protocol.nameRo}');
-              print('🇷🇴 [PROTOCOL] Using: ${locale.languageCode == "ro" && protocol.nameRo != null ? protocol.nameRo : protocol.name}');
               final protocolName = locale.languageCode == 'ro' && protocol.nameRo != null
                   ? protocol.nameRo!
                   : protocol.name;
@@ -671,9 +664,6 @@ class PetProfileScreen extends ConsumerWidget {
             Builder(
               builder: (context) {
                 final locale = Localizations.localeOf(context);
-                print('🐾 [SPECIES-LIST] Raw species: ${profile.species}');
-                print('🐾 [SPECIES-LIST] Locale: ${locale.languageCode}');
-                print('🐾 [SPECIES-LIST] Translated: ${SpeciesTranslations.getDisplayName(profile.species, locale.languageCode)}');
                 return Text(
                     '${SpeciesTranslations.getDisplayName(profile.species, locale.languageCode)}${profile.breed != null ? ' • ${profile.breed}' : ''}');
               },

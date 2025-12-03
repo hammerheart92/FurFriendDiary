@@ -55,11 +55,6 @@ class VaccinationEvent extends UpcomingCareEvent {
   /// Get localized description based on locale
   /// Use this method from UI layer to get properly localized description
   String getLocalizedDescription(String localeCode) {
-    print('📦 [MODEL] VaccinationEvent.getLocalizedDescription called');
-    print('📦 [MODEL] localeCode: $localeCode');
-    print('📦 [MODEL] entry.notes: ${entry.notes}');
-    print('📦 [MODEL] entry.notesRo: ${entry.notesRo}');
-
     final isRomanian = localeCode == 'ro';
     final parts = <String>[];
 
@@ -71,8 +66,6 @@ class VaccinationEvent extends UpcomingCareEvent {
     final notes = isRomanian && entry.notesRo != null && entry.notesRo!.isNotEmpty
         ? entry.notesRo!
         : entry.notes;
-
-    print('📦 [MODEL] Selected notes: $notes');
 
     if (notes != null && notes.isNotEmpty) {
       parts.add(notes);
@@ -86,7 +79,6 @@ class VaccinationEvent extends UpcomingCareEvent {
 
     final defaultLabel = isRomanian ? 'Vaccinare' : 'Vaccination';
     final result = parts.isEmpty ? defaultLabel : parts.join(' - ');
-    print('📦 [MODEL] Final description: $result');
     return result;
   }
 
@@ -141,11 +133,6 @@ class VaccinationRecordEvent extends UpcomingCareEvent {
   /// Get localized description based on locale
   /// Use this method from UI layer to get properly localized description
   String getLocalizedDescription(String localeCode) {
-    print('📦 [MODEL] VaccinationRecordEvent.getLocalizedDescription called');
-    print('📦 [MODEL] localeCode: $localeCode');
-    print('📦 [MODEL] record.notes: ${record.notes}');
-    print('📦 [MODEL] record.notesRo: ${record.notesRo}');
-
     final parts = <String>[];
 
     // Add veterinarian name if available
@@ -163,15 +150,12 @@ class VaccinationRecordEvent extends UpcomingCareEvent {
         ? record.notesRo!
         : record.notes;
 
-    print('📦 [MODEL] Selected notes: $notes');
-
     if (notes != null && notes.isNotEmpty) {
       parts.add(notes);
     }
 
     final defaultLabel = localeCode == 'ro' ? 'Vaccinare' : 'Vaccination';
     final result = parts.isEmpty ? defaultLabel : parts.join(' - ');
-    print('📦 [MODEL] Final description: $result');
     return result;
   }
 

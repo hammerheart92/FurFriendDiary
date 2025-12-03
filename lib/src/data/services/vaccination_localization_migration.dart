@@ -1,6 +1,9 @@
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../local/hive_manager.dart';
 import 'protocols/protocol_data_provider.dart';
+
+final _logger = Logger();
 
 /// One-time migration service to populate notesRo field for existing
 /// VaccinationEvent records from vaccination_protocols.json.
@@ -22,19 +25,18 @@ class VaccinationLocalizationMigration {
     final hasRun = prefs.getBool(_migrationKey) ?? false;
 
     if (hasRun) {
-      print('✅ [MIGRATION] Vaccination localization already migrated');
+      _logger.i('[MIGRATION] Vaccination localization already migrated');
       return;
     }
 
-    print('🔄 [MIGRATION] Starting vaccination localization migration...');
+    _logger.i('[MIGRATION] Starting vaccination localization migration...');
 
     try {
       final migratedCount = await _migrateVaccinationNotes();
       await prefs.setBool(_migrationKey, true);
-      print('✅ [MIGRATION] Completed! Migrated $migratedCount vaccinations');
+      _logger.i('[MIGRATION] Completed! Migrated $migratedCount vaccinations');
     } catch (e, stackTrace) {
-      print('🚨 [MIGRATION] Failed: $e');
-      print('🚨 [MIGRATION] Stack: $stackTrace');
+      _logger.e('[MIGRATION] Failed: $e', error: e, stackTrace: stackTrace);
       // Don't mark as complete if migration fails
       // Will retry on next app launch
     }
@@ -46,12 +48,12 @@ class VaccinationLocalizationMigration {
     final box = HiveManager.instance.vaccinationEventBox;
     final allVaccinations = box.values.toList();
 
-    print('🔍 [MIGRATION] Found ${allVaccinations.length} vaccinations to check');
+    _logger.d('[MIGRATION] Found ${allVaccinations.length} vaccinations to check');
 
     // Load protocols using correct method name
     final protocols = await _protocolProvider.loadVaccinationProtocols();
     if (protocols.isEmpty) {
-      print('⚠️ [MIGRATION] No protocols loaded - skipping migration');
+      _logger.w('[MIGRATION] No protocols loaded - skipping migration');
       return 0;
     }
 
@@ -70,13 +72,13 @@ class VaccinationLocalizationMigration {
 
       final protocol = protocolMap[event.protocolId];
       if (protocol == null) {
-        print('⚠️ [MIGRATION] Protocol not found: ${event.protocolId}');
+        _logger.w('[MIGRATION] Protocol not found: ${event.protocolId}');
         continue;
       }
 
       final stepIndex = event.protocolStepIndex!;
       if (stepIndex < 0 || stepIndex >= protocol.steps.length) {
-        print('⚠️ [MIGRATION] Step index out of range: $stepIndex');
+        _logger.w('[MIGRATION] Step index out of range: $stepIndex');
         continue;
       }
 
@@ -89,7 +91,7 @@ class VaccinationLocalizationMigration {
         // CRITICAL: Use event.id as key (matches repository pattern)
         await box.put(event.id, updatedEvent);
         migratedCount++;
-        print('✅ [MIGRATION] Updated: ${event.vaccineType} (${event.id})');
+        _logger.d('[MIGRATION] Updated: ${event.vaccineType} (${event.id})');
       }
     }
 
@@ -104,6 +106,6 @@ class VaccinationLocalizationMigration {
   static Future<void> resetMigration() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_migrationKey);
-    print('🔄 [MIGRATION] Reset flag - will run on next launch');
+    _logger.i('[MIGRATION] Reset flag - will run on next launch');
   }
 }

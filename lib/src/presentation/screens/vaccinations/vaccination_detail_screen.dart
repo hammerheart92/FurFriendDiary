@@ -475,10 +475,6 @@ class VaccinationDetailScreen extends ConsumerWidget {
     // Use Romanian notes if locale is Romanian and notesRo is available
     final locale = Localizations.localeOf(context);
     final isRomanian = locale.languageCode == 'ro';
-    print('💉 [DETAIL] Locale: ${locale.languageCode}');
-    print('💉 [DETAIL] notes: ${vaccination.notes}');
-    print('💉 [DETAIL] notesRo: ${vaccination.notesRo}');
-    print('💉 [DETAIL] Displaying: ${isRomanian && vaccination.notesRo != null && vaccination.notesRo!.isNotEmpty ? vaccination.notesRo : vaccination.notes}');
     final notes = (isRomanian && vaccination.notesRo != null && vaccination.notesRo!.isNotEmpty)
         ? vaccination.notesRo!
         : vaccination.notes!;
