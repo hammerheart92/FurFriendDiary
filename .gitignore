@@ -73,6 +73,7 @@ HANDOFF_v1_1_1_Session_Nov29_30_2025.md
 # Claude AI / AI assistant files
 .claude/
 CLAUDE.md
+CHANGELOG.md
 
 # Android debug logs
 full_logcat.txt
