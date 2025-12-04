@@ -23,6 +23,7 @@ import '../../../domain/models/pet_profile.dart';
 import '../../../domain/constants/vaccine_type_translations.dart';
 import '../../providers/vaccinations_provider.dart';
 import '../../providers/pet_profile_provider.dart';
+import '../../../data/services/exif_stripper_service.dart';
 
 /// Vaccination Form Screen - Add or edit vaccination events
 ///
@@ -661,8 +662,22 @@ class _VaccinationFormScreenState
     );
 
     if (image != null) {
+      // Strip EXIF metadata for GDPR compliance (data minimization)
+      final exifStripper = ExifStripperService();
+      final cleanedPath = await exifStripper.stripExifFromFile(image.path);
+
+      // Delete original cached file with EXIF data for GDPR compliance
+      try {
+        final originalFile = File(image.path);
+        if (await originalFile.exists()) {
+          await originalFile.delete();
+        }
+      } catch (_) {
+        // Ignore cleanup errors - original may already be deleted
+      }
+
       setState(() {
-        _certificatePhotoPaths.add(image.path);
+        _certificatePhotoPaths.add(cleanedPath);
       });
     }
   }

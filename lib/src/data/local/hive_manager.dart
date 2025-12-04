@@ -82,27 +82,27 @@ class HiveManager {
   /// Initialize Hive and open all boxes
   Future<void> initialize() async {
     if (_isInitialized) {
-      logger.i("🔍 DEBUG: HiveManager already initialized");
+      logger.d("🔍 DEBUG: HiveManager already initialized");
       return;
     }
 
-    logger.i("🔍 DEBUG: Starting HiveManager initialization");
+    logger.d("🔍 DEBUG: Starting HiveManager initialization");
 
     try {
       // Initialize Hive
       await Hive.initFlutter();
-      logger.i("🔍 DEBUG: Hive.initFlutter() completed");
+      logger.d("🔍 DEBUG: Hive.initFlutter() completed");
 
       // Initialize encryption service
-      logger.i("🔐 DEBUG: Initializing encryption service...");
+      logger.d("🔐 DEBUG: Initializing encryption service...");
       await EncryptionService.initialize();
-      logger.i("✅ DEBUG: Encryption service initialized successfully");
+      logger.d("✅ DEBUG: Encryption service initialized successfully");
 
       // Register all adapters
       await _registerAdapters();
 
       // Check if migration is needed (existing v1.0.7 users)
-      logger.i("🔍 DEBUG: Checking if migration needed...");
+      logger.d("🔍 DEBUG: Checking if migration needed...");
       final needsMigration = await EncryptionService.needsMigration();
 
       if (needsMigration) {
@@ -123,16 +123,16 @@ class HiveManager {
           logger.w("⚠️ DEBUG: Continuing with unencrypted boxes - migration will retry next launch");
         }
       } else {
-        logger.i("ℹ️ DEBUG: No migration needed - boxes already encrypted or fresh install");
+        logger.d("ℹ️ DEBUG: No migration needed - boxes already encrypted or fresh install");
       }
 
       // Get encryption cipher for opening boxes
-      logger.i("🔐 DEBUG: Getting encryption cipher...");
+      logger.d("🔐 DEBUG: Getting encryption cipher...");
       final cipher = await EncryptionService.getEncryptionCipher();
-      logger.i("✅ DEBUG: Encryption cipher obtained");
+      logger.d("✅ DEBUG: Encryption cipher obtained");
 
       // Open all boxes with encryption
-      logger.i("🔐 DEBUG: Opening all boxes with encryption enabled...");
+      logger.d("🔐 DEBUG: Opening all boxes with encryption enabled...");
       await _openAllBoxes(cipher);
 
       // Diagnostic: Verify data persistence right after opening boxes
@@ -149,7 +149,7 @@ class HiveManager {
 
   /// Register all Hive adapters
   Future<void> _registerAdapters() async {
-    logger.i("🔍 DEBUG: Registering Hive adapters");
+    logger.d("🔍 DEBUG: Registering Hive adapters");
 
     if (!Hive.isAdapterRegistered(1)) {
       Hive.registerAdapter(PetProfileAdapter());
@@ -299,7 +299,7 @@ class HiveManager {
 
   /// Open all boxes in the correct order
   Future<void> _openAllBoxes(HiveAesCipher? cipher) async {
-    logger.i("🔍 DEBUG: Opening all Hive boxes with encryption enabled");
+    logger.d("🔍 DEBUG: Opening all Hive boxes with encryption enabled");
 
     // Open pet profiles box first (most important)
     _petProfileBox = await _openBox<PetProfile>(
@@ -389,7 +389,7 @@ class HiveManager {
       encryptionCipher: cipher,
     );
 
-    logger.i("✅ DEBUG: All boxes opened successfully with encryption");
+    logger.d("✅ DEBUG: All boxes opened successfully with encryption");
 
     // Mark encryption initialization complete for fresh installs
     // (Migration sets its own flag after migrating data)
@@ -449,14 +449,14 @@ class HiveManager {
 
       // Try to delete corrupted box and recreate
       try {
-        logger.i(
+        logger.d(
             "🔧 DEBUG: Attempting to delete and recreate corrupted box '$boxName'");
         await Hive.deleteBoxFromDisk(boxName);
         final box = await Hive.openBox<T>(
           boxName,
           encryptionCipher: encryptionCipher,
         );
-        logger.i("✅ DEBUG: Box '$boxName' recreated successfully");
+        logger.d("✅ DEBUG: Box '$boxName' recreated successfully");
         return box;
       } catch (e2) {
         logger.e("🚨 ERROR: Failed to recreate box '$boxName': $e2");
@@ -650,10 +650,10 @@ class HiveManager {
 
   /// Close all boxes
   Future<void> close() async {
-    logger.i("🔍 DEBUG: Closing all Hive boxes");
+    logger.d("🔍 DEBUG: Closing all Hive boxes");
     await Hive.close();
     _isInitialized = false;
-    logger.i("✅ DEBUG: All Hive boxes closed");
+    logger.d("✅ DEBUG: All Hive boxes closed");
   }
 
   /// Flush all boxes to ensure data is written to disk
@@ -693,7 +693,7 @@ class HiveManager {
       await _settingsBox?.flush();
       await _appPrefsBox?.flush();
 
-      logger.i("✅ DEBUG: All boxes flushed to disk successfully");
+      logger.d("✅ DEBUG: All boxes flushed to disk successfully");
     } catch (e) {
       logger.e("🚨 ERROR: Failed to flush boxes: $e");
       // Don't rethrow - flushing is best-effort
@@ -722,13 +722,13 @@ class HiveManager {
 
       // List ALL files in directory
       final files = dir.listSync();
-      logger.i("📁 Total files in directory: ${files.length}");
+      logger.d("📁 Total files in directory: ${files.length}");
 
       for (var file in files) {
         if (file is File) {
           final size = await file.length();
           final name = file.path.split(Platform.pathSeparator).last;
-          logger.i("📁   - $name (${size} bytes)");
+          logger.d("📁   - $name (${size} bytes)");
         }
       }
 
@@ -753,16 +753,16 @@ class HiveManager {
       logger.w("📁 =================================");
 
       // Check box states
-      logger.i("📦 Box states:");
-      logger.i(
+      logger.d("📦 Box states:");
+      logger.d(
           "📦   pet_profiles isOpen: ${_petProfileBox?.isOpen ?? false}, length: ${_petProfileBox?.length ?? 0}");
-      logger.i(
+      logger.d(
           "📦   feedings isOpen: ${_feedingBox?.isOpen ?? false}, length: ${_feedingBox?.length ?? 0}");
-      logger.i(
+      logger.d(
           "📦   walks isOpen: ${_walkBox?.isOpen ?? false}, length: ${_walkBox?.length ?? 0}");
-      logger.i(
+      logger.d(
           "📦   settings isOpen: ${_settingsBox?.isOpen ?? false}, length: ${_settingsBox?.length ?? 0}");
-      logger.i(
+      logger.d(
           "📦   app_prefs isOpen: ${_appPrefsBox?.isOpen ?? false}, length: ${_appPrefsBox?.length ?? 0}");
     } catch (e, stack) {
       logger.e("🚨 ERROR in verifyDataPersistence: $e");
@@ -773,13 +773,13 @@ class HiveManager {
   /// Clear all data (for testing/debugging)
   /// Note: Hive must be initialized before calling this method
   Future<void> clearAllData() async {
-    logger.i("🔧 DEBUG: Clearing all Hive data");
+    logger.d("🔧 DEBUG: Clearing all Hive data");
 
     try {
       // Initialize Hive if not already initialized
       if (!_isInitialized) {
         logger
-            .i("🔍 DEBUG: Hive not initialized, initializing for clearAllData");
+            .d("🔍 DEBUG: Hive not initialized, initializing for clearAllData");
         await Hive.initFlutter();
       }
 
@@ -809,7 +809,7 @@ class HiveManager {
       await Hive.deleteBoxFromDisk(settingsBoxName);
       await Hive.deleteBoxFromDisk(appPrefsBoxName);
 
-      logger.i("✅ DEBUG: All Hive data cleared");
+      logger.d("✅ DEBUG: All Hive data cleared");
     } catch (e) {
       logger.e("🚨 ERROR: Failed to clear some Hive data: $e");
     }

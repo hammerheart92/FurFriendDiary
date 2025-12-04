@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:logger/logger.dart';
 import '../../domain/models/vaccination_event.dart';
@@ -17,7 +18,7 @@ class VaccinationRepositoryImpl implements VaccinationRepository {
       // Sort by administered date, newest first
       vaccinations
           .sort((a, b) => b.administeredDate.compareTo(a.administeredDate));
-      logger.i(
+      logger.d(
           "🔍 DEBUG: Retrieved ${vaccinations.length} vaccination events from Hive");
       return vaccinations;
     } catch (e) {
@@ -35,7 +36,7 @@ class VaccinationRepositoryImpl implements VaccinationRepository {
       // Sort by administered date, newest first
       vaccinations
           .sort((a, b) => b.administeredDate.compareTo(a.administeredDate));
-      logger.i(
+      logger.d(
           "🔍 DEBUG: Retrieved ${vaccinations.length} vaccinations for pet $petId");
       return vaccinations;
     } catch (e) {
@@ -50,7 +51,7 @@ class VaccinationRepositoryImpl implements VaccinationRepository {
       final box = HiveBoxes.getVaccinationEvents();
       final vaccination = box.get(id);
       if (vaccination != null) {
-        logger.i(
+        logger.d(
             "🔍 DEBUG: Found vaccination '${vaccination.vaccineType}' with ID $id");
       } else {
         logger.w("⚠️ DEBUG: No vaccination found with ID $id");
@@ -67,7 +68,7 @@ class VaccinationRepositoryImpl implements VaccinationRepository {
     try {
       final box = HiveBoxes.getVaccinationEvents();
       await box.put(event.id, event);
-      logger.i(
+      logger.d(
           "✅ DEBUG: Added vaccination '${event.vaccineType}' with ID ${event.id}");
     } catch (e) {
       logger.e("🚨 ERROR: Failed to add vaccination '${event.vaccineType}': $e");
@@ -80,7 +81,7 @@ class VaccinationRepositoryImpl implements VaccinationRepository {
     try {
       final box = HiveBoxes.getVaccinationEvents();
       await box.put(event.id, event);
-      logger.i(
+      logger.d(
           "✅ DEBUG: Updated vaccination '${event.vaccineType}' with ID ${event.id}");
     } catch (e) {
       logger
@@ -94,8 +95,26 @@ class VaccinationRepositoryImpl implements VaccinationRepository {
     try {
       final box = HiveBoxes.getVaccinationEvents();
       final vaccination = box.get(id);
+
+      // GDPR Article 17: Delete certificate photo files if they exist
+      if (vaccination?.certificatePhotoUrls != null &&
+          vaccination!.certificatePhotoUrls!.isNotEmpty) {
+        for (final photoPath in vaccination.certificatePhotoUrls!) {
+          try {
+            final file = File(photoPath);
+            if (await file.exists()) {
+              await file.delete();
+              logger.d("Deleted certificate photo: $photoPath");
+            }
+          } catch (e) {
+            logger.w("Failed to delete certificate photo $photoPath: $e");
+            // Continue with other photos even if one fails
+          }
+        }
+      }
+
       await box.delete(id);
-      logger.i(
+      logger.d(
           "✅ DEBUG: Deleted vaccination with ID $id${vaccination != null ? " ('${vaccination.vaccineType}')" : ""}");
     } catch (e) {
       logger.e("🚨 ERROR: Failed to delete vaccination with ID $id: $e");
@@ -122,7 +141,7 @@ class VaccinationRepositoryImpl implements VaccinationRepository {
       // Sort by administered date, newest first
       vaccinations
           .sort((a, b) => b.administeredDate.compareTo(a.administeredDate));
-      logger.i(
+      logger.d(
           "🔍 DEBUG: Retrieved ${vaccinations.length} vaccinations for pet $petId in date range");
       return vaccinations;
     } catch (e) {
@@ -147,7 +166,7 @@ class VaccinationRepositoryImpl implements VaccinationRepository {
           .toList();
       // Sort by next due date, soonest first
       vaccinations.sort((a, b) => a.nextDueDate!.compareTo(b.nextDueDate!));
-      logger.i(
+      logger.d(
           "🔍 DEBUG: Retrieved ${vaccinations.length} upcoming vaccinations for pet $petId");
       return vaccinations;
     } catch (e) {
@@ -171,7 +190,7 @@ class VaccinationRepositoryImpl implements VaccinationRepository {
           .toList();
       // Sort by next due date, most overdue first
       vaccinations.sort((a, b) => a.nextDueDate!.compareTo(b.nextDueDate!));
-      logger.i(
+      logger.d(
           "🔍 DEBUG: Retrieved ${vaccinations.length} overdue vaccinations for pet $petId");
       return vaccinations;
     } catch (e) {
@@ -196,7 +215,7 @@ class VaccinationRepositoryImpl implements VaccinationRepository {
         if (stepCompare != 0) return stepCompare;
         return a.administeredDate.compareTo(b.administeredDate);
       });
-      logger.i(
+      logger.d(
           "🔍 DEBUG: Retrieved ${vaccinations.length} vaccinations for protocol $protocolId");
       return vaccinations;
     } catch (e) {
@@ -220,7 +239,7 @@ class VaccinationRepositoryImpl implements VaccinationRepository {
           .toList();
 
       if (vaccinations.isEmpty) {
-        logger.i(
+        logger.d(
             "⚠️ DEBUG: No vaccinations of type '$vaccineType' found for pet $petId");
         return null;
       }
@@ -229,7 +248,7 @@ class VaccinationRepositoryImpl implements VaccinationRepository {
       vaccinations
           .sort((a, b) => b.administeredDate.compareTo(a.administeredDate));
       final lastVaccination = vaccinations.first;
-      logger.i(
+      logger.d(
           "🔍 DEBUG: Found last '$vaccineType' vaccination for pet $petId on ${lastVaccination.administeredDate}");
       return lastVaccination;
     } catch (e) {

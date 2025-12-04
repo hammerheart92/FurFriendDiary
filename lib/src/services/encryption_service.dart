@@ -87,7 +87,7 @@ class EncryptionService {
         existingKeyFromSecure = await _secureStorage.read(key: _encryptionKeyStorageKey);
         if (existingKeyFromSecure != null) {
           final keyBytes = base64Decode(existingKeyFromSecure);
-          _logger.i('🔐 [LOAD-PRIMARY] ✅ Key found in flutter_secure_storage (${keyBytes.length} bytes, hashCode: ${keyBytes.hashCode})');
+          _logger.d('🔐 [LOAD-PRIMARY] ✅ Key found in flutter_secure_storage (${keyBytes.length} bytes)');
         } else {
           _logger.w('🔐 [LOAD-PRIMARY] ⚠️ Key NOT found in flutter_secure_storage (returned null)');
         }
@@ -103,7 +103,7 @@ class EncryptionService {
         existingKeyFromFallback = _prefs!.getString(_fallbackKeyStorageKey);
         if (existingKeyFromFallback != null) {
           final keyBytes = base64Decode(existingKeyFromFallback);
-          _logger.i('🔐 [LOAD-FALLBACK] ✅ Key found in SharedPreferences (${keyBytes.length} bytes, hashCode: ${keyBytes.hashCode})');
+          _logger.d('🔐 [LOAD-FALLBACK] ✅ Key found in SharedPreferences (${keyBytes.length} bytes)');
         } else {
           _logger.w('🔐 [LOAD-FALLBACK] ⚠️ Key NOT found in SharedPreferences (returned null)');
         }
@@ -114,10 +114,8 @@ class EncryptionService {
 
       // Phase 3: Key consistency check
       if (existingKeyFromSecure != null && existingKeyFromFallback != null) {
-        final secureBytes = base64Decode(existingKeyFromSecure);
-        final fallbackBytes = base64Decode(existingKeyFromFallback);
         final keysMatch = existingKeyFromSecure == existingKeyFromFallback;
-        _logger.i('🔐 [CONSISTENCY] Keys present in BOTH storages. Match: $keysMatch (secure.hashCode: ${secureBytes.hashCode}, fallback.hashCode: ${fallbackBytes.hashCode})');
+        _logger.d('🔐 [CONSISTENCY] Keys present in BOTH storages. Match: $keysMatch');
       } else if (existingKeyFromSecure != null) {
         _logger.w('🔐 [CONSISTENCY] ⚠️ Key ONLY in flutter_secure_storage (fallback missing)');
       } else if (existingKeyFromFallback != null) {
@@ -140,7 +138,7 @@ class EncryptionService {
           verifySecure = await _secureStorage.read(key: _encryptionKeyStorageKey);
           if (verifySecure != null) {
             final keyBytes = base64Decode(verifySecure);
-            _logger.i('🔐 [VERIFY-PRIMARY] ✅ Key verified in flutter_secure_storage (${keyBytes.length} bytes, hashCode: ${keyBytes.hashCode})');
+            _logger.d('🔐 [VERIFY-PRIMARY] ✅ Key verified in flutter_secure_storage (${keyBytes.length} bytes)');
           } else {
             _logger.e('🔐 [VERIFY-PRIMARY] ❌ Key verification FAILED - not found in flutter_secure_storage after save!');
           }
@@ -154,7 +152,7 @@ class EncryptionService {
           verifyFallback = _prefs!.getString(_fallbackKeyStorageKey);
           if (verifyFallback != null) {
             final keyBytes = base64Decode(verifyFallback);
-            _logger.i('🔐 [VERIFY-FALLBACK] ✅ Key verified in SharedPreferences (${keyBytes.length} bytes, hashCode: ${keyBytes.hashCode})');
+            _logger.d('🔐 [VERIFY-FALLBACK] ✅ Key verified in SharedPreferences (${keyBytes.length} bytes)');
           } else {
             _logger.e('🔐 [VERIFY-FALLBACK] ❌ Key verification FAILED - not found in SharedPreferences after save!');
           }
@@ -165,9 +163,7 @@ class EncryptionService {
         // Verify consistency of saved keys
         if (verifySecure != null && verifyFallback != null) {
           final keysMatch = verifySecure == verifyFallback;
-          final secureBytes = base64Decode(verifySecure);
-          final fallbackBytes = base64Decode(verifyFallback);
-          _logger.i('🔐 [VERIFY-CONSISTENCY] Keys match after save: $keysMatch (secure.hashCode: ${secureBytes.hashCode}, fallback.hashCode: ${fallbackBytes.hashCode})');
+          _logger.d('🔐 [VERIFY-CONSISTENCY] Keys match after save: $keysMatch');
         } else if (verifySecure == null && verifyFallback == null) {
           _logger.e('🔐 [VERIFY-CONSISTENCY] ❌ CRITICAL: Key save FAILED in BOTH storages!');
         }
