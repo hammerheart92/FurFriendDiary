@@ -1109,6 +1109,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enterCustomSpecies => 'Enter your pet\'s species';
 
   @override
+  String get gender => 'Gender';
+
+  @override
+  String get genderOptional => 'Gender (optional)';
+
+  @override
+  String get genderMale => 'Male';
+
+  @override
+  String get genderFemale => 'Female';
+
+  @override
+  String get genderUnknown => 'Unknown';
+
+  @override
   String get changePhoto => 'Change Photo';
 
   @override

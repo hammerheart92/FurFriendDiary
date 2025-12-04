@@ -29,13 +29,14 @@ class PetProfileAdapter extends TypeAdapter<PetProfile> {
       isActive: fields[9] as bool,
       vaccinationProtocolId: fields[10] as String?,
       dewormingProtocolId: fields[11] as String?,
+      gender: fields[12] == null ? PetGender.unknown : fields[12] as PetGender,
     );
   }
 
   @override
   void write(BinaryWriter writer, PetProfile obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -59,7 +60,9 @@ class PetProfileAdapter extends TypeAdapter<PetProfile> {
       ..writeByte(10)
       ..write(obj.vaccinationProtocolId)
       ..writeByte(11)
-      ..write(obj.dewormingProtocolId);
+      ..write(obj.dewormingProtocolId)
+      ..writeByte(12)
+      ..write(obj.gender);
   }
 
   @override
@@ -69,6 +72,50 @@ class PetProfileAdapter extends TypeAdapter<PetProfile> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is PetProfileAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class PetGenderAdapter extends TypeAdapter<PetGender> {
+  @override
+  final int typeId = 31;
+
+  @override
+  PetGender read(BinaryReader reader) {
+    switch (reader.readByte()) {
+      case 0:
+        return PetGender.male;
+      case 1:
+        return PetGender.female;
+      case 2:
+        return PetGender.unknown;
+      default:
+        return PetGender.male;
+    }
+  }
+
+  @override
+  void write(BinaryWriter writer, PetGender obj) {
+    switch (obj) {
+      case PetGender.male:
+        writer.writeByte(0);
+        break;
+      case PetGender.female:
+        writer.writeByte(1);
+        break;
+      case PetGender.unknown:
+        writer.writeByte(2);
+        break;
+    }
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PetGenderAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
@@ -96,6 +143,8 @@ PetProfile _$PetProfileFromJson(Map<String, dynamic> json) => PetProfile(
       isActive: json['isActive'] as bool? ?? false,
       vaccinationProtocolId: json['vaccinationProtocolId'] as String?,
       dewormingProtocolId: json['dewormingProtocolId'] as String?,
+      gender: $enumDecodeNullable(_$PetGenderEnumMap, json['gender']) ??
+          PetGender.unknown,
     );
 
 Map<String, dynamic> _$PetProfileToJson(PetProfile instance) =>
@@ -112,4 +161,11 @@ Map<String, dynamic> _$PetProfileToJson(PetProfile instance) =>
       'isActive': instance.isActive,
       'vaccinationProtocolId': instance.vaccinationProtocolId,
       'dewormingProtocolId': instance.dewormingProtocolId,
+      'gender': _$PetGenderEnumMap[instance.gender]!,
     };
+
+const _$PetGenderEnumMap = {
+  PetGender.male: 'male',
+  PetGender.female: 'female',
+  PetGender.unknown: 'unknown',
+};

@@ -295,6 +295,11 @@ class HiveManager {
       Hive.registerAdapter(VaccinationEventAdapter());
       logger.d("✅ DEBUG: VaccinationEvent adapter registered with typeId 30");
     }
+
+    if (!Hive.isAdapterRegistered(31)) {
+      Hive.registerAdapter(PetGenderAdapter());
+      logger.d("✅ DEBUG: PetGender adapter registered with typeId 31");
+    }
   }
 
   /// Open all boxes in the correct order

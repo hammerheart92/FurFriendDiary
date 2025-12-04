@@ -463,7 +463,7 @@ class _VaccinationProtocolByIdProviderElement
 }
 
 String _$vaccinationProtocolsHash() =>
-    r'7267414d8f435ff679af3168039fd7797d5bee1d';
+    r'323a75b0f361b5a6a10380e04b79c46e86a6a393';
 
 /// Main vaccination protocol provider - manages all protocols (predefined + custom)
 ///

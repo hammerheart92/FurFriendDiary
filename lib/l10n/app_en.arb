@@ -538,6 +538,17 @@
   "speciesOther": "Other (Custom)",
   "customSpecies": "Custom Species",
   "enterCustomSpecies": "Enter your pet's species",
+  "gender": "Gender",
+  "@gender": {
+    "description": "Label for gender field"
+  },
+  "genderOptional": "Gender (optional)",
+  "@genderOptional": {
+    "description": "Label for optional gender field"
+  },
+  "genderMale": "Male",
+  "genderFemale": "Female",
+  "genderUnknown": "Unknown",
   "changePhoto": "Change Photo",
   "@changePhoto": {
     "description": "Button text to change pet photo"

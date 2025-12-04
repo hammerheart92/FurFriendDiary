@@ -36,9 +36,17 @@ class PetProfileRepository {
   // Get all profiles
   List<PetProfile> getAll() {
     try {
-      return _profiles.values.toList();
-    } catch (e) {
+      logger.d("🔍 DEBUG: getAll() - Box length: ${_profiles.length}");
+      logger.d("🔍 DEBUG: getAll() - Box keys: ${_profiles.keys.toList()}");
+      final pets = _profiles.values.toList();
+      logger.d("🔍 DEBUG: getAll() - Successfully loaded ${pets.length} pets");
+      for (final pet in pets) {
+        logger.d("🔍 DEBUG: Pet '${pet.name}' - gender: ${pet.gender}");
+      }
+      return pets;
+    } catch (e, stackTrace) {
       logger.e("🚨 ERROR in getAll: $e");
+      logger.e("🚨 Stack trace: $stackTrace");
       return [];
     }
   }
@@ -46,9 +54,13 @@ class PetProfileRepository {
   // Get active profiles only
   List<PetProfile> getActive() {
     try {
-      return _profiles.values.where((p) => p.isActive).toList();
-    } catch (e) {
+      logger.d("🔍 DEBUG: getActive() - Fetching active profiles");
+      final active = _profiles.values.where((p) => p.isActive).toList();
+      logger.d("🔍 DEBUG: getActive() - Found ${active.length} active profiles");
+      return active;
+    } catch (e, stackTrace) {
       logger.e("🚨 ERROR in getActive: $e");
+      logger.e("🚨 Stack trace: $stackTrace");
       return [];
     }
   }
@@ -163,10 +175,20 @@ class PetProfileRepository {
   // Get current active profile
   PetProfile? getCurrentProfile() {
     try {
-      return _profiles.values.firstWhere((p) => p.isActive);
+      logger.d("🔍 DEBUG: getCurrentProfile() - Looking for active profile");
+      final active = _profiles.values.firstWhere((p) => p.isActive);
+      logger.d("🔍 DEBUG: getCurrentProfile() - Found active: ${active.name}");
+      return active;
     } catch (e) {
+      logger.d("🔍 DEBUG: getCurrentProfile() - No active profile, trying first available");
       // No active profile found, return first available
-      return _profiles.isNotEmpty ? _profiles.values.first : null;
+      if (_profiles.isNotEmpty) {
+        final first = _profiles.values.first;
+        logger.d("🔍 DEBUG: getCurrentProfile() - Returning first: ${first.name}");
+        return first;
+      }
+      logger.d("🔍 DEBUG: getCurrentProfile() - No profiles available");
+      return null;
     }
   }
 

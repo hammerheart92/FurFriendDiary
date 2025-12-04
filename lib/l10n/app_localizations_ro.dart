@@ -1120,6 +1120,21 @@ class AppLocalizationsRo extends AppLocalizations {
   String get enterCustomSpecies => 'Introduceți specia animalului';
 
   @override
+  String get gender => 'Gen';
+
+  @override
+  String get genderOptional => 'Gen (opțional)';
+
+  @override
+  String get genderMale => 'Mascul';
+
+  @override
+  String get genderFemale => 'Femelă';
+
+  @override
+  String get genderUnknown => 'Necunoscut';
+
+  @override
   String get changePhoto => 'Schimbă fotografia';
 
   @override

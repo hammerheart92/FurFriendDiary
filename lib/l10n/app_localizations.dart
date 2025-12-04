@@ -2216,6 +2216,36 @@ abstract class AppLocalizations {
   /// **'Enter your pet\'s species'**
   String get enterCustomSpecies;
 
+  /// Label for gender field
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get gender;
+
+  /// Label for optional gender field
+  ///
+  /// In en, this message translates to:
+  /// **'Gender (optional)'**
+  String get genderOptional;
+
+  /// No description provided for @genderMale.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get genderMale;
+
+  /// No description provided for @genderFemale.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get genderFemale;
+
+  /// No description provided for @genderUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get genderUnknown;
+
   /// Button text to change pet photo
   ///
   /// In en, this message translates to:

@@ -14,6 +14,42 @@ import 'package:intl/intl.dart';
 
 final _logger = Logger();
 
+/// Get gender-specific icon
+IconData _getGenderIcon(PetGender gender) {
+  switch (gender) {
+    case PetGender.male:
+      return Icons.male;
+    case PetGender.female:
+      return Icons.female;
+    case PetGender.unknown:
+      return Icons.help_outline;
+  }
+}
+
+/// Get gender icon color
+Color _getGenderIconColor(PetGender gender) {
+  switch (gender) {
+    case PetGender.male:
+      return Colors.blue;
+    case PetGender.female:
+      return Colors.pink;
+    case PetGender.unknown:
+      return Colors.grey;
+  }
+}
+
+/// Get localized gender name
+String _getLocalizedGender(PetGender gender, AppLocalizations l10n) {
+  switch (gender) {
+    case PetGender.male:
+      return l10n.genderMale;
+    case PetGender.female:
+      return l10n.genderFemale;
+    case PetGender.unknown:
+      return l10n.genderUnknown;
+  }
+}
+
 class PetProfileScreen extends ConsumerWidget {
   const PetProfileScreen({super.key});
 
@@ -194,6 +230,27 @@ class PetProfileScreen extends ConsumerWidget {
                             );
                           },
                         ),
+                        if (profile.gender != PetGender.unknown) ...[
+                          const SizedBox(height: 4),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                _getGenderIcon(profile.gender),
+                                size: 16,
+                                color: _getGenderIconColor(profile.gender),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                _getLocalizedGender(profile.gender, l10n),
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: theme.colorScheme.onPrimaryContainer
+                                      .withValues(alpha: 255 * 0.7),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                         if (profile.age > 0)
                           Text(
                             l10n.yearsOld(
@@ -664,8 +721,24 @@ class PetProfileScreen extends ConsumerWidget {
             Builder(
               builder: (context) {
                 final locale = Localizations.localeOf(context);
-                return Text(
-                    '${SpeciesTranslations.getDisplayName(profile.species, locale.languageCode)}${profile.breed != null ? ' • ${profile.breed}' : ''}');
+                return Row(
+                  children: [
+                    if (profile.gender != PetGender.unknown) ...[
+                      Icon(
+                        _getGenderIcon(profile.gender),
+                        size: 14,
+                        color: _getGenderIconColor(profile.gender),
+                      ),
+                      const SizedBox(width: 4),
+                    ],
+                    Expanded(
+                      child: Text(
+                        '${SpeciesTranslations.getDisplayName(profile.species, locale.languageCode)}${profile.breed != null ? ' • ${profile.breed}' : ''}',
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                );
               },
             ),
             if (profile.age > 0)

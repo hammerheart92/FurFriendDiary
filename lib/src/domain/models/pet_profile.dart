@@ -4,6 +4,17 @@ import 'package:uuid/uuid.dart';
 
 part 'pet_profile.g.dart';
 
+/// Gender enum for pet profiles
+@HiveType(typeId: 31)
+enum PetGender {
+  @HiveField(0)
+  male,
+  @HiveField(1)
+  female,
+  @HiveField(2)
+  unknown,
+}
+
 @HiveType(typeId: 1)
 @JsonSerializable()
 class PetProfile extends HiveObject {
@@ -43,6 +54,9 @@ class PetProfile extends HiveObject {
   @HiveField(11)
   final String? dewormingProtocolId;
 
+  @HiveField(12)
+  final PetGender gender;
+
   PetProfile({
     String? id,
     required this.name,
@@ -56,6 +70,7 @@ class PetProfile extends HiveObject {
     this.isActive = false,
     this.vaccinationProtocolId,
     this.dewormingProtocolId,
+    this.gender = PetGender.unknown,
   })  : id = id ?? const Uuid().v4(),
         createdAt = createdAt ?? DateTime.now(),
         updatedAt = updatedAt ?? DateTime.now();
@@ -88,6 +103,7 @@ class PetProfile extends HiveObject {
     bool? isActive,
     String? vaccinationProtocolId,
     String? dewormingProtocolId,
+    PetGender? gender,
   }) {
     return PetProfile(
       id: id ?? this.id,
@@ -102,6 +118,7 @@ class PetProfile extends HiveObject {
       isActive: isActive ?? this.isActive,
       vaccinationProtocolId: vaccinationProtocolId ?? this.vaccinationProtocolId,
       dewormingProtocolId: dewormingProtocolId ?? this.dewormingProtocolId,
+      gender: gender ?? this.gender,
     );
   }
 }

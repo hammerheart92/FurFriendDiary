@@ -130,6 +130,7 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
   bool _showCustomSpeciesField = false;
   String? _selectedBreed; // Selected from dropdown
   bool _showCustomBreedField = false; // Show text field for custom breed
+  PetGender _selectedGender = PetGender.unknown;
 
   @override
   void initState() {
@@ -191,6 +192,9 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
             } else {
               logger.d("[BREED] Edit mode - No breed specified for this pet");
             }
+
+            // Load gender
+            _selectedGender = profile.gender;
           });
           logger.d(
               "[PROFILE_SETUP] Edit mode - Pre-filled with existing pet data");
@@ -404,6 +408,42 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
     }
   }
 
+  /// Get localized gender name
+  String _getLocalizedGender(PetGender gender, AppLocalizations l10n) {
+    switch (gender) {
+      case PetGender.male:
+        return l10n.genderMale;
+      case PetGender.female:
+        return l10n.genderFemale;
+      case PetGender.unknown:
+        return l10n.genderUnknown;
+    }
+  }
+
+  /// Get gender-specific icon
+  IconData _getGenderIcon(PetGender gender) {
+    switch (gender) {
+      case PetGender.male:
+        return Icons.male;
+      case PetGender.female:
+        return Icons.female;
+      case PetGender.unknown:
+        return Icons.help_outline;
+    }
+  }
+
+  /// Get gender icon color
+  Color _getGenderIconColor(PetGender gender, ThemeData theme) {
+    switch (gender) {
+      case PetGender.male:
+        return Colors.blue;
+      case PetGender.female:
+        return Colors.pink;
+      case PetGender.unknown:
+        return theme.colorScheme.onSurfaceVariant;
+    }
+  }
+
   /// Get available breeds for the selected species
   List<String>? _getBreedsForSpecies(String? species) {
     if (species == null) {
@@ -488,6 +528,7 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
               notes: _notesController.text.trim().isEmpty
                   ? null
                   : _notesController.text.trim(),
+              gender: _selectedGender,
             )
           : PetProfile(
               name: _nameController.text.trim(),
@@ -501,6 +542,7 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
               notes: _notesController.text.trim().isEmpty
                   ? null
                   : _notesController.text.trim(),
+              gender: _selectedGender,
             );
 
       logger.d(
@@ -769,6 +811,41 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
                   ),
                 ),
               ],
+              const SizedBox(height: 16),
+
+              // Gender dropdown
+              DropdownButtonFormField<PetGender>(
+                value: _selectedGender,
+                decoration: InputDecoration(
+                  labelText: l10n.genderOptional,
+                  border: const OutlineInputBorder(),
+                  prefixIcon: Icon(
+                    _getGenderIcon(_selectedGender),
+                    color: _getGenderIconColor(_selectedGender, theme),
+                  ),
+                ),
+                items: PetGender.values.map((gender) {
+                  return DropdownMenuItem(
+                    value: gender,
+                    child: Row(
+                      children: [
+                        Icon(
+                          _getGenderIcon(gender),
+                          color: _getGenderIconColor(gender, theme),
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(_getLocalizedGender(gender, l10n)),
+                      ],
+                    ),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedGender = value ?? PetGender.unknown;
+                  });
+                },
+              ),
               const SizedBox(height: 16),
 
               // Birthday picker

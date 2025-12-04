@@ -18,14 +18,26 @@ final petProfilesProvider =
 
 // Current active pet profile provider
 final currentPetProfileProvider = Provider<PetProfile?>((ref) {
+  final logger = Logger();
   final profilesAsync = ref.watch(petProfilesProvider);
   return profilesAsync.when(
     data: (profiles) {
+      logger.d("🐾 DEBUG: currentPetProfileProvider - received ${profiles.length} profiles");
       final active = profiles.where((p) => p.isActive);
+      logger.d("🐾 DEBUG: currentPetProfileProvider - ${active.length} active profiles found");
+      if (active.isEmpty && profiles.isNotEmpty) {
+        logger.w("⚠️ WARNING: No active pet but ${profiles.length} pets exist!");
+      }
       return active.isNotEmpty ? active.first : null;
     },
-    loading: () => null,
-    error: (_, __) => null,
+    loading: () {
+      logger.d("🐾 DEBUG: currentPetProfileProvider - still loading");
+      return null;
+    },
+    error: (e, __) {
+      logger.e("🐾 ERROR: currentPetProfileProvider - $e");
+      return null;
+    },
   );
 });
 
@@ -45,10 +57,14 @@ class PetProfilesNotifier extends StateNotifier<AsyncValue<List<PetProfile>>> {
 
   Future<void> _initialize() async {
     try {
+      logger.d("🔍 DEBUG: PetProfilesNotifier._initialize() starting");
       await _repository.init();
+      logger.d("🔍 DEBUG: Repository initialized successfully");
       await load();
-    } catch (error) {
+      logger.d("🔍 DEBUG: PetProfilesNotifier._initialize() completed");
+    } catch (error, stackTrace) {
       logger.e("🚨 ERROR in PetProfileProvider._initialize: $error");
+      logger.e("🚨 Stack trace: $stackTrace");
       // Initialize with empty state if there's an error
       state = AsyncValue.data([]);
     }
@@ -56,18 +72,23 @@ class PetProfilesNotifier extends StateNotifier<AsyncValue<List<PetProfile>>> {
 
   Future<void> load() async {
     try {
-      logger.d("📥 DEBUG: Loading profiles from Hive");
+      logger.d("📥 DEBUG: PetProfilesNotifier.load() starting");
       final profiles = _repository.getAll();
-      logger.d("📥 DEBUG: Loaded ${profiles.length} profiles");
+      logger.d("📥 DEBUG: Repository returned ${profiles.length} profiles");
 
       for (var profile in profiles) {
-        logger
-            .d("📥 DEBUG: - ${profile.name}: photoPath = ${profile.photoPath}");
+        logger.d("📥 DEBUG: - ${profile.name}: gender=${profile.gender}, isActive=${profile.isActive}");
+      }
+
+      if (profiles.isEmpty) {
+        logger.w("⚠️ WARNING: Repository returned empty profile list");
       }
 
       state = AsyncValue.data(profiles);
-    } catch (error) {
+      logger.d("📥 DEBUG: State updated with ${profiles.length} profiles");
+    } catch (error, stackTrace) {
       logger.e("🚨 ERROR in PetProfileProvider.load: $error");
+      logger.e("🚨 Stack trace: $stackTrace");
       // Return empty list if there's an error instead of crashing
       state = AsyncValue.data([]);
     }
