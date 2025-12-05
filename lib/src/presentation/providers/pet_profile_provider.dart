@@ -77,7 +77,7 @@ class PetProfilesNotifier extends StateNotifier<AsyncValue<List<PetProfile>>> {
       logger.d("📥 DEBUG: Repository returned ${profiles.length} profiles");
 
       for (var profile in profiles) {
-        logger.d("📥 DEBUG: - ${profile.name}: gender=${profile.gender}, isActive=${profile.isActive}");
+        logger.d("📥 DEBUG: - ${profile.name}: gender=[REDACTED], isActive=${profile.isActive}");
       }
 
       if (profiles.isEmpty) {

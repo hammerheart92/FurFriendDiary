@@ -41,7 +41,7 @@ class PetProfileRepository {
       final pets = _profiles.values.toList();
       logger.d("🔍 DEBUG: getAll() - Successfully loaded ${pets.length} pets");
       for (final pet in pets) {
-        logger.d("🔍 DEBUG: Pet '${pet.name}' - gender: ${pet.gender}");
+        logger.d("🔍 DEBUG: Pet '${pet.name}' - gender: [REDACTED]");
       }
       return pets;
     } catch (e, stackTrace) {
