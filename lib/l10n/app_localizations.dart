@@ -3380,6 +3380,84 @@ abstract class AppLocalizations {
   /// **'Photo not found'**
   String get photoNotFound;
 
+  /// No description provided for @qrCode.
+  ///
+  /// In en, this message translates to:
+  /// **'QR Code'**
+  String get qrCode;
+
+  /// No description provided for @qrCodeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pet QR Code'**
+  String get qrCodeTitle;
+
+  /// No description provided for @qrCodeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan this code to view pet information'**
+  String get qrCodeDescription;
+
+  /// No description provided for @qrCodePrivacyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'This QR code contains basic pet info only. Medical data is not included.'**
+  String get qrCodePrivacyNote;
+
+  /// No description provided for @qrCodeSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'QR code saved to device'**
+  String get qrCodeSaved;
+
+  /// No description provided for @qrCodeSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save QR code'**
+  String get qrCodeSaveFailed;
+
+  /// No description provided for @qrCodeShareText.
+  ///
+  /// In en, this message translates to:
+  /// **'Here is {petName}\'s QR code. Scan to see pet information.'**
+  String qrCodeShareText(String petName);
+
+  /// No description provided for @qrCodeShareFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to share QR code'**
+  String get qrCodeShareFailed;
+
+  /// No description provided for @saveToDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get saveToDevice;
+
+  /// No description provided for @petInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Pet Information'**
+  String get petInformation;
+
+  /// No description provided for @ageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Age'**
+  String get ageLabel;
+
+  /// No description provided for @yearSingular.
+  ///
+  /// In en, this message translates to:
+  /// **'year'**
+  String get yearSingular;
+
+  /// No description provided for @yearPlural.
+  ///
+  /// In en, this message translates to:
+  /// **'years'**
+  String get yearPlural;
+
   /// No description provided for @medicationInventory.
   ///
   /// In en, this message translates to:

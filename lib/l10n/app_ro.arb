@@ -647,6 +647,27 @@
   "profilePhotoUpdated": "Fotografia de profil a fost actualizată!",
   "photoNotFound": "Fotografia nu a fost găsită",
 
+  "qrCode": "Cod QR",
+  "qrCodeTitle": "Cod QR Animal",
+  "qrCodeDescription": "Scanează acest cod pentru informații despre animal",
+  "qrCodePrivacyNote": "Acest cod QR conține doar informații de bază. Datele medicale nu sunt incluse.",
+  "qrCodeSaved": "Cod QR salvat pe dispozitiv",
+  "qrCodeSaveFailed": "Salvarea codului QR a eșuat",
+  "qrCodeShareText": "Iată codul QR al lui {petName}. Scanează pentru informații.",
+  "@qrCodeShareText": {
+    "placeholders": {
+      "petName": {
+        "type": "String"
+      }
+    }
+  },
+  "qrCodeShareFailed": "Partajarea codului QR a eșuat",
+  "saveToDevice": "Salvează",
+  "petInformation": "Informații Animal",
+  "ageLabel": "Vârstă",
+  "yearSingular": "an",
+  "yearPlural": "ani",
+
   "medicationInventory": "Inventar Medicamente",
   "lowStock": "Stoc Scăzut",
   "allMedications": "Toate Medicamentele",

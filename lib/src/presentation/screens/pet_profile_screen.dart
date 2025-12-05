@@ -11,6 +11,7 @@ import 'package:fur_friend_diary/src/presentation/providers/protocols/protocol_s
 import 'package:fur_friend_diary/src/presentation/providers/protocols/vaccination_protocol_provider.dart';
 import 'package:fur_friend_diary/src/domain/constants/species_translations.dart';
 import 'package:intl/intl.dart';
+import '../widgets/pet_qr_code_sheet.dart';
 
 final _logger = Logger();
 
@@ -327,6 +328,12 @@ class PetProfileScreen extends ConsumerWidget {
                     icon: Icons.event,
                     label: l10n.appointments,
                     onTap: () => context.go('/appointments'),
+                  ),
+                  _buildQuickActionChip(
+                    context,
+                    icon: Icons.qr_code,
+                    label: l10n.qrCode,
+                    onTap: () => showPetQrCodeSheet(context, pet: profile),
                   ),
                 ],
               ),

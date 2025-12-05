@@ -1770,6 +1770,49 @@ class AppLocalizationsRo extends AppLocalizations {
   String get photoNotFound => 'Fotografia nu a fost găsită';
 
   @override
+  String get qrCode => 'Cod QR';
+
+  @override
+  String get qrCodeTitle => 'Cod QR Animal';
+
+  @override
+  String get qrCodeDescription =>
+      'Scanează acest cod pentru informații despre animal';
+
+  @override
+  String get qrCodePrivacyNote =>
+      'Acest cod QR conține doar informații de bază. Datele medicale nu sunt incluse.';
+
+  @override
+  String get qrCodeSaved => 'Cod QR salvat pe dispozitiv';
+
+  @override
+  String get qrCodeSaveFailed => 'Salvarea codului QR a eșuat';
+
+  @override
+  String qrCodeShareText(String petName) {
+    return 'Iată codul QR al lui $petName. Scanează pentru informații.';
+  }
+
+  @override
+  String get qrCodeShareFailed => 'Partajarea codului QR a eșuat';
+
+  @override
+  String get saveToDevice => 'Salvează';
+
+  @override
+  String get petInformation => 'Informații Animal';
+
+  @override
+  String get ageLabel => 'Vârstă';
+
+  @override
+  String get yearSingular => 'an';
+
+  @override
+  String get yearPlural => 'ani';
+
+  @override
   String get medicationInventory => 'Inventar Medicamente';
 
   @override

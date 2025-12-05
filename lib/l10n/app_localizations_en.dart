@@ -1758,6 +1758,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String get photoNotFound => 'Photo not found';
 
   @override
+  String get qrCode => 'QR Code';
+
+  @override
+  String get qrCodeTitle => 'Pet QR Code';
+
+  @override
+  String get qrCodeDescription => 'Scan this code to view pet information';
+
+  @override
+  String get qrCodePrivacyNote =>
+      'This QR code contains basic pet info only. Medical data is not included.';
+
+  @override
+  String get qrCodeSaved => 'QR code saved to device';
+
+  @override
+  String get qrCodeSaveFailed => 'Failed to save QR code';
+
+  @override
+  String qrCodeShareText(String petName) {
+    return 'Here is $petName\'s QR code. Scan to see pet information.';
+  }
+
+  @override
+  String get qrCodeShareFailed => 'Failed to share QR code';
+
+  @override
+  String get saveToDevice => 'Save';
+
+  @override
+  String get petInformation => 'Pet Information';
+
+  @override
+  String get ageLabel => 'Age';
+
+  @override
+  String get yearSingular => 'year';
+
+  @override
+  String get yearPlural => 'years';
+
+  @override
   String get medicationInventory => 'Medication Inventory';
 
   @override

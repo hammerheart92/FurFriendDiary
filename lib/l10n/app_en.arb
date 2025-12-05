@@ -850,6 +850,27 @@
   "profilePhotoUpdated": "Profile photo updated!",
   "photoNotFound": "Photo not found",
 
+  "qrCode": "QR Code",
+  "qrCodeTitle": "Pet QR Code",
+  "qrCodeDescription": "Scan this code to view pet information",
+  "qrCodePrivacyNote": "This QR code contains basic pet info only. Medical data is not included.",
+  "qrCodeSaved": "QR code saved to device",
+  "qrCodeSaveFailed": "Failed to save QR code",
+  "qrCodeShareText": "Here is {petName}'s QR code. Scan to see pet information.",
+  "@qrCodeShareText": {
+    "placeholders": {
+      "petName": {
+        "type": "String"
+      }
+    }
+  },
+  "qrCodeShareFailed": "Failed to share QR code",
+  "saveToDevice": "Save",
+  "petInformation": "Pet Information",
+  "ageLabel": "Age",
+  "yearSingular": "year",
+  "yearPlural": "years",
+
   "medicationInventory": "Medication Inventory",
   "lowStock": "Low Stock",
   "allMedications": "All Medications",

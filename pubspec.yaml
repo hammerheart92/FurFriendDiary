@@ -61,6 +61,9 @@ dependencies:
   # PDF and Sharing
   pdf: ^3.10.4
   share_plus: ^10.1.2
+
+  # QR Code generation
+  qr_flutter: ^4.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
