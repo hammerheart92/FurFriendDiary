@@ -5,8 +5,12 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:fur_friend_diary/src/domain/models/pet_profile.dart';
+import 'package:fur_friend_diary/src/domain/models/vaccination_event.dart';
+import 'package:fur_friend_diary/src/domain/models/medication_entry.dart';
+import 'package:fur_friend_diary/src/domain/models/appointment_entry.dart';
 import 'package:fur_friend_diary/src/data/services/analytics_service.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 /// Service for generating and sharing PDF reports
 class PDFExportService {
@@ -44,6 +48,9 @@ class PDFExportService {
     required DateTime startDate,
     required DateTime endDate,
     required AppLocalizations l10n,
+    List<VaccinationEvent>? vaccinations,
+    List<MedicationEntry>? activeMedications,
+    List<AppointmentEntry>? upcomingAppointments,
   }) async {
     // Load fonts with Romanian character support
     await _loadFonts();
@@ -96,6 +103,7 @@ class PDFExportService {
               // Pet Information
               _buildSection(l10n.pdfPetInformation, [
                 _buildInfoRow(l10n.pdfName, pet.name),
+                _buildInfoRow(l10n.pdfGender, _translateGender(pet.gender, l10n)),
                 _buildInfoRow(l10n.pdfSpecies, _translateSpecies(pet.species, l10n)),
                 _buildInfoRow(l10n.pdfBreed, pet.breed ?? l10n.pdfUnknown),
                 _buildInfoRow(
@@ -117,6 +125,18 @@ class PDFExportService {
                   '${endDate.day}/${endDate.month}/${endDate.year}',
                 ),
               ]),
+              pw.SizedBox(height: 20),
+
+              // Vaccination Status
+              _buildVaccinationSection(vaccinations, l10n),
+              pw.SizedBox(height: 20),
+
+              // Current Medications
+              _buildMedicationsSection(activeMedications, l10n),
+              pw.SizedBox(height: 20),
+
+              // Upcoming Appointments
+              _buildAppointmentsSection(upcomingAppointments, l10n),
               pw.SizedBox(height: 20),
 
               // Health Metrics
@@ -147,6 +167,10 @@ class PDFExportService {
                 _buildInfoRow(
                     l10n.pdfTotalExpenses, '\$${totalExpenses.toStringAsFixed(2)}'),
               ]),
+              pw.SizedBox(height: 20),
+
+              // Medical Notes
+              _buildMedicalNotesSection(pet.notes, l10n),
               pw.SizedBox(height: 30),
 
               // Footer
@@ -433,6 +457,217 @@ class PDFExportService {
       default:
         return species;
     }
+  }
+
+  /// Translate gender enum to localized string.
+  String _translateGender(PetGender? gender, AppLocalizations l10n) {
+    switch (gender) {
+      case PetGender.male:
+        return l10n.pdfMale;
+      case PetGender.female:
+        return l10n.pdfFemale;
+      case PetGender.unknown:
+      case null:
+        return l10n.pdfUnknownGender;
+    }
+  }
+
+  /// Format date for PDF display.
+  String _formatDate(DateTime date, String locale) {
+    return DateFormat.yMMMd(locale).format(date);
+  }
+
+  /// Build vaccination status section.
+  pw.Widget _buildVaccinationSection(
+    List<VaccinationEvent>? vaccinations,
+    AppLocalizations l10n,
+  ) {
+    if (vaccinations == null || vaccinations.isEmpty) {
+      return _buildSection(l10n.pdfVaccinationStatus, [
+        pw.Text(
+          l10n.pdfNoVaccinations,
+          style: pw.TextStyle(
+            font: _regularFont,
+            color: PdfColors.grey600,
+            fontStyle: pw.FontStyle.italic,
+          ),
+        ),
+      ]);
+    }
+
+    // Calculate vaccination stats
+    final totalCount = vaccinations.length;
+    final sortedByDate = List<VaccinationEvent>.from(vaccinations)
+      ..sort((a, b) => b.administeredDate.compareTo(a.administeredDate));
+    final lastVaccination = sortedByDate.first;
+
+    // Find next due vaccination
+    final now = DateTime.now();
+    final upcoming = vaccinations
+        .where((v) => v.nextDueDate != null && v.nextDueDate!.isAfter(now))
+        .toList()
+      ..sort((a, b) => a.nextDueDate!.compareTo(b.nextDueDate!));
+    final nextDue = upcoming.isNotEmpty ? upcoming.first : null;
+
+    // Check for overdue vaccinations
+    final overdue = vaccinations
+        .where((v) => v.nextDueDate != null && v.nextDueDate!.isBefore(now))
+        .toList();
+    final isOverdue = overdue.isNotEmpty;
+
+    // Status text and color
+    final statusText = isOverdue ? l10n.pdfOverdue : l10n.pdfUpToDate;
+    final statusColor = isOverdue ? PdfColors.red : PdfColors.green;
+
+    return _buildSection(l10n.pdfVaccinationStatus, [
+      // Status badge
+      pw.Container(
+        padding: const pw.EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: pw.BoxDecoration(
+          color: statusColor,
+          borderRadius: pw.BorderRadius.circular(4),
+        ),
+        child: pw.Text(
+          statusText,
+          style: pw.TextStyle(
+            font: _boldFont,
+            color: PdfColors.white,
+            fontSize: 10,
+          ),
+        ),
+      ),
+      pw.SizedBox(height: 8),
+      _buildInfoRow(l10n.pdfTotalVaccinations, totalCount.toString()),
+      _buildInfoRow(
+        l10n.pdfLastVaccination,
+        _formatDate(lastVaccination.administeredDate, l10n.localeName),
+      ),
+      if (nextDue != null)
+        _buildInfoRow(
+          l10n.pdfNextVaccineDue,
+          _formatDate(nextDue.nextDueDate!, l10n.localeName),
+        ),
+    ]);
+  }
+
+  /// Build current medications section.
+  pw.Widget _buildMedicationsSection(
+    List<MedicationEntry>? medications,
+    AppLocalizations l10n,
+  ) {
+    if (medications == null || medications.isEmpty) {
+      return _buildSection(l10n.pdfCurrentMedications, [
+        pw.Text(
+          l10n.pdfNoActiveMedications,
+          style: pw.TextStyle(
+            font: _regularFont,
+            color: PdfColors.grey600,
+            fontStyle: pw.FontStyle.italic,
+          ),
+        ),
+      ]);
+    }
+
+    return _buildSection(l10n.pdfCurrentMedications, [
+      ...medications.take(5).map((med) {
+        return pw.Padding(
+          padding: const pw.EdgeInsets.only(bottom: 4),
+          child: pw.Row(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text('• ', style: pw.TextStyle(font: _boldFont)),
+              pw.Expanded(
+                child: pw.Text(
+                  '${med.medicationName} - ${med.dosage} (${med.frequency})',
+                  style: pw.TextStyle(font: _regularFont),
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
+      if (medications.length > 5)
+        pw.Text(
+          '... +${medications.length - 5} more',
+          style: pw.TextStyle(
+            font: _regularFont,
+            color: PdfColors.grey600,
+            fontStyle: pw.FontStyle.italic,
+          ),
+        ),
+    ]);
+  }
+
+  /// Build upcoming appointments section.
+  pw.Widget _buildAppointmentsSection(
+    List<AppointmentEntry>? appointments,
+    AppLocalizations l10n,
+  ) {
+    if (appointments == null || appointments.isEmpty) {
+      return _buildSection(l10n.pdfUpcomingAppointments, [
+        pw.Text(
+          l10n.pdfNoUpcomingAppointments,
+          style: pw.TextStyle(
+            font: _regularFont,
+            color: PdfColors.grey600,
+            fontStyle: pw.FontStyle.italic,
+          ),
+        ),
+      ]);
+    }
+
+    // Sort by date and take next 5
+    final sorted = List<AppointmentEntry>.from(appointments)
+      ..sort((a, b) => a.appointmentDate.compareTo(b.appointmentDate));
+
+    return _buildSection(l10n.pdfUpcomingAppointments, [
+      ...sorted.take(5).map((appt) {
+        final dateStr = _formatDate(appt.appointmentDate, l10n.localeName);
+        final clinicStr = appt.clinic.isNotEmpty
+            ? ' ${l10n.pdfAtClinic} ${appt.clinic}'
+            : '';
+        return pw.Padding(
+          padding: const pw.EdgeInsets.only(bottom: 4),
+          child: pw.Row(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text('• ', style: pw.TextStyle(font: _boldFont)),
+              pw.Expanded(
+                child: pw.Text(
+                  '$dateStr - ${appt.reason}$clinicStr',
+                  style: pw.TextStyle(font: _regularFont),
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
+      if (appointments.length > 5)
+        pw.Text(
+          '... +${appointments.length - 5} more',
+          style: pw.TextStyle(
+            font: _regularFont,
+            color: PdfColors.grey600,
+            fontStyle: pw.FontStyle.italic,
+          ),
+        ),
+    ]);
+  }
+
+  /// Build medical notes section.
+  pw.Widget _buildMedicalNotesSection(String? notes, AppLocalizations l10n) {
+    final hasNotes = notes != null && notes.trim().isNotEmpty;
+
+    return _buildSection(l10n.pdfMedicalNotes, [
+      pw.Text(
+        hasNotes ? notes : l10n.pdfNoMedicalNotes,
+        style: pw.TextStyle(
+          font: _regularFont,
+          color: hasNotes ? PdfColors.black : PdfColors.grey600,
+          fontStyle: hasNotes ? pw.FontStyle.normal : pw.FontStyle.italic,
+        ),
+      ),
+    ]);
   }
 
   Future<String> _savePDF(pw.Document pdf, String fileName) async {

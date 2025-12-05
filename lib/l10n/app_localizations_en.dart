@@ -2533,6 +2533,60 @@ class AppLocalizationsEn extends AppLocalizations {
       'Please review the attached health data and discuss any concerns during the appointment.';
 
   @override
+  String get pdfGender => 'Gender';
+
+  @override
+  String get pdfMale => 'Male';
+
+  @override
+  String get pdfFemale => 'Female';
+
+  @override
+  String get pdfUnknownGender => 'Not specified';
+
+  @override
+  String get pdfVaccinationStatus => 'Vaccination Status';
+
+  @override
+  String get pdfTotalVaccinations => 'Total Vaccinations';
+
+  @override
+  String get pdfLastVaccination => 'Last Vaccination';
+
+  @override
+  String get pdfNextVaccineDue => 'Next Due';
+
+  @override
+  String get pdfUpToDate => 'Up to Date';
+
+  @override
+  String get pdfOverdue => 'Overdue';
+
+  @override
+  String get pdfNoVaccinations => 'No vaccinations recorded';
+
+  @override
+  String get pdfCurrentMedications => 'Current Medications';
+
+  @override
+  String get pdfNoActiveMedications => 'No active medications';
+
+  @override
+  String get pdfUpcomingAppointments => 'Upcoming Appointments';
+
+  @override
+  String get pdfNoUpcomingAppointments => 'No upcoming appointments';
+
+  @override
+  String get pdfMedicalNotes => 'Medical Notes';
+
+  @override
+  String get pdfNoMedicalNotes => 'No medical notes';
+
+  @override
+  String get pdfAtClinic => 'at';
+
+  @override
   String get emailSubject => 'Pet Health Report';
 
   @override

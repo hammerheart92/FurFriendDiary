@@ -4,6 +4,8 @@ import 'package:logger/logger.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
 import 'package:fur_friend_diary/src/presentation/providers/pet_profile_provider.dart';
 import 'package:fur_friend_diary/src/presentation/providers/analytics_provider.dart';
+import 'package:fur_friend_diary/src/presentation/providers/vaccinations_provider.dart';
+import 'package:fur_friend_diary/src/presentation/providers/care_data_provider.dart';
 import 'package:fur_friend_diary/src/presentation/widgets/health_score_chart.dart';
 import 'package:fur_friend_diary/src/presentation/widgets/activity_chart.dart';
 import 'package:fur_friend_diary/src/presentation/widgets/expense_chart.dart';
@@ -719,6 +721,24 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
 
       _logger.i('✅ Step 2: Loading indicator shown (SnackBar)');
 
+      // Fetch additional data for enhanced PDF
+      _logger.i('📄 Step 2.5: Fetching additional data...');
+      final vaccinations = await ref.read(
+        vaccinationsByPetIdProvider(pet.id).future,
+      );
+      final activeMedications = await ref.read(
+        activeMedicationsByPetIdProvider(pet.id).future,
+      );
+      // Get upcoming appointments (next 30 days from today)
+      final upcomingAppointments = await ref.read(
+        appointmentsByDateRangeProvider(
+          pet.id,
+          DateTime.now(),
+          DateTime.now().add(const Duration(days: 30)),
+        ).future,
+      );
+      _logger.i('✅ Step 2.5: Fetched ${vaccinations.length} vaccinations, ${activeMedications.length} medications, ${upcomingAppointments.length} appointments');
+
       // Generate PDF
       _logger.i('📄 Step 3: Generating PDF...');
       final filePath = await pdfService.generateHealthReport(
@@ -726,6 +746,9 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
         startDate: startDate,
         endDate: endDate,
         l10n: l10n,
+        vaccinations: vaccinations,
+        activeMedications: activeMedications,
+        upcomingAppointments: upcomingAppointments,
       ).timeout(
         const Duration(seconds: 30),
         onTimeout: () {

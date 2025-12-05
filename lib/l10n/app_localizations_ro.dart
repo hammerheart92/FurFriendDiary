@@ -2554,6 +2554,60 @@ class AppLocalizationsRo extends AppLocalizations {
       'Vă rugăm să revizuiți datele de sănătate atașate și să discutați orice preocupări în timpul programării.';
 
   @override
+  String get pdfGender => 'Gen';
+
+  @override
+  String get pdfMale => 'Mascul';
+
+  @override
+  String get pdfFemale => 'Femelă';
+
+  @override
+  String get pdfUnknownGender => 'Nespecificat';
+
+  @override
+  String get pdfVaccinationStatus => 'Status Vaccinări';
+
+  @override
+  String get pdfTotalVaccinations => 'Total Vaccinări';
+
+  @override
+  String get pdfLastVaccination => 'Ultima Vaccinare';
+
+  @override
+  String get pdfNextVaccineDue => 'Următoarea';
+
+  @override
+  String get pdfUpToDate => 'La zi';
+
+  @override
+  String get pdfOverdue => 'Întârziată';
+
+  @override
+  String get pdfNoVaccinations => 'Nicio vaccinare înregistrată';
+
+  @override
+  String get pdfCurrentMedications => 'Medicamente Curente';
+
+  @override
+  String get pdfNoActiveMedications => 'Niciun medicament activ';
+
+  @override
+  String get pdfUpcomingAppointments => 'Programări Viitoare';
+
+  @override
+  String get pdfNoUpcomingAppointments => 'Nicio programare viitoare';
+
+  @override
+  String get pdfMedicalNotes => 'Note Medicale';
+
+  @override
+  String get pdfNoMedicalNotes => 'Nicio notă medicală';
+
+  @override
+  String get pdfAtClinic => 'la';
+
+  @override
   String get emailSubject => 'Raport Sănătate Animale';
 
   @override

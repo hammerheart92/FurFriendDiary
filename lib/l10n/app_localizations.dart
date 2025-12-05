@@ -4880,6 +4880,114 @@ abstract class AppLocalizations {
   /// **'Please review the attached health data and discuss any concerns during the appointment.'**
   String get pdfNotesText;
 
+  /// No description provided for @pdfGender.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get pdfGender;
+
+  /// No description provided for @pdfMale.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get pdfMale;
+
+  /// No description provided for @pdfFemale.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get pdfFemale;
+
+  /// No description provided for @pdfUnknownGender.
+  ///
+  /// In en, this message translates to:
+  /// **'Not specified'**
+  String get pdfUnknownGender;
+
+  /// No description provided for @pdfVaccinationStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Vaccination Status'**
+  String get pdfVaccinationStatus;
+
+  /// No description provided for @pdfTotalVaccinations.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Vaccinations'**
+  String get pdfTotalVaccinations;
+
+  /// No description provided for @pdfLastVaccination.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Vaccination'**
+  String get pdfLastVaccination;
+
+  /// No description provided for @pdfNextVaccineDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Due'**
+  String get pdfNextVaccineDue;
+
+  /// No description provided for @pdfUpToDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to Date'**
+  String get pdfUpToDate;
+
+  /// No description provided for @pdfOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get pdfOverdue;
+
+  /// No description provided for @pdfNoVaccinations.
+  ///
+  /// In en, this message translates to:
+  /// **'No vaccinations recorded'**
+  String get pdfNoVaccinations;
+
+  /// No description provided for @pdfCurrentMedications.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Medications'**
+  String get pdfCurrentMedications;
+
+  /// No description provided for @pdfNoActiveMedications.
+  ///
+  /// In en, this message translates to:
+  /// **'No active medications'**
+  String get pdfNoActiveMedications;
+
+  /// No description provided for @pdfUpcomingAppointments.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming Appointments'**
+  String get pdfUpcomingAppointments;
+
+  /// No description provided for @pdfNoUpcomingAppointments.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming appointments'**
+  String get pdfNoUpcomingAppointments;
+
+  /// No description provided for @pdfMedicalNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical Notes'**
+  String get pdfMedicalNotes;
+
+  /// No description provided for @pdfNoMedicalNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'No medical notes'**
+  String get pdfNoMedicalNotes;
+
+  /// No description provided for @pdfAtClinic.
+  ///
+  /// In en, this message translates to:
+  /// **'at'**
+  String get pdfAtClinic;
+
   /// Email subject when sharing health report
   ///
   /// In en, this message translates to:
