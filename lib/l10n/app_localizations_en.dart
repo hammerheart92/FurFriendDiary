@@ -3262,4 +3262,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get viewDetails => 'View details';
+
+  @override
+  String get viewFeedingHistory => 'View Feeding History';
+
+  @override
+  String get noFeedingLogsYet => 'No feeding logs yet';
+
+  @override
+  String get feedingLogEmpty =>
+      'Start tracking your pet\'s meals by adding the first feeding entry.';
+
+  @override
+  String get recentFeedings => 'Recent Feedings';
 }

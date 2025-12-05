@@ -29,6 +29,7 @@ import '../screens/vaccinations/vaccination_form_screen.dart';
 import '../screens/vaccinations/vaccination_timeline_screen.dart';
 import '../screens/vaccinations/vaccination_detail_screen.dart';
 import '../screens/vaccinations/vaccination_protocol_selection_screen.dart';
+import '../screens/feedings/feeding_history_screen.dart';
 import '../providers/pet_profile_provider.dart';
 import '../../domain/models/pet_profile.dart';
 import '../../domain/models/vaccination_event.dart';
@@ -147,6 +148,11 @@ GoRouter createRouter() => GoRouter(
             final medicationId = state.pathParameters['medicationId']!;
             return PurchaseHistoryScreen(medicationId: medicationId);
           },
+        ),
+        // Feeding history route
+        GoRoute(
+          path: '/feedings',
+          builder: (context, state) => const FeedingHistoryScreen(),
         ),
         // Photo gallery routes
         GoRoute(

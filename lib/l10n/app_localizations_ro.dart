@@ -3315,4 +3315,17 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get viewDetails => 'Vizualizează detalii';
+
+  @override
+  String get viewFeedingHistory => 'Vizualizați Istoricul Hrănirii';
+
+  @override
+  String get noFeedingLogsYet => 'Nu există încă înregistrări de hrănire';
+
+  @override
+  String get feedingLogEmpty =>
+      'Începeți să urmăriți mesele animalului dvs. adăugând prima înregistrare de hrănire.';
+
+  @override
+  String get recentFeedings => 'Hrăniri Recente';
 }

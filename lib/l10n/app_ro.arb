@@ -1682,5 +1682,26 @@
   "protocolBasedVaccination": "Vaccinare bazată pe protocol",
   "@protocolBasedVaccination": {
     "description": "Etichetă pentru vaccinările generate din protocoale"
+  },
+
+  "feedingHistory": "Istoric Hrănire",
+  "@feedingHistory": {
+    "description": "Titlu pentru ecranul de istoric hrănire"
+  },
+  "viewFeedingHistory": "Vizualizați Istoricul Hrănirii",
+  "@viewFeedingHistory": {
+    "description": "Eticheta butonului pentru vizualizarea istoricului hrănirii"
+  },
+  "noFeedingLogsYet": "Nu există încă înregistrări de hrănire",
+  "@noFeedingLogsYet": {
+    "description": "Titlu stare goală când nu există hrăniri înregistrate"
+  },
+  "feedingLogEmpty": "Începeți să urmăriți mesele animalului dvs. adăugând prima înregistrare de hrănire.",
+  "@feedingLogEmpty": {
+    "description": "Descriere stare goală pentru istoricul hrănirii"
+  },
+  "recentFeedings": "Hrăniri Recente",
+  "@recentFeedings": {
+    "description": "Titlu secțiune pentru intrările recente de hrănire"
   }
 }

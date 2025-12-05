@@ -1,32 +1,162 @@
-// lib/src/ui/screens/home_screen.dart
+// lib/src/presentation/screens/feedings/feeding_history_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
-import 'package:fur_friend_diary/layout/app_page.dart';
 import 'package:logger/logger.dart';
-import '../../presentation/providers/pet_profile_provider.dart';
-import '../../presentation/providers/feeding_form_state_provider.dart';
-import '../../domain/models/feeding_entry.dart';
-import '../../data/repositories/feeding_repository_impl.dart';
-import '../../presentation/providers/care_data_provider.dart';
-import '../../../l10n/app_localizations.dart';
-import '../../presentation/providers/protocols/protocol_schedule_provider.dart';
-import '../../presentation/models/upcoming_care_event.dart';
-import '../../presentation/widgets/upcoming_care_card_widget.dart';
+import '../../../domain/models/feeding_entry.dart';
+import '../../../data/repositories/feeding_repository_impl.dart';
+import '../../providers/care_data_provider.dart';
+import '../../providers/pet_profile_provider.dart';
+import '../../providers/feeding_form_state_provider.dart';
+import '../../../../l10n/app_localizations.dart';
+import '../../../utils/date_helper.dart';
 
-final _logger = Logger();
+final _logger = Logger();  // ignore: prefer_const_constructors
 final _uuid = Uuid();
 
-class HomeScreen extends ConsumerStatefulWidget {
-  const HomeScreen({super.key});
+class FeedingHistoryScreen extends ConsumerStatefulWidget {
+  const FeedingHistoryScreen({super.key});
 
   @override
-  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<FeedingHistoryScreen> createState() =>
+      _FeedingHistoryScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
+class _FeedingHistoryScreenState extends ConsumerState<FeedingHistoryScreen> {
+  Future<void> _showFeedingDetails(FeedingEntry feeding) async {
+    final l10n = AppLocalizations.of(context);
+
+    final formattedDateTime =
+        '${relativeDateLabel(context, feeding.dateTime)} ${l10n.at} ${localizedTime(context, feeding.dateTime)}';
+
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(feeding.foodType),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('${l10n.date}: $formattedDateTime'),
+            if (feeding.amount > 0) Text('${l10n.amount}: ${feeding.amount}'),
+            if (feeding.notes != null && feeding.notes!.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(
+                '${l10n.notes}:',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 4),
+              Text(feeding.notes!),
+            ],
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.close),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _editFeeding(FeedingEntry feeding) async {
+    _logger.i('Edit feeding: ${feeding.id}');
+    await showModalBottomSheet<void>(
+      context: context,
+      useSafeArea: true,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (context) => _AddFeedingSheet(
+        feeding: feeding,
+        onSubmit: (updatedFeeding) {
+          _updateFeeding(updatedFeeding);
+        },
+      ),
+    );
+  }
+
+  Future<void> _updateFeeding(FeedingEntry feeding) async {
+    try {
+      await ref.read(feedingRepositoryProvider).updateFeeding(feeding);
+      final currentPet = ref.read(currentPetProfileProvider);
+      if (currentPet != null) {
+        ref.invalidate(feedingsByPetIdProvider(currentPet.id));
+      }
+      if (mounted) {
+        final l10n = AppLocalizations.of(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.feedingAdded(feeding.foodType)),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      _logger.e('Failed to update feeding: $e');
+      if (mounted) {
+        final l10n = AppLocalizations.of(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${l10n.failedToSaveFeeding}: $e'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _deleteFeeding(FeedingEntry feeding) async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.confirmDelete),
+        content: Text(l10n.deleteConfirmationMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text(l10n.delete),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        await ref.read(feedingRepositoryProvider).deleteFeeding(feeding.id);
+        final currentPet = ref.read(currentPetProfileProvider);
+        if (currentPet != null) {
+          ref.invalidate(feedingsByPetIdProvider(currentPet.id));
+        }
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(l10n.feedingDeleted),
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      } catch (e) {
+        _logger.e('Failed to delete feeding: $e');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('${l10n.failedToSaveFeeding}: $e'),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        }
+      }
+    }
+  }
+
   Future<void> _addFeeding(FeedingEntry feeding) async {
     try {
       await ref.read(feedingRepositoryProvider).addFeeding(feeding);
@@ -60,7 +190,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Future<void> _showAddFeedingDialog() async {
-    _logger.i('🍽️ FEEDING FORM: Opening add feeding dialog');
+    _logger.i('Opening add feeding dialog');
     return showModalBottomSheet<void>(
       context: context,
       useSafeArea: true,
@@ -68,14 +198,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       isScrollControlled: true,
       builder: (context) => _AddFeedingSheet(
         onSubmit: (feeding) {
-          _logger.i(
-              '🍽️ FEEDING FORM: Form submitted with foodType: ${feeding.foodType}');
           _addFeeding(feeding);
         },
       ),
-    ).then((_) {
-      _logger.i('🍽️ FEEDING FORM: Dialog closed');
-    });
+    );
   }
 
   @override
@@ -84,180 +210,101 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final scheme = Theme.of(context).colorScheme;
     final currentPet = ref.watch(currentPetProfileProvider);
 
-    // Watch upcoming care events for the current pet
-    final upcomingCareAsync = currentPet != null
-        ? ref.watch(upcomingCareProvider(
-            petId: currentPet.id,
-            daysAhead: 14, // Next 2 weeks for dashboard
-          ))
-        : const AsyncValue.data(<UpcomingCareEvent>[]);
+    final feedingsAsync =
+        ref.watch(feedingsByPetIdProvider(currentPet?.id ?? ''));
 
-    return AppPage(
-      title: currentPet != null
-          ? l10n.petHome(currentPet.name)
-          : l10n.home,
-      body: Column(
-        children: [
-          // Pet Profile Display
-          if (currentPet != null) ...[
-            InkWell(
-              onTap: () {
-                // Navigate to pet profiles screen
-                context.go('/profiles');
-              },
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                width: double.infinity,
-                margin: const EdgeInsets.only(bottom: 16),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: scheme.primaryContainer.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: scheme.primary.withOpacity(0.2)),
-                ),
-                child: Row(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.feedingHistory),
+      ),
+      body: feedingsAsync.when(
+        data: (feedings) {
+          if (feedings.isEmpty) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     CircleAvatar(
-                      radius: 24,
-                      backgroundColor: scheme.primary,
-                      child: Text(
-                        currentPet.name.isNotEmpty
-                            ? currentPet.name[0].toUpperCase()
-                            : '?',
-                        style: TextStyle(
-                          color: scheme.onPrimary,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      radius: 48,
+                      backgroundColor: scheme.primaryContainer,
+                      child: Icon(
+                        Icons.restaurant,
+                        size: 48,
+                        color: scheme.onPrimaryContainer,
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            currentPet.name,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                    const SizedBox(height: 24),
+                    Text(
+                      l10n.noFeedingLogsYet,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
                           ),
-                          Text(
-                            '${currentPet.species} • ${currentPet.breed ?? l10n.mixed}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.copyWith(
-                                  color: scheme.onSurface.withOpacity(0.7),
-                                ),
-                          ),
-                        ],
-                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    Icon(
-                      Icons.pets,
-                      color: scheme.primary,
+                    const SizedBox(height: 8),
+                    Text(
+                      l10n.feedingLogEmpty,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: scheme.onSurface.withValues(alpha: 0.7),
+                          ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 24),
+                    FilledButton.icon(
+                      onPressed: _showAddFeedingDialog,
+                      icon: const Icon(Icons.add),
+                      label: Text(l10n.addFirstFeeding),
                     ),
                   ],
                 ),
               ),
-            ),
+            );
+          }
 
-            // Upcoming Care Section
-            if (currentPet != null) ...[
-              upcomingCareAsync.when(
-                data: (events) {
-                  // Show first 5 events only
-                  final displayEvents = events.take(5).toList();
+          // Sort feedings by date (newest first)
+          final sortedFeedings = List<FeedingEntry>.from(feedings)
+            ..sort((a, b) => b.dateTime.compareTo(a.dateTime));
 
-                  if (displayEvents.isEmpty) {
-                    return const SizedBox.shrink(); // Don't show section if no events
-                  }
-
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Section header with "View All" button
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            l10n.upcomingCare,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleLarge
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          ),
-                          TextButton(
-                            onPressed: () => context.go('/calendar'),
-                            child: Text(l10n.viewAll),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-
-                      // Horizontal scrollable list of cards
-                      SizedBox(
-                        height: 130, // Card height
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: displayEvents.length,
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(width: 12),
-                          itemBuilder: (context, index) {
-                            final event = displayEvents[index];
-                            return UpcomingCareCardWidget(
-                              event: event,
-                              onTap: () {
-                                // Handle tap based on event type
-                                switch (event) {
-                                  case MedicationEvent(:final entry):
-                                    // Navigate to medication detail
-                                    context.push('/meds/detail/${entry.id}');
-                                    break;
-                                  case AppointmentEvent():
-                                    // Navigate to Appointments tab
-                                    context.go('/appointments');
-                                    break;
-                                  case VaccinationRecordEvent():
-                                    // Navigate to specific vaccination detail
-                                    context.push('/vaccinations/detail/${event.id}');
-                                    break;
-                                  case VaccinationEvent():
-                                    // Navigate to vaccination timeline (protocol schedule)
-                                    context.push('/vaccinations');
-                                    break;
-                                  case DewormingEvent():
-                                    // Navigate to deworming schedule
-                                    context.push('/deworming/schedule/${currentPet.id}',
-                                        extra: currentPet);
-                                    break;
-                                }
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                    ],
-                  );
-                },
-                loading: () => const SizedBox(
-                  height: 80,
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-                error: (error, stack) => const SizedBox.shrink(), // Hide on error
+          return RefreshIndicator(
+            onRefresh: () async {
+              ref.invalidate(feedingsByPetIdProvider(currentPet!.id));
+            },
+            child: ListView.separated(
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+              itemCount: sortedFeedings.length,
+              separatorBuilder: (_, __) => const Divider(height: 1),
+              itemBuilder: (_, index) => _FeedingTile(
+                item: sortedFeedings[index],
+                onTap: () => _showFeedingDetails(sortedFeedings[index]),
+                onEdit: () => _editFeeding(sortedFeedings[index]),
+                onDelete: () => _deleteFeeding(sortedFeedings[index]),
               ),
-            ],
-          ],
-          // Spacer to push FAB to bottom when there's little content
-          const Spacer(),
-        ],
+            ),
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stack) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  size: 48,
+                  color: scheme.error,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  '${l10n.errorLoadingFeedings}: $error',
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddFeedingDialog,
@@ -267,6 +314,74 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 }
 
+/// Widget to display a single feeding entry in the list
+class _FeedingTile extends StatelessWidget {
+  final FeedingEntry item;
+  final VoidCallback onTap;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+
+  const _FeedingTile({
+    required this.item,
+    required this.onTap,
+    required this.onEdit,
+    required this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    final formattedDateTime =
+        '${relativeDateLabel(context, item.dateTime)} ${l10n.at} ${localizedTime(context, item.dateTime)}';
+
+    return ListTile(
+      leading: const Icon(Icons.pets),
+      title: Text(item.foodType),
+      subtitle: Text(formattedDateTime),
+      trailing: PopupMenuButton<String>(
+        icon: const Icon(Icons.more_vert),
+        onSelected: (value) {
+          switch (value) {
+            case 'edit':
+              onEdit();
+              break;
+            case 'delete':
+              onDelete();
+              break;
+          }
+        },
+        itemBuilder: (context) => [
+          PopupMenuItem(
+            value: 'edit',
+            child: Row(
+              children: [
+                const Icon(Icons.edit),
+                const SizedBox(width: 8),
+                Text(l10n.edit),
+              ],
+            ),
+          ),
+          PopupMenuItem(
+            value: 'delete',
+            child: Row(
+              children: [
+                const Icon(Icons.delete, color: Colors.red),
+                const SizedBox(width: 8),
+                Text(l10n.delete, style: const TextStyle(color: Colors.red)),
+              ],
+            ),
+          ),
+        ],
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+      minVerticalPadding: 12,
+      onTap: onTap,
+    );
+  }
+}
+
+/// Bottom sheet form for adding/editing feeding entries
 class _AddFeedingSheet extends ConsumerStatefulWidget {
   const _AddFeedingSheet({
     required this.onSubmit,
@@ -289,7 +404,6 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
   DateTime _selectedDateTime = DateTime.now();
   bool _isEditMode = false;
 
-  // Common food types
   static const List<String> _commonFoodTypes = [
     'dryFood',
     'wetFood',
@@ -303,8 +417,8 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
     'other',
   ];
 
-  String? _selectedFoodTypeKey; // Selected from dropdown (using keys)
-  bool _showCustomFoodTypeField = false; // Show text field for custom food type
+  String? _selectedFoodTypeKey;
+  bool _showCustomFoodTypeField = false;
 
   @override
   void initState() {
@@ -312,28 +426,19 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
     _isEditMode = widget.feeding != null;
 
     if (_isEditMode) {
-      // Edit mode - pre-fill with existing data
       _foodTypeController.text = widget.feeding!.foodType;
       _amountController.text = widget.feeding!.amount.toString();
       _notesController.text = widget.feeding!.notes ?? '';
       _selectedPetId = widget.feeding!.petId;
       _selectedDateTime = widget.feeding!.dateTime;
-      _logger.d(
-          '[FEEDING] Edit mode - Loading existing food type: ${widget.feeding!.foodType}');
-      // Food type key detection will happen in build method with actual localization
-      _logger.d('[FEEDING] Will detect food type key match in build method');
     } else {
-      // Add mode - use draft state
       final formState = ref.read(feedingFormStateNotifierProvider);
       _foodTypeController.text = formState.foodType;
       _selectedPetId = ref.read(currentPetProfileProvider)?.id;
-      _logger.i(
-          '🍽️ FEEDING FORM: Add mode - Initial foodType from provider: "${formState.foodType}"');
     }
   }
 
   void _clearDraftState() {
-    _logger.i('🍽️ FEEDING FORM: Clearing draft state');
     _foodTypeController.clear();
     _amountController.clear();
     _notesController.clear();
@@ -343,19 +448,16 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
       _selectedFoodTypeKey = null;
       _showCustomFoodTypeField = false;
     });
-    _logger.i('🍽️ FEEDING FORM: Draft state cleared');
   }
 
   @override
   void dispose() {
-    _logger.i('🍽️ FEEDING FORM: dispose() - Cleaning up form');
     _foodTypeController.dispose();
     _amountController.dispose();
     _notesController.dispose();
     super.dispose();
   }
 
-  /// Get localized food type name
   String _getLocalizedFoodType(String foodTypeKey, AppLocalizations l10n) {
     switch (foodTypeKey) {
       case 'dryFood':
@@ -383,19 +485,13 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
     }
   }
 
-  /// Detect which food type key matches the existing food type value
   String? _detectFoodTypeKey(String existingFoodType, AppLocalizations l10n) {
     for (final foodTypeKey in _commonFoodTypes) {
       final localizedValue = _getLocalizedFoodType(foodTypeKey, l10n);
       if (existingFoodType.toLowerCase() == localizedValue.toLowerCase()) {
-        _logger.d(
-            '[FEEDING] Matched existing food type "$existingFoodType" to key: $foodTypeKey');
         return foodTypeKey;
       }
     }
-    // No match found - it's a custom food type
-    _logger.d(
-        '[FEEDING] No match for "$existingFoodType" - will use "other" with custom text');
     return 'other';
   }
 
@@ -405,24 +501,19 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
     final l10n = AppLocalizations.of(context);
     final petsAsync = ref.watch(petProfilesProvider);
 
-    // In edit mode, detect the food type key if not already set
     if (widget.feeding != null && _selectedFoodTypeKey == null) {
       final detectedKey = _detectFoodTypeKey(widget.feeding!.foodType, l10n);
       _selectedFoodTypeKey = detectedKey;
       _showCustomFoodTypeField = (detectedKey == 'other');
 
       if (detectedKey == 'other') {
-        // It's a custom food type, populate the text field
         _foodTypeController.text = widget.feeding!.foodType;
       }
     }
 
     if (!_isEditMode) {
       ref.listen(feedingFormStateNotifierProvider, (previous, next) {
-        _logger.i(
-            '🍽️ FEEDING FORM: Provider state changed - foodType: "${next.foodType}"');
         if (next.foodType != _foodTypeController.text) {
-          _logger.i('🍽️ FEEDING FORM: Syncing controller to provider state');
           _foodTypeController.text = next.foodType;
         }
       });
@@ -455,7 +546,7 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 16),
                       child: DropdownButtonFormField<String>(
-                        value: _selectedPetId,
+                        initialValue: _selectedPetId,
                         decoration: InputDecoration(
                           labelText: '${l10n.pet} *',
                           prefixIcon: const Icon(Icons.pets),
@@ -489,7 +580,7 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
 
               // Food Type Dropdown
               DropdownButtonFormField<String>(
-                value: _selectedFoodTypeKey,
+                initialValue: _selectedFoodTypeKey,
                 decoration: InputDecoration(
                   labelText: '${l10n.foodType} *',
                   border: const OutlineInputBorder(),
@@ -507,33 +598,23 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
                     _showCustomFoodTypeField = (value == 'other');
 
                     if (value != 'other') {
-                      // If user selected from dropdown, clear custom field
                       _foodTypeController.clear();
-                      _logger.d(
-                          '[FEEDING] Food type selected from dropdown: $value');
-                    } else {
-                      _logger.d(
-                          '[FEEDING] Selected "Other (Custom)" - showing text field');
                     }
                   });
                 },
                 validator: (value) {
-                  // If dropdown has value and it's not "other", it's valid
                   if (value != null && value != 'other') return null;
 
-                  // If "Other" is selected, check the text field
                   if (_showCustomFoodTypeField &&
                       _foodTypeController.text.trim().isEmpty) {
                     return l10n.pleaseEnterFoodType;
                   }
 
-                  // If "other" is selected and text field has value, it's valid
                   if (value == 'other' &&
                       _foodTypeController.text.trim().isNotEmpty) {
                     return null;
                   }
 
-                  // No selection made
                   if (value == null) {
                     return l10n.pleaseEnterFoodType;
                   }
@@ -599,7 +680,6 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
               InkWell(
                 onTap: () async {
                   if (!mounted) return;
-                  final navigator = Navigator.of(context);
 
                   final DateTime? date = await showDatePicker(
                     context: context,
@@ -667,20 +747,13 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
                     child: FilledButton(
                       onPressed: () {
                         if (_form.currentState!.validate()) {
-                          // Determine the final food type value
                           String finalFoodType;
                           if (_selectedFoodTypeKey != null &&
                               _selectedFoodTypeKey != 'other') {
-                            // Use localized dropdown value
                             finalFoodType = _getLocalizedFoodType(
                                 _selectedFoodTypeKey!, l10n);
-                            _logger.d(
-                                '[FEEDING] Saving with dropdown food type: $finalFoodType (key: $_selectedFoodTypeKey)');
                           } else {
-                            // Use custom text
                             finalFoodType = _foodTypeController.text.trim();
-                            _logger.d(
-                                '[FEEDING] Saving with custom food type: $finalFoodType');
                           }
 
                           final feeding = _isEditMode

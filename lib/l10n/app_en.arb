@@ -2143,5 +2143,26 @@
   "viewDetails": "View details",
   "@viewDetails": {
     "description": "Accessibility hint for tapping to view details"
+  },
+
+  "feedingHistory": "Feeding History",
+  "@feedingHistory": {
+    "description": "Title for the feeding history screen"
+  },
+  "viewFeedingHistory": "View Feeding History",
+  "@viewFeedingHistory": {
+    "description": "Button label to view feeding history"
+  },
+  "noFeedingLogsYet": "No feeding logs yet",
+  "@noFeedingLogsYet": {
+    "description": "Empty state title when no feedings recorded"
+  },
+  "feedingLogEmpty": "Start tracking your pet's meals by adding the first feeding entry.",
+  "@feedingLogEmpty": {
+    "description": "Empty state description for feeding history"
+  },
+  "recentFeedings": "Recent Feedings",
+  "@recentFeedings": {
+    "description": "Section title for recent feeding entries"
   }
 }

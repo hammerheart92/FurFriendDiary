@@ -1352,7 +1352,7 @@ abstract class AppLocalizations {
   /// **'In period'**
   String get inPeriod;
 
-  /// No description provided for @feedingHistory.
+  /// Title for the feeding history screen
   ///
   /// In en, this message translates to:
   /// **'Feeding History'**
@@ -6163,6 +6163,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View details'**
   String get viewDetails;
+
+  /// Button label to view feeding history
+  ///
+  /// In en, this message translates to:
+  /// **'View Feeding History'**
+  String get viewFeedingHistory;
+
+  /// Empty state title when no feedings recorded
+  ///
+  /// In en, this message translates to:
+  /// **'No feeding logs yet'**
+  String get noFeedingLogsYet;
+
+  /// Empty state description for feeding history
+  ///
+  /// In en, this message translates to:
+  /// **'Start tracking your pet\'s meals by adding the first feeding entry.'**
+  String get feedingLogEmpty;
+
+  /// Section title for recent feeding entries
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Feedings'**
+  String get recentFeedings;
 }
 
 class _AppLocalizationsDelegate
