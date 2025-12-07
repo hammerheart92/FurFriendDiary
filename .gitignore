@@ -36,43 +36,43 @@ ios/Flutter/Flutter.podspec
 *.log
 
 # Debug and documentation files (not for production)
-VET_FEEDBACK_IMPLEMENTATION_PLAN.md
-V1.0.7_HANDOFF.md.txt
-FurFriendDiary_Project_Handoff.md
-APPOINTMENT_REMINDER_DATE_BUG_FIX.md
-DEBUG_NOTIFICATIONS_GUIDE.md
-KEYSTORE_INFO.txt
-REMINDER_NOTIFICATIONS_DEBUG_SESSION.md
-DATA_MIGRATION_SERVICE.md
-ENCRYPTION_DATA_LOSS_FIX_HANDOFF.md
-ENCRYPTION_SERVICE_TESTING.md
-TEST_INSTRUCTIONS.md
-V1.0.7_HANDOFF.md
-capture_logs.bat
-capture_logs.ps1
-logs_fixed_version.txt
-logs_new_version.txt
+docs/VET_FEEDBACK_IMPLEMENTATION_PLAN.md
+docs/V1.0.7_HANDOFF.md.txt
+docs/FurFriendDiary_Project_Handoff.md
+docs/APPOINTMENT_REMINDER_DATE_BUG_FIX.md
+docs/DEBUG_NOTIFICATIONS_GUIDE.md
+docs/KEYSTORE_INFO.txt
+docs/REMINDER_NOTIFICATIONS_DEBUG_SESSION.md
+docs/DATA_MIGRATION_SERVICE.md
+docs/ENCRYPTION_DATA_LOSS_FIX_HANDOFF.md
+docs/ENCRYPTION_SERVICE_TESTING.md
+docs/TEST_INSTRUCTIONS.md
+docs/V1.0.7_HANDOFF.md
+docs/capture_logs.bat
+docs/capture_logs.ps1
+docs/logs_fixed_version.txt
+docs/logs_new_version.txt
 nul
-reminder_test.txt
+docs/reminder_test.txt
 *_test.txt
-test_failure_analysis.md
-REMINDER_CONFIG_WIDGET_GUIDE.md
-REMINDER_CONFIG_WIDGET_VISUAL.txt
-WEEK 3 CONTINUATION HANDOFF - FurFriendDiary v1.1.0.md
-WEEK3_HANDOFF.md
-MANUAL_TESTING_CHECKLIST.md
-WEEK 4 CONTINUATION HANDOFF - FurFriendDiary v1.1.0.md
-WEEK 4 COMPLETION HANDOFF - FurFriendDiary v1.1.0.md
-HANDOFF_v1.1.1_Session_Nov26_2025.md
-VET_PROTOCOL_ROMANIA_EU.md
-test_output.txt
-BUG_FIX_SUMMARY.md
-FIX_VERIFICATION.md
-HANDOFF_v1_1_1_Session_Nov28_2025.md
-HANDOFF_v1_1_1_Session_Nov29_30_2025.md
-FurFriendDiary v1.2.0 - Session Handoff Document.md
-PREMIUM_FEATURES.md
-FurFriendDiary v1.3.0 - Session Handoff Document.md
+docs/test_failure_analysis.md
+docs/REMINDER_CONFIG_WIDGET_GUIDE.md
+docs/REMINDER_CONFIG_WIDGET_VISUAL.txt
+docs/WEEK 3 CONTINUATION HANDOFF - FurFriendDiary v1.1.0.md
+docs/WEEK3_HANDOFF.md
+docs/MANUAL_TESTING_CHECKLIST.md
+docs/WEEK 4 CONTINUATION HANDOFF - FurFriendDiary v1.1.0.md
+docs/WEEK 4 COMPLETION HANDOFF - FurFriendDiary v1.1.0.md
+docs/HANDOFF_v1.1.1_Session_Nov26_2025.md
+docs/VET_PROTOCOL_ROMANIA_EU.md
+docs/test_output.txt
+docs/BUG_FIX_SUMMARY.md
+docs/FIX_VERIFICATION.md
+docs/HANDOFF_v1_1_1_Session_Nov28_2025.md
+docs/HANDOFF_v1_1_1_Session_Nov29_30_2025.md
+docs/FurFriendDiary v1.2.0 - Session Handoff Document.md
+docs/PREMIUM_FEATURES.md
+docs/FurFriendDiary v1.3.0 - Session Handoff Document.md
 # Claude AI / AI assistant files
 .claude/
 CLAUDE.md

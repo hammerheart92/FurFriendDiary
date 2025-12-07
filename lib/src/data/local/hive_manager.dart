@@ -120,10 +120,12 @@ class HiveManager {
             logger.e("   Errors: ${result.errors.join(', ')}");
           }
           // Continue anyway - original data remains accessible
-          logger.w("⚠️ DEBUG: Continuing with unencrypted boxes - migration will retry next launch");
+          logger.w(
+              "⚠️ DEBUG: Continuing with unencrypted boxes - migration will retry next launch");
         }
       } else {
-        logger.d("ℹ️ DEBUG: No migration needed - boxes already encrypted or fresh install");
+        logger.d(
+            "ℹ️ DEBUG: No migration needed - boxes already encrypted or fresh install");
       }
 
       // Get encryption cipher for opening boxes
@@ -253,7 +255,8 @@ class HiveManager {
 
     if (!Hive.isAdapterRegistered(22)) {
       Hive.registerAdapter(VaccinationProtocolAdapter());
-      logger.d("✅ DEBUG: VaccinationProtocol adapter registered with typeId 22");
+      logger
+          .d("✅ DEBUG: VaccinationProtocol adapter registered with typeId 22");
     }
 
     if (!Hive.isAdapterRegistered(23)) {
@@ -399,11 +402,144 @@ class HiveManager {
     // Mark encryption initialization complete for fresh installs
     // (Migration sets its own flag after migrating data)
     final prefs = await SharedPreferences.getInstance();
-    final migrationAlreadyCompleted = prefs.getBool('hive_encryption_migration_completed_v1') ?? false;
+    final migrationAlreadyCompleted =
+        prefs.getBool('hive_encryption_migration_completed_v1') ?? false;
 
     if (!migrationAlreadyCompleted) {
       await prefs.setBool('hive_encryption_migration_completed_v1', true);
       logger.d("✅ DEBUG: Encryption initialization flag saved");
+    }
+  }
+
+  /// Safely delete a box from disk, preventing data loss
+  /// Returns true if box was deleted, false if skipped
+  /// Throws HiveError if box contains data (to prevent data loss)
+  Future<bool> _safeDeleteBoxFromDisk(String boxName) async {
+    logger.e('╔════════════════════════════════════╗');
+    logger.e('║ SAFE DELETE CHECK: $boxName');
+    logger.e('╚════════════════════════════════════╝');
+
+    try {
+      logger.w("🔍 Step 1: Getting Hive storage directory...");
+      // Get the Hive storage directory
+      final appDir = await getApplicationDocumentsDirectory();
+      final hivePath = appDir.path;
+      logger.d("📁 Hive path: $hivePath");
+
+      logger.w("🔍 Step 2: Checking if box files exist on disk...");
+      // Check if box files exist
+      final boxFile = File('$hivePath/$boxName.hive');
+      final lockFile = File('$hivePath/$boxName.lock');
+
+      final boxExists = await boxFile.exists();
+      final lockExists = await lockFile.exists();
+
+      logger.e("📂 Box file exists: $boxExists");
+      logger.e("📂 Lock file exists: $lockExists");
+
+      if (!boxExists && !lockExists) {
+        logger.e("✅ Box '$boxName' files don't exist - NOTHING TO DELETE");
+        logger.e('╚════════════════════════════════════╝');
+        return true; // Nothing to delete, consider it success
+      }
+
+      if (boxExists) {
+        final fileSize = await boxFile.length();
+        logger.e("📂 Box file size: $fileSize bytes");
+      }
+
+      logger.w(
+          "🔍 Step 3: Attempting to open as untyped box to check for data...");
+      // Try to open as untyped box to check if it has data
+      try {
+        // If box is already open, close it first
+        if (Hive.isBoxOpen(boxName)) {
+          logger
+              .w("⚠️  Box '$boxName' is currently OPEN - closing it first...");
+          await Hive.box(boxName).close();
+          logger.d("✅ Box closed successfully");
+        }
+
+        logger.w("🔓 Opening untyped box to inspect contents...");
+        final untypedBox = await Hive.openBox(boxName);
+        final hasData = untypedBox.isNotEmpty;
+        final length = untypedBox.length;
+
+        logger.e("━━━━━━━━━━━━━━━━━━━━━━━━");
+        logger.e("📊 UNTYPED BOX OPENED:");
+        logger.e("📊 Length: $length");
+        logger.e("📊 Has data: $hasData");
+        logger.e("📊 Keys: ${untypedBox.keys.toList()}");
+        logger.e("━━━━━━━━━━━━━━━━━━━━━━━━");
+
+        await untypedBox.close();
+        logger.d("✅ Untyped box closed");
+
+        if (hasData) {
+          logger.e('╔════════════════════════════════════╗');
+          logger.e("║ 🚨 DATA DETECTED - REFUSING DELETE!");
+          logger.e("║ Box: $boxName");
+          logger.e("║ Entries: $length");
+          logger.e('╚════════════════════════════════════╝');
+          throw HiveError("Box '$boxName' contains data ($length entries). "
+              "Cannot delete box with data. Manual intervention required.");
+        }
+
+        // Box is empty, safe to delete
+        logger.e("✅ Box '$boxName' is EMPTY - SAFE TO DELETE");
+      } catch (e) {
+        if (e is HiveError &&
+            e.message.contains('Cannot delete box with data')) {
+          rethrow; // Re-throw our data protection error
+        }
+
+        logger.e("⚠️  CAUGHT ERROR while opening untyped box: $e");
+        logger.w("🔍 Falling back to file size check...");
+
+        // Box couldn't be opened (corrupted) - check file size as fallback
+        final fileSize = await boxFile.length();
+        logger.e("📂 Box file size from fallback: $fileSize bytes");
+
+        // Hive empty box is ~48 bytes, use 100 as threshold
+        if (fileSize > 100) {
+          logger.e('╔════════════════════════════════════╗');
+          logger.e("║ 🚨 FILE SIZE INDICATES DATA!");
+          logger.e("║ Box: $boxName");
+          logger.e("║ Size: $fileSize bytes (threshold: 100)");
+          logger.e("║ REFUSING TO DELETE");
+          logger.e('╚════════════════════════════════════╝');
+          throw HiveError(
+              "Box '$boxName' may contain data (file size: $fileSize bytes). "
+              "Cannot safely delete. Manual intervention required.");
+        }
+        logger.e(
+            "✅ Box '$boxName' appears EMPTY based on file size ($fileSize bytes)");
+      }
+
+      logger.w("🔍 Step 4: DELETING BOX from disk...");
+      logger.e("🚨 EXECUTING: Hive.deleteBoxFromDisk('$boxName')");
+      // Safe to delete
+      await Hive.deleteBoxFromDisk(boxName);
+
+      logger.e('╔════════════════════════════════════╗');
+      logger.e("║ ✅ BOX DELETED SUCCESSFULLY");
+      logger.e("║ Box: $boxName");
+      logger.e('╚════════════════════════════════════╝');
+      return true;
+    } catch (e) {
+      if (e is HiveError) {
+        logger.e('╔════════════════════════════════════╗');
+        logger.e("║ 🚨 HIVE ERROR - RETHROWING");
+        logger.e("║ Error: ${e.message}");
+        logger.e('╚════════════════════════════════════╝');
+        rethrow; // Re-throw HiveErrors (including our data protection errors)
+      }
+      logger.e('╔════════════════════════════════════╗');
+      logger.e("║ ❌ SAFE DELETE FAILED");
+      logger.e("║ Box: $boxName");
+      logger.e("║ Error: $e");
+      logger.e('╚════════════════════════════════════╝');
+      return false;
     }
   }
 
@@ -412,59 +548,103 @@ class HiveManager {
     String boxName, {
     HiveAesCipher? encryptionCipher,
   }) async {
+    // START BANNER
+    logger.e('━━━━━━━━━━━━━━━━━━━━━━━━');
+    logger.e('🔍 ATTEMPTING TO OPEN BOX: $boxName');
+    logger.e('🔍 Expected type: $T');
+    logger.e('🔍 Encryption enabled: ${encryptionCipher != null}');
+    logger.e('━━━━━━━━━━━━━━━━━━━━━━━━');
+
     try {
-      logger.d("🔍 DEBUG: Opening box '$boxName'");
+      logger.w("🔍 DEBUG: Checking if box '$boxName' is already open...");
 
       // CRITICAL FIX: If box is already open, try to get it as the correct type
       // If that fails (wrong type), force-close and reopen with correct type
       if (Hive.isBoxOpen(boxName)) {
-        logger.d("⚠️  DEBUG: Box '$boxName' is already open, checking type...");
+        logger.w(
+            "⚠️  Box '$boxName' is ALREADY OPEN - checking type compatibility...");
         try {
           final existingBox = Hive.box<T>(boxName);
-          logger.d("✅ DEBUG: Box '$boxName' already open with correct type");
+          logger.e(
+              "✅ Box '$boxName' already open with CORRECT type - reusing existing box");
+          logger.e("✅ Existing box length: ${existingBox.length}");
+          logger.e("✅ Existing box isOpen: ${existingBox.isOpen}");
           return existingBox;
         } catch (typeError) {
           // Box is open but with wrong type (e.g., Box<dynamic> instead of Box<PetProfile>)
-          logger.w("⚠️  WARNING: Box '$boxName' open with wrong type: $typeError");
-          logger.w("🔧 Forcing close and reopening with encryption...");
+          logger
+              .e("⚠️  CAUGHT TYPE ERROR: Box '$boxName' open with wrong type!");
+          logger.e("⚠️  Type error details: $typeError");
+          logger.e("🔧 FORCING CLOSE and reopening with encryption...");
 
           try {
             await Hive.box(boxName).close();
-            logger.d("✅ DEBUG: Force-closed box '$boxName'");
+            logger.e("✅ Force-closed box '$boxName' successfully");
           } catch (closeError) {
-            logger.e("❌ ERROR: Failed to force-close '$boxName': $closeError");
-            // Try to delete and recreate
-            await Hive.deleteBoxFromDisk(boxName);
-            logger.w("🔧 Deleted corrupted box '$boxName' from disk");
+            logger.e("❌ CAUGHT CLOSE ERROR: Failed to force-close '$boxName'");
+            logger.e("❌ Close error details: $closeError");
+            logger.e("🔧 CALLING SAFE DELETE due to close failure...");
+            // Try to safely delete (only if empty or non-existent)
+            await _safeDeleteBoxFromDisk(boxName);
           }
         }
+      } else {
+        logger.d("ℹ️  Box '$boxName' is NOT currently open - will open fresh");
       }
+
+      logger.w(
+          "🔓 ATTEMPTING Hive.openBox<$T>('$boxName', encryptionCipher: ${encryptionCipher != null})...");
 
       // Open the box with encryption if cipher provided
       final box = await Hive.openBox<T>(
         boxName,
         encryptionCipher: encryptionCipher,
       );
-      logger.d(
-          "✅ DEBUG: Box '$boxName' opened successfully - IsOpen: ${box.isOpen}, Length: ${box.length}");
+
+      // END BANNER - SUCCESS
+      logger.e('━━━━━━━━━━━━━━━━━━━━━━━━');
+      logger.e('✅ BOX OPENED SUCCESSFULLY: $boxName');
+      logger.e('✅ Type: $T');
+      logger.e('✅ Length: ${box.length}');
+      logger.e('✅ IsOpen: ${box.isOpen}');
+      logger.e('✅ Keys: ${box.keys.toList()}');
+      logger.e('━━━━━━━━━━━━━━━━━━━━━━━━');
 
       return box;
     } catch (e) {
-      logger.e("🚨 ERROR: Failed to open box '$boxName': $e");
+      logger.e('━━━━━━━━━━━━━━━━━━━━━━━━');
+      logger.e("🚨 CAUGHT ERROR OPENING BOX: $boxName");
+      logger.e("🚨 Error type: ${e.runtimeType}");
+      logger.e("🚨 Error message: $e");
+      logger.e('━━━━━━━━━━━━━━━━━━━━━━━━');
 
-      // Try to delete corrupted box and recreate
+      // Try to safely delete corrupted box and recreate (only if empty)
       try {
-        logger.d(
-            "🔧 DEBUG: Attempting to delete and recreate corrupted box '$boxName'");
-        await Hive.deleteBoxFromDisk(boxName);
+        logger.e(
+            "🔧 RECOVERY ATTEMPT: Trying to safely delete and recreate box '$boxName'");
+        logger.e("🔧 CALLING SAFE DELETE from catch block...");
+        await _safeDeleteBoxFromDisk(boxName);
+
+        logger
+            .w("🔓 RETRY: Attempting to open box '$boxName' after deletion...");
         final box = await Hive.openBox<T>(
           boxName,
           encryptionCipher: encryptionCipher,
         );
-        logger.d("✅ DEBUG: Box '$boxName' recreated successfully");
+
+        logger.e('━━━━━━━━━━━━━━━━━━━━━━━━');
+        logger.e("✅ RECOVERY SUCCESS: Box '$boxName' recreated");
+        logger.e('✅ Length after recovery: ${box.length}');
+        logger.e('✅ IsOpen: ${box.isOpen}');
+        logger.e('━━━━━━━━━━━━━━━━━━━━━━━━');
+
         return box;
       } catch (e2) {
-        logger.e("🚨 ERROR: Failed to recreate box '$boxName': $e2");
+        logger.e('━━━━━━━━━━━━━━━━━━━━━━━━');
+        logger.e("🚨 RECOVERY FAILED: Could not recreate box '$boxName'");
+        logger.e("🚨 Recovery error type: ${e2.runtimeType}");
+        logger.e("🚨 Recovery error message: $e2");
+        logger.e('━━━━━━━━━━━━━━━━━━━━━━━━');
         rethrow;
       }
     }
@@ -733,7 +913,7 @@ class HiveManager {
         if (file is File) {
           final size = await file.length();
           final name = file.path.split(Platform.pathSeparator).last;
-          logger.d("📁   - $name (${size} bytes)");
+          logger.d("📁   - $name ($size bytes)");
         }
       }
 
@@ -753,7 +933,7 @@ class HiveManager {
         final exists = await boxFile.exists();
         final size = exists ? await boxFile.length() : 0;
         logger.w(
-            "📁   $boxName: ${exists ? 'EXISTS' : 'MISSING'} (${size} bytes)");
+            "📁   $boxName: ${exists ? 'EXISTS' : 'MISSING'} ($size bytes)");
       }
       logger.w("📁 =================================");
 

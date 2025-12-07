@@ -29,7 +29,7 @@ class PetProfileAdapter extends TypeAdapter<PetProfile> {
       isActive: fields[9] as bool,
       vaccinationProtocolId: fields[10] as String?,
       dewormingProtocolId: fields[11] as String?,
-      gender: fields[12] as PetGender,
+      gender: (fields[12] as PetGender?) ?? PetGender.unknown,
     );
   }
 
