@@ -698,7 +698,8 @@ class _EventListTile extends StatelessWidget {
     } else if (event is VaccinationEvent) {
       return l10n.vaccination;
     } else if (event is MedicationEvent) {
-      return l10n.medication;
+      // Use actual medication name instead of generic label
+      return (event as MedicationEvent).entry.medicationName;
     } else if (event is AppointmentEvent) {
       return l10n.veterinaryAppointment;
     }
@@ -710,22 +711,15 @@ class _EventListTile extends StatelessWidget {
     final locale = Localizations.localeOf(context);
     final isRomanian = locale.languageCode == 'ro';
 
-    print('📅 [CALENDAR] Event type: ${event.runtimeType}');
-    print('📅 [CALENDAR] Locale: ${locale.languageCode}');
-
     // Handle VaccinationEvent with Romanian localization (protocol-generated scheduled events)
     if (event is VaccinationEvent) {
       final vaccinationEvent = event as VaccinationEvent;
-      print('📅 [VACCINATION] notes: ${vaccinationEvent.entry.notes}');
-      print('📅 [VACCINATION] notesRo: ${vaccinationEvent.entry.notesRo}');
       return vaccinationEvent.getLocalizedDescription(locale.languageCode);
     }
 
     // Handle VaccinationRecordEvent with Romanian localization (stored records)
     if (event is VaccinationRecordEvent) {
       final recordEvent = event as VaccinationRecordEvent;
-      print('📅 [VACCINATION_RECORD] notes: ${recordEvent.record.notes}');
-      print('📅 [VACCINATION_RECORD] notesRo: ${recordEvent.record.notesRo}');
       return recordEvent.getLocalizedDescription(locale.languageCode);
     }
 
@@ -756,7 +750,49 @@ class _EventListTile extends StatelessWidget {
 
       return parts.join(' - ');
     }
+
+    // Handle MedicationEvent with localized frequency
+    if (event is MedicationEvent) {
+      final medEvent = event as MedicationEvent;
+      final parts = <String>[];
+
+      if (medEvent.entry.dosage.isNotEmpty) {
+        parts.add(medEvent.entry.dosage);
+      }
+
+      if (medEvent.entry.frequency.isNotEmpty) {
+        // Use localized frequency instead of raw enum
+        parts.add(_getLocalizedFrequency(medEvent.entry.frequency));
+      }
+
+      return parts.isEmpty ? l10n.medication : parts.join(' - ');
+    }
+
     return event.description;
+  }
+
+  /// Get localized frequency string from frequency key
+  String _getLocalizedFrequency(String frequencyKey) {
+    switch (frequencyKey) {
+      case 'frequencyOnceDaily':
+        return l10n.frequencyOnceDaily;
+      case 'frequencyTwiceDaily':
+        return l10n.frequencyTwiceDaily;
+      case 'frequencyThreeTimesDaily':
+        return l10n.frequencyThreeTimesDaily;
+      case 'frequencyFourTimesDaily':
+        return l10n.frequencyFourTimesDaily;
+      case 'frequencyEveryOtherDay':
+        return l10n.frequencyEveryOtherDay;
+      case 'frequencyWeekly':
+        return l10n.frequencyWeekly;
+      case 'frequencyAsNeeded':
+        return l10n.frequencyAsNeeded;
+      case 'frequencyCustom':
+        return l10n.frequencyCustom;
+      default:
+        return frequencyKey;
+    }
   }
 
   @override
