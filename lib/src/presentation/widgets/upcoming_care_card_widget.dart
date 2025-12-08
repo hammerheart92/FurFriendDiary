@@ -14,7 +14,17 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
 import '../../domain/constants/vaccine_type_translations.dart';
+import '../../domain/models/medication_entry.dart';
 import '../models/upcoming_care_event.dart';
+
+/// Medication status states for display logic
+enum _MedicationStatus {
+  notStarted,       // startDate is in the future
+  activeIndefinite, // started, no endDate
+  activeEndingSoon, // started, endDate within 7 days
+  active,           // started, endDate > 7 days away
+  ended,            // endDate is in the past
+}
 
 /// A reusable card widget for displaying upcoming care events (vaccinations,
 /// deworming, appointments, medications) in horizontal scrollable lists.
@@ -112,7 +122,7 @@ class UpcomingCareCardWidget extends StatelessWidget {
 
                   const Spacer(),
 
-                  // Due date
+                  // Due date - context-aware for medications
                   Row(
                     children: [
                       Icon(
@@ -121,10 +131,13 @@ class UpcomingCareCardWidget extends StatelessWidget {
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
                       const SizedBox(width: 4),
-                      Text(
-                        dateFormat.format(event.scheduledDate),
-                        style: theme.textTheme.bodySmall!.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
+                      Expanded(
+                        child: Text(
+                          _getContextAwareDate(context, event, dateFormat),
+                          style: theme.textTheme.bodySmall!.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
@@ -140,7 +153,7 @@ class UpcomingCareCardWidget extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: _getRelativeTimeColor(
-                        event.scheduledDate,
+                        event,
                         theme,
                       ).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(4),
@@ -149,7 +162,7 @@ class UpcomingCareCardWidget extends StatelessWidget {
                       relativeTime,
                       style: theme.textTheme.labelSmall!.copyWith(
                         color: _getRelativeTimeColor(
-                          event.scheduledDate,
+                          event,
                           theme,
                         ),
                         fontWeight: FontWeight.w600,
@@ -288,47 +301,143 @@ class UpcomingCareCardWidget extends StatelessWidget {
   /// Returns appropriate status text based on treatment period
   String _getMedicationStatus(BuildContext context, MedicationEvent event) {
     final l10n = AppLocalizations.of(context);
+    final status = _determineMedicationStatus(event.entry);
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
+
+    switch (status) {
+      case _MedicationStatus.notStarted:
+        // Calculate days until start
+        final startDay = DateTime(
+          event.entry.startDate.year,
+          event.entry.startDate.month,
+          event.entry.startDate.day,
+        );
+        final daysUntil = startDay.difference(today).inDays;
+
+        if (daysUntil == 1) {
+          return l10n.startsTomorrow;
+        } else {
+          return l10n.startsInDays(daysUntil);
+        }
+
+      case _MedicationStatus.activeIndefinite:
+      case _MedicationStatus.active:
+        // Active medication
+        return l10n.medicationActive;
+
+      case _MedicationStatus.activeEndingSoon:
+        // Calculate days until end
+        final endDay = DateTime(
+          event.entry.endDate!.year,
+          event.entry.endDate!.month,
+          event.entry.endDate!.day,
+        );
+        final daysUntilEnd = endDay.difference(today).inDays;
+
+        if (daysUntilEnd == 0) {
+          return l10n.medicationEndsToday;
+        } else if (daysUntilEnd == 1) {
+          return l10n.medicationEndsTomorrow;
+        } else {
+          return l10n.medicationEndsInDays(daysUntilEnd);
+        }
+
+      case _MedicationStatus.ended:
+        // Treatment completed
+        return l10n.treatmentCompleted;
+    }
+  }
+
+  /// Determine the current status of a medication
+  _MedicationStatus _determineMedicationStatus(MedicationEntry entry) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    // Normalize dates to midnight for accurate comparison
     final startDay = DateTime(
-      event.entry.startDate.year,
-      event.entry.startDate.month,
-      event.entry.startDate.day,
+      entry.startDate.year,
+      entry.startDate.month,
+      entry.startDate.day,
     );
 
-    // Future medication - hasn't started yet
+    // Check if medication hasn't started yet
     if (startDay.isAfter(today)) {
-      final daysUntil = startDay.difference(today).inDays;
-      if (daysUntil == 1) {
-        return l10n.startsTomorrow;
-      } else {
-        return l10n.startsInDays(daysUntil);
-      }
+      return _MedicationStatus.notStarted;
     }
 
-    // Check if medication has ended
-    if (event.entry.endDate != null) {
+    // Check if medication has an end date
+    if (entry.endDate != null) {
       final endDay = DateTime(
-        event.entry.endDate!.year,
-        event.entry.endDate!.month,
-        event.entry.endDate!.day,
+        entry.endDate!.year,
+        entry.endDate!.month,
+        entry.endDate!.day,
       );
 
+      // Has ended
       if (endDay.isBefore(today)) {
-        // Treatment ended in the past
-        return l10n.treatmentCompleted;
-      } else {
-        // Active treatment (started and not ended yet)
-        return l10n.dueToday;
+        return _MedicationStatus.ended;
       }
+
+      // Calculate days until end
+      final daysUntilEnd = endDay.difference(today).inDays;
+
+      // Ending soon (within 7 days)
+      if (daysUntilEnd <= 7) {
+        return _MedicationStatus.activeEndingSoon;
+      }
+
+      // Active with end date more than 7 days away
+      return _MedicationStatus.active;
     }
 
-    // Ongoing medication (no end date, has started)
-    return l10n.dueToday;
+    // Active with no end date (indefinite)
+    return _MedicationStatus.activeIndefinite;
+  }
+
+  /// Get context-aware date display for events
+  /// For medications, shows relevant date based on status
+  /// For other events, shows scheduled date
+  String _getContextAwareDate(
+    BuildContext context,
+    UpcomingCareEvent event,
+    DateFormat dateFormat,
+  ) {
+    final l10n = AppLocalizations.of(context);
+
+    // For non-medication events, show scheduled date as before
+    if (event is! MedicationEvent) {
+      return dateFormat.format(event.scheduledDate);
+    }
+
+    // For medications, show context-appropriate date
+    final status = _determineMedicationStatus(event.entry);
+
+    switch (status) {
+      case _MedicationStatus.notStarted:
+      case _MedicationStatus.activeIndefinite:
+        // Show start date
+        return '${l10n.started}: ${dateFormat.format(event.entry.startDate)}';
+
+      case _MedicationStatus.activeEndingSoon:
+      case _MedicationStatus.active:
+      case _MedicationStatus.ended:
+        // Show end date
+        return '${l10n.ends}: ${dateFormat.format(event.entry.endDate!)}';
+    }
   }
 
   /// Get color for relative time badge
-  Color _getRelativeTimeColor(DateTime scheduledDate, ThemeData theme) {
+  /// For medications, uses status-based colors
+  /// For other events, uses date-based colors
+  Color _getRelativeTimeColor(UpcomingCareEvent event, ThemeData theme) {
+    // Special handling for medications
+    if (event is MedicationEvent) {
+      return _getMedicationStatusColor(event, theme);
+    }
+
+    // For non-medication events, use existing date-based logic
+    final scheduledDate = event.scheduledDate;
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final scheduleDay = DateTime(
@@ -349,6 +458,30 @@ class UpcomingCareCardWidget extends StatelessWidget {
     } else {
       // Future - green
       return Colors.green.shade700;
+    }
+  }
+
+  /// Get status-based color for medication badges
+  Color _getMedicationStatusColor(MedicationEvent event, ThemeData theme) {
+    final status = _determineMedicationStatus(event.entry);
+
+    switch (status) {
+      case _MedicationStatus.notStarted:
+        // Future medication - blue
+        return Colors.blue.shade700;
+
+      case _MedicationStatus.activeIndefinite:
+      case _MedicationStatus.active:
+        // Active - green
+        return Colors.green.shade700;
+
+      case _MedicationStatus.activeEndingSoon:
+        // Ending soon - orange
+        return Colors.orange.shade700;
+
+      case _MedicationStatus.ended:
+        // Ended - gray
+        return Colors.grey.shade600;
     }
   }
 }

@@ -1380,6 +1380,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ends => 'Ends';
 
   @override
+  String get medicationActive => 'Active';
+
+  @override
+  String get medicationEndsToday => 'Ends Today';
+
+  @override
+  String get medicationEndsTomorrow => 'Ends Tomorrow';
+
+  @override
+  String medicationEndsInDays(int days) {
+    return 'Ends in $days days';
+  }
+
+  @override
   String get reminders => 'Reminders';
 
   @override

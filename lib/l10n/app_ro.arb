@@ -512,6 +512,10 @@
 
   "started": "A început",
   "ends": "Se termină",
+  "medicationActive": "Activ",
+  "medicationEndsToday": "Se termină astăzi",
+  "medicationEndsTomorrow": "Se termină mâine",
+  "medicationEndsInDays": "Se termină în {days} zile",
 
   "reminders": "Memento-uri",
   "addReminder": "Adaugă Memento",

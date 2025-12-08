@@ -2684,6 +2684,30 @@ abstract class AppLocalizations {
   /// **'Ends'**
   String get ends;
 
+  /// Status badge for active medications
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get medicationActive;
+
+  /// Status badge for medications ending today
+  ///
+  /// In en, this message translates to:
+  /// **'Ends Today'**
+  String get medicationEndsToday;
+
+  /// Status badge for medications ending tomorrow
+  ///
+  /// In en, this message translates to:
+  /// **'Ends Tomorrow'**
+  String get medicationEndsTomorrow;
+
+  /// Status badge for medications ending within 7 days
+  ///
+  /// In en, this message translates to:
+  /// **'Ends in {days} days'**
+  String medicationEndsInDays(int days);
+
   /// No description provided for @reminders.
   ///
   /// In en, this message translates to:

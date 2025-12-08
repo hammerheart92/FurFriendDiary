@@ -1392,6 +1392,20 @@ class AppLocalizationsRo extends AppLocalizations {
   String get ends => 'Se termină';
 
   @override
+  String get medicationActive => 'Activ';
+
+  @override
+  String get medicationEndsToday => 'Se termină astăzi';
+
+  @override
+  String get medicationEndsTomorrow => 'Se termină mâine';
+
+  @override
+  String medicationEndsInDays(int days) {
+    return 'Se termină în $days zile';
+  }
+
+  @override
   String get reminders => 'Memento-uri';
 
   @override

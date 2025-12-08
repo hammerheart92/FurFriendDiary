@@ -701,6 +701,28 @@
 
   "started": "Started",
   "ends": "Ends",
+  "medicationActive": "Active",
+  "@medicationActive": {
+    "description": "Status badge for active medications"
+  },
+  "medicationEndsToday": "Ends Today",
+  "@medicationEndsToday": {
+    "description": "Status badge for medications ending today"
+  },
+  "medicationEndsTomorrow": "Ends Tomorrow",
+  "@medicationEndsTomorrow": {
+    "description": "Status badge for medications ending tomorrow"
+  },
+  "medicationEndsInDays": "Ends in {days} days",
+  "@medicationEndsInDays": {
+    "description": "Status badge for medications ending within 7 days",
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
 
   "reminders": "Reminders",
   "addReminder": "Add Reminder",
