@@ -10,6 +10,7 @@ import 'package:fur_friend_diary/src/presentation/widgets/health_score_chart.dar
 import 'package:fur_friend_diary/src/presentation/widgets/activity_chart.dart';
 import 'package:fur_friend_diary/src/presentation/widgets/expense_chart.dart';
 import 'package:fur_friend_diary/src/presentation/widgets/export_options_dialog.dart';
+import '../providers/pdf_consent_provider.dart';
 
 enum DateRange { sevenDays, thirtyDays, ninetyDays }
 
@@ -658,6 +659,20 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
     final option = await showExportOptionsDialog(context);
     if (option == null) return;
 
+    // Check consent ONLY for PDF exports (not for text summaries)
+    if (option == ExportOption.fullReport ||
+        option == ExportOption.vetSummary) {
+      if (!context.mounted) return;
+
+      final consentService = ref.read(pdfConsentServiceProvider.notifier);
+      final hasConsent = await consentService.checkConsentBeforeExport(context);
+
+      if (!hasConsent) {
+        // User declined consent or dialog was dismissed
+        return;
+      }
+    }
+
     final pdfService = ref.read(pdfExportServiceProvider);
     final endDate = DateTime.now();
     final startDate = endDate.subtract(Duration(days: _daysForRange));
@@ -737,11 +752,13 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
           DateTime.now().add(const Duration(days: 30)),
         ).future,
       );
-      _logger.i('✅ Step 2.5: Fetched ${vaccinations.length} vaccinations, ${activeMedications.length} medications, ${upcomingAppointments.length} appointments');
+      _logger.i(
+          '✅ Step 2.5: Fetched ${vaccinations.length} vaccinations, ${activeMedications.length} medications, ${upcomingAppointments.length} appointments');
 
       // Generate PDF
       _logger.i('📄 Step 3: Generating PDF...');
-      final filePath = await pdfService.generateHealthReport(
+      final filePath = await pdfService
+          .generateHealthReport(
         pet: pet,
         startDate: startDate,
         endDate: endDate,
@@ -749,7 +766,8 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
         vaccinations: vaccinations,
         activeMedications: activeMedications,
         upcomingAppointments: upcomingAppointments,
-      ).timeout(
+      )
+          .timeout(
         const Duration(seconds: 30),
         onTimeout: () {
           throw Exception('PDF generation timed out after 30 seconds');
@@ -869,10 +887,12 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
 
       // Generate vet summary PDF
       _logger.i('📄 Step 3: Generating vet summary...');
-      final filePath = await pdfService.generateVetSummary(
+      final filePath = await pdfService
+          .generateVetSummary(
         pet: pet,
         l10n: l10n,
-      ).timeout(
+      )
+          .timeout(
         const Duration(seconds: 30),
         onTimeout: () {
           throw Exception('Vet summary generation timed out after 30 seconds');
@@ -990,12 +1010,14 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
 
       // Generate text summary
       _logger.i('📄 Step 3: Generating text summary...');
-      final summary = await pdfService.generateTextSummary(
+      final summary = await pdfService
+          .generateTextSummary(
         pet: pet,
         startDate: startDate,
         endDate: endDate,
         l10n: l10n,
-      ).timeout(
+      )
+          .timeout(
         const Duration(seconds: 30),
         onTimeout: () {
           throw Exception('Text summary generation timed out after 30 seconds');

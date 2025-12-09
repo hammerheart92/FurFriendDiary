@@ -2477,7 +2477,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyPolicy.
   ///
   /// In en, this message translates to:
-  /// **'Privacy policy'**
+  /// **'Privacy Policy'**
   String get privacyPolicy;
 
   /// No description provided for @termsOfService.
@@ -2563,6 +2563,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Feature coming soon'**
   String get featureComingSoon;
+
+  /// No description provided for @pdfConsentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF Export Consent'**
+  String get pdfConsentTitle;
+
+  /// No description provided for @pdfConsentMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'To generate PDF health reports, we need your consent to process and export your pet\'s health data. This ensures compliance with data protection regulations (GDPR).'**
+  String get pdfConsentMessage;
+
+  /// No description provided for @pdfConsentDataIncludedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The PDF will include:'**
+  String get pdfConsentDataIncludedTitle;
+
+  /// No description provided for @pdfConsentDataProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Pet profile (name, species, breed, age, gender)'**
+  String get pdfConsentDataProfile;
+
+  /// No description provided for @pdfConsentDataVaccinations.
+  ///
+  /// In en, this message translates to:
+  /// **'Vaccination history and status'**
+  String get pdfConsentDataVaccinations;
+
+  /// No description provided for @pdfConsentDataMedications.
+  ///
+  /// In en, this message translates to:
+  /// **'Current medications with dosages'**
+  String get pdfConsentDataMedications;
+
+  /// No description provided for @pdfConsentDataAppointments.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming appointments'**
+  String get pdfConsentDataAppointments;
+
+  /// No description provided for @pdfConsentDataHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Health metrics (health score, weight trend)'**
+  String get pdfConsentDataHealth;
+
+  /// No description provided for @pdfConsentDataActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity data (feeding records, walks)'**
+  String get pdfConsentDataActivity;
+
+  /// No description provided for @pdfConsentDataExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical expenses'**
+  String get pdfConsentDataExpenses;
+
+  /// No description provided for @pdfConsentDataNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes and observations'**
+  String get pdfConsentDataNotes;
+
+  /// No description provided for @pdfConsentPrivacyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'For more information, see our'**
+  String get pdfConsentPrivacyNote;
+
+  /// No description provided for @pdfConsentDontAskAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t ask again'**
+  String get pdfConsentDontAskAgain;
+
+  /// No description provided for @consentAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get consentAccept;
+
+  /// No description provided for @consentDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get consentDecline;
+
+  /// No description provided for @consentDeclinedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF export declined. You can change this in Settings > Data Management.'**
+  String get consentDeclinedMessage;
+
+  /// No description provided for @consentRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF export requires consent. Please enable it in Settings.'**
+  String get consentRequired;
+
+  /// No description provided for @pdfExportConsent.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF Export Consent'**
+  String get pdfExportConsent;
+
+  /// No description provided for @consentStatusGranted.
+  ///
+  /// In en, this message translates to:
+  /// **'Granted - PDFs can be generated'**
+  String get consentStatusGranted;
+
+  /// No description provided for @consentStatusNotGranted.
+  ///
+  /// In en, this message translates to:
+  /// **'Not granted - PDF export disabled'**
+  String get consentStatusNotGranted;
+
+  /// No description provided for @consentStatusNotSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not yet configured'**
+  String get consentStatusNotSet;
+
+  /// No description provided for @consentGrantedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF export consent granted'**
+  String get consentGrantedMessage;
+
+  /// No description provided for @consentRevokedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF export consent revoked'**
+  String get consentRevokedMessage;
+
+  /// No description provided for @revokeConsentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoke PDF Export Consent'**
+  String get revokeConsentTitle;
+
+  /// No description provided for @revokeConsentMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to revoke consent? You will no longer be able to generate PDF health reports until you grant consent again.'**
+  String get revokeConsentMessage;
+
+  /// No description provided for @revoke.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoke'**
+  String get revoke;
+
+  /// No description provided for @errorLoadingConsent.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading consent status'**
+  String get errorLoadingConsent;
 
   /// No description provided for @editProfile.
   ///

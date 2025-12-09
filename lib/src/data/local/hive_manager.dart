@@ -23,6 +23,7 @@ import '../../domain/models/protocols/deworming_protocol.dart';
 import '../../domain/models/protocols/treatment_plan.dart';
 import '../../domain/models/protocols/reminder_config.dart';
 import '../../domain/models/vaccination_event.dart';
+import '../../domain/models/pdf_consent.dart';
 import '../../services/encryption_service.dart';
 import '../../services/data_migration_service.dart';
 
@@ -303,6 +304,11 @@ class HiveManager {
       Hive.registerAdapter(PetGenderAdapter());
       logger.d("✅ DEBUG: PetGender adapter registered with typeId 31");
     }
+
+    if (!Hive.isAdapterRegistered(32)) {
+      Hive.registerAdapter(PdfConsentAdapter());
+      logger.d("✅ DEBUG: PdfConsent adapter registered with typeId 32");
+    }
   }
 
   /// Open all boxes in the correct order
@@ -398,6 +404,16 @@ class HiveManager {
     );
 
     logger.d("✅ DEBUG: All boxes opened successfully with encryption");
+
+    // DEBUG: Check if pdf_export_consent key exists in app_prefs box
+    if (_appPrefsBox != null) {
+      final hasPdfConsent = _appPrefsBox!.containsKey('pdf_export_consent');
+      logger.d("🔍 DEBUG: app_prefs box has pdf_export_consent key: $hasPdfConsent");
+      if (hasPdfConsent) {
+        final consent = _appPrefsBox!.get('pdf_export_consent');
+        logger.d("📊 DEBUG: Existing pdf_export_consent data: $consent");
+      }
+    }
 
     // Mark encryption initialization complete for fresh installs
     // (Migration sets its own flag after migrating data)
@@ -932,8 +948,8 @@ class HiveManager {
         final boxFile = File('${dir.path}${Platform.pathSeparator}$boxName');
         final exists = await boxFile.exists();
         final size = exists ? await boxFile.length() : 0;
-        logger.w(
-            "📁   $boxName: ${exists ? 'EXISTS' : 'MISSING'} ($size bytes)");
+        logger
+            .w("📁   $boxName: ${exists ? 'EXISTS' : 'MISSING'} ($size bytes)");
       }
       logger.w("📁 =================================");
 

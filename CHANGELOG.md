@@ -1,3 +1,79 @@
+# Changelog
+
+All notable changes to FurFriendDiary will be documented in this file.
+
+## [1.3.2] - In Progress
+
+### Fixed
+- **Medication Display Bug**: Medications in "Upcoming Care" now show status-based badges instead of confusing start dates
+  - Active medications display green "Active" badge with start date
+  - Ending medications display orange "Ends in X days" badge with end date
+  - Future medications display blue "Starts in X days" badge
+  - 7-day threshold for "ending soon" status
+- **Calendar Medication Display**: Calendar now shows actual medication names (e.g., "Propanolol") instead of generic "Medication" label
+  - Fixed frequency display to show localized text (e.g., "Once Daily") instead of raw enum values (e.g., "frequencyOnceDaily")
+  - Supports all 8 frequency types with proper localization
+
+### Added
+- 4 new localization strings for medication status badges (EN/RO)
+- Smart date display logic for medications based on treatment status
+- Color-coded badge system: Green (active), Orange (ending soon), Blue (future)
+
+### In Progress
+- GDPR-compliant PDF export consent dialog system
+- User consent management in Settings > Data Management
+
+---
+
+## [1.3.1] - 2025-12-07
+
+### Fixed
+- **CRITICAL**: Fixed data loss bug during upgrade from v1.3.1 to v1.3.0
+  - Issue: Unsafe type cast in pet_profile.g.dart caused all pet data to be deleted during upgrade
+  - Solution: Changed `gender: fields[12] as PetGender` to `gender: (fields[12] as PetGender?) ?? PetGender.unknown`
+  - Existing pets from v1.2.1 now default to "Unknown" gender
+  - Emergency hotfix released within 24 hours of discovery
+
+### Changed
+- Pet gender field now properly handles null values for backward compatibility
+
+---
+
+## [1.3.0] - 2025-12-06
+
+### Added
+- **Pet Gender Tracking**: Added gender field (Male/Female/Unknown) with gender-specific icons
+  - Male: ♂️ (blue), Female: ♀️ (pink), Unknown: ❓ (grey)
+  - Backward compatible with existing pets (defaults to Unknown)
+- **QR Code Generation**: Generate and share QR codes containing pet profile information
+  - Human-readable text format
+  - Privacy-conscious (excludes medical data)
+  - Save to device and share functionality
+- **Enhanced PDF Reports**: Health reports now include 5 additional sections
+  - Pet gender information
+  - Current vaccination status
+  - Active medications list
+  - Upcoming appointments
+  - Medical notes and observations
+  - Professional formatting with colored status badges
+- **Improved Feedings Interface**: 
+  - Feedings removed from Home screen for cleaner UX
+  - Dedicated Feedings section accessible from Pet Profile
+  - Full CRUD operations with pull-to-refresh
+  - Dual FAB approach for user flexibility
+
+### Changed
+- Home screen design simplified by moving feeding entries to dedicated section
+- PDF export service enhanced with additional health data sections
+
+### Fixed
+- Security: Removed gender field from debug logs (GDPR compliance)
+- Data deletion: PDF reports now properly cleaned up in data deletion service
+
+### Known Issues
+- Medication display shows start date instead of status badge (Fixed in v1.3.1)
+- Critical data loss bug on upgrade (Fixed in v1.3.1)
+
 ## [1.2.1] - 2025-12-03
 
 ### Security 🔒

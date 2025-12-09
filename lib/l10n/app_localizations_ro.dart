@@ -1308,6 +1308,95 @@ class AppLocalizationsRo extends AppLocalizations {
   String get featureComingSoon => 'Funcționalitate în curând';
 
   @override
+  String get pdfConsentTitle => 'Consimțământ Export PDF';
+
+  @override
+  String get pdfConsentMessage =>
+      'Pentru a genera rapoarte de sănătate în format PDF, avem nevoie de consimțământul dumneavoastră pentru a procesa și exporta datele medicale ale animalului. Acest lucru asigură conformitatea cu reglementările de protecție a datelor (GDPR).';
+
+  @override
+  String get pdfConsentDataIncludedTitle => 'PDF-ul va include:';
+
+  @override
+  String get pdfConsentDataProfile =>
+      'Profilul animalului (nume, specie, rasă, vârstă, sex)';
+
+  @override
+  String get pdfConsentDataVaccinations => 'Istoricul și starea vaccinărilor';
+
+  @override
+  String get pdfConsentDataMedications => 'Medicația curentă cu dozele';
+
+  @override
+  String get pdfConsentDataAppointments => 'Programări viitoare';
+
+  @override
+  String get pdfConsentDataHealth =>
+      'Metrici de sănătate (scor sănătate, evoluție greutate)';
+
+  @override
+  String get pdfConsentDataActivity =>
+      'Date activitate (înregistrări hrănire, plimbări)';
+
+  @override
+  String get pdfConsentDataExpenses => 'Cheltuieli medicale';
+
+  @override
+  String get pdfConsentDataNotes => 'Note și observații';
+
+  @override
+  String get pdfConsentPrivacyNote => 'Pentru mai multe informații, consultați';
+
+  @override
+  String get pdfConsentDontAskAgain => 'Nu mai întreba';
+
+  @override
+  String get consentAccept => 'Accept';
+
+  @override
+  String get consentDecline => 'Refuz';
+
+  @override
+  String get consentDeclinedMessage =>
+      'Export PDF refuzat. Puteți modifica acest lucru în Setări > Gestionare Date.';
+
+  @override
+  String get consentRequired =>
+      'Exportul PDF necesită consimțământ. Vă rugăm să îl activați în Setări.';
+
+  @override
+  String get pdfExportConsent => 'Consimțământ Export PDF';
+
+  @override
+  String get consentStatusGranted => 'Acordat - PDF-urile pot fi generate';
+
+  @override
+  String get consentStatusNotGranted => 'Neacordat - Export PDF dezactivat';
+
+  @override
+  String get consentStatusNotSet => 'Încă neconfigurat';
+
+  @override
+  String get consentGrantedMessage => 'Consimțământ export PDF acordat';
+
+  @override
+  String get consentRevokedMessage => 'Consimțământ export PDF revocat';
+
+  @override
+  String get revokeConsentTitle => 'Revocare Consimțământ Export PDF';
+
+  @override
+  String get revokeConsentMessage =>
+      'Sigur doriți să revocați consimțământul? Nu veți mai putea genera rapoarte PDF de sănătate până când acordați din nou consimțământul.';
+
+  @override
+  String get revoke => 'Revocă';
+
+  @override
+  String get errorLoadingConsent =>
+      'Eroare la încărcarea stării consimțământului';
+
+  @override
   String get editProfile => 'Editare Profil';
 
   @override

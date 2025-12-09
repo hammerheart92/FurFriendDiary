@@ -8,6 +8,8 @@ import '../../presentation/providers/settings_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../services/data_deletion_service.dart';
 import 'reminders_screen.dart';
+import '../../presentation/providers/pdf_consent_provider.dart';
+import '../../domain/models/pdf_consent.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -32,223 +34,289 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       body: Stack(
         children: [
           ListView(
-        children: [
-          // Profile Section
-          _buildProfileSection(context),
-          const Divider(height: 32),
+            children: [
+              // Profile Section
+              _buildProfileSection(context),
+              const Divider(height: 32),
 
-          // Pet Management Group
-          _buildSectionHeader(context, l10n.petManagement),
-          ListTile(
-            leading: const Icon(Icons.analytics),
-            title: Text(l10n.reportsAndAnalytics),
-            subtitle: Text(l10n.viewHealthScoresAndMetrics),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => context.push('/analytics'),
-          ),
-          ListTile(
-            leading: const Icon(Icons.local_hospital),
-            title: Text(l10n.veterinarians),
-            subtitle: Text(l10n.manageVeterinariansAndClinics),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => context.push('/vet-list'),
-          ),
-          ListTile(
-            leading: const Icon(Icons.photo_library),
-            title: Text(l10n.photoGallery),
-            subtitle: Text(l10n.viewAndManagePetPhotos),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => context.push('/photo-gallery'),
-          ),
-          ListTile(
-            leading: const Icon(Icons.inventory),
-            title: Text(l10n.medicationInventory),
-            subtitle: Text(l10n.trackMedicationStockLevels),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => context.push('/medication-inventory'),
-          ),
+              // Pet Management Group
+              _buildSectionHeader(context, l10n.petManagement),
+              ListTile(
+                leading: const Icon(Icons.analytics),
+                title: Text(l10n.reportsAndAnalytics),
+                subtitle: Text(l10n.viewHealthScoresAndMetrics),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/analytics'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.local_hospital),
+                title: Text(l10n.veterinarians),
+                subtitle: Text(l10n.manageVeterinariansAndClinics),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/vet-list'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: Text(l10n.photoGallery),
+                subtitle: Text(l10n.viewAndManagePetPhotos),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/photo-gallery'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.inventory),
+                title: Text(l10n.medicationInventory),
+                subtitle: Text(l10n.trackMedicationStockLevels),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/medication-inventory'),
+              ),
 
-          // Account Settings Group
-          const Divider(height: 32),
-          _buildSectionHeader(context, l10n.accountSettings),
-          ListTile(
-            leading: const Icon(Icons.language),
-            title: Text(l10n.language),
-            subtitle: Text(_getLanguageName(context, locale.languageCode)),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showLanguageDialog(context, ref, locale),
-          ),
+              // Account Settings Group
+              const Divider(height: 32),
+              _buildSectionHeader(context, l10n.accountSettings),
+              ListTile(
+                leading: const Icon(Icons.language),
+                title: Text(l10n.language),
+                subtitle: Text(_getLanguageName(context, locale.languageCode)),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => _showLanguageDialog(context, ref, locale),
+              ),
 
-          // App Preferences Group
-          const Divider(height: 32),
-          _buildSectionHeader(context, l10n.appPreferences),
-          ListTile(
-            leading: const Icon(Icons.notifications_outlined),
-            title: Text(l10n.reminders),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const RemindersScreen(),
-                ),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.palette_outlined),
-            title: Text(l10n.theme),
-            subtitle: Text(_getThemeName(context, themeMode)),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showThemeDialog(context, ref, themeMode),
-          ),
-          SwitchListTile(
-            secondary: const Icon(Icons.notifications_outlined),
-            title: Text(l10n.notifications),
-            subtitle: Text(l10n.enableNotifications),
-            value: notificationsEnabled,
-            onChanged: (value) {
-              ref
-                  .read(notificationsEnabledProvider.notifier)
-                  .setNotificationsEnabled(value);
-            },
-          ),
-          SwitchListTile(
-            secondary: const Icon(Icons.analytics_outlined),
-            title: Text(l10n.enableAnalytics),
-            subtitle: Text(l10n.helpImproveApp),
-            value: false,
-            onChanged: (_) {},
-          ),
-
-          // Data Management Group
-          const Divider(height: 32),
-          _buildSectionHeader(context, l10n.dataManagement),
-          ListTile(
-            leading: const Icon(Icons.upload_file),
-            title: Text(l10n.exportData),
-            subtitle: Text(l10n.downloadYourData),
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.featureComingSoon)),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.cleaning_services),
-            title: Text(l10n.clearCache),
-            subtitle: Text(l10n.freeUpSpace),
-            onTap: () => _showClearCacheDialog(context),
-          ),
-          ListTile(
-            leading: Icon(Icons.delete_forever, color: theme.colorScheme.error),
-            title: Text(l10n.deleteAccount,
-                style: TextStyle(color: theme.colorScheme.error)),
-            subtitle: Text(l10n.deleteAccountPermanently),
-            onTap: () => _showDeleteAccountDialog(context),
-          ),
-
-          // Privacy & Legal
-          const Divider(height: 32),
-          _buildSectionHeader(context, l10n.privacyAndLegal),
-          ListTile(
-            leading: const Icon(Icons.privacy_tip_outlined),
-            title: Text(l10n.privacyPolicy),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () async {
-              // Get current locale from app
-              final locale = Localizations.localeOf(context);
-              final isRomanian = locale.languageCode == 'ro';
-
-              // Select URL based on language
-              final urlString = isRomanian
-                  ? 'https://hammerheart92.github.io/furfrienddiary-legal/privacy-policy-ro.html'
-                  : 'https://hammerheart92.github.io/furfrienddiary-legal/privacy-policy.html';
-
-              final url = Uri.parse(urlString);
-
-              try {
-                if (await canLaunchUrl(url)) {
-                  await launchUrl(url, mode: LaunchMode.externalApplication);
-                } else {
-                  if (context.mounted) {
-                    final l10n = AppLocalizations.of(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(l10n.couldNotOpenLink)),
-                    );
-                  }
-                }
-              } catch (e) {
-                if (context.mounted) {
-                  final l10n = AppLocalizations.of(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.couldNotOpenLink)),
+              // App Preferences Group
+              const Divider(height: 32),
+              _buildSectionHeader(context, l10n.appPreferences),
+              ListTile(
+                leading: const Icon(Icons.notifications_outlined),
+                title: Text(l10n.reminders),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const RemindersScreen(),
+                    ),
                   );
-                }
-              }
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.description_outlined),
-            title: Text(l10n.termsOfService),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () async {
-              // Get current locale from app
-              final locale = Localizations.localeOf(context);
-              final isRomanian = locale.languageCode == 'ro';
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.palette_outlined),
+                title: Text(l10n.theme),
+                subtitle: Text(_getThemeName(context, themeMode)),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => _showThemeDialog(context, ref, themeMode),
+              ),
+              SwitchListTile(
+                secondary: const Icon(Icons.notifications_outlined),
+                title: Text(l10n.notifications),
+                subtitle: Text(l10n.enableNotifications),
+                value: notificationsEnabled,
+                onChanged: (value) {
+                  ref
+                      .read(notificationsEnabledProvider.notifier)
+                      .setNotificationsEnabled(value);
+                },
+              ),
+              SwitchListTile(
+                secondary: const Icon(Icons.analytics_outlined),
+                title: Text(l10n.enableAnalytics),
+                subtitle: Text(l10n.helpImproveApp),
+                value: false,
+                onChanged: (_) {},
+              ),
 
-              // Select URL based on language
-              final urlString = isRomanian
-                  ? 'https://hammerheart92.github.io/furfrienddiary-legal/terms-of-service-ro.html'
-                  : 'https://hammerheart92.github.io/furfrienddiary-legal/terms-of-service.html';
-
-              final url = Uri.parse(urlString);
-
-              try {
-                if (await canLaunchUrl(url)) {
-                  await launchUrl(url, mode: LaunchMode.externalApplication);
-                } else {
-                  if (context.mounted) {
-                    final l10n = AppLocalizations.of(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(l10n.couldNotOpenLink)),
-                    );
-                  }
-                }
-              } catch (e) {
-                if (context.mounted) {
-                  final l10n = AppLocalizations.of(context);
+              // Data Management Group
+              const Divider(height: 32),
+              _buildSectionHeader(context, l10n.dataManagement),
+              ListTile(
+                leading: const Icon(Icons.upload_file),
+                title: Text(l10n.exportData),
+                subtitle: Text(l10n.downloadYourData),
+                onTap: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.couldNotOpenLink)),
+                    SnackBar(content: Text(l10n.featureComingSoon)),
                   );
-                }
-              }
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.code),
-            title: Text(l10n.openSourceLicenses),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showLicensePage(context),
-          ),
+                },
+              ),
+              // PDF Export Consent Management
+              Consumer(
+                builder: (context, ref, child) {
+                  final consentAsync = ref.watch(pdfConsentServiceProvider);
 
-          // About Section
-          const Divider(height: 32),
-          _buildSectionHeader(context, l10n.about),
-          FutureBuilder<PackageInfo>(
-            future: PackageInfo.fromPlatform(),
-            builder: (context, snapshot) {
-              final version = snapshot.data?.version ?? '...';
-              final buildNumber = snapshot.data?.buildNumber ?? '';
-              return ListTile(
-                leading: const Icon(Icons.info_outline),
-                title: Text(l10n.appVersion),
-                subtitle: Text('$version+$buildNumber'),
-              );
-            },
+                  return consentAsync.when(
+                    data: (consent) {
+                      final isGranted = consent?.consentGiven ?? false;
+                      final hasDecision = consent != null;
+
+                      return SwitchListTile(
+                        secondary: Icon(
+                          Icons.picture_as_pdf,
+                          color: isGranted
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.onSurfaceVariant,
+                        ),
+                        title: Text(l10n.pdfExportConsent),
+                        subtitle: Text(
+                          hasDecision
+                              ? (isGranted
+                                  ? l10n.consentStatusGranted
+                                  : l10n.consentStatusNotGranted)
+                              : l10n.consentStatusNotSet,
+                        ),
+                        value: isGranted,
+                        onChanged: (value) async {
+                          if (value) {
+                            // Grant consent
+                            await ref
+                                .read(pdfConsentServiceProvider.notifier)
+                                .grantConsent();
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text(l10n.consentGrantedMessage)),
+                              );
+                            }
+                          } else {
+                            // Show confirmation dialog before revoking
+                            if (context.mounted) {
+                              _showRevokeConsentDialog(context);
+                            }
+                          }
+                        },
+                      );
+                    },
+                    loading: () => ListTile(
+                      leading: const Icon(Icons.picture_as_pdf),
+                      title: Text(l10n.pdfExportConsent),
+                      subtitle: const LinearProgressIndicator(),
+                    ),
+                    error: (error, stack) => ListTile(
+                      leading: Icon(
+                        Icons.error_outline,
+                        color: theme.colorScheme.error,
+                      ),
+                      title: Text(l10n.pdfExportConsent),
+                      subtitle: Text(l10n.errorLoadingConsent),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.cleaning_services),
+                title: Text(l10n.clearCache),
+                subtitle: Text(l10n.freeUpSpace),
+                onTap: () => _showClearCacheDialog(context),
+              ),
+              ListTile(
+                leading:
+                    Icon(Icons.delete_forever, color: theme.colorScheme.error),
+                title: Text(l10n.deleteAccount,
+                    style: TextStyle(color: theme.colorScheme.error)),
+                subtitle: Text(l10n.deleteAccountPermanently),
+                onTap: () => _showDeleteAccountDialog(context),
+              ),
+
+              // Privacy & Legal
+              const Divider(height: 32),
+              _buildSectionHeader(context, l10n.privacyAndLegal),
+              ListTile(
+                leading: const Icon(Icons.privacy_tip_outlined),
+                title: Text(l10n.privacyPolicy),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () async {
+                  // Get current locale from app
+                  final locale = Localizations.localeOf(context);
+                  final isRomanian = locale.languageCode == 'ro';
+
+                  // Select URL based on language
+                  final urlString = isRomanian
+                      ? 'https://hammerheart92.github.io/furfrienddiary-legal/privacy-policy-ro.html'
+                      : 'https://hammerheart92.github.io/furfrienddiary-legal/privacy-policy.html';
+
+                  final url = Uri.parse(urlString);
+
+                  try {
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(url,
+                          mode: LaunchMode.externalApplication);
+                    } else {
+                      if (context.mounted) {
+                        final l10n = AppLocalizations.of(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l10n.couldNotOpenLink)),
+                        );
+                      }
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      final l10n = AppLocalizations.of(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(l10n.couldNotOpenLink)),
+                      );
+                    }
+                  }
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.description_outlined),
+                title: Text(l10n.termsOfService),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () async {
+                  // Get current locale from app
+                  final locale = Localizations.localeOf(context);
+                  final isRomanian = locale.languageCode == 'ro';
+
+                  // Select URL based on language
+                  final urlString = isRomanian
+                      ? 'https://hammerheart92.github.io/furfrienddiary-legal/terms-of-service-ro.html'
+                      : 'https://hammerheart92.github.io/furfrienddiary-legal/terms-of-service.html';
+
+                  final url = Uri.parse(urlString);
+
+                  try {
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(url,
+                          mode: LaunchMode.externalApplication);
+                    } else {
+                      if (context.mounted) {
+                        final l10n = AppLocalizations.of(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l10n.couldNotOpenLink)),
+                        );
+                      }
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      final l10n = AppLocalizations.of(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(l10n.couldNotOpenLink)),
+                      );
+                    }
+                  }
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.code),
+                title: Text(l10n.openSourceLicenses),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => _showLicensePage(context),
+              ),
+
+              // About Section
+              const Divider(height: 32),
+              _buildSectionHeader(context, l10n.about),
+              FutureBuilder<PackageInfo>(
+                future: PackageInfo.fromPlatform(),
+                builder: (context, snapshot) {
+                  final version = snapshot.data?.version ?? '...';
+                  final buildNumber = snapshot.data?.buildNumber ?? '';
+                  return ListTile(
+                    leading: const Icon(Icons.info_outline),
+                    title: Text(l10n.appVersion),
+                    subtitle: Text('$version+$buildNumber'),
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
+            ],
           ),
-          const SizedBox(height: 16),
-        ],
-      ),
           // Loading overlay
           if (_isDeleting)
             Container(
@@ -545,6 +613,43 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               }
             },
             child: Text(l10n.delete),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showRevokeConsentDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.revokeConsentTitle),
+        content: Text(l10n.revokeConsentMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+            onPressed: () async {
+              Navigator.pop(context);
+
+              // Revoke consent
+              await ref
+                  .read(pdfConsentServiceProvider.notifier)
+                  .revokeConsent();
+
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.consentRevokedMessage)),
+                );
+              }
+            },
+            child: Text(l10n.revoke),
           ),
         ],
       ),

@@ -1248,7 +1248,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get privacyAndLegal => 'Privacy & Legal';
 
   @override
-  String get privacyPolicy => 'Privacy policy';
+  String get privacyPolicy => 'Privacy Policy';
 
   @override
   String get termsOfService => 'Terms of Service';
@@ -1294,6 +1294,93 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get featureComingSoon => 'Feature coming soon';
+
+  @override
+  String get pdfConsentTitle => 'PDF Export Consent';
+
+  @override
+  String get pdfConsentMessage =>
+      'To generate PDF health reports, we need your consent to process and export your pet\'s health data. This ensures compliance with data protection regulations (GDPR).';
+
+  @override
+  String get pdfConsentDataIncludedTitle => 'The PDF will include:';
+
+  @override
+  String get pdfConsentDataProfile =>
+      'Pet profile (name, species, breed, age, gender)';
+
+  @override
+  String get pdfConsentDataVaccinations => 'Vaccination history and status';
+
+  @override
+  String get pdfConsentDataMedications => 'Current medications with dosages';
+
+  @override
+  String get pdfConsentDataAppointments => 'Upcoming appointments';
+
+  @override
+  String get pdfConsentDataHealth =>
+      'Health metrics (health score, weight trend)';
+
+  @override
+  String get pdfConsentDataActivity => 'Activity data (feeding records, walks)';
+
+  @override
+  String get pdfConsentDataExpenses => 'Medical expenses';
+
+  @override
+  String get pdfConsentDataNotes => 'Notes and observations';
+
+  @override
+  String get pdfConsentPrivacyNote => 'For more information, see our';
+
+  @override
+  String get pdfConsentDontAskAgain => 'Don\'t ask again';
+
+  @override
+  String get consentAccept => 'Accept';
+
+  @override
+  String get consentDecline => 'Decline';
+
+  @override
+  String get consentDeclinedMessage =>
+      'PDF export declined. You can change this in Settings > Data Management.';
+
+  @override
+  String get consentRequired =>
+      'PDF export requires consent. Please enable it in Settings.';
+
+  @override
+  String get pdfExportConsent => 'PDF Export Consent';
+
+  @override
+  String get consentStatusGranted => 'Granted - PDFs can be generated';
+
+  @override
+  String get consentStatusNotGranted => 'Not granted - PDF export disabled';
+
+  @override
+  String get consentStatusNotSet => 'Not yet configured';
+
+  @override
+  String get consentGrantedMessage => 'PDF export consent granted';
+
+  @override
+  String get consentRevokedMessage => 'PDF export consent revoked';
+
+  @override
+  String get revokeConsentTitle => 'Revoke PDF Export Consent';
+
+  @override
+  String get revokeConsentMessage =>
+      'Are you sure you want to revoke consent? You will no longer be able to generate PDF health reports until you grant consent again.';
+
+  @override
+  String get revoke => 'Revoke';
+
+  @override
+  String get errorLoadingConsent => 'Error loading consent status';
 
   @override
   String get editProfile => 'Edit Profile';
