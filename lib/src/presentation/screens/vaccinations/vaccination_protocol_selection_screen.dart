@@ -57,7 +57,8 @@ class VaccinationProtocolSelectionScreen extends ConsumerWidget {
           label: l10n.selectProtocolForPet(pet.name),
           child: protocolsAsync.when(
             loading: () => _buildLoadingState(l10n),
-            error: (error, stack) => _buildErrorState(context, l10n, error, ref),
+            error: (error, stack) =>
+                _buildErrorState(context, l10n, error, ref),
             data: (protocols) => protocols.isEmpty
                 ? _buildEmptyState(context, l10n)
                 : _buildProtocolList(context, l10n, protocols, ref),
@@ -115,7 +116,8 @@ class VaccinationProtocolSelectionScreen extends ConsumerWidget {
             const SizedBox(height: 24),
             OutlinedButton.icon(
               onPressed: () {
-                ref.invalidate(vaccinationProtocolsBySpeciesProvider(pet.species));
+                ref.invalidate(
+                    vaccinationProtocolsBySpeciesProvider(pet.species));
               },
               icon: const Icon(Icons.refresh),
               label: Text(l10n.retry),
@@ -136,7 +138,10 @@ class VaccinationProtocolSelectionScreen extends ConsumerWidget {
             Icon(
               Icons.science_outlined,
               size: 64,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.4),
             ),
             const SizedBox(height: 16),
             Text(
@@ -209,7 +214,8 @@ class VaccinationProtocolSelectionScreen extends ConsumerWidget {
                 final protocol = protocols[index];
                 return _ProtocolCard(
                   protocol: protocol,
-                  onTap: () => _showConfirmationSheet(context, l10n, protocol, ref),
+                  onTap: () =>
+                      _showConfirmationSheet(context, l10n, protocol, ref),
                 );
               },
             ),
@@ -252,7 +258,8 @@ class VaccinationProtocolSelectionScreen extends ConsumerWidget {
     WidgetRef ref,
   ) async {
     try {
-      _logger.d('Applying protocol ${protocol.id} to pet ${pet.id} and generating vaccinations');
+      _logger.d(
+          'Applying protocol ${protocol.id} to pet ${pet.id} and generating vaccinations');
 
       // Step 1: Update pet profile with protocol ID
       final updatedPet = pet.copyWith(
@@ -262,13 +269,15 @@ class VaccinationProtocolSelectionScreen extends ConsumerWidget {
 
       // Step 2: Generate vaccination events from protocol
       final vaccinationService = ref.read(vaccinationServiceProvider);
-      final generatedEvents = await vaccinationService.generateVaccinationsFromProtocol(
+      final generatedEvents =
+          await vaccinationService.generateVaccinationsFromProtocol(
         pet: updatedPet,
         protocolId: protocol.id,
         lookAheadMonths: 24, // Generate 2 years of vaccinations
       );
 
-      _logger.i('Generated ${generatedEvents.length} vaccination events for pet ${pet.id}');
+      _logger.i(
+          'Generated ${generatedEvents.length} vaccination events for pet ${pet.id}');
 
       // Step 3: Invalidate vaccinations provider to refresh the list
       ref.invalidate(vaccinationsByPetIdProvider(pet.id));
@@ -472,7 +481,9 @@ class _ProtocolCard extends StatelessWidget {
                           visualDensity: VisualDensity.compact,
                           backgroundColor: _isCore
                               ? Theme.of(context).colorScheme.primaryContainer
-                              : Theme.of(context).colorScheme.secondaryContainer,
+                              : Theme.of(context)
+                                  .colorScheme
+                                  .secondaryContainer,
                           labelStyle:
                               Theme.of(context).textTheme.labelSmall?.copyWith(
                                     color: _isCore
@@ -527,7 +538,10 @@ class _ProtocolCard extends StatelessWidget {
               ),
               Icon(
                 Icons.chevron_right,
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.4),
               ),
             ],
           ),
@@ -580,7 +594,6 @@ class _ConfirmationBottomSheetState extends State<_ConfirmationBottomSheet> {
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 16),
-
             Card(
               color: Theme.of(context).colorScheme.surfaceContainerLow,
               elevation: 0,
@@ -640,7 +653,6 @@ class _ConfirmationBottomSheetState extends State<_ConfirmationBottomSheet> {
               ),
             ),
             const SizedBox(height: 24),
-
             Row(
               children: [
                 Expanded(

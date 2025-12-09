@@ -24,12 +24,10 @@ class ConsentDialogResponse {
 ///
 /// Returns null if dismissed, or a [ConsentDialogResponse] with the user's choice
 Future<ConsentDialogResponse?> showPdfConsentDialog(BuildContext context) {
-  print('🎭 [DIALOG] showPdfConsentDialog() called');
   return showDialog<ConsentDialogResponse>(
     context: context,
     barrierDismissible: false, // Prevent accidental dismissal
     builder: (context) {
-      print('🎭 [DIALOG] Builder function called, creating dialog');
       return const _PdfConsentDialog();
     },
   );
@@ -51,7 +49,6 @@ class _PdfConsentDialogState extends State<_PdfConsentDialog> {
 
   @override
   Widget build(BuildContext context) {
-    print('🎭 [DIALOG] _PdfConsentDialog.build() called');
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -80,7 +77,8 @@ class _PdfConsentDialogState extends State<_PdfConsentDialog> {
             // Use explicit height calculation to prevent overflow
             ConstrainedBox(
               constraints: BoxConstraints(
-                maxHeight: screenHeight * 0.4, // Reduced from 0.6 to leave room for checkbox and actions
+                maxHeight: screenHeight *
+                    0.4, // Reduced from 0.6 to leave room for checkbox and actions
               ),
               child: SingleChildScrollView(
                 child: Column(
@@ -147,8 +145,6 @@ class _PdfConsentDialogState extends State<_PdfConsentDialog> {
         // Decline button
         TextButton(
           onPressed: () {
-            print('🚫 [DIALOG] User clicked Decline button');
-            print('  - dontAskAgain: $_dontAskAgain');
             Navigator.of(context).pop(
               ConsentDialogResponse(
                 result: ConsentDialogResult.declined,
@@ -162,8 +158,6 @@ class _PdfConsentDialogState extends State<_PdfConsentDialog> {
         // Accept button (primary action)
         FilledButton(
           onPressed: () {
-            print('✅ [DIALOG] User clicked Accept button');
-            print('  - dontAskAgain: $_dontAskAgain');
             Navigator.of(context).pop(
               ConsentDialogResponse(
                 result: ConsentDialogResult.accepted,

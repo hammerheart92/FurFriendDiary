@@ -12,7 +12,7 @@ import '../../providers/feeding_form_state_provider.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../utils/date_helper.dart';
 
-final _logger = Logger();  // ignore: prefer_const_constructors
+final _logger = Logger(); // ignore: prefer_const_constructors
 final _uuid = Uuid();
 
 class FeedingHistoryScreen extends ConsumerStatefulWidget {

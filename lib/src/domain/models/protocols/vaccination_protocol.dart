@@ -121,7 +121,8 @@ class VaccinationProtocol extends HiveObject {
       nameRo: json['nameRo'] as String?,
       species: json['species'] as String,
       steps: (json['steps'] as List<dynamic>)
-          .map((stepJson) => VaccinationStep.fromJson(stepJson as Map<String, dynamic>))
+          .map((stepJson) =>
+              VaccinationStep.fromJson(stepJson as Map<String, dynamic>))
           .toList(),
       description: json['description'] as String,
       descriptionRo: json['descriptionRo'] as String?,
@@ -254,7 +255,8 @@ class VaccinationStep {
       notesRo: json['notesRo'] as String?,
       isRequired: json['isRequired'] as bool? ?? true,
       recurring: json['recurring'] != null
-          ? RecurringSchedule.fromJson(json['recurring'] as Map<String, dynamic>)
+          ? RecurringSchedule.fromJson(
+              json['recurring'] as Map<String, dynamic>)
           : null,
     );
   }

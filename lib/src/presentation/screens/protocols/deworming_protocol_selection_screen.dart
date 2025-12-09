@@ -40,7 +40,8 @@ class DewormingProtocolSelectionScreen extends ConsumerWidget {
           label: l10n.selectProtocolForPet(pet.name),
           child: protocolsAsync.when(
             loading: () => _buildLoadingState(l10n),
-            error: (error, stack) => _buildErrorState(context, l10n, error, ref),
+            error: (error, stack) =>
+                _buildErrorState(context, l10n, error, ref),
             data: (protocols) => protocols.isEmpty
                 ? _buildEmptyState(context, l10n)
                 : _buildProtocolList(context, l10n, protocols, ref),
@@ -100,7 +101,8 @@ class DewormingProtocolSelectionScreen extends ConsumerWidget {
             const SizedBox(height: 24),
             OutlinedButton.icon(
               onPressed: () {
-                ref.invalidate(dewormingProtocolsBySpeciesProvider(pet.species));
+                ref.invalidate(
+                    dewormingProtocolsBySpeciesProvider(pet.species));
               },
               icon: const Icon(Icons.refresh),
               label: Text(l10n.retry),
@@ -179,10 +181,8 @@ class DewormingProtocolSelectionScreen extends ConsumerWidget {
           Text(
             l10n.chooseDewormingProtocol,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withOpacity(0.6),
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                 ),
           ),
           const SizedBox(height: 16),
@@ -196,7 +196,8 @@ class DewormingProtocolSelectionScreen extends ConsumerWidget {
                 final protocol = protocols[index];
                 return _ProtocolCard(
                   protocol: protocol,
-                  onTap: () => _showConfirmationSheet(context, l10n, protocol, ref),
+                  onTap: () =>
+                      _showConfirmationSheet(context, l10n, protocol, ref),
                 );
               },
             ),
@@ -260,7 +261,8 @@ class DewormingProtocolSelectionScreen extends ConsumerWidget {
         Navigator.of(context).pop(true);
       }
     } catch (e, stackTrace) {
-      _logger.e('Failed to apply deworming protocol', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to apply deworming protocol',
+          error: e, stackTrace: stackTrace);
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -343,10 +345,14 @@ class _PetInfoHeader extends StatelessWidget {
                       label: Text(getLocalizedSpecies(pet.species)),
                       padding: EdgeInsets.zero,
                       visualDensity: VisualDensity.compact,
-                      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                      labelStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSecondaryContainer,
-                          ),
+                      backgroundColor:
+                          Theme.of(context).colorScheme.secondaryContainer,
+                      labelStyle:
+                          Theme.of(context).textTheme.labelSmall?.copyWith(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSecondaryContainer,
+                              ),
                     ),
                     const SizedBox(width: 8),
                     Text(
@@ -457,11 +463,20 @@ class _ProtocolCard extends StatelessWidget {
                             visualDensity: VisualDensity.compact,
                             backgroundColor: _isStandard
                                 ? Theme.of(context).colorScheme.primaryContainer
-                                : Theme.of(context).colorScheme.secondaryContainer,
-                            labelStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .secondaryContainer,
+                            labelStyle: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(
                                   color: _isStandard
-                                      ? Theme.of(context).colorScheme.onPrimaryContainer
-                                      : Theme.of(context).colorScheme.onSecondaryContainer,
+                                      ? Theme.of(context)
+                                          .colorScheme
+                                          .onPrimaryContainer
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .onSecondaryContainer,
                                 ),
                           ),
                           const SizedBox(width: 4),
@@ -476,17 +491,27 @@ class _ProtocolCard extends StatelessWidget {
                             padding: EdgeInsets.zero,
                             visualDensity: VisualDensity.compact,
                             backgroundColor: protocol.isCustom
-                                ? Theme.of(context).colorScheme.surfaceContainerHighest
-                                : Theme.of(context).colorScheme.tertiaryContainer,
+                                ? Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHighest
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .tertiaryContainer,
                             side: protocol.isCustom
                                 ? BorderSide(
-                                    color: Theme.of(context).colorScheme.outline,
+                                    color:
+                                        Theme.of(context).colorScheme.outline,
                                   )
                                 : null,
-                            labelStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            labelStyle: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(
                                   color: protocol.isCustom
                                       ? Theme.of(context).colorScheme.onSurface
-                                      : Theme.of(context).colorScheme.onTertiaryContainer,
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .onTertiaryContainer,
                                 ),
                           ),
                         ],
@@ -521,7 +546,10 @@ class _ProtocolCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             l10n.treatmentsCount(protocol.schedules.length),
-                            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelMedium
+                                ?.copyWith(
                                   color: Theme.of(context)
                                       .colorScheme
                                       .onSurface
@@ -540,7 +568,10 @@ class _ProtocolCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             protocol.region ?? 'Unknown',
-                            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelMedium
+                                ?.copyWith(
                                   color: Theme.of(context)
                                       .colorScheme
                                       .onSurface
@@ -556,7 +587,8 @@ class _ProtocolCard extends StatelessWidget {
                 // Chevron icon
                 Icon(
                   Icons.chevron_right,
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
                 ),
               ],
             ),
@@ -648,7 +680,9 @@ class _ConfirmationBottomSheetState extends State<_ConfirmationBottomSheet> {
                                   Expanded(
                                     child: Text(
                                       '${schedule.dewormingType == 'internal' ? l10n.internalDeworming : l10n.externalDeworming} ${l10n.atWeeksAge(schedule.ageInWeeks)}${schedule.productName != null ? ' - ${schedule.productName}' : ''}',
-                                      style: Theme.of(context).textTheme.bodyMedium,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
                                     ),
                                   ),
                                 ],
@@ -660,14 +694,14 @@ class _ConfirmationBottomSheetState extends State<_ConfirmationBottomSheet> {
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
-                          l10n.andXMore(
-                              widget.protocol.schedules.length - 5),
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurface
-                                    .withOpacity(0.6),
-                              ),
+                          l10n.andXMore(widget.protocol.schedules.length - 5),
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withOpacity(0.6),
+                                  ),
                         ),
                       ),
                   ],
@@ -681,9 +715,8 @@ class _ConfirmationBottomSheetState extends State<_ConfirmationBottomSheet> {
               children: [
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: _isApplying
-                        ? null
-                        : () => Navigator.of(context).pop(),
+                    onPressed:
+                        _isApplying ? null : () => Navigator.of(context).pop(),
                     child: Text(l10n.cancel),
                   ),
                 ),

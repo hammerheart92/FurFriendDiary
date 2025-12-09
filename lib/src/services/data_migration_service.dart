@@ -72,7 +72,8 @@ class DataMigrationService {
         );
       }
 
-      _logger.i('✓ Read ${result.totalRecordsMigrated} total records from ${result.boxesProcessed.length} boxes');
+      _logger.i(
+          '✓ Read ${result.totalRecordsMigrated} total records from ${result.boxesProcessed.length} boxes');
 
       // Step 3: Close unencrypted boxes (but DON'T delete yet)
       _logger.i('Step 3: Closing unencrypted boxes (preserving data)...');
@@ -105,7 +106,8 @@ class DataMigrationService {
         );
       }
 
-      _logger.i('✓ Wrote data to ${result.boxesProcessed.length} encrypted boxes');
+      _logger
+          .i('✓ Wrote data to ${result.boxesProcessed.length} encrypted boxes');
 
       // Step 6: Verify data integrity
       _logger.i('Step 6: Verifying data integrity...');
@@ -124,15 +126,18 @@ class DataMigrationService {
       await _deleteUnencryptedBoxes(unencryptedData.keys.toList(), result);
 
       if (result.errors.isNotEmpty) {
-        _logger.w('⚠ Some unencrypted boxes could not be deleted, but migration succeeded');
-        _logger.w('You may need to manually delete: ${result.errors.join(", ")}');
+        _logger.w(
+            '⚠ Some unencrypted boxes could not be deleted, but migration succeeded');
+        _logger
+            .w('You may need to manually delete: ${result.errors.join(", ")}');
       }
 
       _logger.i('✓ Cleaned up old unencrypted boxes');
 
       // Success!
       result.success = true;
-      result.message = 'Successfully migrated ${result.totalRecordsMigrated} records across ${result.boxesProcessed.length} boxes';
+      result.message =
+          'Successfully migrated ${result.totalRecordsMigrated} records across ${result.boxesProcessed.length} boxes';
       result.duration = DateTime.now().difference(startTime);
 
       // Mark migration as completed to prevent re-running on subsequent launches
@@ -193,7 +198,8 @@ class DataMigrationService {
           box = await Hive.openBox(boxName);
         } catch (e) {
           // Box might already be encrypted, skip it
-          _logger.d('Box "$boxName" cannot be opened unencrypted - likely already encrypted');
+          _logger.d(
+              'Box "$boxName" cannot be opened unencrypted - likely already encrypted');
           continue;
         }
 
@@ -305,7 +311,8 @@ class DataMigrationService {
         final encryptedCount = box.length;
 
         if (encryptedCount != originalCount) {
-          _logger.e('✗ Verification failed for "$boxName": Expected $originalCount records, found $encryptedCount');
+          _logger.e(
+              '✗ Verification failed for "$boxName": Expected $originalCount records, found $encryptedCount');
           result.errors.add(
             'Verification failed for "$boxName": count mismatch ($originalCount vs $encryptedCount)',
           );

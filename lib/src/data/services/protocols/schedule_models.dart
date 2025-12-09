@@ -34,7 +34,8 @@ class VaccinationScheduleEntry {
   bool get isDueSoon {
     final now = DateTime.now();
     final thirtyDaysFromNow = now.add(const Duration(days: 30));
-    return scheduledDate.isAfter(now) && scheduledDate.isBefore(thirtyDaysFromNow);
+    return scheduledDate.isAfter(now) &&
+        scheduledDate.isBefore(thirtyDaysFromNow);
   }
 
   /// Helper: True if this is an overdue vaccination
@@ -129,7 +130,8 @@ class DewormingScheduleEntry {
   bool get isDueSoon {
     final now = DateTime.now();
     final thirtyDaysFromNow = now.add(const Duration(days: 30));
-    return scheduledDate.isAfter(now) && scheduledDate.isBefore(thirtyDaysFromNow);
+    return scheduledDate.isAfter(now) &&
+        scheduledDate.isBefore(thirtyDaysFromNow);
   }
 
   /// Helper: True if this is an overdue treatment
@@ -220,8 +222,7 @@ class AppointmentSuggestion {
   int get totalProtocols => dueVaccinations.length + dueDeworming.length;
 
   /// Helper: True if any vaccination is overdue
-  bool get hasOverdueVaccinations =>
-      dueVaccinations.any((v) => v.isOverdue);
+  bool get hasOverdueVaccinations => dueVaccinations.any((v) => v.isOverdue);
 
   /// Helper: True if any deworming is overdue
   bool get hasOverdueDeworming => dueDeworming.any((d) => d.isOverdue);

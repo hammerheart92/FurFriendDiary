@@ -19,11 +19,11 @@ import '../models/upcoming_care_event.dart';
 
 /// Medication status states for display logic
 enum _MedicationStatus {
-  notStarted,       // startDate is in the future
+  notStarted, // startDate is in the future
   activeIndefinite, // started, no endDate
   activeEndingSoon, // started, endDate within 7 days
-  active,           // started, endDate > 7 days away
-  ended,            // endDate is in the past
+  active, // started, endDate > 7 days away
+  ended, // endDate is in the past
 }
 
 /// A reusable card widget for displaying upcoming care events (vaccinations,
@@ -190,7 +190,8 @@ class UpcomingCareCardWidget extends StatelessWidget {
 
     // ISSUE 3 FIX: For vaccination events, translate vaccine type
     if (event is VaccinationEvent || event is VaccinationRecordEvent) {
-      final vaccineType = event.title; // This is the vaccine type (e.g., "Rabies")
+      final vaccineType =
+          event.title; // This is the vaccine type (e.g., "Rabies")
       return VaccineTypeTranslations.getDisplayName(vaccineType, locale);
     }
 

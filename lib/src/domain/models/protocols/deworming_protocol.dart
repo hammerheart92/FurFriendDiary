@@ -258,7 +258,8 @@ class DewormingSchedule {
       notes: json['notes'] as String?,
       notesRo: json['notesRo'] as String?,
       recurring: json['recurring'] != null
-          ? RecurringSchedule.fromJson(json['recurring'] as Map<String, dynamic>)
+          ? RecurringSchedule.fromJson(
+              json['recurring'] as Map<String, dynamic>)
           : null,
       productName: json['productName'] as String?,
     );

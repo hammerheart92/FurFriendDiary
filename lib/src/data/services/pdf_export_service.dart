@@ -28,7 +28,8 @@ class PDFExportService {
     if (_regularFont == null || _boldFont == null) {
       try {
         // Try to load custom fonts from assets
-        final regularData = await rootBundle.load('assets/fonts/Roboto-Regular.ttf');
+        final regularData =
+            await rootBundle.load('assets/fonts/Roboto-Regular.ttf');
         final boldData = await rootBundle.load('assets/fonts/Roboto-Bold.ttf');
 
         _regularFont = pw.Font.ttf(regularData);
@@ -103,8 +104,10 @@ class PDFExportService {
               // Pet Information
               _buildSection(l10n.pdfPetInformation, [
                 _buildInfoRow(l10n.pdfName, pet.name),
-                _buildInfoRow(l10n.pdfGender, _translateGender(pet.gender, l10n)),
-                _buildInfoRow(l10n.pdfSpecies, _translateSpecies(pet.species, l10n)),
+                _buildInfoRow(
+                    l10n.pdfGender, _translateGender(pet.gender, l10n)),
+                _buildInfoRow(
+                    l10n.pdfSpecies, _translateSpecies(pet.species, l10n)),
                 _buildInfoRow(l10n.pdfBreed, pet.breed ?? l10n.pdfUnknown),
                 _buildInfoRow(
                     l10n.pdfAge,
@@ -145,7 +148,8 @@ class PDFExportService {
                     '${healthScore.toStringAsFixed(0)}/100'),
                 _buildInfoRow(l10n.pdfMedicationAdherence,
                     '${medicationAdherence.toStringAsFixed(0)}%'),
-                _buildInfoRow(l10n.pdfWeightTrend, _formatWeightTrend(weightTrend, l10n)),
+                _buildInfoRow(
+                    l10n.pdfWeightTrend, _formatWeightTrend(weightTrend, l10n)),
               ]),
               pw.SizedBox(height: 20),
 
@@ -164,8 +168,8 @@ class PDFExportService {
 
               // Expenses
               _buildSection(l10n.pdfExpenses, [
-                _buildInfoRow(
-                    l10n.pdfTotalExpenses, '\$${totalExpenses.toStringAsFixed(2)}'),
+                _buildInfoRow(l10n.pdfTotalExpenses,
+                    '\$${totalExpenses.toStringAsFixed(2)}'),
               ]),
               pw.SizedBox(height: 20),
 
@@ -178,11 +182,13 @@ class PDFExportService {
               pw.SizedBox(height: 10),
               pw.Text(
                 '${l10n.pdfGeneratedOn} ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
-                style: pw.TextStyle(fontSize: 10, color: PdfColors.grey, font: _regularFont),
+                style: pw.TextStyle(
+                    fontSize: 10, color: PdfColors.grey, font: _regularFont),
               ),
               pw.Text(
                 l10n.pdfFooter,
-                style: pw.TextStyle(fontSize: 10, color: PdfColors.grey, font: _regularFont),
+                style: pw.TextStyle(
+                    fontSize: 10, color: PdfColors.grey, font: _regularFont),
               ),
             ],
           );
@@ -244,7 +250,8 @@ class PDFExportService {
               // Pet Information
               _buildSection(l10n.pdfPetInformation, [
                 _buildInfoRow(l10n.pdfName, pet.name),
-                _buildInfoRow(l10n.pdfSpecies, _translateSpecies(pet.species, l10n)),
+                _buildInfoRow(
+                    l10n.pdfSpecies, _translateSpecies(pet.species, l10n)),
                 _buildInfoRow(l10n.pdfBreed, pet.breed ?? l10n.pdfUnknown),
                 _buildInfoRow(
                     l10n.pdfAge,
@@ -267,11 +274,12 @@ class PDFExportService {
 
               // Health Status
               _buildSection(l10n.pdfHealthStatus, [
-                _buildInfoRow(
-                    l10n.pdfHealthScore, '${healthScore.toStringAsFixed(0)}/100'),
+                _buildInfoRow(l10n.pdfHealthScore,
+                    '${healthScore.toStringAsFixed(0)}/100'),
                 _buildInfoRow(l10n.pdfMedicationCompliance,
                     '${medicationAdherence.toStringAsFixed(0)}%'),
-                _buildInfoRow(l10n.pdfWeightTrend, _formatWeightTrend(weightTrend, l10n)),
+                _buildInfoRow(
+                    l10n.pdfWeightTrend, _formatWeightTrend(weightTrend, l10n)),
               ]),
               pw.SizedBox(height: 20),
 
@@ -298,11 +306,13 @@ class PDFExportService {
               pw.SizedBox(height: 10),
               pw.Text(
                 '${l10n.pdfGeneratedOn} ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
-                style: pw.TextStyle(fontSize: 10, color: PdfColors.grey, font: _regularFont),
+                style: pw.TextStyle(
+                    fontSize: 10, color: PdfColors.grey, font: _regularFont),
               ),
               pw.Text(
                 l10n.pdfFooter,
-                style: pw.TextStyle(fontSize: 10, color: PdfColors.grey, font: _regularFont),
+                style: pw.TextStyle(
+                    fontSize: 10, color: PdfColors.grey, font: _regularFont),
               ),
             ],
           );
@@ -413,7 +423,8 @@ class PDFExportService {
             flex: 2,
             child: pw.Text(
               label,
-              style: pw.TextStyle(fontWeight: pw.FontWeight.bold, font: _boldFont),
+              style:
+                  pw.TextStyle(fontWeight: pw.FontWeight.bold, font: _boldFont),
             ),
           ),
           pw.Expanded(
@@ -623,9 +634,8 @@ class PDFExportService {
     return _buildSection(l10n.pdfUpcomingAppointments, [
       ...sorted.take(5).map((appt) {
         final dateStr = _formatDate(appt.appointmentDate, l10n.localeName);
-        final clinicStr = appt.clinic.isNotEmpty
-            ? ' ${l10n.pdfAtClinic} ${appt.clinic}'
-            : '';
+        final clinicStr =
+            appt.clinic.isNotEmpty ? ' ${l10n.pdfAtClinic} ${appt.clinic}' : '';
         return pw.Padding(
           padding: const pw.EdgeInsets.only(bottom: 4),
           child: pw.Row(

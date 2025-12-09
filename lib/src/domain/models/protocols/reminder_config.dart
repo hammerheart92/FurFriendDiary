@@ -70,7 +70,8 @@ class ReminderConfig extends HiveObject {
           'reminderDays must contain at least one value',
         ),
         assert(
-          eventType != 'custom' || (customTitle != null && customTitle.isNotEmpty),
+          eventType != 'custom' ||
+              (customTitle != null && customTitle.isNotEmpty),
           'customTitle is required when eventType is "custom"',
         ),
         createdAt = createdAt ?? DateTime.now();

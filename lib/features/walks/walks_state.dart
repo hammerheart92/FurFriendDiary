@@ -114,10 +114,10 @@ class WalksController extends ChangeNotifier {
       logger.i('📚 DIRECT HIVE: Total walks in storage: ${allWalks.length}');
 
       // Filter walks by current pet ID
-      final walks = allWalks
-          .where((walk) => walk.petId == _defaultPetId)
-          .toList();
-      logger.i('📚 FILTERED: ${walks.length} walks belong to pet $_defaultPetId');
+      final walks =
+          allWalks.where((walk) => walk.petId == _defaultPetId).toList();
+      logger
+          .i('📚 FILTERED: ${walks.length} walks belong to pet $_defaultPetId');
 
       if (walks.isNotEmpty) {
         _items.clear();
@@ -129,7 +129,8 @@ class WalksController extends ChangeNotifier {
             logger.w('⚠️  Failed to convert walk: $e');
           }
         }
-        logger.i('✅ LOADED ${_items.length} walks from storage for pet $_defaultPetId');
+        logger.i(
+            '✅ LOADED ${_items.length} walks from storage for pet $_defaultPetId');
         notifyListeners();
       } else {
         logger.i('📝 No walks found for pet $_defaultPetId - empty state');

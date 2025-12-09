@@ -71,7 +71,8 @@ class VaccinationRepositoryImpl implements VaccinationRepository {
       logger.d(
           "✅ DEBUG: Added vaccination '${event.vaccineType}' with ID ${event.id}");
     } catch (e) {
-      logger.e("🚨 ERROR: Failed to add vaccination '${event.vaccineType}': $e");
+      logger
+          .e("🚨 ERROR: Failed to add vaccination '${event.vaccineType}': $e");
       rethrow;
     }
   }
@@ -84,8 +85,8 @@ class VaccinationRepositoryImpl implements VaccinationRepository {
       logger.d(
           "✅ DEBUG: Updated vaccination '${event.vaccineType}' with ID ${event.id}");
     } catch (e) {
-      logger
-          .e("🚨 ERROR: Failed to update vaccination '${event.vaccineType}': $e");
+      logger.e(
+          "🚨 ERROR: Failed to update vaccination '${event.vaccineType}': $e");
       rethrow;
     }
   }
@@ -170,8 +171,8 @@ class VaccinationRepositoryImpl implements VaccinationRepository {
           "🔍 DEBUG: Retrieved ${vaccinations.length} upcoming vaccinations for pet $petId");
       return vaccinations;
     } catch (e) {
-      logger
-          .e("🚨 ERROR: Failed to get upcoming vaccinations for pet $petId: $e");
+      logger.e(
+          "🚨 ERROR: Failed to get upcoming vaccinations for pet $petId: $e");
       rethrow;
     }
   }
@@ -205,9 +206,8 @@ class VaccinationRepositoryImpl implements VaccinationRepository {
       String protocolId) async {
     try {
       final box = HiveBoxes.getVaccinationEvents();
-      final vaccinations = box.values
-          .where((event) => event.protocolId == protocolId)
-          .toList();
+      final vaccinations =
+          box.values.where((event) => event.protocolId == protocolId).toList();
       // Sort by protocol step index, then by administered date
       vaccinations.sort((a, b) {
         final stepCompare =

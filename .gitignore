@@ -1,5 +1,6 @@
 # Build outputs
 build/
+android_backup_*/
 *.apk
 *.aab
 *.ipa
@@ -75,10 +76,9 @@ docs/PREMIUM_FEATURES.md
 docs/FurFriendDiary v1.3.0 - Session Handoff Document.md
 docs/v1.3.0 Known Issues.md
 docs/v1.3.2 Polish & Compliance Release.md
+docs/FurFriendDiary v1.3.2 Development Session.md
 # Claude AI / AI assistant files
 .claude/
-CLAUDE.md
-CHANGELOG.md
 
 # Android debug logs
 full_logcat.txt

@@ -57,8 +57,7 @@ class VaccinationFormScreen extends ConsumerStatefulWidget {
       _VaccinationFormScreenState();
 }
 
-class _VaccinationFormScreenState
-    extends ConsumerState<VaccinationFormScreen> {
+class _VaccinationFormScreenState extends ConsumerState<VaccinationFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _batchNumberController = TextEditingController();
   final _veterinarianNameController = TextEditingController();
@@ -377,8 +376,7 @@ class _VaccinationFormScreenState
     );
   }
 
-  Widget _buildVeterinaryDetailsCard(
-      ThemeData theme, AppLocalizations l10n) {
+  Widget _buildVeterinaryDetailsCard(ThemeData theme, AppLocalizations l10n) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -441,8 +439,7 @@ class _VaccinationFormScreenState
     );
   }
 
-  Widget _buildCertificatePhotosCard(
-      ThemeData theme, AppLocalizations l10n) {
+  Widget _buildCertificatePhotosCard(ThemeData theme, AppLocalizations l10n) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -636,7 +633,8 @@ class _VaccinationFormScreenState
   Future<void> _selectNextDueDate() async {
     final picked = await showDatePicker(
       context: context,
-      initialDate: _nextDueDate ?? _administeredDate.add(const Duration(days: 365)),
+      initialDate:
+          _nextDueDate ?? _administeredDate.add(const Duration(days: 365)),
       firstDate: _administeredDate,
       lastDate: DateTime.now().add(const Duration(days: 365 * 5)),
     );
@@ -722,9 +720,8 @@ class _VaccinationFormScreenState
         notes: _notesController.text.trim().isEmpty
             ? null
             : _notesController.text.trim(),
-        certificatePhotoUrls: _certificatePhotoPaths.isEmpty
-            ? null
-            : _certificatePhotoPaths,
+        certificatePhotoUrls:
+            _certificatePhotoPaths.isEmpty ? null : _certificatePhotoPaths,
         isFromProtocol: widget.existingEvent?.isFromProtocol ?? false,
         protocolId: widget.existingEvent?.protocolId,
         protocolStepIndex: widget.existingEvent?.protocolStepIndex,
@@ -734,7 +731,9 @@ class _VaccinationFormScreenState
 
       if (widget.existingEvent != null) {
         // Update existing event
-        await ref.read(vaccinationProviderProvider.notifier).updateVaccination(event);
+        await ref
+            .read(vaccinationProviderProvider.notifier)
+            .updateVaccination(event);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -745,7 +744,9 @@ class _VaccinationFormScreenState
         }
       } else {
         // Add new event
-        await ref.read(vaccinationProviderProvider.notifier).addVaccination(event);
+        await ref
+            .read(vaccinationProviderProvider.notifier)
+            .addVaccination(event);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

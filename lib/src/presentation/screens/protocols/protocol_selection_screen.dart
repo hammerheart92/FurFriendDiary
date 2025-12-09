@@ -40,7 +40,8 @@ class ProtocolSelectionScreen extends ConsumerWidget {
           label: l10n.selectProtocolForPet(pet.name),
           child: protocolsAsync.when(
             loading: () => _buildLoadingState(l10n),
-            error: (error, stack) => _buildErrorState(context, l10n, error, ref),
+            error: (error, stack) =>
+                _buildErrorState(context, l10n, error, ref),
             data: (protocols) => protocols.isEmpty
                 ? _buildEmptyState(context, l10n)
                 : _buildProtocolList(context, l10n, protocols, ref),
@@ -100,7 +101,8 @@ class ProtocolSelectionScreen extends ConsumerWidget {
             const SizedBox(height: 24),
             OutlinedButton.icon(
               onPressed: () {
-                ref.invalidate(vaccinationProtocolsBySpeciesProvider(pet.species));
+                ref.invalidate(
+                    vaccinationProtocolsBySpeciesProvider(pet.species));
               },
               icon: const Icon(Icons.refresh),
               label: Text(l10n.retry),
@@ -179,10 +181,8 @@ class ProtocolSelectionScreen extends ConsumerWidget {
           Text(
             l10n.chooseProtocolMatchingNeeds,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withOpacity(0.6),
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                 ),
           ),
           const SizedBox(height: 16),
@@ -196,7 +196,8 @@ class ProtocolSelectionScreen extends ConsumerWidget {
                 final protocol = protocols[index];
                 return _ProtocolCard(
                   protocol: protocol,
-                  onTap: () => _showConfirmationSheet(context, l10n, protocol, ref),
+                  onTap: () =>
+                      _showConfirmationSheet(context, l10n, protocol, ref),
                 );
               },
             ),
@@ -330,10 +331,14 @@ class _PetInfoHeader extends StatelessWidget {
                       label: Text(_getLocalizedSpecies(context, pet.species)),
                       padding: EdgeInsets.zero,
                       visualDensity: VisualDensity.compact,
-                      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                      labelStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSecondaryContainer,
-                          ),
+                      backgroundColor:
+                          Theme.of(context).colorScheme.secondaryContainer,
+                      labelStyle:
+                          Theme.of(context).textTheme.labelSmall?.copyWith(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSecondaryContainer,
+                              ),
                     ),
                     const SizedBox(width: 8),
                     Text(
@@ -415,10 +420,13 @@ class _ProtocolCard extends StatelessWidget {
     final isRomanian = locale.languageCode == 'ro';
 
     // Use Romanian name/description if available and locale is Romanian
-    final displayName = (isRomanian && protocol.nameRo != null && protocol.nameRo!.isNotEmpty)
-        ? protocol.nameRo!
-        : protocol.name;
-    final displayDescription = (isRomanian && protocol.descriptionRo != null && protocol.descriptionRo!.isNotEmpty)
+    final displayName =
+        (isRomanian && protocol.nameRo != null && protocol.nameRo!.isNotEmpty)
+            ? protocol.nameRo!
+            : protocol.name;
+    final displayDescription = (isRomanian &&
+            protocol.descriptionRo != null &&
+            protocol.descriptionRo!.isNotEmpty)
         ? protocol.descriptionRo!
         : protocol.description;
 
@@ -466,11 +474,20 @@ class _ProtocolCard extends StatelessWidget {
                             visualDensity: VisualDensity.compact,
                             backgroundColor: _isCore
                                 ? Theme.of(context).colorScheme.primaryContainer
-                                : Theme.of(context).colorScheme.secondaryContainer,
-                            labelStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .secondaryContainer,
+                            labelStyle: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(
                                   color: _isCore
-                                      ? Theme.of(context).colorScheme.onPrimaryContainer
-                                      : Theme.of(context).colorScheme.onSecondaryContainer,
+                                      ? Theme.of(context)
+                                          .colorScheme
+                                          .onPrimaryContainer
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .onSecondaryContainer,
                                 ),
                           ),
                           const SizedBox(width: 4),
@@ -485,17 +502,27 @@ class _ProtocolCard extends StatelessWidget {
                             padding: EdgeInsets.zero,
                             visualDensity: VisualDensity.compact,
                             backgroundColor: protocol.isCustom
-                                ? Theme.of(context).colorScheme.surfaceContainerHighest
-                                : Theme.of(context).colorScheme.tertiaryContainer,
+                                ? Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHighest
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .tertiaryContainer,
                             side: protocol.isCustom
                                 ? BorderSide(
-                                    color: Theme.of(context).colorScheme.outline,
+                                    color:
+                                        Theme.of(context).colorScheme.outline,
                                   )
                                 : null,
-                            labelStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            labelStyle: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(
                                   color: protocol.isCustom
                                       ? Theme.of(context).colorScheme.onSurface
-                                      : Theme.of(context).colorScheme.onTertiaryContainer,
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .onTertiaryContainer,
                                 ),
                           ),
                         ],
@@ -530,7 +557,10 @@ class _ProtocolCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             l10n.vaccinationsCount(protocol.steps.length),
-                            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelMedium
+                                ?.copyWith(
                                   color: Theme.of(context)
                                       .colorScheme
                                       .onSurface
@@ -549,7 +579,10 @@ class _ProtocolCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             protocol.region ?? 'Unknown',
-                            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelMedium
+                                ?.copyWith(
                                   color: Theme.of(context)
                                       .colorScheme
                                       .onSurface
@@ -565,7 +598,8 @@ class _ProtocolCard extends StatelessWidget {
                 // Chevron icon
                 Icon(
                   Icons.chevron_right,
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
                 ),
               ],
             ),
@@ -603,7 +637,9 @@ class _ConfirmationBottomSheetState extends State<_ConfirmationBottomSheet> {
     final isRomanian = locale.languageCode == 'ro';
 
     // Use Romanian name if available and locale is Romanian
-    final displayName = (isRomanian && widget.protocol.nameRo != null && widget.protocol.nameRo!.isNotEmpty)
+    final displayName = (isRomanian &&
+            widget.protocol.nameRo != null &&
+            widget.protocol.nameRo!.isNotEmpty)
         ? widget.protocol.nameRo!
         : widget.protocol.name;
 
@@ -637,49 +673,47 @@ class _ConfirmationBottomSheetState extends State<_ConfirmationBottomSheet> {
                     const Divider(height: 16),
 
                     // Show first 3-5 vaccine steps
-                    ...widget.protocol.steps
-                        .take(5)
-                        .map((step) => Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Icon(
-                                    step.isRequired
-                                        ? Icons.check_circle
-                                        : Icons.radio_button_unchecked,
-                                    size: 16,
-                                    color: step.isRequired
-                                        ? Colors.green
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .onSurface
-                                            .withOpacity(0.5),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(
-                                      '${step.vaccineName} ${l10n.atWeeksAge(step.ageInWeeks)}',
-                                      style: Theme.of(context).textTheme.bodyMedium,
-                                    ),
-                                  ),
-                                ],
+                    ...widget.protocol.steps.take(5).map((step) => Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(
+                                step.isRequired
+                                    ? Icons.check_circle
+                                    : Icons.radio_button_unchecked,
+                                size: 16,
+                                color: step.isRequired
+                                    ? Colors.green
+                                    : Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withOpacity(0.5),
                               ),
-                            )),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  '${step.vaccineName} ${l10n.atWeeksAge(step.ageInWeeks)}',
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )),
 
                     // Show "...and X more" if there are more steps
                     if (widget.protocol.steps.length > 5)
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
-                          l10n.andXMore(
-                              widget.protocol.steps.length - 5),
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurface
-                                    .withOpacity(0.6),
-                              ),
+                          l10n.andXMore(widget.protocol.steps.length - 5),
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withOpacity(0.6),
+                                  ),
                         ),
                       ),
                   ],
@@ -693,9 +727,8 @@ class _ConfirmationBottomSheetState extends State<_ConfirmationBottomSheet> {
               children: [
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: _isApplying
-                        ? null
-                        : () => Navigator.of(context).pop(),
+                    onPressed:
+                        _isApplying ? null : () => Navigator.of(context).pop(),
                     child: Text(l10n.cancel),
                   ),
                 ),

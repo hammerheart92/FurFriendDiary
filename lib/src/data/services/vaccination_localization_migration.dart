@@ -12,7 +12,8 @@ final _logger = Logger();
 /// to v1.2.0. It finds protocol-based vaccinations that are missing Romanian
 /// translations and populates them from the protocol step data.
 class VaccinationLocalizationMigration {
-  static const String _migrationKey = 'vaccination_localization_migration_v1_2_0';
+  static const String _migrationKey =
+      'vaccination_localization_migration_v1_2_0';
 
   final ProtocolDataProvider _protocolProvider;
 
@@ -48,7 +49,8 @@ class VaccinationLocalizationMigration {
     final box = HiveManager.instance.vaccinationEventBox;
     final allVaccinations = box.values.toList();
 
-    _logger.d('[MIGRATION] Found ${allVaccinations.length} vaccinations to check');
+    _logger
+        .d('[MIGRATION] Found ${allVaccinations.length} vaccinations to check');
 
     // Load protocols using correct method name
     final protocols = await _protocolProvider.loadVaccinationProtocols();
@@ -66,7 +68,9 @@ class VaccinationLocalizationMigration {
       }
 
       // Skip if not protocol-based
-      if (!event.isFromProtocol || event.protocolId == null || event.protocolStepIndex == null) {
+      if (!event.isFromProtocol ||
+          event.protocolId == null ||
+          event.protocolStepIndex == null) {
         continue;
       }
 

@@ -9,7 +9,6 @@ import '../../domain/exceptions/permission_exceptions.dart';
 class ImageService {
   final ImagePicker _picker = ImagePicker();
   final Logger _logger = Logger();
-  
 
   /// Pick an image from the gallery
   /// Returns null if the user cancels

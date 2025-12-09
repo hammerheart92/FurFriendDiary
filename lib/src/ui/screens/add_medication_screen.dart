@@ -251,7 +251,8 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                                 if (!value) {
                                   _endDate = null;
                                 } else {
-                                  _endDate = _startDate.add(const Duration(days: 30));
+                                  _endDate =
+                                      _startDate.add(const Duration(days: 30));
                                 }
                               });
                             },

@@ -149,17 +149,13 @@ class TreatmentPlan extends HiveObject {
 
   /// Get all incomplete tasks sorted by scheduled date
   List<TreatmentTask> get incompleteTasks {
-    return tasks
-        .where((task) => !task.isCompleted)
-        .toList()
+    return tasks.where((task) => !task.isCompleted).toList()
       ..sort((a, b) => a.scheduledDate.compareTo(b.scheduledDate));
   }
 
   /// Get all completed tasks sorted by completion date
   List<TreatmentTask> get completedTasks {
-    return tasks
-        .where((task) => task.isCompleted)
-        .toList()
+    return tasks.where((task) => task.isCompleted).toList()
       ..sort((a, b) {
         if (a.completedAt == null || b.completedAt == null) return 0;
         return b.completedAt!.compareTo(a.completedAt!);
@@ -254,7 +250,7 @@ class TreatmentTask {
     this.completedAt,
     this.notes,
     this.taskType = 'other',
-  }) : assert(
+  })  : assert(
           taskType == 'medication' ||
               taskType == 'appointment' ||
               taskType == 'care' ||
@@ -331,7 +327,8 @@ class TreatmentTask {
       description: json['description'] as String?,
       scheduledDate: DateTime.parse(json['scheduledDate'] as String),
       scheduledTime: json['scheduledTime'] != null
-          ? TimeOfDayModel.fromJson(json['scheduledTime'] as Map<String, dynamic>)
+          ? TimeOfDayModel.fromJson(
+              json['scheduledTime'] as Map<String, dynamic>)
           : null,
       isCompleted: json['isCompleted'] as bool? ?? false,
       completedAt: json['completedAt'] != null

@@ -47,8 +47,7 @@ class TreatmentPlanRepositoryImpl implements TreatmentPlanRepository {
   @override
   Future<List<TreatmentPlan>> getByPetId(String petId) async {
     try {
-      final plans =
-          box.values.where((plan) => plan.petId == petId).toList();
+      final plans = box.values.where((plan) => plan.petId == petId).toList();
       // Sort by start date, newest first
       plans.sort((a, b) => b.startDate.compareTo(a.startDate));
       logger.i(
@@ -147,8 +146,7 @@ class TreatmentPlanRepositoryImpl implements TreatmentPlanRepository {
     try {
       final count = box.length;
       await box.clear();
-      logger.i(
-          "✅ DEBUG: Deleted all treatment plans (removed $count plans)");
+      logger.i("✅ DEBUG: Deleted all treatment plans (removed $count plans)");
     } catch (e) {
       logger.e("🚨 ERROR: Failed to delete all treatment plans: $e");
       rethrow;

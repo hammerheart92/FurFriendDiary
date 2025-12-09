@@ -241,7 +241,8 @@ class AppointmentList extends ConsumerWidget {
               ),
               Text(
                 l10n.setReminder,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               Expanded(

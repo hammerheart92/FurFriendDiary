@@ -63,7 +63,8 @@ Future<List<UpcomingCareEvent>> upcomingCare(
         events.addAll(
           schedule
               .where((entry) =>
-                  entry.scheduledDate.isAfter(startDate.subtract(const Duration(days: 1))) &&
+                  entry.scheduledDate
+                      .isAfter(startDate.subtract(const Duration(days: 1))) &&
                   entry.scheduledDate.isBefore(endDate))
               .map((entry) => VaccinationEvent(entry)),
         );
@@ -92,7 +93,8 @@ Future<List<UpcomingCareEvent>> upcomingCare(
         events.addAll(
           schedule
               .where((entry) =>
-                  entry.scheduledDate.isAfter(startDate.subtract(const Duration(days: 1))) &&
+                  entry.scheduledDate
+                      .isAfter(startDate.subtract(const Duration(days: 1))) &&
                   entry.scheduledDate.isBefore(endDate))
               .map((entry) => DewormingEvent(entry)),
         );
@@ -109,7 +111,8 @@ Future<List<UpcomingCareEvent>> upcomingCare(
     events.addAll(
       appointments
           .where((appt) =>
-              appt.appointmentDate.isAfter(startDate.subtract(const Duration(days: 1))) &&
+              appt.appointmentDate
+                  .isAfter(startDate.subtract(const Duration(days: 1))) &&
               appt.appointmentDate.isBefore(endDate))
           .map((appt) => AppointmentEvent(appt)),
     );
@@ -126,10 +129,10 @@ Future<List<UpcomingCareEvent>> upcomingCare(
     events.addAll(
       medications
           .where((med) =>
-            med.isActive &&
-            med.startDate.isAfter(startDate.subtract(const Duration(days: 1))) &&
-            med.startDate.isBefore(endDate)
-          )
+              med.isActive &&
+              med.startDate
+                  .isAfter(startDate.subtract(const Duration(days: 1))) &&
+              med.startDate.isBefore(endDate))
           .map((med) => MedicationEvent(med)),
     );
   } catch (e) {
@@ -146,10 +149,10 @@ Future<List<UpcomingCareEvent>> upcomingCare(
     events.addAll(
       vaccinations
           .where((vax) =>
-            vax.nextDueDate != null &&
-            vax.nextDueDate!.isAfter(startDate.subtract(const Duration(days: 1))) &&
-            vax.nextDueDate!.isBefore(endDate)
-          )
+              vax.nextDueDate != null &&
+              vax.nextDueDate!
+                  .isAfter(startDate.subtract(const Duration(days: 1))) &&
+              vax.nextDueDate!.isBefore(endDate))
           .map((vax) => VaccinationRecordEvent(vax)),
     );
   } catch (e) {
@@ -298,9 +301,7 @@ Future<List<UpcomingCareEvent>> overdueCare(
   ).future);
 
   final now = DateTime.now();
-  return allEvents
-      .where((event) => event.scheduledDate.isBefore(now))
-      .toList();
+  return allEvents.where((event) => event.scheduledDate.isBefore(now)).toList();
 }
 
 /// Get care events due soon (within specified days)

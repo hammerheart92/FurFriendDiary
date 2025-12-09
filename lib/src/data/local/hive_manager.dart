@@ -83,66 +83,44 @@ class HiveManager {
   /// Initialize Hive and open all boxes
   Future<void> initialize() async {
     if (_isInitialized) {
-      logger.d("🔍 DEBUG: HiveManager already initialized");
       return;
     }
-
-    logger.d("🔍 DEBUG: Starting HiveManager initialization");
 
     try {
       // Initialize Hive
       await Hive.initFlutter();
-      logger.d("🔍 DEBUG: Hive.initFlutter() completed");
 
       // Initialize encryption service
-      logger.d("🔐 DEBUG: Initializing encryption service...");
       await EncryptionService.initialize();
-      logger.d("✅ DEBUG: Encryption service initialized successfully");
 
       // Register all adapters
       await _registerAdapters();
 
       // Check if migration is needed (existing v1.0.7 users)
-      logger.d("🔍 DEBUG: Checking if migration needed...");
       final needsMigration = await EncryptionService.needsMigration();
 
       if (needsMigration) {
-        logger.w("⚠️ DEBUG: Migration needed - running DataMigrationService");
-
         final migrationService = DataMigrationService();
         final result = await migrationService.migrateToEncrypted();
 
-        if (result.success) {
-          logger.i(
-              "✅ DEBUG: Migration completed successfully: ${result.totalRecordsMigrated} records across ${result.boxesProcessed.length} boxes in ${result.duration.inSeconds}s");
-        } else {
+        if (!result.success) {
           logger.e("❌ DEBUG: Migration failed: ${result.message}");
           if (result.errors.isNotEmpty) {
             logger.e("   Errors: ${result.errors.join(', ')}");
           }
-          // Continue anyway - original data remains accessible
-          logger.w(
-              "⚠️ DEBUG: Continuing with unencrypted boxes - migration will retry next launch");
         }
-      } else {
-        logger.d(
-            "ℹ️ DEBUG: No migration needed - boxes already encrypted or fresh install");
       }
 
       // Get encryption cipher for opening boxes
-      logger.d("🔐 DEBUG: Getting encryption cipher...");
       final cipher = await EncryptionService.getEncryptionCipher();
-      logger.d("✅ DEBUG: Encryption cipher obtained");
 
       // Open all boxes with encryption
-      logger.d("🔐 DEBUG: Opening all boxes with encryption enabled...");
       await _openAllBoxes(cipher);
 
       // Diagnostic: Verify data persistence right after opening boxes
       await verifyDataPersistence();
 
       _isInitialized = true;
-      logger.i("✅ DEBUG: HiveManager initialization completed successfully");
     } catch (e, stackTrace) {
       logger.e("🚨 ERROR: HiveManager initialization failed: $e");
       logger.e("🚨 STACK: $stackTrace");
@@ -152,106 +130,84 @@ class HiveManager {
 
   /// Register all Hive adapters
   Future<void> _registerAdapters() async {
-    logger.d("🔍 DEBUG: Registering Hive adapters");
-
     if (!Hive.isAdapterRegistered(1)) {
       Hive.registerAdapter(PetProfileAdapter());
-      logger.d("✅ DEBUG: PetProfile adapter registered with typeId 1");
     }
 
     if (!Hive.isAdapterRegistered(2)) {
       Hive.registerAdapter(FeedingEntryAdapter());
-      logger.d("✅ DEBUG: FeedingEntry adapter registered with typeId 2");
     }
 
     if (!Hive.isAdapterRegistered(3)) {
       Hive.registerAdapter(WalkAdapter());
-      logger.d("✅ DEBUG: Walk adapter registered with typeId 3");
     }
 
     if (!Hive.isAdapterRegistered(4)) {
       Hive.registerAdapter(WalkTypeAdapter());
-      logger.d("✅ DEBUG: WalkType adapter registered with typeId 4");
     }
 
     if (!Hive.isAdapterRegistered(5)) {
       Hive.registerAdapter(MedicationEntryAdapter());
-      logger.d("✅ DEBUG: MedicationEntry adapter registered with typeId 5");
     }
 
     if (!Hive.isAdapterRegistered(6)) {
       Hive.registerAdapter(AppointmentEntryAdapter());
-      logger.d("✅ DEBUG: AppointmentEntry adapter registered with typeId 6");
     }
 
     if (!Hive.isAdapterRegistered(7)) {
       Hive.registerAdapter(WalkLocationAdapter());
-      logger.d("✅ DEBUG: WalkLocation adapter registered with typeId 7");
     }
 
     if (!Hive.isAdapterRegistered(9)) {
       Hive.registerAdapter(ReportEntryAdapter());
-      logger.d("✅ DEBUG: ReportEntry adapter registered with typeId 9");
     }
 
     if (!Hive.isAdapterRegistered(8)) {
       Hive.registerAdapter(UserProfileAdapter());
-      logger.d("✅ DEBUG: UserProfile adapter registered with typeId 8");
     }
 
     if (!Hive.isAdapterRegistered(10)) {
       Hive.registerAdapter(ReminderTypeAdapter());
-      logger.d("✅ DEBUG: ReminderType adapter registered with typeId 10");
     }
 
     if (!Hive.isAdapterRegistered(11)) {
       Hive.registerAdapter(ReminderFrequencyAdapter());
-      logger.d("✅ DEBUG: ReminderFrequency adapter registered with typeId 11");
     }
 
     if (!Hive.isAdapterRegistered(12)) {
       Hive.registerAdapter(ReminderAdapter());
-      logger.d("✅ DEBUG: Reminder adapter registered with typeId 12");
     }
 
     if (!Hive.isAdapterRegistered(13)) {
       Hive.registerAdapter(TimeOfDayModelAdapter());
-      logger.d("✅ DEBUG: TimeOfDayModel adapter registered with typeId 13");
     }
 
     if (!Hive.isAdapterRegistered(14)) {
       Hive.registerAdapter(WeightEntryAdapter());
-      logger.d("✅ DEBUG: WeightEntry adapter registered with typeId 14");
     }
 
     if (!Hive.isAdapterRegistered(15)) {
       Hive.registerAdapter(WeightUnitAdapter());
-      logger.d("✅ DEBUG: WeightUnit adapter registered with typeId 15");
     }
 
     if (!Hive.isAdapterRegistered(16)) {
       Hive.registerAdapter(PetPhotoAdapter());
-      logger.d("✅ DEBUG: PetPhoto adapter registered with typeId 16");
     }
 
     if (!Hive.isAdapterRegistered(18)) {
       Hive.registerAdapter(MedicationPurchaseAdapter());
-      logger.d("✅ DEBUG: MedicationPurchase adapter registered with typeId 18");
     }
 
     if (!Hive.isAdapterRegistered(19)) {
       Hive.registerAdapter(VetProfileAdapter());
-      logger.d("✅ DEBUG: VetProfile adapter registered with typeId 19");
     }
 
     if (!Hive.isAdapterRegistered(20)) {
       Hive.registerAdapter(HealthReportAdapter());
-      logger.d("✅ DEBUG: HealthReport adapter registered with typeId 20");
     }
 
     if (!Hive.isAdapterRegistered(21)) {
       Hive.registerAdapter(ExpenseReportAdapter());
-      logger.d("✅ DEBUG: ExpenseReport adapter registered with typeId 21");
     }
 
     if (!Hive.isAdapterRegistered(22)) {
@@ -262,59 +218,47 @@ class HiveManager {
 
     if (!Hive.isAdapterRegistered(23)) {
       Hive.registerAdapter(VaccinationStepAdapter());
-      logger.d("✅ DEBUG: VaccinationStep adapter registered with typeId 23");
     }
 
     if (!Hive.isAdapterRegistered(24)) {
       Hive.registerAdapter(RecurringScheduleAdapter());
-      logger.d("✅ DEBUG: RecurringSchedule adapter registered with typeId 24");
     }
 
     if (!Hive.isAdapterRegistered(25)) {
       Hive.registerAdapter(DewormingProtocolAdapter());
-      logger.d("✅ DEBUG: DewormingProtocol adapter registered with typeId 25");
     }
 
     if (!Hive.isAdapterRegistered(26)) {
       Hive.registerAdapter(DewormingScheduleAdapter());
-      logger.d("✅ DEBUG: DewormingSchedule adapter registered with typeId 26");
     }
 
     if (!Hive.isAdapterRegistered(27)) {
       Hive.registerAdapter(TreatmentPlanAdapter());
-      logger.d("✅ DEBUG: TreatmentPlan adapter registered with typeId 27");
     }
 
     if (!Hive.isAdapterRegistered(28)) {
       Hive.registerAdapter(TreatmentTaskAdapter());
-      logger.d("✅ DEBUG: TreatmentTask adapter registered with typeId 28");
     }
 
     if (!Hive.isAdapterRegistered(29)) {
       Hive.registerAdapter(ReminderConfigAdapter());
-      logger.d("✅ DEBUG: ReminderConfig adapter registered with typeId 29");
     }
 
     if (!Hive.isAdapterRegistered(30)) {
       Hive.registerAdapter(VaccinationEventAdapter());
-      logger.d("✅ DEBUG: VaccinationEvent adapter registered with typeId 30");
     }
 
     if (!Hive.isAdapterRegistered(31)) {
       Hive.registerAdapter(PetGenderAdapter());
-      logger.d("✅ DEBUG: PetGender adapter registered with typeId 31");
     }
 
     if (!Hive.isAdapterRegistered(32)) {
       Hive.registerAdapter(PdfConsentAdapter());
-      logger.d("✅ DEBUG: PdfConsent adapter registered with typeId 32");
     }
   }
 
   /// Open all boxes in the correct order
   Future<void> _openAllBoxes(HiveAesCipher? cipher) async {
-    logger.d("🔍 DEBUG: Opening all Hive boxes with encryption enabled");
-
     // Open pet profiles box first (most important)
     _petProfileBox = await _openBox<PetProfile>(
       petProfileBoxName,
@@ -403,18 +347,6 @@ class HiveManager {
       encryptionCipher: cipher,
     );
 
-    logger.d("✅ DEBUG: All boxes opened successfully with encryption");
-
-    // DEBUG: Check if pdf_export_consent key exists in app_prefs box
-    if (_appPrefsBox != null) {
-      final hasPdfConsent = _appPrefsBox!.containsKey('pdf_export_consent');
-      logger.d("🔍 DEBUG: app_prefs box has pdf_export_consent key: $hasPdfConsent");
-      if (hasPdfConsent) {
-        final consent = _appPrefsBox!.get('pdf_export_consent');
-        logger.d("📊 DEBUG: Existing pdf_export_consent data: $consent");
-      }
-    }
-
     // Mark encryption initialization complete for fresh installs
     // (Migration sets its own flag after migrating data)
     final prefs = await SharedPreferences.getInstance();
@@ -423,7 +355,6 @@ class HiveManager {
 
     if (!migrationAlreadyCompleted) {
       await prefs.setBool('hive_encryption_migration_completed_v1', true);
-      logger.d("✅ DEBUG: Encryption initialization flag saved");
     }
   }
 
@@ -851,10 +782,8 @@ class HiveManager {
 
   /// Close all boxes
   Future<void> close() async {
-    logger.d("🔍 DEBUG: Closing all Hive boxes");
     await Hive.close();
     _isInitialized = false;
-    logger.d("✅ DEBUG: All Hive boxes closed");
   }
 
   /// Flush all boxes to ensure data is written to disk
@@ -867,8 +796,6 @@ class HiveManager {
   /// - After critical data changes
   /// - Before app termination
   Future<void> flushAllBoxes() async {
-    logger.d("💾 DEBUG: Flushing all Hive boxes to disk...");
-
     try {
       // Flush all typed boxes
       await _petProfileBox?.flush();
@@ -893,8 +820,6 @@ class HiveManager {
       // Flush untyped boxes
       await _settingsBox?.flush();
       await _appPrefsBox?.flush();
-
-      logger.d("✅ DEBUG: All boxes flushed to disk successfully");
     } catch (e) {
       logger.e("🚨 ERROR: Failed to flush boxes: $e");
       // Don't rethrow - flushing is best-effort
@@ -974,13 +899,9 @@ class HiveManager {
   /// Clear all data (for testing/debugging)
   /// Note: Hive must be initialized before calling this method
   Future<void> clearAllData() async {
-    logger.d("🔧 DEBUG: Clearing all Hive data");
-
     try {
       // Initialize Hive if not already initialized
       if (!_isInitialized) {
-        logger
-            .d("🔍 DEBUG: Hive not initialized, initializing for clearAllData");
         await Hive.initFlutter();
       }
 
@@ -1009,8 +930,6 @@ class HiveManager {
       await Hive.deleteBoxFromDisk(vaccinationEventBoxName);
       await Hive.deleteBoxFromDisk(settingsBoxName);
       await Hive.deleteBoxFromDisk(appPrefsBoxName);
-
-      logger.d("✅ DEBUG: All Hive data cleared");
     } catch (e) {
       logger.e("🚨 ERROR: Failed to clear some Hive data: $e");
     }

@@ -11,34 +11,21 @@ class PdfConsentRepositoryImpl implements PdfConsentRepository {
 
   @override
   Future<PdfConsent?> getConsent() async {
-    print('🗄️ [REPOSITORY] getConsent() called');
     final box = HiveBoxes.getAppPrefs();
     final consent = box.get(_consentKey) as PdfConsent?;
-    print('🗄️ [REPOSITORY] Retrieved consent: ${consent != null ? "exists" : "null"}');
-    if (consent != null) {
-      print('  - consentGiven: ${consent.consentGiven}');
-      print('  - dontAskAgain: ${consent.dontAskAgain}');
-      print('  - timestamp: ${consent.timestamp}');
-    }
     return consent;
   }
 
   @override
   Future<void> saveConsent(PdfConsent consent) async {
-    print('💾 [REPOSITORY] saveConsent() called');
-    print('  - consentGiven: ${consent.consentGiven}');
-    print('  - dontAskAgain: ${consent.dontAskAgain}');
     final box = HiveBoxes.getAppPrefs();
     await box.put(_consentKey, consent);
-    print('✅ [REPOSITORY] Consent saved successfully');
   }
 
   @override
   Future<void> deleteConsent() async {
-    print('🗑️ [REPOSITORY] deleteConsent() called');
     final box = HiveBoxes.getAppPrefs();
     await box.delete(_consentKey);
-    print('✅ [REPOSITORY] Consent deleted successfully');
   }
 
   @override

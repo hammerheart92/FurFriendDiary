@@ -123,8 +123,8 @@ class ReminderSchedulerService {
     }
 
     // Fetch ReminderConfig for this pet and event type
-    final configs = await reminderConfigRepository.getByPetIdAndEventType(
-        petId, eventType);
+    final configs =
+        await reminderConfigRepository.getByPetIdAndEventType(petId, eventType);
     final config = configs.isNotEmpty ? configs.first : null;
 
     // Determine reminder offsets
@@ -328,8 +328,7 @@ class ReminderSchedulerService {
           'deworm_${entry.dewormingType}_${entry.scheduledDate.millisecondsSinceEpoch}';
 
       // Construct title and description
-      final title =
-          '${_capitalize(entry.dewormingType)} Deworming Treatment';
+      final title = '${_capitalize(entry.dewormingType)} Deworming Treatment';
       final description = entry.productName != null
           ? 'Product: ${entry.productName}'
           : (entry.notes ?? 'Scheduled deworming treatment');
@@ -390,8 +389,8 @@ class ReminderSchedulerService {
   Future<List<String>> scheduleAppointmentReminders({
     required AppointmentEntry appointment,
   }) async {
-    logger.i(
-        'Scheduling appointment reminders: appointmentId=${appointment.id}');
+    logger
+        .i('Scheduling appointment reminders: appointmentId=${appointment.id}');
 
     // Use appointmentTime which contains both date and time
     final eventDate = appointment.appointmentTime;
@@ -488,8 +487,8 @@ class ReminderSchedulerService {
     // Option B: Cancel by pattern
     if (petId != null && eventType != null && eventId != null) {
       // Fetch ReminderConfig to get possible offsets
-      final configs =
-          await reminderConfigRepository.getByPetIdAndEventType(petId, eventType);
+      final configs = await reminderConfigRepository.getByPetIdAndEventType(
+          petId, eventType);
       final config = configs.isNotEmpty ? configs.first : null;
 
       List<int> possibleOffsets = config?.reminderDays ??
@@ -498,15 +497,16 @@ class ReminderSchedulerService {
 
       // Generate and cancel all possible reminder IDs
       for (final offset in possibleOffsets) {
-        final reminderId = generateReminderId(petId, eventType, eventId, offset);
+        final reminderId =
+            generateReminderId(petId, eventType, eventId, offset);
         try {
           await notificationService.cancelReminder(reminderId);
           cancelledCount++;
           logger.d('Cancelled reminder by pattern: $reminderId');
         } catch (e) {
           // Silent fail - reminder may not exist
-          logger.d(
-              'Reminder not found (expected if not scheduled): $reminderId');
+          logger
+              .d('Reminder not found (expected if not scheduled): $reminderId');
         }
       }
     }
@@ -705,7 +705,8 @@ class ReminderSchedulerService {
       case 'medication':
         return ReminderType.medication;
       default:
-        return ReminderType.appointment; // Default to appointment for unknown types
+        return ReminderType
+            .appointment; // Default to appointment for unknown types
     }
   }
 

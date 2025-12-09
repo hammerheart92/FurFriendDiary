@@ -102,9 +102,8 @@ class ReminderConfigRepositoryImpl implements ReminderConfigRepository {
   @override
   Future<List<ReminderConfig>> getByEventType(String eventType) async {
     try {
-      final configs = box.values
-          .where((config) => config.eventType == eventType)
-          .toList();
+      final configs =
+          box.values.where((config) => config.eventType == eventType).toList();
       // Sort by creation date, newest first
       configs.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       logger.i(
@@ -158,7 +157,8 @@ class ReminderConfigRepositoryImpl implements ReminderConfigRepository {
       logger.i(
           "✅ DEBUG: Deleted reminder configuration with ID $id${config != null ? " (eventType: '${config.eventType}')" : ""}");
     } catch (e) {
-      logger.e("🚨 ERROR: Failed to delete reminder configuration with ID $id: $e");
+      logger.e(
+          "🚨 ERROR: Failed to delete reminder configuration with ID $id: $e");
       rethrow;
     }
   }

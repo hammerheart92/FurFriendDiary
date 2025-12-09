@@ -62,7 +62,9 @@ class _FileAndConsolePrinter extends LogPrinter {
 
     // Write to file asynchronously (don't await to avoid blocking) - only in debug mode
     if (kDebugMode && logFile != null) {
-      logFile!.writeAsString('$logLine\n', mode: FileMode.append).catchError((e) {
+      logFile!
+          .writeAsString('$logLine\n', mode: FileMode.append)
+          .catchError((e) {
         print('Error writing to log file: $e');
         return logFile!; // Return the file even on error
       });

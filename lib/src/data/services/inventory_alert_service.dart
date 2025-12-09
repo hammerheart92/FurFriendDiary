@@ -16,8 +16,8 @@ class InventoryAlertService {
     try {
       final prefs = await SharedPreferences.getInstance();
       final languageCode = prefs.getString('app_language') ??
-                           prefs.getString('language_code') ??
-                           ui.PlatformDispatcher.instance.locale.languageCode;
+          prefs.getString('language_code') ??
+          ui.PlatformDispatcher.instance.locale.languageCode;
       return Locale(languageCode);
     } catch (e) {
       return const Locale('en'); // Fallback to English
@@ -86,11 +86,13 @@ class InventoryAlertService {
     final l10n = lookupAppLocalizations(locale);
 
     // Use localized unit name for pills, fallback to provided unit
-    final localizedUnit = stockUnit.toLowerCase() == 'pills' ? l10n.pills : stockUnit;
+    final localizedUnit =
+        stockUnit.toLowerCase() == 'pills' ? l10n.pills : stockUnit;
 
     // Get localized body text
     final bodyText = l10n.lowStockBody(stockQuantity, localizedUnit);
-    final titleText = isCritical ? l10n.criticalLowStockAlert : 'Low Stock Alert';
+    final titleText =
+        isCritical ? l10n.criticalLowStockAlert : 'Low Stock Alert';
 
     final androidDetails = AndroidNotificationDetails(
       'reminders',

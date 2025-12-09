@@ -51,7 +51,8 @@ class _WalksScreenState extends ConsumerState<WalksScreen>
               child: walksAsync.when(
                 data: (walks) {
                   // Convert Walk models to WalkEntry for UI display
-                  final allWalks = walks.map((w) => WalkEntry.fromWalk(w)).toList();
+                  final allWalks =
+                      walks.map((w) => WalkEntry.fromWalk(w)).toList();
                   final filtered = _filteredWalks(allWalks);
                   final isEmpty = filtered.isEmpty;
 
@@ -63,7 +64,8 @@ class _WalksScreenState extends ConsumerState<WalksScreen>
                   if (filtered.isNotEmpty) {
                     logger.d('📱 UI WALKS LIST:');
                     for (int i = 0; i < filtered.length; i++) {
-                      logger.d('   ${i + 1}. ${filtered[i].note} at ${filtered[i].start}');
+                      logger.d(
+                          '   ${i + 1}. ${filtered[i].note} at ${filtered[i].start}');
                     }
                   } else if (allWalks.isNotEmpty) {
                     logger.d(

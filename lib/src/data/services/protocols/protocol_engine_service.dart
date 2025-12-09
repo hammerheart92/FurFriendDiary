@@ -99,8 +99,7 @@ class ProtocolEngineService {
     } else {
       // Interval-based dose: Calculate from last dose + intervalDays
       if (step.intervalDays == null) {
-        logger.e(
-            'Step $stepIndex has no intervalDays for booster calculation');
+        logger.e('Step $stepIndex has no intervalDays for booster calculation');
         return null;
       }
       calculatedDate =
@@ -302,9 +301,11 @@ class ProtocolEngineService {
 
           // Calculate next treatment
           if (schedule.recurring != null) {
-            currentDate = addMonths(currentDate, schedule.recurring!.intervalMonths);
+            currentDate =
+                addMonths(currentDate, schedule.recurring!.intervalMonths);
           } else if (schedule.intervalDays != null) {
-            currentDate = currentDate.add(Duration(days: schedule.intervalDays!));
+            currentDate =
+                currentDate.add(Duration(days: schedule.intervalDays!));
           } else {
             break; // One-time treatment
           }
@@ -327,7 +328,8 @@ class ProtocolEngineService {
         }
 
         // Recurring treatment - calculate next upcoming treatment
-        final startDate = pet.birthday!.add(Duration(days: schedule.ageInWeeks * 7));
+        final startDate =
+            pet.birthday!.add(Duration(days: schedule.ageInWeeks * 7));
 
         // Get max doses limit if specified
         final maxDoses = schedule.recurring?.numberOfDoses;
@@ -343,7 +345,7 @@ class ProtocolEngineService {
           if (schedule.recurring != null) {
             // Month-based interval: calculate approximately how many treatments have passed
             final monthsSinceStart = (now.year - startDate.year) * 12 +
-                                     (now.month - startDate.month);
+                (now.month - startDate.month);
             final intervalMonths = schedule.recurring!.intervalMonths;
             final dosesPassed = (monthsSinceStart / intervalMonths).floor();
 
@@ -364,7 +366,8 @@ class ProtocolEngineService {
               final jumpToDose = maxDoses != null
                   ? dosesPassed.clamp(0, maxDoses - 1)
                   : dosesPassed;
-              currentDate = startDate.add(Duration(days: jumpToDose * schedule.intervalDays!));
+              currentDate = startDate
+                  .add(Duration(days: jumpToDose * schedule.intervalDays!));
               dosesGenerated = jumpToDose;
             }
           }
@@ -377,18 +380,22 @@ class ProtocolEngineService {
             // We're at the last dose, move to it
             dosesGenerated = maxDoses - 1;
             if (schedule.recurring != null) {
-              currentDate = addMonths(startDate, dosesGenerated * schedule.recurring!.intervalMonths);
+              currentDate = addMonths(startDate,
+                  dosesGenerated * schedule.recurring!.intervalMonths);
             } else if (schedule.intervalDays != null) {
-              currentDate = startDate.add(Duration(days: dosesGenerated * schedule.intervalDays!));
+              currentDate = startDate
+                  .add(Duration(days: dosesGenerated * schedule.intervalDays!));
             }
             break;
           }
 
           dosesGenerated++;
           if (schedule.recurring != null) {
-            currentDate = addMonths(startDate, dosesGenerated * schedule.recurring!.intervalMonths);
+            currentDate = addMonths(
+                startDate, dosesGenerated * schedule.recurring!.intervalMonths);
           } else if (schedule.intervalDays != null) {
-            currentDate = startDate.add(Duration(days: dosesGenerated * schedule.intervalDays!));
+            currentDate = startDate
+                .add(Duration(days: dosesGenerated * schedule.intervalDays!));
           }
         }
 
@@ -410,9 +417,11 @@ class ProtocolEngineService {
 
           // Calculate next treatment
           if (schedule.recurring != null) {
-            currentDate = addMonths(startDate, dosesGenerated * schedule.recurring!.intervalMonths);
+            currentDate = addMonths(
+                startDate, dosesGenerated * schedule.recurring!.intervalMonths);
           } else if (schedule.intervalDays != null) {
-            currentDate = startDate.add(Duration(days: dosesGenerated * schedule.intervalDays!));
+            currentDate = startDate
+                .add(Duration(days: dosesGenerated * schedule.intervalDays!));
           } else {
             break; // One-time treatment (shouldn't reach here but safeguard)
           }
@@ -492,14 +501,12 @@ class ProtocolEngineService {
 
     final dueVaccinations = allVaccinationEntries
         .where((e) =>
-            e.scheduledDate.isAfter(now) &&
-            e.scheduledDate.isBefore(windowEnd))
+            e.scheduledDate.isAfter(now) && e.scheduledDate.isBefore(windowEnd))
         .toList();
 
     final dueDeworming = allDewormingEntries
         .where((e) =>
-            e.scheduledDate.isAfter(now) &&
-            e.scheduledDate.isBefore(windowEnd))
+            e.scheduledDate.isAfter(now) && e.scheduledDate.isBefore(windowEnd))
         .toList();
 
     if (dueVaccinations.isEmpty && dueDeworming.isEmpty) {
@@ -841,7 +848,6 @@ ProtocolEngineService protocolEngineService(ProtocolEngineServiceRef ref) {
   return ProtocolEngineService(
     vaccinationProtocolRepository:
         ref.watch(vaccinationProtocolRepositoryProvider),
-    dewormingProtocolRepository:
-        ref.watch(dewormingProtocolRepositoryProvider),
+    dewormingProtocolRepository: ref.watch(dewormingProtocolRepositoryProvider),
   );
 }

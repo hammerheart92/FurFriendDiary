@@ -31,7 +31,8 @@ import '../../providers/protocols/reminder_config_provider.dart';
 /// ```
 class ReminderSettingsScreen extends ConsumerStatefulWidget {
   final PetProfile pet;
-  final String eventType; // 'vaccination', 'deworming', 'appointment', 'medication'
+  final String
+      eventType; // 'vaccination', 'deworming', 'appointment', 'medication'
 
   const ReminderSettingsScreen({
     super.key,
@@ -224,10 +225,15 @@ class _ReminderSettingsScreenState
                       : l10n.disableReminders,
                 ),
                 secondary: Icon(
-                  _isEnabled ? Icons.notifications_active : Icons.notifications_off,
+                  _isEnabled
+                      ? Icons.notifications_active
+                      : Icons.notifications_off,
                   color: _isEnabled
                       ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                      : Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.5),
                 ),
               ),
             ),
@@ -307,7 +313,8 @@ class _ReminderSettingsScreenState
               child: FilledButton.icon(
                 onPressed: _isSaving
                     ? null
-                    : () => _saveReminderSettings(context, l10n, existingConfig),
+                    : () =>
+                        _saveReminderSettings(context, l10n, existingConfig),
                 icon: _isSaving
                     ? const SizedBox(
                         width: 20,
@@ -361,7 +368,8 @@ class _ReminderSettingsScreenState
       if (_twoWeeksBefore) reminderDays.add(14);
 
       // If disabled, keep empty list
-      final effectiveReminderDays = _isEnabled ? reminderDays : [1]; // Minimum required by model
+      final effectiveReminderDays =
+          _isEnabled ? reminderDays : [1]; // Minimum required by model
 
       // Create or update config
       final config = existingConfig?.copyWith(
@@ -442,10 +450,9 @@ class _PetInfoHeader extends StatelessWidget {
           CircleAvatar(
             radius: 24,
             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-            backgroundImage:
-                pet.photoPath != null && pet.photoPath!.isNotEmpty
-                    ? AssetImage(pet.photoPath!)
-                    : null,
+            backgroundImage: pet.photoPath != null && pet.photoPath!.isNotEmpty
+                ? AssetImage(pet.photoPath!)
+                : null,
             child: pet.photoPath == null || pet.photoPath!.isEmpty
                 ? Icon(
                     Icons.pets,
@@ -472,9 +479,8 @@ class _PetInfoHeader extends StatelessWidget {
                   backgroundColor:
                       Theme.of(context).colorScheme.secondaryContainer,
                   labelStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSecondaryContainer,
+                        color:
+                            Theme.of(context).colorScheme.onSecondaryContainer,
                       ),
                 ),
               ],

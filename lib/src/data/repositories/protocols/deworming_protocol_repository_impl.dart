@@ -49,8 +49,10 @@ class DewormingProtocolRepositoryImpl implements DewormingProtocolRepository {
   @override
   Future<List<DewormingProtocol>> getBySpecies(String species) async {
     try {
-      final protocols =
-          box.values.where((protocol) => protocol.species.toLowerCase() == species.toLowerCase()).toList();
+      final protocols = box.values
+          .where((protocol) =>
+              protocol.species.toLowerCase() == species.toLowerCase())
+          .toList();
       // Sort by name alphabetically
       protocols.sort((a, b) => a.name.compareTo(b.name));
       logger.i(
@@ -106,8 +108,8 @@ class DewormingProtocolRepositoryImpl implements DewormingProtocolRepository {
       logger.i(
           "✅ DEBUG: Saved deworming protocol '${protocol.name}' with ID ${protocol.id}");
     } catch (e) {
-      logger
-          .e("🚨 ERROR: Failed to save deworming protocol '${protocol.name}': $e");
+      logger.e(
+          "🚨 ERROR: Failed to save deworming protocol '${protocol.name}': $e");
       rethrow;
     }
   }

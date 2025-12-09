@@ -532,7 +532,8 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
                         onTap: () async {
                           // This option works correctly - auto-dismisses as expected
                           final navigator = Navigator.of(bottomSheetContext);
-                          await Future.delayed(const Duration(milliseconds: 100));
+                          await Future.delayed(
+                              const Duration(milliseconds: 100));
                           navigator.pop();
                           await _createMultipleReminders(medication);
                         },
@@ -672,7 +673,8 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
     }
   }
 
-  String _getReminderFrequencyLabel(ReminderFrequency frequency, AppLocalizations l10n) {
+  String _getReminderFrequencyLabel(
+      ReminderFrequency frequency, AppLocalizations l10n) {
     switch (frequency) {
       case ReminderFrequency.once:
         return l10n.once;

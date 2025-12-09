@@ -179,8 +179,7 @@ class ReportProvider extends _$ReportProvider {
 }
 
 @riverpod
-Stream<List<ReportEntry>> reportsByPetId(
-    ReportsByPetIdRef ref, String petId) {
+Stream<List<ReportEntry>> reportsByPetId(ReportsByPetIdRef ref, String petId) {
   final repository = ref.watch(reportRepositoryProvider);
   return repository.getReportsStreamByPetId(petId);
 }

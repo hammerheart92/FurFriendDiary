@@ -16,17 +16,10 @@ class PetProfileRepository {
 
   // Initialize boxes - called from InitService
   Future<void> init() async {
-    logger.i("🔍 DEBUG: PetProfileRepository.init() called");
-
     try {
       // Use HiveBoxes to get already opened boxes
       _profileBox = HiveBoxes.getPetProfiles();
-      logger.i("🔍 DEBUG: Got pet profiles box successfully");
-
       _settingsBox = HiveBoxes.getAppPrefs();
-      logger.i("🔍 DEBUG: Got app prefs box successfully");
-
-      logger.i("🔍 DEBUG: PetProfileRepository initialization completed");
     } catch (e) {
       logger.e("🚨 ERROR: PetProfileRepository.init() failed: $e");
       rethrow;
@@ -36,13 +29,7 @@ class PetProfileRepository {
   // Get all profiles
   List<PetProfile> getAll() {
     try {
-      logger.d("🔍 DEBUG: getAll() - Box length: ${_profiles.length}");
-      logger.d("🔍 DEBUG: getAll() - Box keys: ${_profiles.keys.toList()}");
       final pets = _profiles.values.toList();
-      logger.d("🔍 DEBUG: getAll() - Successfully loaded ${pets.length} pets");
-      for (final pet in pets) {
-        logger.d("🔍 DEBUG: Pet '${pet.name}' - gender: [REDACTED]");
-      }
       return pets;
     } catch (e, stackTrace) {
       logger.e("🚨 ERROR in getAll: $e");
@@ -54,9 +41,7 @@ class PetProfileRepository {
   // Get active profiles only
   List<PetProfile> getActive() {
     try {
-      logger.d("🔍 DEBUG: getActive() - Fetching active profiles");
       final active = _profiles.values.where((p) => p.isActive).toList();
-      logger.d("🔍 DEBUG: getActive() - Found ${active.length} active profiles");
       return active;
     } catch (e, stackTrace) {
       logger.e("🚨 ERROR in getActive: $e");
@@ -94,27 +79,15 @@ class PetProfileRepository {
 
   // Add new profile
   Future<void> add(PetProfile profile) async {
-    logger
-        .i("🔍 DEBUG: PetProfileRepository.add() called for: ${profile.name}");
-
     try {
-      logger.d("🔍 DEBUG: Attempting to get pet_profiles box");
       final box =
           _profiles; // This will call HiveBoxes.getPetProfiles() with defensive checks
 
-      logger.d("🔍 DEBUG: Box retrieved successfully. IsOpen: ${box.isOpen}");
-      logger.d("🔍 DEBUG: Current box length: ${box.length}");
-
       // If this is the first profile, make it active
       final isFirstProfile = box.isEmpty;
-      logger.d("🔍 DEBUG: Is first profile: $isFirstProfile");
 
       final profileToSave =
           isFirstProfile ? profile.copyWith(isActive: true) : profile;
-
-      logger.d("🔍 DEBUG: About to save profile with ID: ${profile.id}");
-      logger.d(
-          "🔍 DEBUG: Profile to save - Name: ${profileToSave.name}, Active: ${profileToSave.isActive}");
 
       await box.put(profile.id, profileToSave);
       await box.flush(); // CRITICAL FIX: Flush to disk immediately
@@ -122,17 +95,9 @@ class PetProfileRepository {
       // DIAGNOSTIC: Verify data persistence right after saving
       await HiveManager.instance.verifyDataPersistence();
 
-      logger.i("🔍 DEBUG: Profile saved successfully!");
-      logger.d("🔍 DEBUG: Box now contains ${box.length} profiles");
-
-      // Verify the save
-      final savedProfile = box.get(profile.id);
-      logger.d("🔍 DEBUG: Verification - saved profile: ${savedProfile?.name}");
-
       if (isFirstProfile) {
         await _settings.put('hasCompletedSetup', true);
         await _settings.flush(); // CRITICAL FIX: Flush to disk immediately
-        logger.i("🔍 DEBUG: Setup completion flag set to true");
       }
     } catch (e) {
       logger.e("🚨 ERROR: addPetProfile failed: $e");
@@ -175,19 +140,14 @@ class PetProfileRepository {
   // Get current active profile
   PetProfile? getCurrentProfile() {
     try {
-      logger.d("🔍 DEBUG: getCurrentProfile() - Looking for active profile");
       final active = _profiles.values.firstWhere((p) => p.isActive);
-      logger.d("🔍 DEBUG: getCurrentProfile() - Found active: ${active.name}");
       return active;
     } catch (e) {
-      logger.d("🔍 DEBUG: getCurrentProfile() - No active profile, trying first available");
       // No active profile found, return first available
       if (_profiles.isNotEmpty) {
         final first = _profiles.values.first;
-        logger.d("🔍 DEBUG: getCurrentProfile() - Returning first: ${first.name}");
         return first;
       }
-      logger.d("🔍 DEBUG: getCurrentProfile() - No profiles available");
       return null;
     }
   }

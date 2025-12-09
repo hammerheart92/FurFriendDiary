@@ -23,9 +23,7 @@ class PdfConsentService extends _$PdfConsentService {
 
   @override
   Future<PdfConsent?> build() async {
-    print('🏗️ [PDF_CONSENT_PROVIDER] build() called - Loading initial consent state');
     final consent = await _repository.getConsent();
-    print('🏗️ [PDF_CONSENT_PROVIDER] build() completed - consent: ${consent == null ? "null" : "exists (consentGiven: ${consent.consentGiven})"}');
     return consent;
   }
 
@@ -36,32 +34,19 @@ class PdfConsentService extends _$PdfConsentService {
   ///
   /// Returns true if PDF export can proceed, false otherwise
   Future<bool> checkConsentBeforeExport(BuildContext context) async {
-    print('🔍 [PDF_CONSENT] checkConsentBeforeExport() called');
     if (!context.mounted) {
-      print('❌ [PDF_CONSENT] Context not mounted, returning false');
       return false;
     }
 
     final consent = await _repository.getConsent();
 
-    print('📊 [PDF_CONSENT] Consent state retrieved:');
-    print('  - consent is null: ${consent == null}');
-    if (consent != null) {
-      print('  - consentGiven: ${consent.consentGiven}');
-      print('  - dontAskAgain: ${consent.dontAskAgain}');
-      print('  - timestamp: ${consent.timestamp}');
-      print('  - id: ${consent.id}');
-    }
-
     // Case 1: Consent already granted
     if (consent != null && consent.consentGiven) {
-      print('✅ [PDF_CONSENT] Case 1: Consent already granted');
       return true;
     }
 
     // Case 2: User previously declined with "don't ask again"
     if (consent != null && !consent.consentGiven && consent.dontAskAgain) {
-      print('🚫 [PDF_CONSENT] Case 2: User previously declined with "don\'t ask again"');
       if (context.mounted) {
         final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -81,28 +66,22 @@ class PdfConsentService extends _$PdfConsentService {
     }
 
     // Case 3: No decision made or declined without "don't ask again" → show dialog
-    print('💬 [PDF_CONSENT] Case 3: Showing consent dialog');
     if (context.mounted) {
-      print('🎬 [PDF_CONSENT] About to call showPdfConsentDialog()');
       final result = await showPdfConsentDialog(context);
-      print('📝 [PDF_CONSENT] Dialog result: $result');
 
       if (result == null) {
         // Dialog dismissed (shouldn't happen with barrierDismissible: false)
-        print('❌ [PDF_CONSENT] Dialog dismissed (null result)');
         return false;
       }
 
       if (result.result == ConsentDialogResult.accepted) {
         // User accepted consent
-        print('✅ [PDF_CONSENT] User accepted consent');
         await _saveConsent(
           PdfConsent.granted(dontAskAgain: result.dontAskAgain),
         );
         return true;
       } else {
         // User declined consent
-        print('🚫 [PDF_CONSENT] User declined consent');
         await _saveConsent(
           PdfConsent.declined(dontAskAgain: result.dontAskAgain),
         );
@@ -118,13 +97,11 @@ class PdfConsentService extends _$PdfConsentService {
       }
     }
 
-    print('❌ [PDF_CONSENT] Context not mounted after Case 3 check');
     return false;
   }
 
   /// Grant consent (called from Settings)
   Future<void> grantConsent() async {
-    print('⚙️ [PDF_CONSENT] grantConsent() called from Settings');
     final consent = PdfConsent.granted(dontAskAgain: true);
     await _saveConsent(consent);
   }
@@ -132,10 +109,7 @@ class PdfConsentService extends _$PdfConsentService {
   /// Revoke consent (called from Settings after confirmation)
   /// Deletes the consent record entirely so dialog appears on next export attempt
   Future<void> revokeConsent() async {
-    print('⚙️ [PDF_CONSENT] revokeConsent() called from Settings');
-    print('🗑️ [PDF_CONSENT] Deleting consent record to allow dialog on next export');
     await resetConsent();
-    print('✅ [PDF_CONSENT] Consent record deleted successfully');
   }
 
   /// Reset consent decision (for testing/debugging)

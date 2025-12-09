@@ -72,7 +72,8 @@ class DewormingScheduleScreen extends ConsumerWidget {
 
           // Edge case: All treatments completed
           final now = DateTime.now();
-          final allCompleted = schedule.every((entry) => entry.scheduledDate.isBefore(now));
+          final allCompleted =
+              schedule.every((entry) => entry.scheduledDate.isBefore(now));
           if (allCompleted) {
             return _buildAllCompletedMessage(context, l10n, theme, schedule);
           }
@@ -82,7 +83,8 @@ class DewormingScheduleScreen extends ConsumerWidget {
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) {
-          _logger.e('Error loading deworming schedule', error: error, stackTrace: stackTrace);
+          _logger.e('Error loading deworming schedule',
+              error: error, stackTrace: stackTrace);
           return _buildErrorMessage(context, l10n, theme, error);
         },
       ),
@@ -100,7 +102,8 @@ class DewormingScheduleScreen extends ConsumerWidget {
     ThemeData theme,
     List<DewormingScheduleEntry> schedule,
   ) {
-    final protocolAsync = ref.watch(dewormingProtocolByIdProvider(pet.dewormingProtocolId!));
+    final protocolAsync =
+        ref.watch(dewormingProtocolByIdProvider(pet.dewormingProtocolId!));
 
     return protocolAsync.when(
       data: (protocol) {
@@ -262,7 +265,8 @@ class DewormingScheduleScreen extends ConsumerWidget {
                     const SizedBox(height: 4),
                     Text(
                       l10n.birthDateLabel(
-                        DateFormat.yMMMd(Localizations.localeOf(context).languageCode)
+                        DateFormat.yMMMd(
+                                Localizations.localeOf(context).languageCode)
                             .format(pet.birthday!),
                       ),
                       style: theme.textTheme.bodySmall?.copyWith(
@@ -295,7 +299,8 @@ class DewormingScheduleScreen extends ConsumerWidget {
     final statusConfig = _getStatusConfig(theme, status);
 
     return Semantics(
-      label: '${l10n.treatmentNumber(treatmentNumber)}: ${_getTreatmentTypeLabel(l10n, entry.dewormingType)}, '
+      label:
+          '${l10n.treatmentNumber(treatmentNumber)}: ${_getTreatmentTypeLabel(l10n, entry.dewormingType)}, '
           '${_getStatusLabel(l10n, status, entry, context)}',
       child: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
@@ -408,7 +413,8 @@ class DewormingScheduleScreen extends ConsumerWidget {
                               const SizedBox(width: 6),
                               Expanded(
                                 child: Text(
-                                  _formatDateDisplay(l10n, entry, status, context),
+                                  _formatDateDisplay(
+                                      l10n, entry, status, context),
                                   style: theme.textTheme.bodyMedium?.copyWith(
                                     color: statusConfig.iconColor,
                                     fontWeight: FontWeight.w500,
@@ -426,7 +432,8 @@ class DewormingScheduleScreen extends ConsumerWidget {
                                 Icon(
                                   Icons.medication,
                                   size: 16,
-                                  color: theme.colorScheme.primary.withOpacity(0.7),
+                                  color: theme.colorScheme.primary
+                                      .withOpacity(0.7),
                                 ),
                                 const SizedBox(width: 6),
                                 Expanded(
@@ -443,36 +450,45 @@ class DewormingScheduleScreen extends ConsumerWidget {
                           ],
 
                           // Notes (use Romanian if available and locale matches)
-                          if (entry.notes != null && entry.notes!.isNotEmpty) ...[
+                          if (entry.notes != null &&
+                              entry.notes!.isNotEmpty) ...[
                             const SizedBox(height: 8),
                             Builder(
                               builder: (context) {
                                 final locale = Localizations.localeOf(context);
                                 final isRomanian = locale.languageCode == 'ro';
-                                final displayNotes = (isRomanian && entry.notesRo != null && entry.notesRo!.isNotEmpty)
+                                final displayNotes = (isRomanian &&
+                                        entry.notesRo != null &&
+                                        entry.notesRo!.isNotEmpty)
                                     ? entry.notesRo!
                                     : entry.notes!;
                                 return Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
-                                    color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                                    color: theme
+                                        .colorScheme.surfaceContainerHighest
+                                        .withOpacity(0.5),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Icon(
                                         Icons.info_outline,
                                         size: 14,
-                                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                        color: theme.colorScheme.onSurface
+                                            .withOpacity(0.6),
                                       ),
                                       const SizedBox(width: 6),
                                       Expanded(
                                         child: Text(
                                           displayNotes,
-                                          style: theme.textTheme.bodySmall?.copyWith(
+                                          style: theme.textTheme.bodySmall
+                                              ?.copyWith(
                                             fontSize: 12,
-                                            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                            color: theme.colorScheme.onSurface
+                                                .withOpacity(0.7),
                                           ),
                                         ),
                                       ),
@@ -673,7 +689,8 @@ class DewormingScheduleScreen extends ConsumerWidget {
 
           ...List.generate(schedule.length, (index) {
             final entry = schedule[index];
-            return _buildCompletedTreatmentCard(context, l10n, theme, entry, index + 1);
+            return _buildCompletedTreatmentCard(
+                context, l10n, theme, entry, index + 1);
           }),
 
           const SizedBox(height: 24),
@@ -774,14 +791,10 @@ class DewormingScheduleScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: isInternal
-            ? Colors.amber.shade100
-            : Colors.orange.shade100,
+        color: isInternal ? Colors.amber.shade100 : Colors.orange.shade100,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isInternal
-              ? Colors.amber.shade700
-              : Colors.orange.shade700,
+          color: isInternal ? Colors.amber.shade700 : Colors.orange.shade700,
           width: 1,
         ),
       ),
@@ -791,9 +804,7 @@ class DewormingScheduleScreen extends ConsumerWidget {
           Icon(
             _getTreatmentIcon(type),
             size: 12,
-            color: isInternal
-                ? Colors.amber.shade900
-                : Colors.orange.shade900,
+            color: isInternal ? Colors.amber.shade900 : Colors.orange.shade900,
           ),
           const SizedBox(width: 4),
           Text(
@@ -801,9 +812,8 @@ class DewormingScheduleScreen extends ConsumerWidget {
             style: theme.textTheme.labelSmall?.copyWith(
               fontSize: 10,
               fontWeight: FontWeight.bold,
-              color: isInternal
-                  ? Colors.amber.shade900
-                  : Colors.orange.shade900,
+              color:
+                  isInternal ? Colors.amber.shade900 : Colors.orange.shade900,
             ),
           ),
         ],

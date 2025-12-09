@@ -36,7 +36,8 @@ class ExifStripperService {
 
       // Save to app documents directory with unique filename
       final appDir = await getApplicationDocumentsDirectory();
-      final certificatesDir = Directory('${appDir.path}/vaccination_certificates');
+      final certificatesDir =
+          Directory('${appDir.path}/vaccination_certificates');
       if (!await certificatesDir.exists()) {
         await certificatesDir.create(recursive: true);
       }

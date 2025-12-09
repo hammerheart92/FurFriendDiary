@@ -139,7 +139,6 @@ class VaccinationService {
     }
   }
 
-
   // ============================================================================
   // CORE METHOD 2: Mark Vaccination as Completed
   // ============================================================================
@@ -161,7 +160,8 @@ class VaccinationService {
     List<String>? certificatePhotoUrls,
   }) async {
     try {
-      final existing = await vaccinationRepository.getVaccinationById(vaccinationId);
+      final existing =
+          await vaccinationRepository.getVaccinationById(vaccinationId);
       if (existing == null) {
         throw Exception('Vaccination not found: $vaccinationId');
       }
@@ -172,12 +172,14 @@ class VaccinationService {
         clinicName: clinicName ?? existing.clinicName,
         batchNumber: batchNumber ?? existing.batchNumber,
         notes: notes ?? existing.notes,
-        certificatePhotoUrls: certificatePhotoUrls ?? existing.certificatePhotoUrls,
+        certificatePhotoUrls:
+            certificatePhotoUrls ?? existing.certificatePhotoUrls,
         updatedAt: DateTime.now(),
       );
 
       await vaccinationRepository.updateVaccination(updated);
-      logger.i('Marked vaccination $vaccinationId as completed on $completedDate');
+      logger.i(
+          'Marked vaccination $vaccinationId as completed on $completedDate');
       return updated;
     } catch (e) {
       logger.e('Failed to mark vaccination as completed: $e');
@@ -201,7 +203,8 @@ class VaccinationService {
     String? notes,
   }) async {
     try {
-      final existing = await vaccinationRepository.getVaccinationById(vaccinationId);
+      final existing =
+          await vaccinationRepository.getVaccinationById(vaccinationId);
       if (existing == null) {
         throw Exception('Vaccination not found: $vaccinationId');
       }
@@ -227,7 +230,8 @@ class VaccinationService {
       );
 
       await vaccinationRepository.addVaccination(boosterEvent);
-      logger.i('Scheduled booster vaccination for ${existing.vaccineType} on $nextBoosterDate');
+      logger.i(
+          'Scheduled booster vaccination for ${existing.vaccineType} on $nextBoosterDate');
       return boosterEvent;
     } catch (e) {
       logger.e('Failed to schedule booster: $e');
@@ -242,8 +246,10 @@ class VaccinationService {
   /// Get a summary of vaccination statistics for a pet
   Future<VaccinationSummary> getVaccinationSummaryForPet(String petId) async {
     try {
-      final allVaccinations = await vaccinationRepository.getVaccinationsByPetId(petId);
-      final upcoming = await vaccinationRepository.getUpcomingVaccinations(petId);
+      final allVaccinations =
+          await vaccinationRepository.getVaccinationsByPetId(petId);
+      final upcoming =
+          await vaccinationRepository.getUpcomingVaccinations(petId);
       final overdue = await vaccinationRepository.getOverdueVaccinations(petId);
 
       // Count vaccinations completed this year
@@ -265,7 +271,8 @@ class VaccinationService {
       }
 
       // Get overdue vaccine types
-      final overdueVaccineTypes = overdue.map((v) => v.vaccineType).toSet().toList();
+      final overdueVaccineTypes =
+          overdue.map((v) => v.vaccineType).toSet().toList();
 
       final summary = VaccinationSummary(
         totalVaccinations: allVaccinations.length,
@@ -295,7 +302,8 @@ class VaccinationService {
 
   /// Check if a specific vaccine type is due for a pet
   Future<bool> isVaccineDue(String petId, String vaccineType) async {
-    final lastVaccination = await vaccinationRepository.getLastVaccinationByType(
+    final lastVaccination =
+        await vaccinationRepository.getLastVaccinationByType(
       petId,
       vaccineType,
     );
@@ -316,7 +324,8 @@ class VaccinationService {
 
   /// Get all available vaccine types that have been administered to a pet
   Future<List<String>> getVaccineTypesForPet(String petId) async {
-    final vaccinations = await vaccinationRepository.getVaccinationsByPetId(petId);
+    final vaccinations =
+        await vaccinationRepository.getVaccinationsByPetId(petId);
     return vaccinations.map((v) => v.vaccineType).toSet().toList();
   }
 }

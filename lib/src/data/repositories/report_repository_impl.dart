@@ -153,7 +153,8 @@ class ReportRepositoryImpl implements ReportRepository {
         ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
       controller.add(initialReports);
 
-      logger.i('[REPORT_REPO] getReportsStream - Initial emit: ${initialReports.length} reports for pet $petId');
+      logger.i(
+          '[REPORT_REPO] getReportsStream - Initial emit: ${initialReports.length} reports for pet $petId');
 
       // Listen to changes
       final subscription = box.watch().listen((_) {
@@ -163,7 +164,8 @@ class ReportRepositoryImpl implements ReportRepository {
           ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
         controller.add(reports);
 
-        logger.i('[REPORT_REPO] getReportsStream - Change detected: ${reports.length} reports');
+        logger.i(
+            '[REPORT_REPO] getReportsStream - Change detected: ${reports.length} reports');
       });
 
       // Cleanup

@@ -93,9 +93,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         : const AsyncValue.data(<UpcomingCareEvent>[]);
 
     return AppPage(
-      title: currentPet != null
-          ? l10n.petHome(currentPet.name)
-          : l10n.home,
+      title: currentPet != null ? l10n.petHome(currentPet.name) : l10n.home,
       body: Column(
         children: [
           // Pet Profile Display
@@ -174,7 +172,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   final displayEvents = events.take(5).toList();
 
                   if (displayEvents.isEmpty) {
-                    return const SizedBox.shrink(); // Don't show section if no events
+                    return const SizedBox
+                        .shrink(); // Don't show section if no events
                   }
 
                   return Column(
@@ -226,7 +225,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     break;
                                   case VaccinationRecordEvent():
                                     // Navigate to specific vaccination detail
-                                    context.push('/vaccinations/detail/${event.id}');
+                                    context.push(
+                                        '/vaccinations/detail/${event.id}');
                                     break;
                                   case VaccinationEvent():
                                     // Navigate to vaccination timeline (protocol schedule)
@@ -234,7 +234,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     break;
                                   case DewormingEvent():
                                     // Navigate to deworming schedule
-                                    context.push('/deworming/schedule/${currentPet.id}',
+                                    context.push(
+                                        '/deworming/schedule/${currentPet.id}',
                                         extra: currentPet);
                                     break;
                                 }
@@ -251,7 +252,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   height: 80,
                   child: Center(child: CircularProgressIndicator()),
                 ),
-                error: (error, stack) => const SizedBox.shrink(), // Hide on error
+                error: (error, stack) =>
+                    const SizedBox.shrink(), // Hide on error
               ),
             ],
           ],

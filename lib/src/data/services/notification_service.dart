@@ -13,8 +13,8 @@ Future<Locale> _getCurrentLocale() async {
   try {
     final prefs = await SharedPreferences.getInstance();
     final languageCode = prefs.getString('app_language') ??
-                         prefs.getString('language_code') ??
-                         ui.PlatformDispatcher.instance.locale.languageCode;
+        prefs.getString('language_code') ??
+        ui.PlatformDispatcher.instance.locale.languageCode;
     return Locale(languageCode);
   } catch (e) {
     return const Locale('en'); // Fallback to English
@@ -48,7 +48,8 @@ class NotificationService {
   bool _initialized = false;
 
   /// Generate localized notification title and body based on reminder
-  Future<Map<String, String>> _getLocalizedNotificationText(Reminder reminder) async {
+  Future<Map<String, String>> _getLocalizedNotificationText(
+      Reminder reminder) async {
     final locale = await _getCurrentLocale();
     final l10n = lookupAppLocalizations(locale);
 
@@ -120,7 +121,8 @@ class NotificationService {
 
       // Note: cancelAll() removed - it was deleting scheduled reminders on app restart!
       // The "Missing type parameter" error was fixed by adding complete AndroidNotificationDetails
-      _logger.i('✅ DEBUG: NotificationService initializing (preserving existing reminders)');
+      _logger.i(
+          '✅ DEBUG: NotificationService initializing (preserving existing reminders)');
 
       // CRITICAL: Delete old channel and create new one with correct importance
       await _deleteOldChannel();
@@ -149,7 +151,8 @@ class NotificationService {
         _logger.i('🗑️ Deleted old notification channel');
       } catch (e) {
         // Channel might not exist, that's fine
-        _logger.d('Old channel not found (this is expected on fresh install): $e');
+        _logger
+            .d('Old channel not found (this is expected on fresh install): $e');
       }
     }
   }
@@ -171,43 +174,44 @@ class NotificationService {
 
     if (androidPlugin != null) {
       await androidPlugin.createNotificationChannel(channel);
-      _logger.i('✅ Notification channel "reminders_v2" created with Importance.max');
+      _logger.i(
+          '✅ Notification channel "reminders_v2" created with Importance.max');
     }
   }
 
   /// Check notification permissions
-/// CRITICAL FIX: Handle null values from canScheduleExactNotifications()
-Future<void> _checkPermissions() async {
-  final androidPlugin = _notifications.resolvePlatformSpecificImplementation<
-      AndroidFlutterLocalNotificationsPlugin>();
+  /// CRITICAL FIX: Handle null values from canScheduleExactNotifications()
+  Future<void> _checkPermissions() async {
+    final androidPlugin = _notifications.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
 
-  if (androidPlugin != null) {
-    // Request permissions on Android 13+
-    await androidPlugin.requestNotificationsPermission();
+    if (androidPlugin != null) {
+      // Request permissions on Android 13+
+      await androidPlugin.requestNotificationsPermission();
 
-    // Check exact alarm permission (Android 12+/API 31+)
-    final canScheduleExactAlarms =
-        await androidPlugin.canScheduleExactNotifications();
-
-    // CRITICAL FIX: Treat null and false the same - both mean permission not granted
-    if (canScheduleExactAlarms != true) {
-      // Request permission - this opens Settings on Android 12+
-      await androidPlugin.requestExactAlarmsPermission();
-
-      // Wait a moment for settings to potentially be changed
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      // Verify again
-      final canScheduleAfterRequest =
+      // Check exact alarm permission (Android 12+/API 31+)
+      final canScheduleExactAlarms =
           await androidPlugin.canScheduleExactNotifications();
 
-      if (canScheduleAfterRequest != true) {
-        _logger.e(
-            'CRITICAL: Exact alarm permission NOT granted. Scheduled reminders WILL NOT WORK until user enables this permission manually!');
+      // CRITICAL FIX: Treat null and false the same - both mean permission not granted
+      if (canScheduleExactAlarms != true) {
+        // Request permission - this opens Settings on Android 12+
+        await androidPlugin.requestExactAlarmsPermission();
+
+        // Wait a moment for settings to potentially be changed
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        // Verify again
+        final canScheduleAfterRequest =
+            await androidPlugin.canScheduleExactNotifications();
+
+        if (canScheduleAfterRequest != true) {
+          _logger.e(
+              'CRITICAL: Exact alarm permission NOT granted. Scheduled reminders WILL NOT WORK until user enables this permission manually!');
+        }
       }
     }
   }
-}
 
   Future<void> scheduleReminder(Reminder reminder) async {
     if (!_initialized) {

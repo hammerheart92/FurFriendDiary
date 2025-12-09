@@ -50,7 +50,8 @@ class SpeciesTranslations {
     final normalizedSpecies = species.toLowerCase().trim();
 
     if (localeCode == 'ro') {
-      return _romanianTranslations[normalizedSpecies] ?? _capitalizeFirst(species);
+      return _romanianTranslations[normalizedSpecies] ??
+          _capitalizeFirst(species);
     }
 
     // English or fallback

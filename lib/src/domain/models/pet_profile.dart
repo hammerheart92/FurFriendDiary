@@ -116,7 +116,8 @@ class PetProfile extends HiveObject {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? DateTime.now(),
       isActive: isActive ?? this.isActive,
-      vaccinationProtocolId: vaccinationProtocolId ?? this.vaccinationProtocolId,
+      vaccinationProtocolId:
+          vaccinationProtocolId ?? this.vaccinationProtocolId,
       dewormingProtocolId: dewormingProtocolId ?? this.dewormingProtocolId,
       gender: gender ?? this.gender,
     );

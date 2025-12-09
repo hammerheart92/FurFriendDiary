@@ -507,7 +507,8 @@ class PetProfileScreen extends ConsumerWidget {
         ),
         const SizedBox(height: 12),
         FilledButton.tonalIcon(
-          onPressed: () => context.push('/deworming/select/${profile.id}', extra: profile),
+          onPressed: () =>
+              context.push('/deworming/select/${profile.id}', extra: profile),
           icon: const Icon(Icons.add, size: 18),
           label: Text(l10n.selectDewormingProtocol),
         ),
@@ -566,9 +567,10 @@ class PetProfileScreen extends ConsumerWidget {
             if (protocol != null) {
               // Use protocol.nameRo when locale is Romanian
               final locale = Localizations.localeOf(context);
-              final protocolName = locale.languageCode == 'ro' && protocol.nameRo != null
-                  ? protocol.nameRo!
-                  : protocol.name;
+              final protocolName =
+                  locale.languageCode == 'ro' && protocol.nameRo != null
+                      ? protocol.nameRo!
+                      : protocol.name;
 
               return Row(
                 children: [

@@ -35,7 +35,8 @@ class VaccinationProtocolRepositoryImpl
     try {
       final protocol = box.get(id);
       if (protocol != null) {
-        logger.i("🔍 DEBUG: Found vaccination protocol '${protocol.name}' with ID $id");
+        logger.i(
+            "🔍 DEBUG: Found vaccination protocol '${protocol.name}' with ID $id");
       } else {
         logger.w("⚠️ DEBUG: No vaccination protocol found with ID $id");
       }
@@ -123,7 +124,8 @@ class VaccinationProtocolRepositoryImpl
       logger.i(
           "✅ DEBUG: Deleted vaccination protocol with ID $id${protocol != null ? " ('${protocol.name}')" : ""}");
     } catch (e) {
-      logger.e("🚨 ERROR: Failed to delete vaccination protocol with ID $id: $e");
+      logger
+          .e("🚨 ERROR: Failed to delete vaccination protocol with ID $id: $e");
       rethrow;
     }
   }

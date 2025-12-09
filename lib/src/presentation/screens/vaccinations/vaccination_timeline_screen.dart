@@ -155,8 +155,8 @@ class VaccinationTimelineScreen extends ConsumerWidget {
     required PetProfile currentPet,
   }) {
     // Check if any protocol-based vaccinations exist
-    final hasProtocolBasedVaccinations = [...overdue, ...upcoming, ...completed]
-        .any((v) => v.isFromProtocol);
+    final hasProtocolBasedVaccinations =
+        [...overdue, ...upcoming, ...completed].any((v) => v.isFromProtocol);
 
     return SingleChildScrollView(
       child: Column(
@@ -334,14 +334,16 @@ class VaccinationTimelineScreen extends ConsumerWidget {
               Text(
                 l10n.chooseProtocolMatchingNeeds,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onPrimaryContainer.withValues(alpha: 0.8),
+                  color: theme.colorScheme.onPrimaryContainer
+                      .withValues(alpha: 0.8),
                 ),
               ),
               const SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,
                 child: FilledButton.tonalIcon(
-                  onPressed: () => _navigateToProtocolSelection(context, currentPet),
+                  onPressed: () =>
+                      _navigateToProtocolSelection(context, currentPet),
                   icon: const Icon(Icons.add),
                   label: Text(l10n.selectProtocol),
                 ),
@@ -442,7 +444,8 @@ class VaccinationTimelineScreen extends ConsumerWidget {
     final locale = Localizations.localeOf(context).languageCode;
 
     return Semantics(
-      label: '${VaccineTypeTranslations.getDisplayName(vaccination.vaccineType, locale)}, ${_getStatusLabel(l10n, status)}, '
+      label:
+          '${VaccineTypeTranslations.getDisplayName(vaccination.vaccineType, locale)}, ${_getStatusLabel(l10n, status)}, '
           '${_formatDateForStatus(l10n, vaccination, status, locale)}',
       button: true,
       onTapHint: l10n.viewDetails,
@@ -723,7 +726,8 @@ class VaccinationTimelineScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 24),
                 FilledButton.icon(
-                  onPressed: () => context.push('/vaccinations/add/${currentPet.id}'),
+                  onPressed: () =>
+                      context.push('/vaccinations/add/${currentPet.id}'),
                   icon: const Icon(Icons.add),
                   label: Text(l10n.add),
                 ),

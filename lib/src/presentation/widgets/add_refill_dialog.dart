@@ -225,7 +225,8 @@ class _AddRefillDialogState extends ConsumerState<AddRefillDialog> {
                     controller: _quantityController,
                     decoration: InputDecoration(
                       labelText: '${l10n.quantityPurchased} *',
-                      hintText: l10n.translateStockUnit(widget.medication.stockUnit),
+                      hintText:
+                          l10n.translateStockUnit(widget.medication.stockUnit),
                       prefixIcon: const Icon(Icons.inventory_2),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),

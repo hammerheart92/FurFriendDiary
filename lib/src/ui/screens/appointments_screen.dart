@@ -304,7 +304,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
     String petId,
   ) {
     final l10n = AppLocalizations.of(context);
-    
+
     // Filter appointments based on search query
     final filteredAppointments = appointments.where((appointment) {
       if (_searchQuery.isEmpty) return true;
@@ -481,7 +481,8 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
               ),
               Text(
                 l10n.setReminder,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               Expanded(
@@ -492,10 +493,12 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
                       leading: const Icon(Icons.today, color: Colors.blue),
                       title: Text(l10n.oneDayBefore),
                       subtitle: Text(_formatReminderTime(
-                          _combineDateTime(appointment), const Duration(days: 1))),
+                          _combineDateTime(appointment),
+                          const Duration(days: 1))),
                       onTap: () {
                         Navigator.pop(context);
-                        final appointmentDateTime = _combineDateTime(appointment);
+                        final appointmentDateTime =
+                            _combineDateTime(appointment);
                         _createReminder(
                           appointment,
                           appointmentDateTime.subtract(const Duration(days: 1)),
@@ -503,30 +506,38 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
                       },
                     ),
                     ListTile(
-                      leading: const Icon(Icons.access_time, color: Colors.orange),
+                      leading:
+                          const Icon(Icons.access_time, color: Colors.orange),
                       title: Text(l10n.oneHourBefore),
                       subtitle: Text(_formatReminderTime(
-                          _combineDateTime(appointment), const Duration(hours: 1))),
+                          _combineDateTime(appointment),
+                          const Duration(hours: 1))),
                       onTap: () {
                         Navigator.pop(context);
-                        final appointmentDateTime = _combineDateTime(appointment);
+                        final appointmentDateTime =
+                            _combineDateTime(appointment);
                         _createReminder(
                           appointment,
-                          appointmentDateTime.subtract(const Duration(hours: 1)),
+                          appointmentDateTime
+                              .subtract(const Duration(hours: 1)),
                         );
                       },
                     ),
                     ListTile(
-                      leading: const Icon(Icons.notifications, color: Colors.green),
+                      leading:
+                          const Icon(Icons.notifications, color: Colors.green),
                       title: Text(l10n.thirtyMinutesBefore),
                       subtitle: Text(_formatReminderTime(
-                          _combineDateTime(appointment), const Duration(minutes: 30))),
+                          _combineDateTime(appointment),
+                          const Duration(minutes: 30))),
                       onTap: () {
                         Navigator.pop(context);
-                        final appointmentDateTime = _combineDateTime(appointment);
+                        final appointmentDateTime =
+                            _combineDateTime(appointment);
                         _createReminder(
                           appointment,
-                          appointmentDateTime.subtract(const Duration(minutes: 30)),
+                          appointmentDateTime
+                              .subtract(const Duration(minutes: 30)),
                         );
                       },
                     ),

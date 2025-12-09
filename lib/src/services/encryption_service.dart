@@ -22,12 +22,14 @@ import 'dart:math';
 class EncryptionService {
   static final Logger _logger = Logger();
   static const String _encryptionKeyStorageKey = 'hive_encryption_key_v1';
-  static const String _fallbackKeyStorageKey = 'hive_encryption_key_fallback_v1';
+  static const String _fallbackKeyStorageKey =
+      'hive_encryption_key_fallback_v1';
 
   static const FlutterSecureStorage _secureStorage = FlutterSecureStorage(
     aOptions: AndroidOptions(
       encryptedSharedPreferences: true,
-      resetOnError: false, // CRITICAL FIX: Prevent key deletion on errors (Samsung devices)
+      resetOnError:
+          false, // CRITICAL FIX: Prevent key deletion on errors (Samsung devices)
     ),
     iOptions: IOSOptions(
       accessibility: KeychainAccessibility.first_unlock_this_device,
@@ -76,74 +78,94 @@ class EncryptionService {
       _logger.i('🔐 [INIT] Starting EncryptionService initialization...');
 
       // Initialize SharedPreferences for fallback storage
-      _logger.d('🔐 [INIT] Initializing SharedPreferences for fallback storage...');
+      _logger.d(
+          '🔐 [INIT] Initializing SharedPreferences for fallback storage...');
       _prefs = await SharedPreferences.getInstance();
       _logger.d('🔐 [INIT] SharedPreferences initialized successfully');
 
       // Phase 1: Check if key exists in flutter_secure_storage (primary)
-      _logger.d('🔐 [LOAD-PRIMARY] Attempting to load key from flutter_secure_storage...');
+      _logger.d(
+          '🔐 [LOAD-PRIMARY] Attempting to load key from flutter_secure_storage...');
       String? existingKeyFromSecure;
       try {
-        existingKeyFromSecure = await _secureStorage.read(key: _encryptionKeyStorageKey);
+        existingKeyFromSecure =
+            await _secureStorage.read(key: _encryptionKeyStorageKey);
         if (existingKeyFromSecure != null) {
           final keyBytes = base64Decode(existingKeyFromSecure);
-          _logger.d('🔐 [LOAD-PRIMARY] ✅ Key found in flutter_secure_storage (${keyBytes.length} bytes)');
+          _logger.d(
+              '🔐 [LOAD-PRIMARY] ✅ Key found in flutter_secure_storage (${keyBytes.length} bytes)');
         } else {
-          _logger.w('🔐 [LOAD-PRIMARY] ⚠️ Key NOT found in flutter_secure_storage (returned null)');
+          _logger.w(
+              '🔐 [LOAD-PRIMARY] ⚠️ Key NOT found in flutter_secure_storage (returned null)');
         }
       } catch (e) {
-        _logger.e('🔐 [LOAD-PRIMARY] ❌ Failed to read from flutter_secure_storage: $e');
+        _logger.e(
+            '🔐 [LOAD-PRIMARY] ❌ Failed to read from flutter_secure_storage: $e');
         existingKeyFromSecure = null;
       }
 
       // Phase 2: Check if key exists in SharedPreferences (fallback)
-      _logger.d('🔐 [LOAD-FALLBACK] Attempting to load key from SharedPreferences...');
+      _logger.d(
+          '🔐 [LOAD-FALLBACK] Attempting to load key from SharedPreferences...');
       String? existingKeyFromFallback;
       try {
         existingKeyFromFallback = _prefs!.getString(_fallbackKeyStorageKey);
         if (existingKeyFromFallback != null) {
           final keyBytes = base64Decode(existingKeyFromFallback);
-          _logger.d('🔐 [LOAD-FALLBACK] ✅ Key found in SharedPreferences (${keyBytes.length} bytes)');
+          _logger.d(
+              '🔐 [LOAD-FALLBACK] ✅ Key found in SharedPreferences (${keyBytes.length} bytes)');
         } else {
-          _logger.w('🔐 [LOAD-FALLBACK] ⚠️ Key NOT found in SharedPreferences (returned null)');
+          _logger.w(
+              '🔐 [LOAD-FALLBACK] ⚠️ Key NOT found in SharedPreferences (returned null)');
         }
       } catch (e) {
-        _logger.e('🔐 [LOAD-FALLBACK] ❌ Failed to read from SharedPreferences: $e');
+        _logger.e(
+            '🔐 [LOAD-FALLBACK] ❌ Failed to read from SharedPreferences: $e');
         existingKeyFromFallback = null;
       }
 
       // Phase 3: Key consistency check
       if (existingKeyFromSecure != null && existingKeyFromFallback != null) {
         final keysMatch = existingKeyFromSecure == existingKeyFromFallback;
-        _logger.d('🔐 [CONSISTENCY] Keys present in BOTH storages. Match: $keysMatch');
+        _logger.d(
+            '🔐 [CONSISTENCY] Keys present in BOTH storages. Match: $keysMatch');
       } else if (existingKeyFromSecure != null) {
-        _logger.w('🔐 [CONSISTENCY] ⚠️ Key ONLY in flutter_secure_storage (fallback missing)');
+        _logger.w(
+            '🔐 [CONSISTENCY] ⚠️ Key ONLY in flutter_secure_storage (fallback missing)');
       } else if (existingKeyFromFallback != null) {
-        _logger.w('🔐 [CONSISTENCY] ⚠️ Key ONLY in SharedPreferences (secure missing)');
+        _logger.w(
+            '🔐 [CONSISTENCY] ⚠️ Key ONLY in SharedPreferences (secure missing)');
       } else {
-        _logger.i('🔐 [CONSISTENCY] No keys found in either storage - new key generation required');
+        _logger.i(
+            '🔐 [CONSISTENCY] No keys found in either storage - new key generation required');
       }
 
       // Phase 4: Generate new key if none exists
       if (existingKeyFromSecure == null && existingKeyFromFallback == null) {
-        _logger.i('🔐 [GENERATE] No encryption key found in any storage, generating new 256-bit AES key...');
+        _logger.i(
+            '🔐 [GENERATE] No encryption key found in any storage, generating new 256-bit AES key...');
         await _generateAndStoreKey();
 
         // Phase 5: Immediate verification after generation
-        _logger.d('🔐 [VERIFY] Verifying newly generated key was saved correctly...');
+        _logger.d(
+            '🔐 [VERIFY] Verifying newly generated key was saved correctly...');
 
         // Verify secure storage save
         String? verifySecure;
         try {
-          verifySecure = await _secureStorage.read(key: _encryptionKeyStorageKey);
+          verifySecure =
+              await _secureStorage.read(key: _encryptionKeyStorageKey);
           if (verifySecure != null) {
             final keyBytes = base64Decode(verifySecure);
-            _logger.d('🔐 [VERIFY-PRIMARY] ✅ Key verified in flutter_secure_storage (${keyBytes.length} bytes)');
+            _logger.d(
+                '🔐 [VERIFY-PRIMARY] ✅ Key verified in flutter_secure_storage (${keyBytes.length} bytes)');
           } else {
-            _logger.e('🔐 [VERIFY-PRIMARY] ❌ Key verification FAILED - not found in flutter_secure_storage after save!');
+            _logger.e(
+                '🔐 [VERIFY-PRIMARY] ❌ Key verification FAILED - not found in flutter_secure_storage after save!');
           }
         } catch (e) {
-          _logger.e('🔐 [VERIFY-PRIMARY] ❌ Key verification FAILED - error reading from flutter_secure_storage: $e');
+          _logger.e(
+              '🔐 [VERIFY-PRIMARY] ❌ Key verification FAILED - error reading from flutter_secure_storage: $e');
         }
 
         // Verify fallback storage save
@@ -152,29 +174,36 @@ class EncryptionService {
           verifyFallback = _prefs!.getString(_fallbackKeyStorageKey);
           if (verifyFallback != null) {
             final keyBytes = base64Decode(verifyFallback);
-            _logger.d('🔐 [VERIFY-FALLBACK] ✅ Key verified in SharedPreferences (${keyBytes.length} bytes)');
+            _logger.d(
+                '🔐 [VERIFY-FALLBACK] ✅ Key verified in SharedPreferences (${keyBytes.length} bytes)');
           } else {
-            _logger.e('🔐 [VERIFY-FALLBACK] ❌ Key verification FAILED - not found in SharedPreferences after save!');
+            _logger.e(
+                '🔐 [VERIFY-FALLBACK] ❌ Key verification FAILED - not found in SharedPreferences after save!');
           }
         } catch (e) {
-          _logger.e('🔐 [VERIFY-FALLBACK] ❌ Key verification FAILED - error reading from SharedPreferences: $e');
+          _logger.e(
+              '🔐 [VERIFY-FALLBACK] ❌ Key verification FAILED - error reading from SharedPreferences: $e');
         }
 
         // Verify consistency of saved keys
         if (verifySecure != null && verifyFallback != null) {
           final keysMatch = verifySecure == verifyFallback;
-          _logger.d('🔐 [VERIFY-CONSISTENCY] Keys match after save: $keysMatch');
+          _logger
+              .d('🔐 [VERIFY-CONSISTENCY] Keys match after save: $keysMatch');
         } else if (verifySecure == null && verifyFallback == null) {
-          _logger.e('🔐 [VERIFY-CONSISTENCY] ❌ CRITICAL: Key save FAILED in BOTH storages!');
+          _logger.e(
+              '🔐 [VERIFY-CONSISTENCY] ❌ CRITICAL: Key save FAILED in BOTH storages!');
         }
       } else {
         _logger.d('🔐 [GENERATE] Skipping key generation - existing key found');
       }
 
       // Phase 6: Final validation - retrieve and use the key
-      _logger.d('🔐 [FINAL-VALIDATE] Validating final encryption cipher retrieval...');
+      _logger.d(
+          '🔐 [FINAL-VALIDATE] Validating final encryption cipher retrieval...');
       await getEncryptionCipher();
-      _logger.i('🔐 [FINAL-VALIDATE] ✅ Encryption cipher retrieved successfully');
+      _logger
+          .i('🔐 [FINAL-VALIDATE] ✅ Encryption cipher retrieved successfully');
 
       _isInitialized = true;
       _logger.i('🔐 [INIT] ✅ EncryptionService initialized successfully');
@@ -406,7 +435,8 @@ class EncryptionService {
 
       // Check migration completion flag
       final prefs = await SharedPreferences.getInstance();
-      final migrationCompleted = prefs.getBool('hive_encryption_migration_completed_v1') ?? false;
+      final migrationCompleted =
+          prefs.getBool('hive_encryption_migration_completed_v1') ?? false;
 
       if (migrationCompleted) {
         _logger.i('✓ Migration already completed (flag found)');
@@ -417,13 +447,15 @@ class EncryptionService {
       final keyExists = await _keyExists();
 
       if (!keyExists) {
-        _logger.i('✓ No encryption key exists - fresh install, no migration needed');
+        _logger.i(
+            '✓ No encryption key exists - fresh install, no migration needed');
         return false;
       }
 
       // Key exists but migration not marked complete
       // Check if any box files exist from before encryption
-      _logger.w('⚠ Encryption key exists but migration flag not set - checking for legacy data...');
+      _logger.w(
+          '⚠ Encryption key exists but migration flag not set - checking for legacy data...');
 
       bool hasLegacyData = false;
       for (final boxName in _boxNames) {
@@ -476,7 +508,8 @@ class EncryptionService {
   /// and recreated, as the data cannot be decrypted.
   static Future<void> deleteEncryptionKey() async {
     try {
-      _logger.w('Deleting encryption key - all encrypted data will become inaccessible!');
+      _logger.w(
+          'Deleting encryption key - all encrypted data will become inaccessible!');
 
       // Delete from secure storage (primary)
       await _secureStorage.delete(key: _encryptionKeyStorageKey);

@@ -257,8 +257,8 @@ class VaccinationDetailScreen extends ConsumerWidget {
     AppLocalizations l10n,
     VaccinationEvent vaccination,
   ) {
-    final dateFormat = DateFormat('MMMM dd, yyyy',
-        Localizations.localeOf(context).toString());
+    final dateFormat =
+        DateFormat('MMMM dd, yyyy', Localizations.localeOf(context).toString());
 
     return Card(
       child: Padding(
@@ -475,7 +475,9 @@ class VaccinationDetailScreen extends ConsumerWidget {
     // Use Romanian notes if locale is Romanian and notesRo is available
     final locale = Localizations.localeOf(context);
     final isRomanian = locale.languageCode == 'ro';
-    final notes = (isRomanian && vaccination.notesRo != null && vaccination.notesRo!.isNotEmpty)
+    final notes = (isRomanian &&
+            vaccination.notesRo != null &&
+            vaccination.notesRo!.isNotEmpty)
         ? vaccination.notesRo!
         : vaccination.notes!;
 

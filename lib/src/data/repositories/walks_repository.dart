@@ -19,9 +19,7 @@ class WalksRepository implements WalkRepository {
 
       // Listen to changes
       final subscription = _box.watch().listen((_) {
-        final walks = _box.values
-            .where((walk) => walk.petId == petId)
-            .toList()
+        final walks = _box.values.where((walk) => walk.petId == petId).toList()
           ..sort((a, b) => b.startTime.compareTo(a.startTime));
         controller.add(walks);
       });

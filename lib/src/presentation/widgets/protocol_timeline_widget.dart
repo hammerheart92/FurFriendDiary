@@ -173,10 +173,9 @@ class ProtocolTimelineWidget extends StatelessWidget {
 
     // Check if this is the next upcoming dose
     // (first future dose in the timeline)
-    final allFutureDoses = scheduleEntries
-            ?.where((e) => e.scheduledDate.isAfter(now))
-            .toList() ??
-        [];
+    final allFutureDoses =
+        scheduleEntries?.where((e) => e.scheduledDate.isAfter(now)).toList() ??
+            [];
 
     if (allFutureDoses.isNotEmpty) {
       allFutureDoses.sort((a, b) => a.scheduledDate.compareTo(b.scheduledDate));
@@ -305,7 +304,8 @@ class ProtocolTimelineWidget extends StatelessWidget {
                                     vertical: 2,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: theme.colorScheme.surfaceContainerHighest,
+                                    color: theme
+                                        .colorScheme.surfaceContainerHighest,
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Text(
@@ -399,8 +399,8 @@ class ProtocolTimelineWidget extends StatelessWidget {
                                   Expanded(
                                     child: Text(
                                       step.notes!,
-                                      style: theme.textTheme.bodySmall
-                                          ?.copyWith(
+                                      style:
+                                          theme.textTheme.bodySmall?.copyWith(
                                         fontSize: 12,
                                         color: theme.colorScheme.onSurface
                                             .withOpacity(0.7),
@@ -496,7 +496,8 @@ class ProtocolTimelineWidget extends StatelessWidget {
       return 'Not scheduled yet';
     }
 
-    final formattedDate = DateFormat('MMM dd, yyyy').format(entry.scheduledDate);
+    final formattedDate =
+        DateFormat('MMM dd, yyyy').format(entry.scheduledDate);
 
     switch (status) {
       case TimelineStepStatus.completed:
@@ -547,7 +548,8 @@ class ProtocolTimelineWidget extends StatelessWidget {
       return 'Not scheduled yet';
     }
 
-    final formattedDate = DateFormat('MMMM dd, yyyy').format(entry.scheduledDate);
+    final formattedDate =
+        DateFormat('MMMM dd, yyyy').format(entry.scheduledDate);
 
     switch (status) {
       case TimelineStepStatus.completed:

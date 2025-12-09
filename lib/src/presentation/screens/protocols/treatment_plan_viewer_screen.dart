@@ -154,10 +154,7 @@ class _TreatmentPlanViewerScreenState
             Icon(
               Icons.assignment_outlined,
               size: 64,
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withOpacity(0.5),
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
             ),
             const SizedBox(height: 16),
             Text(
@@ -275,7 +272,9 @@ class _TreatmentPlanViewerScreenState
       try {
         _logger.d('Marking plan as complete: planId=$planId');
 
-        await ref.read(treatmentPlansProvider.notifier).markPlanComplete(planId);
+        await ref
+            .read(treatmentPlansProvider.notifier)
+            .markPlanComplete(planId);
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -329,10 +328,9 @@ class _PetInfoHeader extends StatelessWidget {
           CircleAvatar(
             radius: 24,
             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-            backgroundImage:
-                pet.photoPath != null && pet.photoPath!.isNotEmpty
-                    ? AssetImage(pet.photoPath!)
-                    : null,
+            backgroundImage: pet.photoPath != null && pet.photoPath!.isNotEmpty
+                ? AssetImage(pet.photoPath!)
+                : null,
             child: pet.photoPath == null || pet.photoPath!.isEmpty
                 ? Icon(
                     Icons.pets,
@@ -359,9 +357,8 @@ class _PetInfoHeader extends StatelessWidget {
                   backgroundColor:
                       Theme.of(context).colorScheme.secondaryContainer,
                   labelStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSecondaryContainer,
+                        color:
+                            Theme.of(context).colorScheme.onSecondaryContainer,
                       ),
                 ),
               ],
@@ -541,10 +538,8 @@ class _TaskChecklistItem extends StatelessWidget {
                 Icon(
                   _getTaskTypeIcon(task.taskType),
                   size: 16,
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withOpacity(0.6),
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                 ),
                 const SizedBox(width: 4),
                 Text(
@@ -575,12 +570,13 @@ class _TaskChecklistItem extends StatelessWidget {
                     visualDensity: VisualDensity.compact,
                     backgroundColor:
                         Theme.of(context).colorScheme.tertiaryContainer,
-                    labelStyle:
-                        Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onTertiaryContainer,
-                            ),
+                    labelStyle: Theme.of(context)
+                        .textTheme
+                        .labelSmall
+                        ?.copyWith(
+                          color:
+                              Theme.of(context).colorScheme.onTertiaryContainer,
+                        ),
                     padding: const EdgeInsets.symmetric(horizontal: 4),
                   ),
                 ],

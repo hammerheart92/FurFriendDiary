@@ -76,7 +76,8 @@ class ProtocolDataProvider {
 
       // Load JSON string from assets
       final jsonString = await rootBundle.loadString(_vaccinationProtocolsPath);
-      logger.d('✅ Loaded vaccination protocols JSON (${jsonString.length} characters)');
+      logger.d(
+          '✅ Loaded vaccination protocols JSON (${jsonString.length} characters)');
 
       // Parse JSON
       final List<dynamic> jsonList = jsonDecode(jsonString) as List<dynamic>;

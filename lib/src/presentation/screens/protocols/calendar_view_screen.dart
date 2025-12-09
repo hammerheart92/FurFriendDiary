@@ -35,8 +35,7 @@ class CalendarViewScreen extends ConsumerStatefulWidget {
   const CalendarViewScreen({super.key});
 
   @override
-  ConsumerState<CalendarViewScreen> createState() =>
-      _CalendarViewScreenState();
+  ConsumerState<CalendarViewScreen> createState() => _CalendarViewScreenState();
 }
 
 class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
@@ -741,7 +740,9 @@ class _EventListTile extends StatelessWidget {
       }
 
       // Add notes if available (use Romanian if locale matches)
-      final notes = (isRomanian && dewormingEvent.entry.notesRo != null && dewormingEvent.entry.notesRo!.isNotEmpty)
+      final notes = (isRomanian &&
+              dewormingEvent.entry.notesRo != null &&
+              dewormingEvent.entry.notesRo!.isNotEmpty)
           ? dewormingEvent.entry.notesRo!
           : dewormingEvent.entry.notes;
       if (notes != null && notes.isNotEmpty) {
@@ -904,7 +905,8 @@ class _EventListTile extends StatelessWidget {
   }
 
   /// Build event icon - custom calendar for appointments, emoji for others
-  Widget _buildEventIcon(BuildContext context, UpcomingCareEvent event, Color eventColor) {
+  Widget _buildEventIcon(
+      BuildContext context, UpcomingCareEvent event, Color eventColor) {
     // For appointments, use custom calendar icon with actual date
     if (event is AppointmentEvent) {
       final date = event.scheduledDate;

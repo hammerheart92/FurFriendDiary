@@ -38,7 +38,8 @@ class VaccinationEvent extends UpcomingCareEvent {
     // replace static words like "Dose" and "Required" with localized strings,
     // but notesRo provides Romanian translations for protocol-specific notes.
     final parts = <String>[];
-    parts.add('Dose ${entry.stepIndex + 1}'); // Will use l10n.doseNumber() in UI
+    parts
+        .add('Dose ${entry.stepIndex + 1}'); // Will use l10n.doseNumber() in UI
 
     // Use notesRo if available (Romanian), otherwise fall back to notes (English)
     // The UI layer should check locale and provide notesRo when appropriate
@@ -49,7 +50,9 @@ class VaccinationEvent extends UpcomingCareEvent {
     if (entry.isRequired) {
       parts.add('Required'); // Will use l10n.requiredVaccine in UI
     }
-    return parts.isEmpty ? 'Vaccination' : parts.join(' - '); // Will use l10n.vaccination in UI
+    return parts.isEmpty
+        ? 'Vaccination'
+        : parts.join(' - '); // Will use l10n.vaccination in UI
   }
 
   /// Get localized description based on locale
@@ -59,13 +62,16 @@ class VaccinationEvent extends UpcomingCareEvent {
     final parts = <String>[];
 
     // Localized dose label
-    final doseLabel = isRomanian ? 'Doza ${entry.stepIndex + 1}' : 'Dose ${entry.stepIndex + 1}';
+    final doseLabel = isRomanian
+        ? 'Doza ${entry.stepIndex + 1}'
+        : 'Dose ${entry.stepIndex + 1}';
     parts.add(doseLabel);
 
     // Use Romanian notes if locale is Romanian, otherwise use English
-    final notes = isRomanian && entry.notesRo != null && entry.notesRo!.isNotEmpty
-        ? entry.notesRo!
-        : entry.notes;
+    final notes =
+        isRomanian && entry.notesRo != null && entry.notesRo!.isNotEmpty
+            ? entry.notesRo!
+            : entry.notes;
 
     if (notes != null && notes.isNotEmpty) {
       parts.add(notes);
@@ -118,7 +124,8 @@ class VaccinationRecordEvent extends UpcomingCareEvent {
   @override
   String get description {
     final parts = <String>[];
-    if (record.veterinarianName != null && record.veterinarianName!.isNotEmpty) {
+    if (record.veterinarianName != null &&
+        record.veterinarianName!.isNotEmpty) {
       parts.add('Dr. ${record.veterinarianName}');
     }
     if (record.clinicName != null && record.clinicName!.isNotEmpty) {
@@ -136,7 +143,8 @@ class VaccinationRecordEvent extends UpcomingCareEvent {
     final parts = <String>[];
 
     // Add veterinarian name if available
-    if (record.veterinarianName != null && record.veterinarianName!.isNotEmpty) {
+    if (record.veterinarianName != null &&
+        record.veterinarianName!.isNotEmpty) {
       parts.add('Dr. ${record.veterinarianName}');
     }
 
@@ -146,7 +154,9 @@ class VaccinationRecordEvent extends UpcomingCareEvent {
     }
 
     // Use Romanian notes if locale is Romanian and notesRo is available
-    final notes = localeCode == 'ro' && record.notesRo != null && record.notesRo!.isNotEmpty
+    final notes = localeCode == 'ro' &&
+            record.notesRo != null &&
+            record.notesRo!.isNotEmpty
         ? record.notesRo!
         : record.notes;
 
@@ -193,7 +203,8 @@ class DewormingEvent extends UpcomingCareEvent {
   DateTime get scheduledDate => entry.scheduledDate;
 
   @override
-  String get title => 'Deworming Treatment'; // Placeholder - UI layer should use l10n.dewormingTreatment
+  String get title =>
+      'Deworming Treatment'; // Placeholder - UI layer should use l10n.dewormingTreatment
 
   @override
   String get description {
@@ -251,7 +262,9 @@ class AppointmentEvent extends UpcomingCareEvent {
     if (entry.notes != null && entry.notes!.isNotEmpty) {
       parts.add(entry.notes!);
     }
-    return parts.isEmpty ? 'Veterinary Appointment' : parts.join(' - '); // Will use l10n.veterinaryAppointment in UI
+    return parts.isEmpty
+        ? 'Veterinary Appointment'
+        : parts.join(' - '); // Will use l10n.veterinaryAppointment in UI
   }
 
   @override
@@ -302,7 +315,9 @@ class MedicationEvent extends UpcomingCareEvent {
     if (entry.frequency.isNotEmpty) {
       parts.add(entry.frequency);
     }
-    return parts.isEmpty ? 'Medication' : parts.join(' - '); // Will use l10n.medication in UI
+    return parts.isEmpty
+        ? 'Medication'
+        : parts.join(' - '); // Will use l10n.medication in UI
   }
 
   @override

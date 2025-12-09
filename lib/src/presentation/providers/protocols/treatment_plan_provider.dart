@@ -89,7 +89,8 @@ class TreatmentPlans extends _$TreatmentPlans {
     // Verify all tasks are completed
     final allTasksComplete = plan.tasks.every((task) => task.isCompleted);
     if (!allTasksComplete) {
-      final incompleteTasks = plan.tasks.where((task) => !task.isCompleted).length;
+      final incompleteTasks =
+          plan.tasks.where((task) => !task.isCompleted).length;
       throw StateError(
           'Cannot mark plan as complete: $incompleteTasks task(s) are still incomplete');
     }
@@ -169,7 +170,9 @@ Future<List<TreatmentPlan>> completedTreatmentPlansByPetId(
   String petId,
 ) async {
   final plans = await ref.watch(treatmentPlansByPetIdProvider(petId).future);
-  return plans.where((plan) => plan.tasks.every((task) => task.isCompleted)).toList();
+  return plans
+      .where((plan) => plan.tasks.every((task) => task.isCompleted))
+      .toList();
 }
 
 /// Get a specific treatment plan by ID
@@ -210,8 +213,12 @@ Future<Map<String, dynamic>> treatmentPlanStats(
   final plans = await ref.watch(treatmentPlansByPetIdProvider(petId).future);
 
   final total = plans.length;
-  final completed = plans.where((plan) => plan.tasks.every((task) => task.isCompleted)).length;
-  final active = plans.where((plan) => !plan.tasks.every((task) => task.isCompleted)).length;
+  final completed = plans
+      .where((plan) => plan.tasks.every((task) => task.isCompleted))
+      .length;
+  final active = plans
+      .where((plan) => !plan.tasks.every((task) => task.isCompleted))
+      .length;
   final completionRate = total > 0 ? (completed / total * 100).round() : 0;
 
   return {
