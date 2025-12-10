@@ -120,20 +120,48 @@ Future<List<UpcomingCareEvent>> upcomingCare(
     // Silent failure - continue with other events
   }
 
-  // 4. Add upcoming medications (active medications within date range)
+  // 4. Add upcoming medications (medications relevant to date range)
   try {
     final medicationRepo = ref.watch(medicationRepositoryProvider);
     final medications = await medicationRepo.getMedicationsByPetId(petId);
 
-    // Filter active medications that start within the date range
+    // Filter medications that are relevant to the date range:
+    // - Medications starting within the range, OR
+    // - Ongoing medications (started before, ending after or during range), OR
+    // - Medications ending within the range
     events.addAll(
-      medications
-          .where((med) =>
-              med.isActive &&
-              med.startDate
-                  .isAfter(startDate.subtract(const Duration(days: 1))) &&
-              med.startDate.isBefore(endDate))
-          .map((med) => MedicationEvent(med)),
+      medications.where((med) {
+        // Normalize dates to midnight for accurate comparison
+        final medStartDay = DateTime(
+          med.startDate.year,
+          med.startDate.month,
+          med.startDate.day,
+        );
+
+        final medEndDay = med.endDate != null
+            ? DateTime(
+                med.endDate!.year,
+                med.endDate!.month,
+                med.endDate!.day,
+              )
+            : null;
+
+        // Include medication if:
+        // 1. It starts within the date range
+        final startsInRange = !medStartDay.isBefore(startDate) &&
+                              medStartDay.isBefore(endDate);
+
+        // 2. It's ongoing during the range (started before, no end date or ends after start)
+        final ongoingDuringRange = medStartDay.isBefore(startDate) &&
+                                   (medEndDay == null || !medEndDay.isBefore(startDate));
+
+        // 3. It ends within the range
+        final endsInRange = medEndDay != null &&
+                           !medEndDay.isBefore(startDate) &&
+                           medEndDay.isBefore(endDate);
+
+        return startsInRange || ongoingDuringRange || endsInRange;
+      }).map((med) => MedicationEvent(med)),
     );
   } catch (e) {
     // Silent failure - continue with other events

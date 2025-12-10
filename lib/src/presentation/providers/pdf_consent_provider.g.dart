@@ -6,7 +6,7 @@ part of 'pdf_consent_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$pdfConsentServiceHash() => r'c9e20ec4d04a8bcbe84655db26237fe6dc3dc414';
+String _$pdfConsentServiceHash() => r'b4d6e115b09992d926f1fc6e96d71e786e467473';
 
 /// Service for managing PDF export consent with UI interactions
 ///

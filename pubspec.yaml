@@ -22,9 +22,9 @@ dependencies:
   # Storage & security
   hive: 2.2.3
   hive_flutter: 1.1.0
-  path_provider: 2.1.4
-  flutter_secure_storage: 9.2.2
-  shared_preferences: 2.3.3
+  path_provider: 2.1.5                    # ⬆️ Updated from 2.1.4
+  flutter_secure_storage: 9.2.4           # ⬆️ Updated from 9.2.2
+  shared_preferences: 2.5.4               # ⬆️ Updated from 2.3.3
 
   # Time, permissions
   timezone: 0.9.4
@@ -37,13 +37,13 @@ dependencies:
   flutter_local_notifications: 17.2.3
 
   # Media & location
-  image_picker: 1.1.2
+  image_picker: 1.2.1                     # ⬆️ Updated from 1.1.2
   geolocator: 13.0.2
-  device_info_plus: 12.1.0
+  device_info_plus: 12.3.0                # ⬆️ Updated from 12.1.0
   image: ^4.1.7
 
   # Misc
-  url_launcher: 6.3.0
+  url_launcher: 6.3.2                     # ⬆️ Updated from 6.3.0
   # path: 1.9.0  # Removed - let Flutter SDK manage path version
   json_serializable: ^6.7.1
   uuid: ^4.3.3

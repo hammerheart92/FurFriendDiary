@@ -14,6 +14,7 @@ android_backup_*/
 .pub/
 
 # Android
+android_backup_20250911_145612/.gradle/8.7/fileHashes/fileHashes.lock  
 android/.gradle/
 android/local.properties
 android/app/build/
@@ -77,6 +78,7 @@ docs/FurFriendDiary v1.3.0 - Session Handoff Document.md
 docs/v1.3.0 Known Issues.md
 docs/v1.3.2 Polish & Compliance Release.md
 docs/FurFriendDiary v1.3.2 Development Session.md
+docs/Future Release Checklist.md
 # Claude AI / AI assistant files
 .claude/
 
