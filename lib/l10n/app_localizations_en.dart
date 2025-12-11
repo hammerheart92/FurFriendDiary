@@ -3376,4 +3376,97 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recentFeedings => 'Recent Feedings';
+
+  @override
+  String get profileSaved => 'Profile saved successfully';
+
+  @override
+  String get errorSavingProfile => 'Error saving profile';
+
+  @override
+  String get noProfileFound => 'No profile found';
+
+  @override
+  String get enterYourName => 'Enter your name';
+
+  @override
+  String get nameRequired => 'Name is required';
+
+  @override
+  String get nameTooShort => 'Name must be at least 2 characters';
+
+  @override
+  String get enterYourEmail => 'Enter your email (optional)';
+
+  @override
+  String get errorLoadingProfile => 'Error loading profile';
+
+  @override
+  String get subscriptionStatus => 'Subscription Status';
+
+  @override
+  String get expiresOn => 'Expires:';
+
+  @override
+  String get freeTierDescription => 'Free tier - manage up to 1 pet';
+
+  @override
+  String get lifetimeAccess => 'Lifetime access - unlimited pets';
+
+  @override
+  String managingPets(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count pets',
+      one: '1 pet',
+      zero: 'no pets',
+    );
+    return 'Managing $_temp0';
+  }
+
+  @override
+  String get upgradeToPremium => 'Upgrade to Premium';
+
+  @override
+  String get freeTierLimitReached =>
+      'You\'ve reached the free tier limit of 1 pet.';
+
+  @override
+  String get upgradeForUnlimitedPets =>
+      'Upgrade to Premium for unlimited pets and exclusive features!';
+
+  @override
+  String get maybeLater => 'Maybe Later';
+
+  @override
+  String get learnMore => 'Learn More';
+
+  @override
+  String get premiumComingSoon => 'Premium features coming soon!';
+
+  @override
+  String get unlimitedPets => 'Unlimited pets';
+
+  @override
+  String get cloudBackup => 'Cloud backup';
+
+  @override
+  String get familySharing => 'Family sharing';
+
+  @override
+  String get tierFree => 'Free';
+
+  @override
+  String get tierPremium => 'Premium';
+
+  @override
+  String get tierLifetime => 'Lifetime';
+
+  @override
+  String get dataDeletedAppCloseMessage =>
+      'All your data has been permanently deleted. The app will now close. Please reopen to start fresh.';
+
+  @override
+  String get ok => 'OK';
 }

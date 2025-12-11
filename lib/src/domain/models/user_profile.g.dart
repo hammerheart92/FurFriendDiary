@@ -24,13 +24,16 @@ class UserProfileAdapter extends TypeAdapter<UserProfile> {
       createdAt: fields[4] as DateTime?,
       updatedAt: fields[5] as DateTime?,
       hasCompletedOnboarding: fields[6] as bool,
+      tier: fields[7] as PetOwnerTier,
+      premiumExpiryDate: fields[8] as DateTime?,
+      petIds: (fields[9] as List?)?.cast<String>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, UserProfile obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -44,7 +47,13 @@ class UserProfileAdapter extends TypeAdapter<UserProfile> {
       ..writeByte(5)
       ..write(obj.updatedAt)
       ..writeByte(6)
-      ..write(obj.hasCompletedOnboarding);
+      ..write(obj.hasCompletedOnboarding)
+      ..writeByte(7)
+      ..write(obj.tier)
+      ..writeByte(8)
+      ..write(obj.premiumExpiryDate)
+      ..writeByte(9)
+      ..write(obj.petIds);
   }
 
   @override

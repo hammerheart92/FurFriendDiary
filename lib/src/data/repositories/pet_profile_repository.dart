@@ -1,6 +1,9 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:logger/logger.dart';
 import 'package:fur_friend_diary/src/domain/models/pet_profile.dart';
+import 'package:fur_friend_diary/src/domain/models/user_profile.dart';
+import 'package:fur_friend_diary/src/domain/models/pet_owner_tier.dart';
+import 'package:fur_friend_diary/src/domain/exceptions/pet_limit_exceeded_exception.dart';
 import '../local/hive_boxes.dart';
 import '../local/hive_manager.dart';
 
@@ -83,6 +86,9 @@ class PetProfileRepository {
       final box =
           _profiles; // This will call HiveBoxes.getPetProfiles() with defensive checks
 
+      // Check tier limit before adding (FREE tier enforcement)
+      await _checkTierLimit();
+
       // If this is the first profile, make it active
       final isFirstProfile = box.isEmpty;
 
@@ -103,6 +109,41 @@ class PetProfileRepository {
       logger.e("🚨 ERROR: addPetProfile failed: $e");
       logger.e("🚨 ERROR: Error type: ${e.runtimeType}");
       rethrow;
+    }
+  }
+
+  /// Check if user can add more pets based on their tier.
+  /// Throws [PetLimitExceededException] if limit is reached.
+  Future<void> _checkTierLimit() async {
+    try {
+      // Get user profile from app_prefs box
+      final appPrefs = HiveBoxes.getAppPrefs();
+      final userProfile = appPrefs.get('current_user_profile') as UserProfile?;
+
+      // If no profile exists, allow first pet (migration will create profile)
+      if (userProfile == null) {
+        logger.d('No user profile found, allowing pet creation');
+        return;
+      }
+
+      // Check if user can add more pets
+      if (!userProfile.canAddPet()) {
+        final currentPetCount = userProfile.petIds.length;
+        logger.w(
+            '🚫 Pet limit reached: FREE tier allows 1 pet, user has $currentPetCount');
+        throw PetLimitExceededException.freeTierLimit(
+          currentPetCount: currentPetCount,
+        );
+      }
+
+      logger.d(
+          '✅ Tier check passed: ${userProfile.effectiveTier.displayName} tier');
+    } catch (e) {
+      if (e is PetLimitExceededException) {
+        rethrow;
+      }
+      // Log error but don't block pet creation if check fails
+      logger.e('Error checking tier limit: $e');
     }
   }
 

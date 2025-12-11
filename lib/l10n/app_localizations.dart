@@ -6373,6 +6373,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Recent Feedings'**
   String get recentFeedings;
+
+  /// No description provided for @profileSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile saved successfully'**
+  String get profileSaved;
+
+  /// No description provided for @errorSavingProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Error saving profile'**
+  String get errorSavingProfile;
+
+  /// No description provided for @noProfileFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No profile found'**
+  String get noProfileFound;
+
+  /// No description provided for @enterYourName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your name'**
+  String get enterYourName;
+
+  /// No description provided for @nameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Name is required'**
+  String get nameRequired;
+
+  /// No description provided for @nameTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Name must be at least 2 characters'**
+  String get nameTooShort;
+
+  /// No description provided for @enterYourEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email (optional)'**
+  String get enterYourEmail;
+
+  /// No description provided for @errorLoadingProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading profile'**
+  String get errorLoadingProfile;
+
+  /// No description provided for @subscriptionStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription Status'**
+  String get subscriptionStatus;
+
+  /// No description provided for @expiresOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires:'**
+  String get expiresOn;
+
+  /// No description provided for @freeTierDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Free tier - manage up to 1 pet'**
+  String get freeTierDescription;
+
+  /// No description provided for @lifetimeAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Lifetime access - unlimited pets'**
+  String get lifetimeAccess;
+
+  /// No description provided for @managingPets.
+  ///
+  /// In en, this message translates to:
+  /// **'Managing {count, plural, =0{no pets} =1{1 pet} other{{count} pets}}'**
+  String managingPets(int count);
+
+  /// Title for upgrade prompt dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Premium'**
+  String get upgradeToPremium;
+
+  /// Message when FREE tier user tries to add more pets
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve reached the free tier limit of 1 pet.'**
+  String get freeTierLimitReached;
+
+  /// Upgrade benefits message
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Premium for unlimited pets and exclusive features!'**
+  String get upgradeForUnlimitedPets;
+
+  /// Button to dismiss upgrade dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Maybe Later'**
+  String get maybeLater;
+
+  /// Button to learn more about Premium
+  ///
+  /// In en, this message translates to:
+  /// **'Learn More'**
+  String get learnMore;
+
+  /// Message shown when premium purchase is not yet available
+  ///
+  /// In en, this message translates to:
+  /// **'Premium features coming soon!'**
+  String get premiumComingSoon;
+
+  /// Premium feature: unlimited pets
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited pets'**
+  String get unlimitedPets;
+
+  /// Premium feature: cloud backup
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud backup'**
+  String get cloudBackup;
+
+  /// Premium feature: family sharing
+  ///
+  /// In en, this message translates to:
+  /// **'Family sharing'**
+  String get familySharing;
+
+  /// Tier name for free users
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get tierFree;
+
+  /// Tier name for premium subscribers
+  ///
+  /// In en, this message translates to:
+  /// **'Premium'**
+  String get tierPremium;
+
+  /// Tier name for lifetime purchasers
+  ///
+  /// In en, this message translates to:
+  /// **'Lifetime'**
+  String get tierLifetime;
+
+  /// Message shown after successful data deletion
+  ///
+  /// In en, this message translates to:
+  /// **'All your data has been permanently deleted. The app will now close. Please reopen to start fresh.'**
+  String get dataDeletedAppCloseMessage;
+
+  /// Generic OK button text
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
 }
 
 class _AppLocalizationsDelegate

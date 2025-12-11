@@ -24,6 +24,7 @@ import '../../domain/models/protocols/treatment_plan.dart';
 import '../../domain/models/protocols/reminder_config.dart';
 import '../../domain/models/vaccination_event.dart';
 import '../../domain/models/pdf_consent.dart';
+import '../../domain/models/pet_owner_tier.dart';
 import '../../services/encryption_service.dart';
 import '../../services/data_migration_service.dart';
 
@@ -192,6 +193,10 @@ class HiveManager {
 
     if (!Hive.isAdapterRegistered(16)) {
       Hive.registerAdapter(PetPhotoAdapter());
+    }
+
+    if (!Hive.isAdapterRegistered(17)) {
+      Hive.registerAdapter(PetOwnerTierAdapter());
     }
 
     if (!Hive.isAdapterRegistered(18)) {

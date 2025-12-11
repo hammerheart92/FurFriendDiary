@@ -5,6 +5,9 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../presentation/providers/settings_provider.dart';
+import '../../presentation/providers/pet_owner_provider.dart';
+import '../../presentation/widgets/tier_badge.dart';
+import '../../presentation/widgets/user_avatar.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../services/data_deletion_service.dart';
 import 'reminders_screen.dart';
@@ -332,47 +335,129 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Widget _buildProfileSection(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final profileAsync = ref.watch(petOwnerProvider);
+    final petCount = ref.watch(currentPetCountProvider);
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 32,
-            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-            child: Text(
-              'PO',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
+    return profileAsync.when(
+      data: (profile) {
+        final name = profile?.name ?? l10n.petOwner;
+        final email = profile?.email;
+        final tier = profile?.effectiveTier;
+
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              UserAvatar(name: name, radius: 32),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: theme.textTheme.titleLarge,
+                    ),
+                    if (email != null && email.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        email,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        if (tier != null) ...[
+                          TierBadge(tier: tier, compact: true),
+                          const SizedBox(width: 8),
+                        ],
+                        Text(
+                          l10n.managingPets(petCount),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.edit),
+                onPressed: () => context.push('/profile-edit'),
+                tooltip: l10n.editProfile,
+              ),
+            ],
+          ),
+        );
+      },
+      loading: () => Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 32,
+              backgroundColor: theme.colorScheme.primaryContainer,
+              child: const CircularProgressIndicator(strokeWidth: 2),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 120,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    width: 80,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.petOwner,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'user@example.com',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                ),
-              ],
+          ],
+        ),
+      ),
+      error: (_, __) => Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 32,
+              backgroundColor: theme.colorScheme.errorContainer,
+              child: Icon(
+                Icons.person_off,
+                color: theme.colorScheme.onErrorContainer,
+              ),
             ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () => context.push('/profile-edit'),
-          ),
-        ],
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                l10n.petOwner,
+                style: theme.textTheme.titleLarge,
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: () => context.push('/profile-edit'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -586,21 +671,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 showDialog(
                   context: context,
                   barrierDismissible: false,
-                  builder: (context) => AlertDialog(
-                    title: Text(l10n.accountDeletedSuccessfully),
-                    content: const Text(
-                      'All your data has been permanently deleted. The app will now close. Please reopen to start fresh.',
-                    ),
-                    actions: [
-                      FilledButton(
-                        onPressed: () {
-                          // Exit the app
-                          SystemNavigator.pop();
-                        },
-                        child: const Text('OK'),
-                      ),
-                    ],
-                  ),
+                  builder: (context) {
+                    final dialogL10n = AppLocalizations.of(context);
+                    return AlertDialog(
+                      title: Text(dialogL10n.accountDeletedSuccessfully),
+                      content: Text(dialogL10n.dataDeletedAppCloseMessage),
+                      actions: [
+                        FilledButton(
+                          onPressed: () {
+                            // Exit the app
+                            SystemNavigator.pop();
+                          },
+                          child: Text(dialogL10n.ok),
+                        ),
+                      ],
+                    );
+                  },
                 );
               } else {
                 // Show error message

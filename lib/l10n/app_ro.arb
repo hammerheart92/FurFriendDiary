@@ -1738,5 +1738,85 @@
   "recentFeedings": "Hrăniri Recente",
   "@recentFeedings": {
     "description": "Titlu secțiune pentru intrările recente de hrănire"
+  },
+
+  "profileSaved": "Profil salvat cu succes",
+  "errorSavingProfile": "Eroare la salvarea profilului",
+  "noProfileFound": "Profil negăsit",
+  "enterYourName": "Introduceți numele dvs.",
+  "nameRequired": "Numele este obligatoriu",
+  "nameTooShort": "Numele trebuie să aibă cel puțin 2 caractere",
+  "enterYourEmail": "Introduceți email-ul dvs. (opțional)",
+  "errorLoadingProfile": "Eroare la încărcarea profilului",
+  "subscriptionStatus": "Stare Abonament",
+  "expiresOn": "Expiră:",
+  "freeTierDescription": "Nivel gratuit - gestionați până la 1 animal",
+  "lifetimeAccess": "Acces pe viață - animale nelimitate",
+  "saveChanges": "Salvați Modificările",
+  "managingPets": "Gestionează {count, plural, =0{niciun animal} =1{1 animal} other{{count} animale}}",
+  "@managingPets": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "upgradeToPremium": "Treci la Premium",
+  "@upgradeToPremium": {
+    "description": "Titlu pentru dialogul de upgrade"
+  },
+  "freeTierLimitReached": "Ai atins limita de 1 animal pentru contul gratuit.",
+  "@freeTierLimitReached": {
+    "description": "Mesaj când utilizatorul FREE încearcă să adauge mai multe animale"
+  },
+  "upgradeForUnlimitedPets": "Treci la Premium pentru animale nelimitate și funcții exclusive!",
+  "@upgradeForUnlimitedPets": {
+    "description": "Mesaj despre beneficiile upgrade-ului"
+  },
+  "maybeLater": "Poate mai târziu",
+  "@maybeLater": {
+    "description": "Buton pentru a respinge dialogul de upgrade"
+  },
+  "learnMore": "Află mai multe",
+  "@learnMore": {
+    "description": "Buton pentru a afla mai multe despre Premium"
+  },
+  "premiumComingSoon": "Funcțiile Premium vor fi disponibile în curând!",
+  "@premiumComingSoon": {
+    "description": "Mesaj afișat când achiziția premium nu este încă disponibilă"
+  },
+
+  "unlimitedPets": "Animale nelimitate",
+  "@unlimitedPets": {
+    "description": "Funcție Premium: animale nelimitate"
+  },
+  "cloudBackup": "Backup în cloud",
+  "@cloudBackup": {
+    "description": "Funcție Premium: backup în cloud"
+  },
+  "familySharing": "Partajare cu familia",
+  "@familySharing": {
+    "description": "Funcție Premium: partajare cu familia"
+  },
+  "tierFree": "Gratuit",
+  "@tierFree": {
+    "description": "Denumire nivel pentru utilizatori gratuiți"
+  },
+  "tierPremium": "Premium",
+  "@tierPremium": {
+    "description": "Denumire nivel pentru abonați premium"
+  },
+  "tierLifetime": "Pe Viață",
+  "@tierLifetime": {
+    "description": "Denumire nivel pentru achiziții pe viață"
+  },
+  "dataDeletedAppCloseMessage": "Toate datele au fost șterse permanent. Aplicația se va închide acum. Vă rugăm să redeschideți pentru a începe de la zero.",
+  "@dataDeletedAppCloseMessage": {
+    "description": "Mesaj afișat după ștergerea cu succes a datelor"
+  },
+  "ok": "OK",
+  "@ok": {
+    "description": "Text generic pentru butonul OK"
   }
 }

@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 import 'package:fur_friend_diary/src/domain/models/pet_profile.dart';
 import 'package:fur_friend_diary/src/presentation/providers/pet_profile_provider.dart';
+import 'package:fur_friend_diary/src/presentation/providers/pet_owner_provider.dart';
+import 'package:fur_friend_diary/src/presentation/dialogs/upgrade_prompt_dialog.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
 import 'package:fur_friend_diary/src/ui/screens/weight_history_screen.dart';
 import 'package:fur_friend_diary/src/presentation/providers/protocols/protocol_schedule_provider.dart';
@@ -66,7 +68,7 @@ class PetProfileScreen extends ConsumerWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () => context.push('/add-pet'),
+            onPressed: () => _handleAddPet(context, ref, l10n),
             icon: const Icon(Icons.add),
             tooltip: l10n.addPet,
           ),
@@ -97,6 +99,39 @@ class PetProfileScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  /// Handle add pet button press.
+  /// Checks tier limit and shows upgrade dialog if limit reached.
+  Future<void> _handleAddPet(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) async {
+    // Check if user can add more pets
+    final canAdd = ref.read(canAddMorePetsProvider);
+
+    if (canAdd) {
+      // Navigate to add pet screen
+      context.push('/add-pet');
+    } else {
+      // Show upgrade prompt dialog
+      final result = await UpgradePromptDialog.show(context);
+
+      if (result == true) {
+        // User wants to learn more about Premium
+        // For now, show a snackbar (placeholder for future premium flow)
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(l10n.premiumComingSoon),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      }
+      // If result is false or null, dialog was dismissed - do nothing
+    }
   }
 
   Widget _buildProfileList(

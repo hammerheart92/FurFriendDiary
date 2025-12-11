@@ -11,6 +11,7 @@ import 'src/data/repositories/pet_profile_repository.dart';
 import 'src/presentation/providers/settings_provider.dart';
 import 'src/utils/file_logger.dart';
 import 'src/data/services/vaccination_localization_migration.dart';
+import 'src/data/services/pet_owner_migration_service.dart';
 import 'src/data/services/protocols/protocol_data_provider.dart';
 import 'theme/theme.dart';
 
@@ -33,6 +34,15 @@ Future<void> main() async {
 
     // Initialize NotificationService
     await NotificationService().initialize();
+
+    // Run pet owner migration (v1.3.3)
+    // Creates UserProfile for existing users and links their pets
+    try {
+      await PetOwnerMigrationService.migrateIfNeeded();
+    } catch (e) {
+      logger.w("WARNING: Pet owner migration failed: $e");
+      // Don't crash app if migration fails - will retry on next launch
+    }
 
     // Run vaccination localization migration (v1.2.0)
     try {

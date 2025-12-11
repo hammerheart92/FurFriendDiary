@@ -2217,5 +2217,85 @@
   "recentFeedings": "Recent Feedings",
   "@recentFeedings": {
     "description": "Section title for recent feeding entries"
+  },
+
+  "profileSaved": "Profile saved successfully",
+  "errorSavingProfile": "Error saving profile",
+  "noProfileFound": "No profile found",
+  "enterYourName": "Enter your name",
+  "nameRequired": "Name is required",
+  "nameTooShort": "Name must be at least 2 characters",
+  "enterYourEmail": "Enter your email (optional)",
+  "errorLoadingProfile": "Error loading profile",
+  "subscriptionStatus": "Subscription Status",
+  "expiresOn": "Expires:",
+  "freeTierDescription": "Free tier - manage up to 1 pet",
+  "lifetimeAccess": "Lifetime access - unlimited pets",
+  "saveChanges": "Save Changes",
+  "managingPets": "Managing {count, plural, =0{no pets} =1{1 pet} other{{count} pets}}",
+  "@managingPets": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "upgradeToPremium": "Upgrade to Premium",
+  "@upgradeToPremium": {
+    "description": "Title for upgrade prompt dialog"
+  },
+  "freeTierLimitReached": "You've reached the free tier limit of 1 pet.",
+  "@freeTierLimitReached": {
+    "description": "Message when FREE tier user tries to add more pets"
+  },
+  "upgradeForUnlimitedPets": "Upgrade to Premium for unlimited pets and exclusive features!",
+  "@upgradeForUnlimitedPets": {
+    "description": "Upgrade benefits message"
+  },
+  "maybeLater": "Maybe Later",
+  "@maybeLater": {
+    "description": "Button to dismiss upgrade dialog"
+  },
+  "learnMore": "Learn More",
+  "@learnMore": {
+    "description": "Button to learn more about Premium"
+  },
+  "premiumComingSoon": "Premium features coming soon!",
+  "@premiumComingSoon": {
+    "description": "Message shown when premium purchase is not yet available"
+  },
+
+  "unlimitedPets": "Unlimited pets",
+  "@unlimitedPets": {
+    "description": "Premium feature: unlimited pets"
+  },
+  "cloudBackup": "Cloud backup",
+  "@cloudBackup": {
+    "description": "Premium feature: cloud backup"
+  },
+  "familySharing": "Family sharing",
+  "@familySharing": {
+    "description": "Premium feature: family sharing"
+  },
+  "tierFree": "Free",
+  "@tierFree": {
+    "description": "Tier name for free users"
+  },
+  "tierPremium": "Premium",
+  "@tierPremium": {
+    "description": "Tier name for premium subscribers"
+  },
+  "tierLifetime": "Lifetime",
+  "@tierLifetime": {
+    "description": "Tier name for lifetime purchasers"
+  },
+  "dataDeletedAppCloseMessage": "All your data has been permanently deleted. The app will now close. Please reopen to start fresh.",
+  "@dataDeletedAppCloseMessage": {
+    "description": "Message shown after successful data deletion"
+  },
+  "ok": "OK",
+  "@ok": {
+    "description": "Generic OK button text"
   }
 }

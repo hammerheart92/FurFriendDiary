@@ -371,7 +371,7 @@ class AppLocalizationsRo extends AppLocalizations {
   String get notes => 'Notițe';
 
   @override
-  String get saveChanges => 'Salvează Modificările';
+  String get saveChanges => 'Salvați Modificările';
 
   @override
   String get markInactive => 'Marchează ca Inactiv';
@@ -3431,4 +3431,99 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get recentFeedings => 'Hrăniri Recente';
+
+  @override
+  String get profileSaved => 'Profil salvat cu succes';
+
+  @override
+  String get errorSavingProfile => 'Eroare la salvarea profilului';
+
+  @override
+  String get noProfileFound => 'Profil negăsit';
+
+  @override
+  String get enterYourName => 'Introduceți numele dvs.';
+
+  @override
+  String get nameRequired => 'Numele este obligatoriu';
+
+  @override
+  String get nameTooShort => 'Numele trebuie să aibă cel puțin 2 caractere';
+
+  @override
+  String get enterYourEmail => 'Introduceți email-ul dvs. (opțional)';
+
+  @override
+  String get errorLoadingProfile => 'Eroare la încărcarea profilului';
+
+  @override
+  String get subscriptionStatus => 'Stare Abonament';
+
+  @override
+  String get expiresOn => 'Expiră:';
+
+  @override
+  String get freeTierDescription =>
+      'Nivel gratuit - gestionați până la 1 animal';
+
+  @override
+  String get lifetimeAccess => 'Acces pe viață - animale nelimitate';
+
+  @override
+  String managingPets(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count animale',
+      one: '1 animal',
+      zero: 'niciun animal',
+    );
+    return 'Gestionează $_temp0';
+  }
+
+  @override
+  String get upgradeToPremium => 'Treci la Premium';
+
+  @override
+  String get freeTierLimitReached =>
+      'Ai atins limita de 1 animal pentru contul gratuit.';
+
+  @override
+  String get upgradeForUnlimitedPets =>
+      'Treci la Premium pentru animale nelimitate și funcții exclusive!';
+
+  @override
+  String get maybeLater => 'Poate mai târziu';
+
+  @override
+  String get learnMore => 'Află mai multe';
+
+  @override
+  String get premiumComingSoon =>
+      'Funcțiile Premium vor fi disponibile în curând!';
+
+  @override
+  String get unlimitedPets => 'Animale nelimitate';
+
+  @override
+  String get cloudBackup => 'Backup în cloud';
+
+  @override
+  String get familySharing => 'Partajare cu familia';
+
+  @override
+  String get tierFree => 'Gratuit';
+
+  @override
+  String get tierPremium => 'Premium';
+
+  @override
+  String get tierLifetime => 'Pe Viață';
+
+  @override
+  String get dataDeletedAppCloseMessage =>
+      'Toate datele au fost șterse permanent. Aplicația se va închide acum. Vă rugăm să redeschideți pentru a începe de la zero.';
+
+  @override
+  String get ok => 'OK';
 }
