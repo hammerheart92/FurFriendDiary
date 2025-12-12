@@ -14,6 +14,7 @@ dependencies:
     sdk: flutter
   intl: any
   dynamic_color: ^1.7.0
+  google_fonts: ^6.1.0
 
   # Routing and state
   go_router: 14.2.7
