@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../theme/tokens/colors.dart';
+import '../../../theme/tokens/spacing.dart';
 import '../../domain/models/pet_owner_tier.dart';
 import '../../presentation/providers/pet_owner_provider.dart';
-import '../../presentation/widgets/tier_badge.dart';
-import '../../presentation/widgets/user_avatar.dart';
 
 class ProfileEditScreen extends ConsumerStatefulWidget {
   const ProfileEditScreen({super.key});
@@ -101,11 +102,25 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final profileAsync = ref.watch(petOwnerProvider);
+    final backgroundColor =
+        isDark ? DesignColors.dBackground : DesignColors.lBackground;
+    final secondaryTextColor =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
 
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: Text(l10n.editProfile),
+        backgroundColor: backgroundColor,
+        elevation: 0,
+        title: Text(
+          l10n.editProfile,
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         actions: [
           if (_hasChanges)
             TextButton(
@@ -116,7 +131,14 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                       height: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : Text(l10n.save),
+                  : Text(
+                      l10n.save,
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: DesignColors.highlightBlue,
+                      ),
+                    ),
             ),
         ],
       ),
@@ -130,12 +152,15 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                   Icon(
                     Icons.person_off,
                     size: 64,
-                    color: theme.colorScheme.onSurfaceVariant,
+                    color: secondaryTextColor,
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: DesignSpacing.md),
                   Text(
                     l10n.noProfileFound,
-                    style: theme.textTheme.bodyLarge,
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      color: secondaryTextColor,
+                    ),
                   ),
                 ],
               ),
@@ -143,7 +168,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
           }
 
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(DesignSpacing.md),
             child: Form(
               key: _formKey,
               child: Column(
@@ -151,24 +176,22 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                 children: [
                   // Avatar Section
                   Center(
-                    child: UserAvatar(
-                      name: _nameController.text.isEmpty
+                    child: _buildStyledAvatar(
+                      context,
+                      _nameController.text.isEmpty
                           ? profile.name
                           : _nameController.text,
-                      radius: 48,
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: DesignSpacing.lg),
 
                   // Name Field
-                  TextFormField(
+                  _buildStyledTextField(
+                    context: context,
+                    label: l10n.name,
+                    icon: Icons.person_outline,
                     controller: _nameController,
-                    decoration: InputDecoration(
-                      labelText: l10n.name,
-                      hintText: l10n.enterYourName,
-                      prefixIcon: const Icon(Icons.person_outline),
-                      border: const OutlineInputBorder(),
-                    ),
+                    hintText: l10n.enterYourName,
                     textCapitalization: TextCapitalization.words,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
@@ -181,17 +204,15 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                     },
                     onChanged: (_) => _onFieldChanged(),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: DesignSpacing.md),
 
                   // Email Field
-                  TextFormField(
+                  _buildStyledTextField(
+                    context: context,
+                    label: l10n.email,
+                    icon: Icons.alternate_email,
                     controller: _emailController,
-                    decoration: InputDecoration(
-                      labelText: l10n.email,
-                      hintText: l10n.enterYourEmail,
-                      prefixIcon: const Icon(Icons.email_outlined),
-                      border: const OutlineInputBorder(),
-                    ),
+                    hintText: l10n.enterYourEmail,
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
                       if (value != null && value.trim().isNotEmpty) {
@@ -207,34 +228,59 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                     },
                     onChanged: (_) => _onFieldChanged(),
                   ),
-                  const SizedBox(height: 32),
+                  SizedBox(height: DesignSpacing.lg),
 
                   // Subscription Status Section
                   _buildSubscriptionSection(context, profile.effectiveTier,
                       profile.premiumExpiryDate),
-                  const SizedBox(height: 24),
+                  SizedBox(height: DesignSpacing.xl),
 
                   // Save Button
-                  FilledButton.icon(
-                    onPressed: _hasChanges && !_isLoading ? _saveProfile : null,
-                    icon: _isLoading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed:
+                          _hasChanges && !_isLoading ? _saveProfile : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: DesignColors.highlightBlue,
+                        foregroundColor: Colors.white,
+                        disabledBackgroundColor:
+                            DesignColors.highlightBlue.withAlpha(128),
+                        disabledForegroundColor: Colors.white70,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: _isLoading
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : Text(
+                              l10n.saveChanges,
+                              style: GoogleFonts.inter(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          )
-                        : const Icon(Icons.save),
-                    label: Text(l10n.saveChanges),
+                    ),
                   ),
                 ],
               ),
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => Center(
+          child: CircularProgressIndicator(
+            color: DesignColors.highlightBlue,
+          ),
+        ),
         error: (error, _) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -242,22 +288,202 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
               Icon(
                 Icons.error_outline,
                 size: 64,
-                color: theme.colorScheme.error,
+                color: isDark ? DesignColors.dDanger : DesignColors.lDanger,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: DesignSpacing.md),
               Text(
                 l10n.errorLoadingProfile,
-                style: theme.textTheme.bodyLarge,
+                style: GoogleFonts.inter(
+                  fontSize: 16,
+                  color: secondaryTextColor,
+                ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: DesignSpacing.md),
               OutlinedButton.icon(
                 onPressed: () => ref.invalidate(petOwnerProvider),
                 icon: const Icon(Icons.refresh),
                 label: Text(l10n.retry),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: DesignColors.highlightBlue,
+                  side: BorderSide(color: DesignColors.highlightBlue),
+                ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  /// Generate initials from name (1-2 characters)
+  String _getInitials(String name) {
+    if (name.trim().isEmpty) return 'PO';
+    final parts = name.trim().split(' ').where((p) => p.isNotEmpty).toList();
+    if (parts.isEmpty) return 'PO';
+    if (parts.length == 1) {
+      return parts[0].substring(0, parts[0].length >= 2 ? 2 : 1).toUpperCase();
+    }
+    return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+  }
+
+  /// Build styled text field with blue label and icon
+  Widget _buildStyledTextField({
+    required BuildContext context,
+    required String label,
+    required IconData icon,
+    required TextEditingController controller,
+    String? hintText,
+    TextInputType? keyboardType,
+    TextCapitalization textCapitalization = TextCapitalization.none,
+    String? Function(String?)? validator,
+    void Function(String)? onChanged,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final fillColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final borderColor = isDark ? DesignColors.dDisabled : DesignColors.lDisabled;
+    final textColor = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final hintColor = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Blue label
+        Text(
+          label,
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: DesignColors.highlightBlue,
+          ),
+        ),
+        SizedBox(height: DesignSpacing.xs),
+        // Styled text field
+        TextFormField(
+          controller: controller,
+          keyboardType: keyboardType,
+          textCapitalization: textCapitalization,
+          validator: validator,
+          onChanged: onChanged,
+          style: GoogleFonts.inter(
+            fontSize: 16,
+            color: textColor,
+          ),
+          decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: GoogleFonts.inter(
+              fontSize: 16,
+              color: hintColor,
+            ),
+            prefixIcon: Icon(
+              icon,
+              color: hintColor,
+              size: 20,
+            ),
+            filled: true,
+            fillColor: fillColor,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: borderColor,
+                width: 1,
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: borderColor,
+                width: 1,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: DesignColors.highlightBlue,
+                width: 2,
+              ),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: isDark ? DesignColors.dDanger : DesignColors.lDanger,
+                width: 1,
+              ),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: isDark ? DesignColors.dDanger : DesignColors.lDanger,
+                width: 2,
+              ),
+            ),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: DesignSpacing.md,
+              vertical: DesignSpacing.md,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Build styled avatar with blue border and decorative camera icon
+  Widget _buildStyledAvatar(BuildContext context, String name) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final initials = _getInitials(name);
+
+    return SizedBox(
+      width: 120,
+      height: 120,
+      child: Stack(
+        children: [
+          // Avatar with blue border
+          Container(
+            width: 120,
+            height: 120,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces,
+              border: Border.all(
+                color: DesignColors.highlightBlue,
+                width: 3,
+              ),
+            ),
+            child: Center(
+              child: Text(
+                initials,
+                style: GoogleFonts.poppins(
+                  fontSize: 40,
+                  fontWeight: FontWeight.w600,
+                  color: DesignColors.highlightBlue,
+                ),
+              ),
+            ),
+          ),
+          // Camera icon overlay (decorative only)
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: DesignColors.highlightBlue,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isDark
+                      ? DesignColors.dBackground
+                      : DesignColors.lBackground,
+                  width: 3,
+                ),
+              ),
+              child: const Icon(
+                Icons.camera_alt,
+                color: Colors.white,
+                size: 18,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -268,73 +494,148 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
     DateTime? expiryDate,
   ) {
     final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryTextColor =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryTextColor =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final borderColor = isDark ? DesignColors.dDisabled : DesignColors.lDisabled;
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.subscriptionStatus,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+    // Determine badge color based on tier
+    Color badgeColor;
+    IconData badgeIcon;
+    switch (tier) {
+      case PetOwnerTier.premium:
+        badgeColor = DesignColors.highlightYellow;
+        badgeIcon = Icons.star;
+        break;
+      case PetOwnerTier.lifetime:
+        badgeColor = DesignColors.highlightPurple;
+        badgeIcon = Icons.diamond;
+        break;
+      case PetOwnerTier.free:
+        badgeColor = DesignColors.highlightTeal;
+        badgeIcon = Icons.person_outline;
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Section header
+        Text(
+          l10n.subscriptionStatus,
+          style: GoogleFonts.poppins(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: primaryTextColor,
+          ),
+        ),
+        SizedBox(height: DesignSpacing.sm),
+        // Styled container
+        Container(
+          padding: EdgeInsets.all(DesignSpacing.md),
+          decoration: BoxDecoration(
+            color: surfaceColor,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: borderColor,
+              width: 1,
             ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                TierBadge(tier: tier),
-                const Spacer(),
-                if (tier == PetOwnerTier.premium && expiryDate != null) ...[
-                  Icon(
-                    Icons.calendar_today,
-                    size: 16,
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${l10n.expiresOn} ${DateFormat.yMMMd().format(expiryDate)}',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ],
-            ),
-            if (tier == PetOwnerTier.free) ...[
-              const SizedBox(height: 12),
-              Text(
-                l10n.freeTierDescription,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-            if (tier == PetOwnerTier.lifetime) ...[
-              const SizedBox(height: 12),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               Row(
                 children: [
-                  Icon(
-                    Icons.check_circle,
-                    size: 16,
-                    color: theme.colorScheme.primary,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    l10n.lifetimeAccess,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.w500,
+                  // Styled tier badge
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: DesignSpacing.sm,
+                      vertical: DesignSpacing.xs,
+                    ),
+                    decoration: BoxDecoration(
+                      color: badgeColor.withAlpha(51), // 20% opacity
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: badgeColor,
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          badgeIcon,
+                          size: 16,
+                          color: badgeColor,
+                        ),
+                        SizedBox(width: DesignSpacing.xs),
+                        Text(
+                          tier.name.toUpperCase(),
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: badgeColor,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+                  const Spacer(),
+                  if (tier == PetOwnerTier.premium && expiryDate != null) ...[
+                    Icon(
+                      Icons.calendar_today,
+                      size: 16,
+                      color: secondaryTextColor,
+                    ),
+                    SizedBox(width: DesignSpacing.xs),
+                    Text(
+                      '${l10n.expiresOn} ${DateFormat.yMMMd().format(expiryDate)}',
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        color: secondaryTextColor,
+                      ),
+                    ),
+                  ],
                 ],
               ),
+              if (tier == PetOwnerTier.free) ...[
+                SizedBox(height: DesignSpacing.sm),
+                Text(
+                  l10n.freeTierDescription,
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: secondaryTextColor,
+                  ),
+                ),
+              ],
+              if (tier == PetOwnerTier.lifetime) ...[
+                SizedBox(height: DesignSpacing.sm),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.check_circle,
+                      size: 16,
+                      color: DesignColors.highlightPurple,
+                    ),
+                    SizedBox(width: DesignSpacing.xs),
+                    Text(
+                      l10n.lifetimeAccess,
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        color: DesignColors.highlightPurple,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ],
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }
