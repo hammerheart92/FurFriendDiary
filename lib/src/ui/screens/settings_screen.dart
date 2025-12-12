@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../presentation/providers/settings_provider.dart';
 import '../../presentation/providers/pet_owner_provider.dart';
 import '../../presentation/widgets/tier_badge.dart';
-import '../../presentation/widgets/user_avatar.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../services/data_deletion_service.dart';
 import 'reminders_screen.dart';
 import '../../presentation/providers/pdf_consent_provider.dart';
-import '../../domain/models/pdf_consent.dart';
+import '../../../theme/tokens/colors.dart';
+import '../../../theme/tokens/spacing.dart';
+import '../../../theme/tokens/shadows.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -32,65 +34,83 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
 
+    final isDark = theme.brightness == Brightness.dark;
+    final backgroundColor =
+        isDark ? DesignColors.dBackground : DesignColors.lBackground;
+
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.settings)),
+      backgroundColor: backgroundColor,
+      appBar: AppBar(
+        title: Text(
+          l10n.settings,
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       body: Stack(
         children: [
           ListView(
             children: [
               // Profile Section
               _buildProfileSection(context),
-              const Divider(height: 32),
 
               // Pet Management Group
               _buildSectionHeader(context, l10n.petManagement),
-              ListTile(
-                leading: const Icon(Icons.analytics),
-                title: Text(l10n.reportsAndAnalytics),
-                subtitle: Text(l10n.viewHealthScoresAndMetrics),
-                trailing: const Icon(Icons.chevron_right),
+              _buildSettingsItem(
+                context: context,
+                icon: Icons.analytics,
+                iconColor: DesignColors.highlightBlue,
+                title: l10n.reportsAndAnalytics,
+                subtitle: l10n.viewHealthScoresAndMetrics,
                 onTap: () => context.push('/analytics'),
               ),
-              ListTile(
-                leading: const Icon(Icons.local_hospital),
-                title: Text(l10n.veterinarians),
-                subtitle: Text(l10n.manageVeterinariansAndClinics),
-                trailing: const Icon(Icons.chevron_right),
+              _buildSettingsItem(
+                context: context,
+                icon: Icons.local_hospital,
+                iconColor: DesignColors.highlightCoral,
+                title: l10n.veterinarians,
+                subtitle: l10n.manageVeterinariansAndClinics,
                 onTap: () => context.push('/vet-list'),
               ),
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: Text(l10n.photoGallery),
-                subtitle: Text(l10n.viewAndManagePetPhotos),
-                trailing: const Icon(Icons.chevron_right),
+              _buildSettingsItem(
+                context: context,
+                icon: Icons.photo_library,
+                iconColor: DesignColors.highlightPink,
+                title: l10n.photoGallery,
+                subtitle: l10n.viewAndManagePetPhotos,
                 onTap: () => context.push('/photo-gallery'),
               ),
-              ListTile(
-                leading: const Icon(Icons.inventory),
-                title: Text(l10n.medicationInventory),
-                subtitle: Text(l10n.trackMedicationStockLevels),
-                trailing: const Icon(Icons.chevron_right),
+              _buildSettingsItem(
+                context: context,
+                icon: Icons.inventory,
+                iconColor: DesignColors.highlightPurple,
+                title: l10n.medicationInventory,
+                subtitle: l10n.trackMedicationStockLevels,
                 onTap: () => context.push('/medication-inventory'),
               ),
 
               // Account Settings Group
-              const Divider(height: 32),
               _buildSectionHeader(context, l10n.accountSettings),
-              ListTile(
-                leading: const Icon(Icons.language),
-                title: Text(l10n.language),
-                subtitle: Text(_getLanguageName(context, locale.languageCode)),
-                trailing: const Icon(Icons.chevron_right),
+              _buildSettingsItem(
+                context: context,
+                icon: Icons.language,
+                iconColor: DesignColors.highlightTeal,
+                title: l10n.language,
+                subtitle: _getLanguageName(context, locale.languageCode),
                 onTap: () => _showLanguageDialog(context, ref, locale),
               ),
 
               // App Preferences Group
-              const Divider(height: 32),
               _buildSectionHeader(context, l10n.appPreferences),
-              ListTile(
-                leading: const Icon(Icons.notifications_outlined),
-                title: Text(l10n.reminders),
-                trailing: const Icon(Icons.chevron_right),
+              _buildSettingsItem(
+                context: context,
+                icon: Icons.notifications_outlined,
+                iconColor: DesignColors.highlightYellow,
+                title: l10n.reminders,
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
@@ -99,39 +119,53 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   );
                 },
               ),
-              ListTile(
-                leading: const Icon(Icons.palette_outlined),
-                title: Text(l10n.theme),
-                subtitle: Text(_getThemeName(context, themeMode)),
-                trailing: const Icon(Icons.chevron_right),
+              _buildSettingsItem(
+                context: context,
+                icon: Icons.palette_outlined,
+                iconColor: DesignColors.highlightPurple,
+                title: l10n.theme,
+                subtitle: _getThemeName(context, themeMode),
                 onTap: () => _showThemeDialog(context, ref, themeMode),
               ),
-              SwitchListTile(
-                secondary: const Icon(Icons.notifications_outlined),
-                title: Text(l10n.notifications),
-                subtitle: Text(l10n.enableNotifications),
-                value: notificationsEnabled,
-                onChanged: (value) {
-                  ref
-                      .read(notificationsEnabledProvider.notifier)
-                      .setNotificationsEnabled(value);
-                },
+              _buildSettingsItem(
+                context: context,
+                icon: Icons.notifications_active,
+                iconColor: DesignColors.highlightBlue,
+                title: l10n.notifications,
+                subtitle: l10n.enableNotifications,
+                trailing: Switch(
+                  value: notificationsEnabled,
+                  activeTrackColor: DesignColors.highlightTeal.withAlpha(128),
+                  activeThumbColor: DesignColors.highlightTeal,
+                  onChanged: (value) {
+                    ref
+                        .read(notificationsEnabledProvider.notifier)
+                        .setNotificationsEnabled(value);
+                  },
+                ),
               ),
-              SwitchListTile(
-                secondary: const Icon(Icons.analytics_outlined),
-                title: Text(l10n.enableAnalytics),
-                subtitle: Text(l10n.helpImproveApp),
-                value: false,
-                onChanged: (_) {},
+              _buildSettingsItem(
+                context: context,
+                icon: Icons.bar_chart,
+                iconColor: DesignColors.highlightNavy,
+                title: l10n.enableAnalytics,
+                subtitle: l10n.helpImproveApp,
+                trailing: Switch(
+                  value: false,
+                  activeTrackColor: DesignColors.highlightTeal.withAlpha(128),
+                  activeThumbColor: DesignColors.highlightTeal,
+                  onChanged: (_) {},
+                ),
               ),
 
               // Data Management Group
-              const Divider(height: 32),
               _buildSectionHeader(context, l10n.dataManagement),
-              ListTile(
-                leading: const Icon(Icons.upload_file),
-                title: Text(l10n.exportData),
-                subtitle: Text(l10n.downloadYourData),
+              _buildSettingsItem(
+                context: context,
+                icon: Icons.file_download,
+                iconColor: DesignColors.highlightTeal,
+                title: l10n.exportData,
+                subtitle: l10n.downloadYourData,
                 onTap: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(l10n.featureComingSoon)),
@@ -148,100 +182,102 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       final isGranted = consent?.consentGiven ?? false;
                       final hasDecision = consent != null;
 
-                      return SwitchListTile(
-                        secondary: Icon(
-                          Icons.picture_as_pdf,
-                          color: isGranted
-                              ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurfaceVariant,
-                        ),
-                        title: Text(l10n.pdfExportConsent),
-                        subtitle: Text(
-                          hasDecision
-                              ? (isGranted
-                                  ? l10n.consentStatusGranted
-                                  : l10n.consentStatusNotGranted)
-                              : l10n.consentStatusNotSet,
-                        ),
-                        value: isGranted,
-                        onChanged: (value) async {
-                          if (value) {
-                            // Grant consent
-                            await ref
-                                .read(pdfConsentServiceProvider.notifier)
-                                .grantConsent();
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                    content: Text(l10n.consentGrantedMessage)),
-                              );
+                      return _buildSettingsItem(
+                        context: context,
+                        icon: Icons.picture_as_pdf,
+                        iconColor: DesignColors.highlightCoral,
+                        title: l10n.pdfExportConsent,
+                        subtitle: hasDecision
+                            ? (isGranted
+                                ? l10n.consentStatusGranted
+                                : l10n.consentStatusNotGranted)
+                            : l10n.consentStatusNotSet,
+                        trailing: Switch(
+                          value: isGranted,
+                          activeTrackColor:
+                              DesignColors.highlightTeal.withAlpha(128),
+                          activeThumbColor: DesignColors.highlightTeal,
+                          onChanged: (value) async {
+                            if (value) {
+                              await ref
+                                  .read(pdfConsentServiceProvider.notifier)
+                                  .grantConsent();
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content:
+                                          Text(l10n.consentGrantedMessage)),
+                                );
+                              }
+                            } else {
+                              if (context.mounted) {
+                                _showRevokeConsentDialog(context);
+                              }
                             }
-                          } else {
-                            // Show confirmation dialog before revoking
-                            if (context.mounted) {
-                              _showRevokeConsentDialog(context);
-                            }
-                          }
-                        },
+                          },
+                        ),
                       );
                     },
-                    loading: () => ListTile(
-                      leading: const Icon(Icons.picture_as_pdf),
-                      title: Text(l10n.pdfExportConsent),
-                      subtitle: const LinearProgressIndicator(),
-                    ),
-                    error: (error, stack) => ListTile(
-                      leading: Icon(
-                        Icons.error_outline,
-                        color: theme.colorScheme.error,
+                    loading: () => _buildSettingsItem(
+                      context: context,
+                      icon: Icons.picture_as_pdf,
+                      iconColor: DesignColors.highlightCoral,
+                      title: l10n.pdfExportConsent,
+                      subtitle: '...',
+                      trailing: const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(strokeWidth: 2),
                       ),
-                      title: Text(l10n.pdfExportConsent),
-                      subtitle: Text(l10n.errorLoadingConsent),
+                    ),
+                    error: (error, stack) => _buildSettingsItem(
+                      context: context,
+                      icon: Icons.error_outline,
+                      iconColor: DesignColors.lDanger,
+                      title: l10n.pdfExportConsent,
+                      subtitle: l10n.errorLoadingConsent,
+                      trailing: const SizedBox.shrink(),
                     ),
                   );
                 },
               ),
-              ListTile(
-                leading: const Icon(Icons.cleaning_services),
-                title: Text(l10n.clearCache),
-                subtitle: Text(l10n.freeUpSpace),
+              _buildSettingsItem(
+                context: context,
+                icon: Icons.cleaning_services,
+                iconColor: DesignColors.highlightYellow,
+                title: l10n.clearCache,
+                subtitle: l10n.freeUpSpace,
                 onTap: () => _showClearCacheDialog(context),
               ),
-              ListTile(
-                leading:
-                    Icon(Icons.delete_forever, color: theme.colorScheme.error),
-                title: Text(l10n.deleteAccount,
-                    style: TextStyle(color: theme.colorScheme.error)),
-                subtitle: Text(l10n.deleteAccountPermanently),
+              _buildSettingsItem(
+                context: context,
+                icon: Icons.delete_forever,
+                iconColor: DesignColors.lDanger,
+                title: l10n.deleteAccount,
+                subtitle: l10n.deleteAccountPermanently,
                 onTap: () => _showDeleteAccountDialog(context),
               ),
 
               // Privacy & Legal
-              const Divider(height: 32),
               _buildSectionHeader(context, l10n.privacyAndLegal),
-              ListTile(
-                leading: const Icon(Icons.privacy_tip_outlined),
-                title: Text(l10n.privacyPolicy),
-                trailing: const Icon(Icons.chevron_right),
+              _buildSettingsItem(
+                context: context,
+                icon: Icons.privacy_tip_outlined,
+                iconColor: DesignColors.highlightBlue,
+                title: l10n.privacyPolicy,
                 onTap: () async {
-                  // Get current locale from app
-                  final locale = Localizations.localeOf(context);
-                  final isRomanian = locale.languageCode == 'ro';
-
-                  // Select URL based on language
+                  final currentLocale = Localizations.localeOf(context);
+                  final isRomanian = currentLocale.languageCode == 'ro';
                   final urlString = isRomanian
                       ? 'https://hammerheart92.github.io/furfrienddiary-legal/privacy-policy-ro.html'
                       : 'https://hammerheart92.github.io/furfrienddiary-legal/privacy-policy.html';
-
                   final url = Uri.parse(urlString);
-
                   try {
                     if (await canLaunchUrl(url)) {
                       await launchUrl(url,
                           mode: LaunchMode.externalApplication);
                     } else {
                       if (context.mounted) {
-                        final l10n = AppLocalizations.of(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text(l10n.couldNotOpenLink)),
                         );
@@ -249,7 +285,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     }
                   } catch (e) {
                     if (context.mounted) {
-                      final l10n = AppLocalizations.of(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(l10n.couldNotOpenLink)),
                       );
@@ -257,29 +292,24 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   }
                 },
               ),
-              ListTile(
-                leading: const Icon(Icons.description_outlined),
-                title: Text(l10n.termsOfService),
-                trailing: const Icon(Icons.chevron_right),
+              _buildSettingsItem(
+                context: context,
+                icon: Icons.description_outlined,
+                iconColor: DesignColors.highlightNavy,
+                title: l10n.termsOfService,
                 onTap: () async {
-                  // Get current locale from app
-                  final locale = Localizations.localeOf(context);
-                  final isRomanian = locale.languageCode == 'ro';
-
-                  // Select URL based on language
+                  final currentLocale = Localizations.localeOf(context);
+                  final isRomanian = currentLocale.languageCode == 'ro';
                   final urlString = isRomanian
                       ? 'https://hammerheart92.github.io/furfrienddiary-legal/terms-of-service-ro.html'
                       : 'https://hammerheart92.github.io/furfrienddiary-legal/terms-of-service.html';
-
                   final url = Uri.parse(urlString);
-
                   try {
                     if (await canLaunchUrl(url)) {
                       await launchUrl(url,
                           mode: LaunchMode.externalApplication);
                     } else {
                       if (context.mounted) {
-                        final l10n = AppLocalizations.of(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text(l10n.couldNotOpenLink)),
                         );
@@ -287,7 +317,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     }
                   } catch (e) {
                     if (context.mounted) {
-                      final l10n = AppLocalizations.of(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(l10n.couldNotOpenLink)),
                       );
@@ -295,29 +324,32 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   }
                 },
               ),
-              ListTile(
-                leading: const Icon(Icons.code),
-                title: Text(l10n.openSourceLicenses),
-                trailing: const Icon(Icons.chevron_right),
+              _buildSettingsItem(
+                context: context,
+                icon: Icons.code,
+                iconColor: DesignColors.highlightTeal,
+                title: l10n.openSourceLicenses,
                 onTap: () => _showLicensePage(context),
               ),
 
               // About Section
-              const Divider(height: 32),
               _buildSectionHeader(context, l10n.about),
               FutureBuilder<PackageInfo>(
                 future: PackageInfo.fromPlatform(),
                 builder: (context, snapshot) {
                   final version = snapshot.data?.version ?? '...';
                   final buildNumber = snapshot.data?.buildNumber ?? '';
-                  return ListTile(
-                    leading: const Icon(Icons.info_outline),
-                    title: Text(l10n.appVersion),
-                    subtitle: Text('$version+$buildNumber'),
+                  return _buildSettingsItem(
+                    context: context,
+                    icon: Icons.info_outline,
+                    iconColor: DesignColors.highlightPurple,
+                    title: l10n.appVersion,
+                    subtitle: '$version+$buildNumber',
+                    trailing: const SizedBox.shrink(),
                   );
                 },
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: DesignSpacing.xl),
             ],
           ),
           // Loading overlay
@@ -336,50 +368,123 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget _buildProfileSection(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final profileAsync = ref.watch(petOwnerProvider);
     final petCount = ref.watch(currentPetCountProvider);
+
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryTextColor =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryTextColor =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
 
     return profileAsync.when(
       data: (profile) {
         final name = profile?.name ?? l10n.petOwner;
         final email = profile?.email;
         final tier = profile?.effectiveTier;
+        final initials = name.isNotEmpty
+            ? name
+                .split(' ')
+                .map((w) => w.isNotEmpty ? w[0] : '')
+                .take(2)
+                .join()
+                .toUpperCase()
+            : 'PO';
 
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
+        return Container(
+          margin: EdgeInsets.all(DesignSpacing.md),
+          padding: EdgeInsets.all(DesignSpacing.md),
+          decoration: BoxDecoration(
+            color: surfaceColor,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+          ),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              UserAvatar(name: name, radius: 32),
-              const SizedBox(width: 16),
+              // Avatar with gradient border
+              Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      DesignColors.highlightPurple,
+                      DesignColors.highlightPink,
+                    ],
+                  ),
+                ),
+                padding: const EdgeInsets.all(3),
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: surfaceColor,
+                  ),
+                  child: Center(
+                    child: Text(
+                      initials,
+                      style: GoogleFonts.poppins(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w600,
+                        color: DesignColors.highlightPurple,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: DesignSpacing.md),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      name,
-                      style: theme.textTheme.titleLarge,
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            name,
+                            style: GoogleFonts.poppins(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: primaryTextColor,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        SizedBox(width: DesignSpacing.xs),
+                        const Text('🐾', style: TextStyle(fontSize: 18)),
+                      ],
                     ),
                     if (email != null && email.isNotEmpty) ...[
-                      const SizedBox(height: 2),
+                      SizedBox(height: DesignSpacing.xs),
                       Text(
                         email,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          color: secondaryTextColor,
                         ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
-                    const SizedBox(height: 8),
+                    SizedBox(height: DesignSpacing.sm),
                     Row(
                       children: [
                         if (tier != null) ...[
                           TierBadge(tier: tier, compact: true),
-                          const SizedBox(width: 8),
+                          SizedBox(width: DesignSpacing.sm),
                         ],
-                        Text(
-                          l10n.managingPets(petCount),
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
+                        Flexible(
+                          child: Text(
+                            l10n.managingPets(petCount),
+                            style: GoogleFonts.inter(
+                              fontSize: 13,
+                              color: secondaryTextColor,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
@@ -388,7 +493,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.edit),
+                icon: Icon(
+                  Icons.edit_outlined,
+                  color: secondaryTextColor,
+                ),
                 onPressed: () => context.push('/profile-edit'),
                 tooltip: l10n.editProfile,
               ),
@@ -396,16 +504,27 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
         );
       },
-      loading: () => Padding(
-        padding: const EdgeInsets.all(16.0),
+      loading: () => Container(
+        margin: EdgeInsets.all(DesignSpacing.md),
+        padding: EdgeInsets.all(DesignSpacing.md),
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(16),
+        ),
         child: Row(
           children: [
-            CircleAvatar(
-              radius: 32,
-              backgroundColor: theme.colorScheme.primaryContainer,
-              child: const CircularProgressIndicator(strokeWidth: 2),
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: DesignColors.highlightPurple.withAlpha(51),
+              ),
+              child: const Center(
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
             ),
-            const SizedBox(width: 16),
+            SizedBox(width: DesignSpacing.md),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -414,16 +533,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     width: 120,
                     height: 20,
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerHighest,
+                      color: secondaryTextColor.withAlpha(51),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: DesignSpacing.sm),
                   Container(
                     width: 80,
                     height: 16,
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerHighest,
+                      color: secondaryTextColor.withAlpha(51),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -433,27 +552,41 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ],
         ),
       ),
-      error: (_, __) => Padding(
-        padding: const EdgeInsets.all(16.0),
+      error: (_, __) => Container(
+        margin: EdgeInsets.all(DesignSpacing.md),
+        padding: EdgeInsets.all(DesignSpacing.md),
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(16),
+        ),
         child: Row(
           children: [
-            CircleAvatar(
-              radius: 32,
-              backgroundColor: theme.colorScheme.errorContainer,
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: DesignColors.lDanger.withAlpha(51),
+              ),
               child: Icon(
                 Icons.person_off,
-                color: theme.colorScheme.onErrorContainer,
+                color: DesignColors.lDanger,
+                size: 32,
               ),
             ),
-            const SizedBox(width: 16),
+            SizedBox(width: DesignSpacing.md),
             Expanded(
               child: Text(
                 l10n.petOwner,
-                style: theme.textTheme.titleLarge,
+                style: GoogleFonts.poppins(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: primaryTextColor,
+                ),
               ),
             ),
             IconButton(
-              icon: const Icon(Icons.edit),
+              icon: Icon(Icons.edit_outlined, color: secondaryTextColor),
               onPressed: () => context.push('/profile-edit'),
             ),
           ],
@@ -462,15 +595,107 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
+  /// Theme-aware section header with teal accent color
   Widget _buildSectionHeader(BuildContext context, String title) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      padding: EdgeInsets.only(
+        left: DesignSpacing.md,
+        top: DesignSpacing.lg,
+        bottom: DesignSpacing.xs,
+      ),
       child: Text(
-        title,
-        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              color: Theme.of(context).colorScheme.primary,
-              fontWeight: FontWeight.w600,
+        title.toUpperCase(),
+        style: GoogleFonts.inter(
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          color: DesignColors.highlightTeal,
+          letterSpacing: 0.5,
+        ),
+      ),
+    );
+  }
+
+  /// Builds a colored circular icon background
+  Widget _buildIconBackground({
+    required IconData icon,
+    required Color color,
+    double size = 48,
+  }) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: color.withAlpha(51), // 20% opacity (255 * 0.2 ≈ 51)
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Icon(
+        icon,
+        color: color,
+        size: size * 0.5,
+      ),
+    );
+  }
+
+  /// Theme-aware settings list item with icon background
+  Widget _buildSettingsItem({
+    required BuildContext context,
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    String? subtitle,
+    Widget? trailing,
+    VoidCallback? onTap,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryTextColor =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryTextColor =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: DesignSpacing.md,
+        vertical: DesignSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.sm,
+      ),
+      child: ListTile(
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: DesignSpacing.md,
+          vertical: DesignSpacing.sm,
+        ),
+        leading: _buildIconBackground(icon: icon, color: iconColor),
+        title: Text(
+          title,
+          style: GoogleFonts.inter(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: primaryTextColor,
+          ),
+        ),
+        subtitle: subtitle != null
+            ? Padding(
+                padding: EdgeInsets.only(top: DesignSpacing.xs),
+                child: Text(
+                  subtitle,
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: secondaryTextColor,
+                  ),
+                ),
+              )
+            : null,
+        trailing: trailing ??
+            Icon(
+              Icons.chevron_right,
+              color: secondaryTextColor,
             ),
+        onTap: onTap,
       ),
     );
   }
