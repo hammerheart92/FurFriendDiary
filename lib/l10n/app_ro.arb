@@ -1818,5 +1818,18 @@
   "ok": "OK",
   "@ok": {
     "description": "Text generic pentru butonul OK"
+  },
+
+  "periodWeek": "Săptămână",
+  "@periodWeek": {
+    "description": "Opțiune selector perioadă pentru săptămână"
+  },
+  "periodMonth": "Lună",
+  "@periodMonth": {
+    "description": "Opțiune selector perioadă pentru lună"
+  },
+  "periodAll": "Toate",
+  "@periodAll": {
+    "description": "Opțiune selector perioadă pentru toate"
   }
 }

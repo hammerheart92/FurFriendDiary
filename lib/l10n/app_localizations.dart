@@ -6535,6 +6535,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'OK'**
   String get ok;
+
+  /// Period selector option for week
+  ///
+  /// In en, this message translates to:
+  /// **'Week'**
+  String get periodWeek;
+
+  /// Period selector option for month
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get periodMonth;
+
+  /// Period selector option for all time
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get periodAll;
 }
 
 class _AppLocalizationsDelegate

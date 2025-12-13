@@ -54,7 +54,7 @@ dependencies:
   package_info_plus: ^8.0.0
 
   # Charts
-  fl_chart: ^0.68.0
+  fl_chart: ^0.69.0
 
   # Calendar
   table_calendar: ^3.0.9

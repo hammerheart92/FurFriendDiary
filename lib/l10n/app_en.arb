@@ -2297,5 +2297,18 @@
   "ok": "OK",
   "@ok": {
     "description": "Generic OK button text"
+  },
+
+  "periodWeek": "Week",
+  "@periodWeek": {
+    "description": "Period selector option for week"
+  },
+  "periodMonth": "Month",
+  "@periodMonth": {
+    "description": "Period selector option for month"
+  },
+  "periodAll": "All",
+  "@periodAll": {
+    "description": "Period selector option for all time"
   }
 }

@@ -39,7 +39,11 @@ final weightEntriesForPetProvider =
 /// Latest weight for current pet
 final latestWeightProvider = Provider.autoDispose<WeightEntry?>((ref) {
   final entriesAsync = ref.watch(weightEntriesProvider);
-  final entries = entriesAsync.whenData((data) => data).value ?? [];
+  final entries = entriesAsync.when(
+    data: (data) => data,
+    loading: () => <WeightEntry>[],
+    error: (_, __) => <WeightEntry>[],
+  );
   return entries.isNotEmpty ? entries.first : null;
 });
 
@@ -53,7 +57,11 @@ final latestWeightForPetProvider =
 /// Weight change (difference between latest and earliest) for current pet
 final weightChangeProvider = Provider.autoDispose<double?>((ref) {
   final entriesAsync = ref.watch(weightEntriesProvider);
-  final entries = entriesAsync.whenData((data) => data).value ?? [];
+  final entries = entriesAsync.when(
+    data: (data) => data,
+    loading: () => <WeightEntry>[],
+    error: (_, __) => <WeightEntry>[],
+  );
   if (entries.length < 2) return null;
 
   final latest = entries.first.weight;
@@ -71,6 +79,47 @@ final weightChangeForPetProvider =
 /// Weight unit preference provider (default: kilograms)
 final weightUnitProvider =
     StateProvider<WeightUnit>((ref) => WeightUnit.kilograms);
+
+/// Period filter for weight chart
+enum WeightPeriod { week, month, all }
+
+/// Selected period for weight chart filter
+final weightPeriodProvider =
+    StateProvider<WeightPeriod>((ref) => WeightPeriod.all);
+
+/// Filtered weight entries based on selected period (for chart display)
+final filteredWeightEntriesProvider =
+    Provider.autoDispose<List<WeightEntry>>((ref) {
+  final entriesAsync = ref.watch(weightEntriesProvider);
+  final period = ref.watch(weightPeriodProvider);
+
+  // Properly handle AsyncValue - use .when() to extract data
+  final entries = entriesAsync.when(
+    data: (data) => data,
+    loading: () => <WeightEntry>[],
+    error: (_, __) => <WeightEntry>[],
+  );
+
+  if (period == WeightPeriod.all || entries.isEmpty) {
+    return entries;
+  }
+
+  final now = DateTime.now();
+  final DateTime cutoff;
+
+  switch (period) {
+    case WeightPeriod.week:
+      cutoff = now.subtract(const Duration(days: 7));
+      break;
+    case WeightPeriod.month:
+      cutoff = DateTime(now.year, now.month - 1, now.day);
+      break;
+    case WeightPeriod.all:
+      return entries;
+  }
+
+  return entries.where((e) => e.date.isAfter(cutoff)).toList();
+});
 
 /// Convert weight between units
 double convertWeight(double weight, WeightUnit from, WeightUnit to) {

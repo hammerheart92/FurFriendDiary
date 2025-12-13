@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
 import 'package:fur_friend_diary/src/domain/models/weight_entry.dart';
 import 'package:fur_friend_diary/src/presentation/providers/weight_provider.dart';
 import 'package:fur_friend_diary/src/presentation/widgets/add_weight_dialog.dart';
+import 'package:fur_friend_diary/theme/tokens/colors.dart';
+import 'package:fur_friend_diary/theme/tokens/spacing.dart';
+import 'package:fur_friend_diary/theme/tokens/shadows.dart';
 
 class WeightHistoryScreen extends ConsumerWidget {
   const WeightHistoryScreen({super.key});
@@ -13,13 +17,27 @@ class WeightHistoryScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final backgroundColor =
+        isDark ? DesignColors.dBackground : DesignColors.lBackground;
+
     final weightEntriesAsync = ref.watch(weightEntriesProvider);
     final latestWeight = ref.watch(latestWeightProvider);
     final weightChange = ref.watch(weightChangeProvider);
 
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: Text(l10n.weightTracking),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(
+          l10n.weightTracking,
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.info_outline),
@@ -34,6 +52,9 @@ class WeightHistoryScreen extends ConsumerWidget {
             return _buildEmptyState(context, l10n);
           }
 
+          // Get filtered entries for chart
+          final filteredEntries = ref.watch(filteredWeightEntriesProvider);
+
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -41,12 +62,12 @@ class WeightHistoryScreen extends ConsumerWidget {
                 // Summary Card
                 _buildSummaryCard(context, l10n, latestWeight, weightChange),
 
-                const SizedBox(height: 16),
+                SizedBox(height: DesignSpacing.md),
 
                 // Chart
-                _buildWeightChart(context, l10n, entries),
+                _buildWeightChart(context, l10n, filteredEntries, ref),
 
-                const SizedBox(height: 16),
+                SizedBox(height: DesignSpacing.md),
 
                 // History List
                 _buildHistoryList(context, l10n, entries, ref),
@@ -57,51 +78,93 @@ class WeightHistoryScreen extends ConsumerWidget {
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.error_outline, size: 48, color: Colors.red),
-                const SizedBox(height: 16),
-                Text('Error: $error', textAlign: TextAlign.center),
-              ],
-            ),
+        loading: () => Center(
+          child: CircularProgressIndicator(
+            color: DesignColors.highlightTeal,
           ),
         ),
+        error: (error, stack) => _buildErrorState(context, l10n, error),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showAddWeightDialog(context),
+        backgroundColor: DesignColors.highlightTeal,
+        foregroundColor: Colors.white,
         icon: const Icon(Icons.add),
-        label: Text(l10n.addWeight),
+        label: Text(
+          l10n.addWeight,
+          style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+        ),
       ),
     );
   }
 
   Widget _buildEmptyState(BuildContext context, AppLocalizations l10n) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32.0),
+        padding: EdgeInsets.all(DesignSpacing.xl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.monitor_weight_outlined,
               size: 80,
-              color: Theme.of(context).colorScheme.secondary.withOpacity(0.5),
+              color: DesignColors.highlightTeal.withOpacity(0.5),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: DesignSpacing.md),
             Text(
               l10n.noWeightEntries,
-              style: Theme.of(context).textTheme.titleLarge,
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: primaryText,
+              ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: DesignSpacing.sm),
             Text(
               l10n.addWeightToTrack,
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: secondaryText,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorState(
+      BuildContext context, AppLocalizations l10n, Object error) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(DesignSpacing.lg),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 48,
+              color: DesignColors.lDanger,
+            ),
+            SizedBox(height: DesignSpacing.md),
+            Text(
+              'Error: $error',
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: primaryText,
+              ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -116,50 +179,74 @@ class WeightHistoryScreen extends ConsumerWidget {
     WeightEntry? latestWeight,
     double? weightChange,
   ) {
-    return Card(
-      margin: const EdgeInsets.all(16),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
+    return Container(
+      margin: EdgeInsets.all(DesignSpacing.md),
+      decoration: BoxDecoration(
+        color: DesignColors.highlightTeal.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+        border: Border.all(
+          color: DesignColors.highlightTeal.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(DesignSpacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               l10n.currentWeight,
-              style: Theme.of(context).textTheme.titleMedium,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: secondaryText,
+              ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: DesignSpacing.sm),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
+                // Large weight number with Quicksand font
                 Text(
                   latestWeight != null
-                      ? '${latestWeight.weight.toStringAsFixed(1)} kg'
+                      ? latestWeight.weight.toStringAsFixed(1)
                       : '--',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                if (weightChange != null) ...[
-                  const SizedBox(width: 16),
-                  Chip(
-                    label: Text(
-                      '${weightChange > 0 ? '+' : ''}${weightChange.toStringAsFixed(1)} kg',
-                      style: TextStyle(
-                        color: weightChange > 0 ? Colors.green : Colors.red,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    backgroundColor:
-                        (weightChange > 0 ? Colors.green : Colors.red)
-                            .withOpacity(0.1),
+                  style: GoogleFonts.quicksand(
+                    fontSize: 48,
+                    fontWeight: FontWeight.w700,
+                    color: primaryText,
                   ),
-                ],
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: DesignSpacing.sm),
+                  child: Text(
+                    ' kg',
+                    style: GoogleFonts.inter(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: secondaryText,
+                    ),
+                  ),
+                ),
+                SizedBox(width: DesignSpacing.md),
+                if (weightChange != null) _buildChangeBadge(weightChange),
               ],
             ),
             if (latestWeight != null) ...[
-              const SizedBox(height: 4),
+              SizedBox(height: DesignSpacing.xs),
               Text(
                 DateFormat.yMMMd().format(latestWeight.date),
-                style: Theme.of(context).textTheme.bodySmall,
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  color: secondaryText,
+                ),
               ),
             ],
           ],
@@ -168,14 +255,59 @@ class WeightHistoryScreen extends ConsumerWidget {
     );
   }
 
+  /// Build styled change badge (red for loss, green for gain)
+  Widget _buildChangeBadge(double change) {
+    final isGain = change > 0;
+    final color = isGain ? DesignColors.lSuccess : DesignColors.lDanger;
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: DesignSpacing.sm,
+        vertical: DesignSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withOpacity(0.5)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isGain ? Icons.arrow_upward : Icons.arrow_downward,
+            size: 14,
+            color: color,
+          ),
+          SizedBox(width: DesignSpacing.xs),
+          Text(
+            '${isGain ? '+' : ''}${change.toStringAsFixed(1)} kg',
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildWeightChart(
     BuildContext context,
     AppLocalizations l10n,
     List<WeightEntry> entries,
+    WidgetRef ref,
   ) {
     if (entries.length < 2) {
       return const SizedBox.shrink();
     }
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final selectedPeriod = ref.watch(weightPeriodProvider);
 
     // Sort entries by date (oldest first for chart)
     final sortedEntries = entries.reversed.toList();
@@ -188,79 +320,86 @@ class WeightHistoryScreen extends ConsumerWidget {
         sortedEntries.map((e) => e.weight).reduce((a, b) => a < b ? a : b);
     final maxWeight =
         sortedEntries.map((e) => e.weight).reduce((a, b) => a > b ? a : b);
-    // CRITICAL FIX: Prevent zero range when all weights are the same
     final weightRange = maxWeight - minWeight;
     final safeRange = weightRange > 0 ? weightRange : 1.0;
 
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: DesignSpacing.md),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(DesignSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              l10n.weightTrend,
-              style: Theme.of(context).textTheme.titleMedium,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  l10n.weightTrend,
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: primaryText,
+                  ),
+                ),
+                // Period Selector Dropdown
+                _buildPeriodDropdown(context, ref, selectedPeriod, l10n),
+              ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: DesignSpacing.md),
             SizedBox(
-              height: 200,
+              height: 120,
               child: LineChart(
                 LineChartData(
-                  gridData: const FlGridData(show: true),
-                  titlesData: FlTitlesData(
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 40,
-                        getTitlesWidget: (value, meta) {
-                          return Text(
-                            '${value.toStringAsFixed(1)}kg',
-                            style: const TextStyle(fontSize: 10),
-                          );
-                        },
-                      ),
-                    ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 30,
-                        getTitlesWidget: (value, meta) {
-                          if (value.toInt() >= 0 &&
-                              value.toInt() < sortedEntries.length) {
-                            final entry = sortedEntries[value.toInt()];
-                            return Text(
-                              DateFormat('M/d').format(entry.date),
-                              style: const TextStyle(fontSize: 10),
-                            );
-                          }
-                          return const Text('');
-                        },
-                      ),
-                    ),
-                    rightTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
-                    topTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
-                  ),
-                  borderData: FlBorderData(show: true),
-                  // Use safeRange to prevent issues when all weights are identical
+                  gridData: const FlGridData(show: false),
+                  titlesData: const FlTitlesData(show: false),
+                  borderData: FlBorderData(show: false),
                   minY: minWeight - (safeRange * 0.1),
                   maxY: maxWeight + (safeRange * 0.1),
+                  lineTouchData: LineTouchData(
+                    touchTooltipData: LineTouchTooltipData(
+                      getTooltipColor: (touchedSpot) =>
+                          DesignColors.highlightTeal,
+                      tooltipRoundedRadius: 8,
+                      getTooltipItems: (touchedSpots) {
+                        return touchedSpots.map((spot) {
+                          final entry = sortedEntries[spot.x.toInt()];
+                          return LineTooltipItem(
+                            '${entry.weight.toStringAsFixed(1)} kg\n${DateFormat('M/d').format(entry.date)}',
+                            GoogleFonts.inter(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          );
+                        }).toList();
+                      },
+                    ),
+                  ),
                   lineBarsData: [
                     LineChartBarData(
                       spots: spots,
                       isCurved: true,
-                      color: Theme.of(context).colorScheme.primary,
+                      color: DesignColors.highlightTeal,
                       barWidth: 3,
-                      dotData: const FlDotData(show: true),
+                      dotData: FlDotData(
+                        show: true,
+                        getDotPainter: (spot, percent, bar, index) {
+                          return FlDotCirclePainter(
+                            radius: 4,
+                            color: DesignColors.highlightTeal,
+                            strokeWidth: 2,
+                            strokeColor: Colors.white,
+                          );
+                        },
+                      ),
                       belowBarData: BarAreaData(
                         show: true,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .primary
-                            .withOpacity(0.1),
+                        color: DesignColors.highlightTeal.withOpacity(0.1),
                       ),
                     ),
                   ],
@@ -273,79 +412,230 @@ class WeightHistoryScreen extends ConsumerWidget {
     );
   }
 
+  /// Build period dropdown selector
+  Widget _buildPeriodDropdown(
+    BuildContext context,
+    WidgetRef ref,
+    WeightPeriod selected,
+    AppLocalizations l10n,
+  ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Period labels - using localized strings
+    String getPeriodLabel(WeightPeriod period) {
+      switch (period) {
+        case WeightPeriod.week:
+          return l10n.periodWeek;
+        case WeightPeriod.month:
+          return l10n.periodMonth;
+        case WeightPeriod.all:
+          return l10n.periodAll;
+      }
+    }
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: DesignSpacing.sm,
+        vertical: DesignSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: DesignColors.highlightTeal.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: DesignColors.highlightTeal.withOpacity(0.3)),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<WeightPeriod>(
+          value: selected,
+          isDense: true,
+          icon: Icon(
+            Icons.calendar_today,
+            size: 14,
+            color: DesignColors.highlightTeal,
+          ),
+          style: GoogleFonts.inter(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: DesignColors.highlightTeal,
+          ),
+          dropdownColor:
+              isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces,
+          items: WeightPeriod.values.map((period) {
+            return DropdownMenuItem(
+              value: period,
+              child: Text(getPeriodLabel(period)),
+            );
+          }).toList(),
+          onChanged: (value) {
+            if (value != null) {
+              ref.read(weightPeriodProvider.notifier).state = value;
+            }
+          },
+        ),
+      ),
+    );
+  }
+
   Widget _buildHistoryList(
     BuildContext context,
     AppLocalizations l10n,
     List<WeightEntry> entries,
     WidgetRef ref,
   ) {
-    return Card(
-      margin: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text(
-              l10n.history,
-              style: Theme.of(context).textTheme.titleMedium,
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Section Header
+        Padding(
+          padding: EdgeInsets.only(
+            left: DesignSpacing.md,
+            top: DesignSpacing.lg,
+            bottom: DesignSpacing.sm,
+          ),
+          child: Text(
+            l10n.history.toUpperCase(),
+            style: GoogleFonts.inter(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: DesignColors.highlightTeal,
+              letterSpacing: 0.5,
             ),
           ),
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: entries.length,
-            separatorBuilder: (context, index) => const Divider(height: 1),
-            itemBuilder: (context, index) {
-              final entry = entries[index];
-              final previousEntry =
-                  index < entries.length - 1 ? entries[index + 1] : null;
-              final change = previousEntry != null
-                  ? entry.weight - previousEntry.weight
-                  : null;
+        ),
+        // History Items
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: entries.length,
+          itemBuilder: (context, index) {
+            final entry = entries[index];
+            final previousEntry =
+                index < entries.length - 1 ? entries[index + 1] : null;
+            final change = previousEntry != null
+                ? entry.weight - previousEntry.weight
+                : null;
+            final entryNumber = entries.length - index;
 
-              return ListTile(
-                leading: CircleAvatar(
-                  child: Text('${entry.weight.toStringAsFixed(0)}'),
+            return Container(
+              margin: EdgeInsets.symmetric(
+                horizontal: DesignSpacing.md,
+                vertical: DesignSpacing.xs,
+              ),
+              decoration: BoxDecoration(
+                color: surfaceColor,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.sm,
+              ),
+              child: ListTile(
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: DesignSpacing.md,
+                  vertical: DesignSpacing.xs,
                 ),
-                title: Text('${entry.weight.toStringAsFixed(1)} kg'),
+                leading: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: DesignColors.highlightTeal.withOpacity(0.15),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: DesignColors.highlightTeal.withOpacity(0.3),
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '#$entryNumber',
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: DesignColors.highlightTeal,
+                      ),
+                    ),
+                  ),
+                ),
+                title: Text(
+                  '${entry.weight.toStringAsFixed(1)} kg',
+                  style: GoogleFonts.quicksand(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: primaryText,
+                  ),
+                ),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(DateFormat.yMMMd().format(entry.date)),
-                    if (entry.notes != null && entry.notes!.isNotEmpty)
+                    SizedBox(height: DesignSpacing.xs),
+                    Text(
+                      DateFormat.yMMMd().format(entry.date),
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        color: secondaryText,
+                      ),
+                    ),
+                    if (entry.notes != null && entry.notes!.isNotEmpty) ...[
+                      SizedBox(height: DesignSpacing.xs),
                       Text(
                         entry.notes!,
-                        style: Theme.of(context).textTheme.bodySmall,
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          fontStyle: FontStyle.italic,
+                          color: secondaryText,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
+                    ],
                   ],
                 ),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (change != null)
-                      Chip(
-                        label: Text(
-                          '${change > 0 ? '+' : ''}${change.toStringAsFixed(1)}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: change > 0 ? Colors.green : Colors.red,
-                          ),
-                        ),
-                        backgroundColor:
-                            (change > 0 ? Colors.green : Colors.red)
-                                .withOpacity(0.1),
-                      ),
+                    if (change != null) _buildSmallChangeBadge(change),
+                    SizedBox(width: DesignSpacing.xs),
                     IconButton(
-                      icon: const Icon(Icons.delete_outline),
+                      icon: Icon(
+                        Icons.delete_outline,
+                        color: secondaryText,
+                      ),
                       onPressed: () => _confirmDelete(context, entry, ref),
                     ),
                   ],
                 ),
-              );
-            },
-          ),
-        ],
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  /// Small change badge for history items
+  Widget _buildSmallChangeBadge(double change) {
+    final isGain = change > 0;
+    final color = isGain ? DesignColors.lSuccess : DesignColors.lDanger;
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: DesignSpacing.xs,
+        vertical: 2,
+      ),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        '${isGain ? '+' : ''}${change.toStringAsFixed(1)}',
+        style: GoogleFonts.inter(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
       ),
     );
   }
@@ -363,20 +653,49 @@ class WeightHistoryScreen extends ConsumerWidget {
     WidgetRef ref,
   ) async {
     final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n.deleteWeight),
-        content: Text(l10n.deleteWeightConfirm),
+        backgroundColor: surfaceColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: Text(
+          l10n.deleteWeight,
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.w600,
+            color: primaryText,
+          ),
+        ),
+        content: Text(
+          l10n.deleteWeightConfirm,
+          style: GoogleFonts.inter(color: primaryText),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text(l10n.cancel),
+            child: Text(
+              l10n.cancel,
+              style: GoogleFonts.inter(
+                color: isDark
+                    ? DesignColors.dSecondaryText
+                    : DesignColors.lSecondaryText,
+              ),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: Text(l10n.delete),
+            style: TextButton.styleFrom(foregroundColor: DesignColors.lDanger),
+            child: Text(
+              l10n.delete,
+              style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+            ),
           ),
         ],
       ),
@@ -388,7 +707,13 @@ class WeightHistoryScreen extends ConsumerWidget {
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.weightDeleted)),
+          SnackBar(
+            content: Text(
+              l10n.weightDeleted,
+              style: GoogleFonts.inter(),
+            ),
+            backgroundColor: DesignColors.highlightTeal,
+          ),
         );
       }
     }
@@ -396,15 +721,40 @@ class WeightHistoryScreen extends ConsumerWidget {
 
   void _showWeightInfo(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n.aboutWeightTracking),
-        content: Text(l10n.weightTrackingInfo),
+        backgroundColor: surfaceColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: Text(
+          l10n.aboutWeightTracking,
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.w600,
+            color: primaryText,
+          ),
+        ),
+        content: Text(
+          l10n.weightTrackingInfo,
+          style: GoogleFonts.inter(color: primaryText),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(l10n.close),
+            style: TextButton.styleFrom(
+              foregroundColor: DesignColors.highlightTeal,
+            ),
+            child: Text(
+              l10n.close,
+              style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+            ),
           ),
         ],
       ),

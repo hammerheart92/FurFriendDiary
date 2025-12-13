@@ -3526,4 +3526,13 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get ok => 'OK';
+
+  @override
+  String get periodWeek => 'Săptămână';
+
+  @override
+  String get periodMonth => 'Lună';
+
+  @override
+  String get periodAll => 'Toate';
 }
