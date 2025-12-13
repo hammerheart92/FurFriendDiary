@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:fur_friend_diary/theme/tokens/colors.dart';
+import 'package:fur_friend_diary/theme/tokens/spacing.dart';
+import 'package:fur_friend_diary/theme/tokens/shadows.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../providers/photo_provider.dart';
 import '../providers/pet_profile_provider.dart';
 import '../widgets/add_photo_sheet.dart';
@@ -73,29 +78,10 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
       }
     } on PermissionPermanentlyDeniedException {
       if (mounted) {
-        await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text(l10n.permissionDenied),
-            content: Text(
-              source == 'camera'
-                  ? l10n.cameraPermissionDenied
-                  : l10n.galleryPermissionDenied,
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(l10n.cancel),
-              ),
-              FilledButton(
-                onPressed: () async {
-                  Navigator.pop(context);
-                  await openAppSettings();
-                },
-                child: Text(l10n.openSettings),
-              ),
-            ],
-          ),
+        await _showPermissionDialog(
+          source == 'camera'
+              ? l10n.cameraPermissionDenied
+              : l10n.galleryPermissionDenied,
         );
       }
     } on PermissionDeniedException {
@@ -139,12 +125,15 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
           SnackBar(
             content: Row(
               children: [
-                const SizedBox(
+                SizedBox(
                   width: 20,
                   height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: DesignColors.highlightTeal,
+                  ),
                 ),
-                const SizedBox(width: 16),
+                SizedBox(width: DesignSpacing.md),
                 Text(l10n.processingPhotos),
               ],
             ),
@@ -193,26 +182,7 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
     } on PermissionPermanentlyDeniedException {
       if (mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text(l10n.permissionDenied),
-            content: Text(l10n.galleryPermissionDenied),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(l10n.cancel),
-              ),
-              FilledButton(
-                onPressed: () async {
-                  Navigator.pop(context);
-                  await openAppSettings();
-                },
-                child: Text(l10n.openSettings),
-              ),
-            ],
-          ),
-        );
+        await _showPermissionDialog(l10n.galleryPermissionDenied);
       }
     } on PermissionDeniedException {
       if (mounted) {
@@ -233,7 +203,7 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error: ${e.toString()}'),
-            backgroundColor: Colors.red,
+            backgroundColor: DesignColors.highlightCoral,
           ),
         );
       }
@@ -242,6 +212,89 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  Future<void> _showPermissionDialog(String message) async {
+    final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
+    await showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          decoration: BoxDecoration(
+            color: surfaceColor,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: DesignShadows.lg,
+          ),
+          padding: EdgeInsets.all(DesignSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                l10n.permissionDenied,
+                style: GoogleFonts.poppins(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
+                ),
+              ),
+              SizedBox(height: DesignSpacing.md),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: secondaryText,
+                ),
+              ),
+              SizedBox(height: DesignSpacing.lg),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(
+                      l10n.cancel,
+                      style: GoogleFonts.inter(
+                        color: secondaryText,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: DesignSpacing.sm),
+                  ElevatedButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      await openAppSettings();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: DesignColors.highlightTeal,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: DesignSpacing.lg,
+                        vertical: DesignSpacing.sm,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      l10n.openSettings,
+                      style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   String _formatBytes(int bytes) {
@@ -259,35 +312,58 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
     final l10n = AppLocalizations.of(context)!;
     final photosAsync = ref.watch(photosForCurrentPetProvider);
     final storageAsync = ref.watch(storageUsedByCurrentPetProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
 
     return Scaffold(
       appBar: AppBar(
         title: photosAsync.maybeWhen(
-          data: (photos) => Text('${l10n.photoGallery} (${photos.length})'),
-          orElse: () => Text(l10n.photoGallery),
+          data: (photos) => Text(
+            '${l10n.photoGallery} (${photos.length})',
+            style: GoogleFonts.poppins(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: primaryText,
+            ),
+          ),
+          orElse: () => Text(
+            l10n.photoGallery,
+            style: GoogleFonts.poppins(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: primaryText,
+            ),
+          ),
         ),
         actions: [
           if (storageAsync.hasValue)
             Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: Tooltip(
-                message:
-                    '${l10n.storageUsed}: ${_formatBytes(storageAsync.value!)}',
+              padding: EdgeInsets.only(right: DesignSpacing.md),
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: DesignSpacing.sm,
+                  vertical: DesignSpacing.xs,
+                ),
+                decoration: BoxDecoration(
+                  color: DesignColors.highlightTeal.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       Icons.storage,
-                      size: 16,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      size: 14,
+                      color: DesignColors.highlightTeal,
                     ),
-                    const SizedBox(width: 4),
+                    SizedBox(width: DesignSpacing.xs),
                     Text(
                       _formatBytes(storageAsync.value!),
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: DesignColors.highlightTeal,
+                      ),
                     ),
                   ],
                 ),
@@ -298,126 +374,247 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
       body: photosAsync.when(
         data: (photos) {
           if (photos.isEmpty) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.photo_library_outlined,
-                      size: 100,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .primary
-                          .withValues(alpha: 0.5),
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      l10n.noPhotos,
-                      style:
-                          Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      l10n.addFirstPhoto,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 32),
-                    FilledButton.icon(
-                      onPressed: _handleAddPhoto,
-                      icon: const Icon(Icons.add_a_photo),
-                      label: Text(l10n.addPhoto),
-                      style: FilledButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
+            return _buildEmptyState(l10n);
           }
 
           return RefreshIndicator(
+            color: DesignColors.highlightTeal,
             onRefresh: () async {
               ref.invalidate(photosForCurrentPetProvider);
               ref.invalidate(storageUsedByCurrentPetProvider);
             },
             child: GridView.builder(
-              padding: const EdgeInsets.all(4.0),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 4,
-                mainAxisSpacing: 4,
+              padding: EdgeInsets.all(DesignSpacing.md),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: DesignSpacing.sm,
+                mainAxisSpacing: DesignSpacing.sm,
               ),
-              itemCount: photos.length,
+              itemCount: photos.length + 1, // +1 for Add Photo card
               itemBuilder: (context, index) {
-                final photo = photos[index];
-                final thumbnailFile = File(photo.thumbnailPath);
-
-                return GestureDetector(
-                  onTap: () {
-                    // Pass all photo IDs and current index for swipe navigation
-                    final photoIds = photos.map((p) => p.id).toList();
-                    context.push(
-                      '/photo-detail/${photo.id}',
-                      extra: {
-                        'photoIds': photoIds,
-                        'initialIndex': index,
-                      },
-                    );
-                  },
-                  child: Hero(
-                    tag: 'photo-${photo.id}',
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .surfaceContainerHighest,
-                        ),
-                        child: thumbnailFile.existsSync()
-                            ? Image.file(
-                                thumbnailFile,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return const Icon(Icons.broken_image);
-                                },
-                              )
-                            : const Icon(Icons.broken_image),
-                      ),
-                    ),
-                  ),
-                );
+                if (index == 0) {
+                  return _buildAddPhotoCard(l10n);
+                }
+                return _buildPhotoTile(photos[index - 1], index - 1, photos);
               },
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => Center(
+          child: CircularProgressIndicator(
+            color: DesignColors.highlightTeal,
+          ),
+        ),
         error: (error, stack) => Center(
           child: Text('Error: ${error.toString()}'),
         ),
       ),
       floatingActionButton: _isLoading
-          ? const FloatingActionButton(
+          ? FloatingActionButton(
               onPressed: null,
-              child: CircularProgressIndicator(),
+              backgroundColor: DesignColors.highlightTeal,
+              child: const CircularProgressIndicator(
+                color: Colors.white,
+              ),
             )
           : FloatingActionButton(
               onPressed: _handleAddPhoto,
-              child: const Icon(Icons.add_a_photo),
+              backgroundColor: DesignColors.highlightTeal,
+              elevation: 8,
+              child: const Icon(
+                Icons.add_a_photo,
+                color: Colors.white,
+              ),
             ),
+    );
+  }
+
+  Widget _buildEmptyState(AppLocalizations l10n) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(DesignSpacing.xl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Cute cat icon
+            Icon(
+              Icons.pets,
+              size: 80,
+              color: DesignColors.highlightPeach.withOpacity(0.5),
+            ),
+            SizedBox(height: DesignSpacing.md),
+            Icon(
+              Icons.photo_library_outlined,
+              size: 64,
+              color: DesignColors.highlightTeal.withOpacity(0.5),
+            ),
+            SizedBox(height: DesignSpacing.md),
+            Text(
+              l10n.noPhotos,
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: primaryText,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: DesignSpacing.xs),
+            Text(
+              l10n.addFirstPhoto,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: secondaryText,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: DesignSpacing.lg),
+            ElevatedButton.icon(
+              onPressed: _handleAddPhoto,
+              icon: const Icon(Icons.add_a_photo),
+              label: Text(l10n.addPhoto),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: DesignColors.highlightTeal,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: DesignSpacing.lg,
+                  vertical: DesignSpacing.md,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAddPhotoCard(AppLocalizations l10n) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: _handleAddPhoto,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          decoration: BoxDecoration(
+            color: DesignColors.highlightPeach.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: DesignColors.highlightTeal.withOpacity(0.3),
+              width: 2,
+            ),
+            boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.sm,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Cute cat illustration - enlarged, centered
+              SvgPicture.asset(
+                'assets/illustrations/new_image.svg',
+                width: 120,
+                height: 120,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPhotoTile(dynamic photo, int photoIndex, List<dynamic> photos) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final thumbnailFile = File(photo.thumbnailPath);
+    final currentPet = ref.watch(currentPetProfileProvider);
+    final isProfilePhoto = currentPet?.photoPath == photo.filePath;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          // Pass all photo IDs and current index for swipe navigation
+          final photoIds = photos.map((p) => p.id).toList();
+          context.push(
+            '/photo-detail/${photo.id}',
+            extra: {
+              'photoIds': photoIds,
+              'initialIndex': photoIndex,
+            },
+          );
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+            border: isProfilePhoto
+                ? Border.all(color: DesignColors.highlightTeal, width: 3)
+                : null,
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Hero(
+              tag: 'photo-${photo.id}',
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Photo image
+                  thumbnailFile.existsSync()
+                      ? Image.file(
+                          thumbnailFile,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: isDark
+                                  ? DesignColors.dSurfaces
+                                  : DesignColors.lSurfaces,
+                              child: Icon(
+                                Icons.broken_image,
+                                color: DesignColors.highlightTeal.withOpacity(0.5),
+                              ),
+                            );
+                          },
+                        )
+                      : Container(
+                          color: isDark
+                              ? DesignColors.dSurfaces
+                              : DesignColors.lSurfaces,
+                          child: Icon(
+                            Icons.broken_image,
+                            color: DesignColors.highlightTeal.withOpacity(0.5),
+                          ),
+                        ),
+                  // Profile photo badge
+                  if (isProfilePhoto)
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: DesignColors.highlightTeal,
+                          shape: BoxShape.circle,
+                          boxShadow: DesignShadows.md,
+                        ),
+                        child: const Icon(
+                          Icons.person,
+                          size: 16,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

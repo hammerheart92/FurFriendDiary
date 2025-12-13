@@ -3,8 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:fur_friend_diary/theme/tokens/colors.dart';
+import 'package:fur_friend_diary/theme/tokens/spacing.dart';
+import 'package:fur_friend_diary/theme/tokens/shadows.dart';
 import '../providers/photo_provider.dart';
 import '../providers/pet_profile_provider.dart';
 import '../../domain/models/pet_photo.dart';
@@ -121,24 +125,8 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
 
     if (photo == null || currentPet == null) return;
 
-    // Show confirmation dialog
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.setProfilePhoto),
-        content: Text(l10n.setProfilePhotoConfirm(currentPet.name)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.confirm),
-          ),
-        ],
-      ),
-    );
+    // Show styled confirmation dialog
+    final confirmed = await _showSetProfilePhotoDialog(currentPet.name);
 
     if (confirmed != true || !mounted) return;
 
@@ -159,7 +147,7 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.profilePhotoUpdated),
-            backgroundColor: Colors.green,
+            backgroundColor: DesignColors.highlightTeal,
           ),
         );
       }
@@ -172,30 +160,94 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
     }
   }
 
+  Future<bool?> _showSetProfilePhotoDialog(String petName) async {
+    final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          decoration: BoxDecoration(
+            color: surfaceColor,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: DesignShadows.lg,
+          ),
+          padding: EdgeInsets.all(DesignSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                l10n.setProfilePhoto,
+                style: GoogleFonts.poppins(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
+                ),
+              ),
+              SizedBox(height: DesignSpacing.md),
+              Text(
+                l10n.setProfilePhotoConfirm(petName),
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: secondaryText,
+                ),
+              ),
+              SizedBox(height: DesignSpacing.lg),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: Text(
+                      l10n.cancel,
+                      style: GoogleFonts.inter(
+                        color: secondaryText,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: DesignSpacing.sm),
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: DesignColors.highlightTeal,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: DesignSpacing.lg,
+                        vertical: DesignSpacing.sm,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      l10n.confirm,
+                      style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _deletePhoto() async {
     final l10n = AppLocalizations.of(context)!;
 
-    // Show confirmation dialog
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.deletePhoto),
-        content: Text(l10n.deletePhotoConfirm),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-            child: Text(l10n.delete),
-          ),
-        ],
-      ),
-    );
+    // Show styled confirmation dialog
+    final confirmed = await _showDeleteDialog();
 
     if (confirmed != true || !mounted) return;
 
@@ -246,6 +298,89 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
     }
   }
 
+  Future<bool?> _showDeleteDialog() async {
+    final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          decoration: BoxDecoration(
+            color: surfaceColor,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: DesignShadows.lg,
+          ),
+          padding: EdgeInsets.all(DesignSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                l10n.deletePhoto,
+                style: GoogleFonts.poppins(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
+                ),
+              ),
+              SizedBox(height: DesignSpacing.md),
+              Text(
+                l10n.deletePhotoConfirm,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: secondaryText,
+                ),
+              ),
+              SizedBox(height: DesignSpacing.lg),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: Text(
+                      l10n.cancel,
+                      style: GoogleFonts.inter(
+                        color: DesignColors.highlightTeal,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: DesignSpacing.sm),
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: DesignColors.highlightCoral,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: DesignSpacing.lg,
+                        vertical: DesignSpacing.sm,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      l10n.delete,
+                      style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   String _formatBytes(int bytes) {
     if (bytes < 1024) {
       return '$bytes B';
@@ -265,6 +400,13 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
     final l10n = AppLocalizations.of(context)!;
     final currentPhotoId = widget.photoIds[_currentIndex];
     final photo = ref.watch(photoDetailProvider(currentPhotoId));
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
 
     if (photo == null) {
       return Scaffold(
@@ -283,31 +425,39 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.black,
+        iconTheme: const IconThemeData(color: Colors.white),
         title: Text(
           '${l10n.photo} ${_currentIndex + 1} / ${widget.photoIds.length}',
+          style: GoogleFonts.inter(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: Colors.white70,
+          ),
         ),
         actions: [
           if (_isEditingCaption)
             IconButton(
-              icon: const Icon(Icons.check),
+              icon: Icon(Icons.check, color: DesignColors.highlightTeal),
               onPressed: () => _saveCaption(photo),
             )
           else ...[
             // Share button
             IconButton(
-              icon: const Icon(Icons.share),
+              icon: Icon(Icons.share, color: DesignColors.highlightTeal),
               tooltip: l10n.share,
               onPressed: _sharePhoto,
             ),
             // Set as profile photo button
             IconButton(
-              icon: const Icon(Icons.account_circle),
+              icon:
+                  Icon(Icons.account_circle, color: DesignColors.highlightTeal),
               tooltip: l10n.setProfilePhoto,
               onPressed: _setAsProfilePhoto,
             ),
             // Edit button
             IconButton(
-              icon: const Icon(Icons.edit),
+              icon: Icon(Icons.edit, color: DesignColors.highlightTeal),
               tooltip: l10n.edit,
               onPressed: () {
                 setState(() {
@@ -320,12 +470,15 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
           if (!_isEditingCaption)
             IconButton(
               icon: _isDeleting
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: DesignColors.highlightCoral,
+                      ),
                     )
-                  : const Icon(Icons.delete),
+                  : Icon(Icons.delete, color: DesignColors.highlightCoral),
               tooltip: l10n.delete,
               onPressed: _isDeleting ? null : _deletePhoto,
             ),
@@ -336,7 +489,8 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Photo with swipe and zoom capability
-            SizedBox(
+            Container(
+              color: Colors.black,
               height: MediaQuery.of(context).size.height * 0.5,
               child: PageView.builder(
                 controller: _pageController,
@@ -352,7 +506,11 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
                   final pagePhoto = ref.watch(photoDetailProvider(pagePhotoId));
 
                   if (pagePhoto == null) {
-                    return const Center(child: CircularProgressIndicator());
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: DesignColors.highlightTeal,
+                      ),
+                    );
                   }
 
                   final pagePhotoFile = File(pagePhoto.filePath);
@@ -368,21 +526,27 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
                               fit: BoxFit.contain,
                               errorBuilder: (context, error, stackTrace) {
                                 return Container(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .surfaceContainerHighest,
-                                  child: const Center(
-                                    child: Icon(Icons.broken_image, size: 80),
+                                  color: Colors.black,
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.broken_image,
+                                      size: 80,
+                                      color: DesignColors.highlightTeal
+                                          .withOpacity(0.5),
+                                    ),
                                   ),
                                 );
                               },
                             )
                           : Container(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .surfaceContainerHighest,
-                              child: const Center(
-                                child: Icon(Icons.broken_image, size: 80),
+                              color: Colors.black,
+                              child: Center(
+                                child: Icon(
+                                  Icons.broken_image,
+                                  size: 80,
+                                  color: DesignColors.highlightTeal
+                                      .withOpacity(0.5),
+                                ),
                               ),
                             ),
                     ),
@@ -393,38 +557,71 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
 
             // Page indicator
             if (widget.photoIds.length > 1)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
+              Container(
+                color: Colors.black,
+                padding: EdgeInsets.symmetric(vertical: DesignSpacing.sm),
                 child: Center(
                   child: Text(
                     '${_currentIndex + 1} / ${widget.photoIds.length}',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      color: Colors.white70,
+                    ),
                   ),
                 ),
               ),
 
-            // Photo details
-            Padding(
-              padding: const EdgeInsets.all(16.0),
+            // Photo details section
+            Container(
+              color: surfaceColor,
+              padding: EdgeInsets.all(DesignSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Caption
+                  // Caption header
                   Text(
                     l10n.caption,
-                    style: Theme.of(context).textTheme.titleMedium,
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: secondaryText,
+                    ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: DesignSpacing.xs),
+
+                  // Caption input/display
                   if (_isEditingCaption)
                     TextField(
                       controller: _captionController,
+                      maxLines: 3,
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        color: primaryText,
+                      ),
                       decoration: InputDecoration(
                         hintText: l10n.addCaption,
-                        border: const OutlineInputBorder(),
+                        hintStyle: GoogleFonts.inter(
+                          color: secondaryText.withOpacity(0.6),
+                        ),
+                        filled: true,
+                        fillColor: surfaceColor,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: isDark
+                                ? DesignColors.dDisabled
+                                : DesignColors.lDisabled,
+                            width: 1,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: DesignColors.highlightTeal,
+                            width: 2,
+                          ),
+                        ),
                       ),
-                      maxLines: 3,
                       autofocus: true,
                     )
                   else
@@ -432,36 +629,47 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
                       photo.caption?.isEmpty ?? true
                           ? l10n.noCaption
                           : photo.caption!,
-                      style: Theme.of(context).textTheme.bodyLarge,
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        color: photo.caption?.isEmpty ?? true
+                            ? secondaryText.withOpacity(0.6)
+                            : primaryText,
+                        fontStyle: photo.caption?.isEmpty ?? true
+                            ? FontStyle.italic
+                            : FontStyle.normal,
+                      ),
                     ),
 
-                  const SizedBox(height: 24),
+                  SizedBox(height: DesignSpacing.lg),
 
                   // Date taken
                   _buildInfoRow(
-                    context,
                     icon: Icons.calendar_today,
                     label: l10n.dateTaken,
                     value: _formatDate(photo.dateTaken),
+                    secondaryText: secondaryText,
+                    primaryText: primaryText,
                   ),
 
-                  const SizedBox(height: 12),
+                  SizedBox(height: DesignSpacing.sm),
 
                   // File size
                   _buildInfoRow(
-                    context,
                     icon: Icons.storage,
                     label: l10n.fileSize,
                     value: _formatBytes(photo.fileSize),
+                    secondaryText: secondaryText,
+                    primaryText: primaryText,
                   ),
 
                   if (photo.createdAt != photo.dateTaken) ...[
-                    const SizedBox(height: 12),
+                    SizedBox(height: DesignSpacing.sm),
                     _buildInfoRow(
-                      context,
                       icon: Icons.add_circle,
                       label: l10n.dateAdded,
                       value: _formatDate(photo.createdAt),
+                      secondaryText: secondaryText,
+                      primaryText: primaryText,
                     ),
                   ],
                 ],
@@ -473,33 +681,38 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
     );
   }
 
-  Widget _buildInfoRow(
-    BuildContext context, {
+  Widget _buildInfoRow({
     required IconData icon,
     required String label,
     required String value,
+    required Color secondaryText,
+    required Color primaryText,
   }) {
     return Row(
       children: [
         Icon(
           icon,
-          size: 20,
-          color: Theme.of(context).colorScheme.outline,
+          size: 16,
+          color: secondaryText,
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: DesignSpacing.sm),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 label,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  color: secondaryText,
+                ),
               ),
               Text(
                 value,
-                style: Theme.of(context).textTheme.bodyLarge,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: primaryText,
+                ),
               ),
             ],
           ),

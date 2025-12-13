@@ -164,7 +164,9 @@ GoRouter createRouter() => GoRouter(
           builder: (context, state) {
             final photoId = state.pathParameters['photoId']!;
             final extra = state.extra as Map<String, dynamic>?;
-            final photoIds = extra?['photoIds'] as List<String>? ?? [photoId];
+            final photoIds =
+                (extra?['photoIds'] as List<dynamic>?)?.cast<String>() ??
+                    [photoId];
             final initialIndex = extra?['initialIndex'] as int? ?? 0;
             return PhotoDetailScreen(
               photoId: photoId,
