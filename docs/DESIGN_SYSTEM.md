@@ -311,6 +311,48 @@ Container(
 
 ---
 
+## ⚠️ CRITICAL: Flutter 3.38+ Color API Bug
+
+**Date Discovered:** December 13, 2025
+**Affects:** Flutter 3.38.x with custom color classes (DesignColors)
+
+### The Problem
+Flutter 3.38+ introduced `.withValues(alpha:)` as a replacement for `.withOpacity()`. However, when used with custom color constants from design token classes, **icons and text may fail to render** while container backgrounds appear correctly.
+
+**Symptom:** Empty teal/coral squares where icons should appear, missing badge text.
+
+### Root Cause
+The `.withValues(alpha:)` API has rendering issues when:
+1. Used with static `const Color` definitions in custom classes
+2. Combined with `BoxDecoration` backgrounds
+3. Applied to Icon or Text widget colors
+
+### Solution
+**Always use `.withOpacity()` instead of `.withValues(alpha:)`**
+
+```dart
+// ❌ DON'T - May cause rendering bugs
+color: DesignColors.highlightTeal.withValues(alpha: 26),
+
+// ✅ DO - Battle-tested, reliable
+color: DesignColors.highlightTeal.withOpacity(0.1),
+```
+
+### Conversion Table
+| Alpha (0-255) | Opacity (0.0-1.0) |
+|---------------|-------------------|
+| 26            | 0.10              |
+| 38            | 0.15              |
+| 51            | 0.20              |
+| 77            | 0.30              |
+| 102           | 0.40              |
+| 128           | 0.50              |
+| 180           | 0.70              |
+
+**Note:** IDE will show deprecation warning for `.withOpacity()` - this is safe to ignore. The deprecation is informational only; the API works correctly.
+
+---
+
 ## 🚨 Important Rules
 
 ### DO ✅
@@ -327,6 +369,7 @@ Container(
 - Never mix font families randomly
 - Never skip shadows on elevated elements
 - Never assume light mode only
+- **Never use `.withValues(alpha:)` - use `.withOpacity()` instead** (see Flutter 3.38+ bug above)
 
 ---
 
