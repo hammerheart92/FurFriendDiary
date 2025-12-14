@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../domain/models/feeding_entry.dart';
 import '../../../data/repositories/feeding_repository_impl.dart';
 import '../../providers/care_data_provider.dart';
@@ -11,6 +12,9 @@ import '../../providers/pet_profile_provider.dart';
 import '../../providers/feeding_form_state_provider.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../utils/date_helper.dart';
+import '../../../../theme/tokens/colors.dart';
+import '../../../../theme/tokens/spacing.dart';
+import '../../../../theme/tokens/shadows.dart';
 
 final _logger = Logger(); // ignore: prefer_const_constructors
 final _uuid = Uuid();
@@ -26,37 +30,148 @@ class FeedingHistoryScreen extends ConsumerStatefulWidget {
 class _FeedingHistoryScreenState extends ConsumerState<FeedingHistoryScreen> {
   Future<void> _showFeedingDetails(FeedingEntry feeding) async {
     final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
 
     final formattedDateTime =
         '${relativeDateLabel(context, feeding.dateTime)} ${l10n.at} ${localizedTime(context, feeding.dateTime)}';
 
+    final foodColor = _getFoodTypeColor(feeding.foodType);
+    final foodIcon = _getFoodTypeIcon(feeding.foodType);
+
     await showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(feeding.foodType),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('${l10n.date}: $formattedDateTime'),
-            if (feeding.amount > 0) Text('${l10n.amount}: ${feeding.amount}'),
-            if (feeding.notes != null && feeding.notes!.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Text(
-                '${l10n.notes}:',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 4),
-              Text(feeding.notes!),
-            ],
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.close),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          decoration: BoxDecoration(
+            color: surfaceColor,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: DesignShadows.lg,
           ),
-        ],
+          padding: EdgeInsets.all(DesignSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Food type icon
+              Container(
+                padding: EdgeInsets.all(DesignSpacing.md),
+                decoration: BoxDecoration(
+                  color: foodColor.withOpacity(0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  foodIcon,
+                  size: 48,
+                  color: foodColor,
+                ),
+              ),
+              SizedBox(height: DesignSpacing.md),
+              Text(
+                feeding.foodType,
+                style: GoogleFonts.poppins(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
+                ),
+              ),
+              SizedBox(height: DesignSpacing.md),
+              // Details
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(DesignSpacing.md),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? DesignColors.dBackground
+                      : DesignColors.lBackground,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.access_time,
+                            size: 16, color: DesignColors.highlightTeal),
+                        SizedBox(width: DesignSpacing.sm),
+                        Expanded(
+                          child: Text(
+                            formattedDateTime,
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              color: primaryText,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (feeding.amount > 0) ...[
+                      SizedBox(height: DesignSpacing.sm),
+                      Row(
+                        children: [
+                          Icon(Icons.scale,
+                              size: 16, color: DesignColors.highlightTeal),
+                          SizedBox(width: DesignSpacing.sm),
+                          Text(
+                            '${feeding.amount.toStringAsFixed(0)} g',
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              color: primaryText,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                    if (feeding.notes != null && feeding.notes!.isNotEmpty) ...[
+                      SizedBox(height: DesignSpacing.sm),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.note,
+                              size: 16, color: DesignColors.highlightTeal),
+                          SizedBox(width: DesignSpacing.sm),
+                          Expanded(
+                            child: Text(
+                              feeding.notes!,
+                              style: GoogleFonts.inter(
+                                fontSize: 14,
+                                fontStyle: FontStyle.italic,
+                                color: secondaryText,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              SizedBox(height: DesignSpacing.lg),
+              // Close button
+              SizedBox(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: TextButton.styleFrom(
+                    foregroundColor: DesignColors.highlightTeal,
+                    padding: EdgeInsets.symmetric(vertical: DesignSpacing.sm),
+                  ),
+                  child: Text(
+                    l10n.close,
+                    style: GoogleFonts.inter(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -109,22 +224,97 @@ class _FeedingHistoryScreenState extends ConsumerState<FeedingHistoryScreen> {
 
   Future<void> _deleteFeeding(FeedingEntry feeding) async {
     final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.confirmDelete),
-        content: Text(l10n.deleteConfirmationMessage),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(l10n.cancel),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          decoration: BoxDecoration(
+            color: surfaceColor,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: DesignShadows.lg,
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: Text(l10n.delete),
+          padding: EdgeInsets.all(DesignSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Warning icon
+              Container(
+                padding: EdgeInsets.all(DesignSpacing.md),
+                decoration: BoxDecoration(
+                  color: DesignColors.lDanger.withOpacity(0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.warning_outlined,
+                  size: 48,
+                  color: DesignColors.lDanger,
+                ),
+              ),
+              SizedBox(height: DesignSpacing.md),
+              Text(
+                l10n.confirmDelete,
+                style: GoogleFonts.poppins(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
+                ),
+              ),
+              SizedBox(height: DesignSpacing.sm),
+              Text(
+                l10n.deleteConfirmationMessage,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: secondaryText,
+                ),
+              ),
+              SizedBox(height: DesignSpacing.lg),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, false),
+                    child: Text(
+                      l10n.cancel,
+                      style: GoogleFonts.inter(
+                        color: secondaryText,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: DesignSpacing.sm),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context, true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: DesignColors.lDanger,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: DesignSpacing.lg,
+                        vertical: DesignSpacing.sm,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      l10n.delete,
+                      style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
 
@@ -138,7 +328,11 @@ class _FeedingHistoryScreenState extends ConsumerState<FeedingHistoryScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(l10n.feedingDeleted),
+              content: Text(
+                l10n.feedingDeleted,
+                style: GoogleFonts.inter(),
+              ),
+              backgroundColor: DesignColors.highlightTeal,
               duration: const Duration(seconds: 2),
             ),
           );
@@ -148,8 +342,11 @@ class _FeedingHistoryScreenState extends ConsumerState<FeedingHistoryScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('${l10n.failedToSaveFeeding}: $e'),
-              backgroundColor: Theme.of(context).colorScheme.error,
+              content: Text(
+                '${l10n.failedToSaveFeeding}: $e',
+                style: GoogleFonts.inter(),
+              ),
+              backgroundColor: DesignColors.lDanger,
             ),
           );
         }
@@ -204,63 +401,60 @@ class _FeedingHistoryScreenState extends ConsumerState<FeedingHistoryScreen> {
     );
   }
 
+  /// Get color for food type
+  Color _getFoodTypeColor(String foodType) {
+    final lowerType = foodType.toLowerCase();
+    if (lowerType.contains('dry')) return DesignColors.highlightCoral;
+    if (lowerType.contains('wet')) return DesignColors.highlightTeal;
+    if (lowerType.contains('treat')) return DesignColors.highlightPink;
+    if (lowerType.contains('snack')) return DesignColors.highlightYellow;
+    return DesignColors.highlightBlue;
+  }
+
+  /// Get icon for food type
+  IconData _getFoodTypeIcon(String foodType) {
+    final lowerType = foodType.toLowerCase();
+    if (lowerType.contains('dry')) return Icons.pets;
+    if (lowerType.contains('wet')) return Icons.restaurant_menu;
+    if (lowerType.contains('treat')) return Icons.cookie;
+    if (lowerType.contains('snack')) return Icons.fastfood;
+    return Icons.restaurant;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final scheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor =
+        isDark ? DesignColors.dBackground : DesignColors.lBackground;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
     final currentPet = ref.watch(currentPetProfileProvider);
 
     final feedingsAsync =
         ref.watch(feedingsByPetIdProvider(currentPet?.id ?? ''));
 
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: Text(l10n.feedingHistory),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(
+          l10n.feedingHistory,
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: primaryText,
+          ),
+        ),
+        iconTheme: IconThemeData(color: primaryText),
       ),
       body: feedingsAsync.when(
         data: (feedings) {
           if (feedings.isEmpty) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CircleAvatar(
-                      radius: 48,
-                      backgroundColor: scheme.primaryContainer,
-                      child: Icon(
-                        Icons.restaurant,
-                        size: 48,
-                        color: scheme.onPrimaryContainer,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      l10n.noFeedingLogsYet,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      l10n.feedingLogEmpty,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: scheme.onSurface.withValues(alpha: 0.7),
-                          ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 24),
-                    FilledButton.icon(
-                      onPressed: _showAddFeedingDialog,
-                      icon: const Icon(Icons.add),
-                      label: Text(l10n.addFirstFeeding),
-                    ),
-                  ],
-                ),
-              ),
-            );
+            return _buildEmptyState(context, l10n, primaryText, secondaryText);
           }
 
           // Sort feedings by date (newest first)
@@ -268,47 +462,145 @@ class _FeedingHistoryScreenState extends ConsumerState<FeedingHistoryScreen> {
             ..sort((a, b) => b.dateTime.compareTo(a.dateTime));
 
           return RefreshIndicator(
+            color: DesignColors.highlightTeal,
             onRefresh: () async {
-              ref.invalidate(feedingsByPetIdProvider(currentPet!.id));
+              final pet = ref.read(currentPetProfileProvider);
+              if (pet != null) {
+                ref.invalidate(feedingsByPetIdProvider(pet.id));
+              }
             },
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            child: ListView.builder(
+              padding: EdgeInsets.symmetric(
+                vertical: DesignSpacing.md,
+                horizontal: DesignSpacing.md,
+              ),
               itemCount: sortedFeedings.length,
-              separatorBuilder: (_, __) => const Divider(height: 1),
               itemBuilder: (_, index) => _FeedingTile(
                 item: sortedFeedings[index],
                 onTap: () => _showFeedingDetails(sortedFeedings[index]),
                 onEdit: () => _editFeeding(sortedFeedings[index]),
                 onDelete: () => _deleteFeeding(sortedFeedings[index]),
+                getFoodTypeColor: _getFoodTypeColor,
+                getFoodTypeIcon: _getFoodTypeIcon,
               ),
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(32),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 48,
-                  color: scheme.error,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  '${l10n.errorLoadingFeedings}: $error',
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
+        loading: () => Center(
+          child: CircularProgressIndicator(
+            color: DesignColors.highlightTeal,
           ),
         ),
+        error: (error, stack) => _buildErrorState(context, l10n, error, primaryText),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: _showAddFeedingDialog,
-        child: const Icon(Icons.add),
+        backgroundColor: DesignColors.highlightTeal,
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.add),
+        label: Text(
+          l10n.addNewFeeding,
+          style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+        ),
+      ),
+    );
+  }
+
+  /// Build empty state widget
+  Widget _buildEmptyState(
+    BuildContext context,
+    AppLocalizations l10n,
+    Color primaryText,
+    Color secondaryText,
+  ) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(DesignSpacing.xl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.restaurant,
+              size: 80,
+              color: DesignColors.highlightCoral.withOpacity(0.5),
+            ),
+            SizedBox(height: DesignSpacing.sm),
+            Icon(
+              Icons.food_bank_outlined,
+              size: 64,
+              color: DesignColors.highlightTeal.withOpacity(0.5),
+            ),
+            SizedBox(height: DesignSpacing.md),
+            Text(
+              l10n.noFeedingLogsYet,
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: primaryText,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: DesignSpacing.xs),
+            Text(
+              l10n.feedingLogEmpty,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: secondaryText,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: DesignSpacing.lg),
+            ElevatedButton.icon(
+              onPressed: _showAddFeedingDialog,
+              icon: const Icon(Icons.add),
+              label: Text(l10n.addFirstFeeding),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: DesignColors.highlightTeal,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: DesignSpacing.lg,
+                  vertical: DesignSpacing.md,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Build error state widget
+  Widget _buildErrorState(
+    BuildContext context,
+    AppLocalizations l10n,
+    Object error,
+    Color primaryText,
+  ) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(DesignSpacing.xl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 48,
+              color: DesignColors.lDanger,
+            ),
+            SizedBox(height: DesignSpacing.md),
+            Text(
+              '${l10n.errorLoadingFeedings}: $error',
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: primaryText,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -320,63 +612,152 @@ class _FeedingTile extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  final Color Function(String) getFoodTypeColor;
+  final IconData Function(String) getFoodTypeIcon;
 
   const _FeedingTile({
     required this.item,
     required this.onTap,
     required this.onEdit,
     required this.onDelete,
+    required this.getFoodTypeColor,
+    required this.getFoodTypeIcon,
   });
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
 
     final formattedDateTime =
         '${relativeDateLabel(context, item.dateTime)} ${l10n.at} ${localizedTime(context, item.dateTime)}';
 
-    return ListTile(
-      leading: const Icon(Icons.pets),
-      title: Text(item.foodType),
-      subtitle: Text(formattedDateTime),
-      trailing: PopupMenuButton<String>(
-        icon: const Icon(Icons.more_vert),
-        onSelected: (value) {
-          switch (value) {
-            case 'edit':
-              onEdit();
-              break;
-            case 'delete':
-              onDelete();
-              break;
-          }
-        },
-        itemBuilder: (context) => [
-          PopupMenuItem(
-            value: 'edit',
-            child: Row(
-              children: [
-                const Icon(Icons.edit),
-                const SizedBox(width: 8),
-                Text(l10n.edit),
-              ],
-            ),
-          ),
-          PopupMenuItem(
-            value: 'delete',
-            child: Row(
-              children: [
-                const Icon(Icons.delete, color: Colors.red),
-                const SizedBox(width: 8),
-                Text(l10n.delete, style: const TextStyle(color: Colors.red)),
-              ],
-            ),
-          ),
-        ],
+    final foodColor = getFoodTypeColor(item.foodType);
+    final foodIcon = getFoodTypeIcon(item.foodType);
+
+    return Container(
+      margin: EdgeInsets.only(bottom: DesignSpacing.sm),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
       ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-      minVerticalPadding: 12,
-      onTap: onTap,
+      child: ListTile(
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: DesignSpacing.md,
+          vertical: DesignSpacing.sm,
+        ),
+        leading: Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            color: foodColor.withOpacity(0.15),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            foodIcon,
+            color: foodColor,
+            size: 24,
+          ),
+        ),
+        title: Text(
+          item.foodType,
+          style: GoogleFonts.poppins(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: primaryText,
+          ),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: DesignSpacing.xs),
+            Text(
+              formattedDateTime,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: secondaryText,
+              ),
+            ),
+            if (item.amount > 0) ...[
+              SizedBox(height: DesignSpacing.xs),
+              Row(
+                children: [
+                  Icon(Icons.scale, size: 14, color: secondaryText),
+                  SizedBox(width: DesignSpacing.xs),
+                  Text(
+                    '${item.amount.toStringAsFixed(0)} g',
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      color: secondaryText,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ],
+        ),
+        trailing: PopupMenuButton<String>(
+          icon: Icon(Icons.more_vert, color: secondaryText),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          color: surfaceColor,
+          onSelected: (value) {
+            switch (value) {
+              case 'edit':
+                onEdit();
+                break;
+              case 'delete':
+                onDelete();
+                break;
+            }
+          },
+          itemBuilder: (context) => [
+            PopupMenuItem(
+              value: 'edit',
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.edit_outlined,
+                    size: 20,
+                    color: DesignColors.highlightTeal,
+                  ),
+                  SizedBox(width: DesignSpacing.sm),
+                  Text(
+                    l10n.edit,
+                    style: GoogleFonts.inter(color: primaryText),
+                  ),
+                ],
+              ),
+            ),
+            PopupMenuItem(
+              value: 'delete',
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.delete_outline,
+                    size: 20,
+                    color: DesignColors.lDanger,
+                  ),
+                  SizedBox(width: DesignSpacing.sm),
+                  Text(
+                    l10n.delete,
+                    style: GoogleFonts.inter(color: DesignColors.lDanger),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        onTap: onTap,
+      ),
     );
   }
 }
@@ -495,10 +876,71 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
     return 'other';
   }
 
+  /// Build consistent input decoration with design system
+  InputDecoration _buildInputDecoration({
+    required String label,
+    required IconData prefixIcon,
+    IconData? suffixIcon,
+    String? suffixText,
+    String? hintText,
+    bool alignLabelTop = false,
+    required Color secondaryText,
+    required Color surfaceColor,
+    required Color disabledColor,
+  }) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: GoogleFonts.inter(fontSize: 14, color: secondaryText),
+      hintText: hintText,
+      hintStyle: GoogleFonts.inter(fontSize: 14, color: secondaryText),
+      alignLabelWithHint: alignLabelTop,
+      prefixIcon: alignLabelTop
+          ? Padding(
+              padding: EdgeInsets.only(bottom: 40),
+              child: Icon(prefixIcon, color: DesignColors.highlightTeal),
+            )
+          : Icon(prefixIcon, color: DesignColors.highlightTeal),
+      suffixIcon:
+          suffixIcon != null ? Icon(suffixIcon, color: secondaryText) : null,
+      suffixText: suffixText,
+      suffixStyle: GoogleFonts.inter(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: secondaryText,
+      ),
+      filled: true,
+      fillColor: surfaceColor,
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: disabledColor, width: 1),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: DesignColors.highlightTeal, width: 2),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: DesignColors.lDanger, width: 2),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: DesignColors.lDanger, width: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final disabledColor =
+        isDark ? DesignColors.dDisabled : DesignColors.lDisabled;
     final petsAsync = ref.watch(petProfilesProvider);
 
     if (widget.feeding != null && _selectedFoodTypeKey == null) {
@@ -521,10 +963,10 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
 
     return Padding(
       padding: EdgeInsets.only(
-        left: 16,
-        right: 16,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-        top: 8,
+        left: DesignSpacing.md,
+        right: DesignSpacing.md,
+        bottom: MediaQuery.of(context).viewInsets.bottom + DesignSpacing.md,
+        top: DesignSpacing.sm,
       ),
       child: Form(
         key: _form,
@@ -533,24 +975,49 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Handle bar
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: disabledColor,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              SizedBox(height: DesignSpacing.md),
+
+              // Title
               Text(
                 _isEditMode ? l10n.editFeeding : l10n.addNewFeeding,
-                style: theme.textTheme.titleLarge,
+                style: GoogleFonts.poppins(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
+                ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: DesignSpacing.lg),
 
               // Pet Selection (if multiple pets exist)
               petsAsync.when(
                 data: (pets) {
                   if (pets.length > 1) {
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
+                      padding: EdgeInsets.only(bottom: DesignSpacing.md),
                       child: DropdownButtonFormField<String>(
-                        initialValue: _selectedPetId,
-                        decoration: InputDecoration(
-                          labelText: '${l10n.pet} *',
-                          prefixIcon: const Icon(Icons.pets),
-                          border: const OutlineInputBorder(),
+                        value: _selectedPetId,
+                        decoration: _buildInputDecoration(
+                          label: '${l10n.pet} *',
+                          prefixIcon: Icons.pets,
+                          secondaryText: secondaryText,
+                          surfaceColor: surfaceColor,
+                          disabledColor: disabledColor,
+                        ),
+                        dropdownColor: surfaceColor,
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          color: primaryText,
                         ),
                         items: pets
                             .map((pet) => DropdownMenuItem(
@@ -580,12 +1047,16 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
 
               // Food Type Dropdown
               DropdownButtonFormField<String>(
-                initialValue: _selectedFoodTypeKey,
-                decoration: InputDecoration(
-                  labelText: '${l10n.foodType} *',
-                  border: const OutlineInputBorder(),
-                  prefixIcon: const Icon(Icons.restaurant),
+                value: _selectedFoodTypeKey,
+                decoration: _buildInputDecoration(
+                  label: '${l10n.foodType} *',
+                  prefixIcon: Icons.restaurant,
+                  secondaryText: secondaryText,
+                  surfaceColor: surfaceColor,
+                  disabledColor: disabledColor,
                 ),
+                dropdownColor: surfaceColor,
+                style: GoogleFonts.inter(fontSize: 16, color: primaryText),
                 items: _commonFoodTypes.map((foodTypeKey) {
                   return DropdownMenuItem(
                     value: foodTypeKey == 'other' ? 'other' : foodTypeKey,
@@ -625,15 +1096,18 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
 
               // Show custom text field if "Other" is selected
               if (_showCustomFoodTypeField) ...[
-                const SizedBox(height: 16),
+                SizedBox(height: DesignSpacing.md),
                 TextFormField(
                   controller: _foodTypeController,
-                  decoration: InputDecoration(
-                    labelText: l10n.foodTypeCustomPlaceholder,
+                  decoration: _buildInputDecoration(
+                    label: l10n.foodTypeCustomPlaceholder,
                     hintText: l10n.foodTypeHint,
-                    border: const OutlineInputBorder(),
-                    prefixIcon: const Icon(Icons.edit),
+                    prefixIcon: Icons.edit,
+                    secondaryText: secondaryText,
+                    surfaceColor: surfaceColor,
+                    disabledColor: disabledColor,
                   ),
+                  style: GoogleFonts.inter(fontSize: 16, color: primaryText),
                   validator: (value) {
                     if (_showCustomFoodTypeField &&
                         (value == null || value.trim().isEmpty)) {
@@ -650,18 +1124,21 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
                   },
                 ),
               ],
-              const SizedBox(height: 16),
+              SizedBox(height: DesignSpacing.md),
 
               // Amount
               TextFormField(
                 controller: _amountController,
-                decoration: InputDecoration(
-                  labelText: '${l10n.amount} *',
+                decoration: _buildInputDecoration(
+                  label: '${l10n.amount} *',
                   hintText: '0.0',
-                  prefixIcon: const Icon(Icons.fitness_center),
+                  prefixIcon: Icons.scale,
                   suffixText: 'g',
-                  border: const OutlineInputBorder(),
+                  secondaryText: secondaryText,
+                  surfaceColor: surfaceColor,
+                  disabledColor: disabledColor,
                 ),
+                style: GoogleFonts.inter(fontSize: 16, color: primaryText),
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
                 validator: (value) {
@@ -674,10 +1151,11 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: DesignSpacing.md),
 
               // Timestamp Picker
               InkWell(
+                borderRadius: BorderRadius.circular(12),
                 onTap: () async {
                   if (!mounted) return;
 
@@ -706,30 +1184,38 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
                   }
                 },
                 child: InputDecorator(
-                  decoration: InputDecoration(
-                    labelText: l10n.feedingTime,
-                    prefixIcon: const Icon(Icons.access_time),
-                    border: const OutlineInputBorder(),
+                  decoration: _buildInputDecoration(
+                    label: l10n.feedingTime,
+                    prefixIcon: Icons.access_time,
+                    suffixIcon: Icons.calendar_today,
+                    secondaryText: secondaryText,
+                    surfaceColor: surfaceColor,
+                    disabledColor: disabledColor,
                   ),
                   child: Text(
                     DateFormat('MMM dd, yyyy HH:mm').format(_selectedDateTime),
+                    style: GoogleFonts.inter(fontSize: 16, color: primaryText),
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: DesignSpacing.md),
 
               // Notes
               TextFormField(
                 controller: _notesController,
-                decoration: InputDecoration(
-                  labelText: l10n.notes,
+                decoration: _buildInputDecoration(
+                  label: l10n.notes,
                   hintText: l10n.addNotesOptional,
-                  prefixIcon: const Icon(Icons.note),
-                  border: const OutlineInputBorder(),
+                  prefixIcon: Icons.note,
+                  alignLabelTop: true,
+                  secondaryText: secondaryText,
+                  surfaceColor: surfaceColor,
+                  disabledColor: disabledColor,
                 ),
+                style: GoogleFonts.inter(fontSize: 16, color: primaryText),
                 maxLines: 3,
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: DesignSpacing.lg),
 
               // Action Buttons
               Row(
@@ -738,13 +1224,28 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
                     Expanded(
                       child: OutlinedButton(
                         onPressed: _clearDraftState,
-                        child: Text(l10n.clear),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: secondaryText,
+                          side: BorderSide(color: disabledColor),
+                          padding:
+                              EdgeInsets.symmetric(vertical: DesignSpacing.md),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          l10n.clear,
+                          style: GoogleFonts.inter(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: DesignSpacing.md),
                   ],
                   Expanded(
-                    child: FilledButton(
+                    child: ElevatedButton(
                       onPressed: () {
                         if (_form.currentState!.validate()) {
                           String finalFoodType;
@@ -784,7 +1285,23 @@ class _AddFeedingSheetState extends ConsumerState<_AddFeedingSheet> {
                           Navigator.of(context).pop();
                         }
                       },
-                      child: Text(_isEditMode ? l10n.save : l10n.add),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: DesignColors.highlightTeal,
+                        foregroundColor: Colors.white,
+                        padding:
+                            EdgeInsets.symmetric(vertical: DesignSpacing.md),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        _isEditMode ? l10n.save : l10n.add,
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ),
                 ],
