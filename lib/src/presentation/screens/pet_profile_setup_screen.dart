@@ -2,11 +2,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 import 'package:fur_friend_diary/src/domain/models/pet_profile.dart';
 import 'package:fur_friend_diary/src/presentation/providers/pet_profile_provider.dart';
 import 'package:fur_friend_diary/src/services/profile_picture_service.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
+import '../../../../theme/tokens/colors.dart';
+import '../../../../theme/tokens/spacing.dart';
+import '../../../../theme/tokens/shadows.dart';
 
 class PetProfileSetupScreen extends ConsumerStatefulWidget {
   final String? petId; // null = create new, non-null = edit existing
@@ -584,76 +588,170 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
     }
   }
 
+  InputDecoration _buildInputDecoration({
+    required String label,
+    required IconData prefixIcon,
+    IconData? suffixIcon,
+    String? hintText,
+    bool alignLabelTop = false,
+    required Color secondaryText,
+    required Color surfaceColor,
+    required Color disabledColor,
+  }) {
+    return InputDecoration(
+      labelText: label,
+      hintText: hintText,
+      labelStyle: GoogleFonts.inter(fontSize: 14, color: secondaryText),
+      alignLabelWithHint: alignLabelTop,
+      prefixIcon: alignLabelTop
+          ? Padding(
+              padding: const EdgeInsets.only(bottom: 60),
+              child: Icon(prefixIcon, color: DesignColors.highlightTeal),
+            )
+          : Icon(prefixIcon, color: DesignColors.highlightTeal),
+      suffixIcon: suffixIcon != null ? Icon(suffixIcon, color: secondaryText) : null,
+      filled: true,
+      fillColor: surfaceColor,
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: disabledColor, width: 1),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: DesignColors.highlightTeal, width: 2),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: DesignColors.lDanger, width: 2),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: DesignColors.lDanger, width: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final disabledColor = isDark ? DesignColors.dDisabled : DesignColors.lDisabled;
 
     return Scaffold(
+      backgroundColor: isDark ? DesignColors.dBackground : DesignColors.lBackground,
       appBar: AppBar(
-        title: Text(_isEditMode ? l10n.editPetProfile : l10n.setupPetProfile),
+        backgroundColor: surfaceColor,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: primaryText),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          _isEditMode ? l10n.editPetProfile : l10n.setupPetProfile,
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: primaryText,
+          ),
+        ),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(DesignSpacing.md),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Image picker section
+              // Image picker section with camera overlay
               Center(
-                child: GestureDetector(
-                  onTap: _pickImage,
-                  child: Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: theme.colorScheme.surfaceContainerHighest,
-                      border: Border.all(
-                        color: theme.colorScheme.outline,
-                        width: 2,
+                child: Column(
+                  children: [
+                    Stack(
+                      alignment: Alignment.bottomRight,
+                      children: [
+                        // Photo preview
+                        GestureDetector(
+                          onTap: _pickImage,
+                          child: Container(
+                            width: 120,
+                            height: 120,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: surfaceColor,
+                              border: Border.all(
+                                color: DesignColors.highlightTeal.withOpacity(0.3),
+                                width: 2,
+                              ),
+                            ),
+                            child: ClipOval(
+                              child: _savedImagePath != null
+                                  ? Image.file(
+                                      File(_savedImagePath!),
+                                      fit: BoxFit.cover,
+                                      width: 120,
+                                      height: 120,
+                                    )
+                                  : Icon(
+                                      Icons.pets,
+                                      size: 48,
+                                      color: secondaryText.withOpacity(0.5),
+                                    ),
+                            ),
+                          ),
+                        ),
+                        // Camera overlay badge
+                        Positioned(
+                          right: 0,
+                          bottom: 0,
+                          child: GestureDetector(
+                            onTap: _pickImage,
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: const BoxDecoration(
+                                color: DesignColors.highlightTeal,
+                                shape: BoxShape.circle,
+                                boxShadow: DesignShadows.md,
+                              ),
+                              child: const Icon(
+                                Icons.camera_alt,
+                                size: 20,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: DesignSpacing.sm),
+                    Text(
+                      _savedImagePath != null ? l10n.changePhoto : l10n.addPhoto,
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: DesignColors.highlightTeal,
                       ),
                     ),
-                    child: _savedImagePath != null
-                        ? ClipOval(
-                            child: Image.file(
-                              File(_savedImagePath!),
-                              fit: BoxFit.cover,
-                              width: 120,
-                              height: 120,
-                            ),
-                          )
-                        : Icon(
-                            Icons.pets,
-                            size: 48,
-                            color: theme.colorScheme.onSurface
-                                .withValues(alpha: 0.6),
-                          ),
-                  ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 8),
-              Center(
-                child: TextButton.icon(
-                  onPressed: _pickImage,
-                  icon: const Icon(Icons.camera_alt),
-                  label: Text(_savedImagePath != null
-                      ? l10n.changePhoto
-                      : l10n.addPhoto),
-                ),
-              ),
-              const SizedBox(height: 24),
+              SizedBox(height: DesignSpacing.lg),
 
               // Pet name field
               TextFormField(
                 controller: _nameController,
-                decoration: InputDecoration(
-                  labelText: '${l10n.petName} *',
-                  border: const OutlineInputBorder(),
-                  prefixIcon: const Icon(Icons.pets),
+                decoration: _buildInputDecoration(
+                  label: '${l10n.petName} *',
+                  prefixIcon: Icons.pets,
+                  secondaryText: secondaryText,
+                  surfaceColor: surfaceColor,
+                  disabledColor: disabledColor,
                 ),
+                style: GoogleFonts.inter(fontSize: 16, color: primaryText),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return l10n.pleaseEnterPetName;
@@ -661,16 +759,20 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: DesignSpacing.md),
 
               // Species dropdown
               DropdownButtonFormField<String>(
                 value: _selectedSpecies,
-                decoration: InputDecoration(
-                  labelText: '${l10n.species} *',
-                  border: const OutlineInputBorder(),
-                  prefixIcon: const Icon(Icons.category),
+                decoration: _buildInputDecoration(
+                  label: '${l10n.species} *',
+                  prefixIcon: Icons.category,
+                  secondaryText: secondaryText,
+                  surfaceColor: surfaceColor,
+                  disabledColor: disabledColor,
                 ),
+                style: GoogleFonts.inter(fontSize: 16, color: primaryText),
+                dropdownColor: surfaceColor,
                 items: _commonSpecies.map((species) {
                   return DropdownMenuItem(
                     value: species == 'Other (Custom)' ? null : species,
@@ -729,15 +831,18 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
 
               // Show custom text field if "Other" is selected
               if (_showCustomSpeciesField) ...[
-                const SizedBox(height: 16),
+                SizedBox(height: DesignSpacing.md),
                 TextFormField(
                   controller: _speciesController,
-                  decoration: InputDecoration(
-                    labelText: l10n.customSpecies,
+                  decoration: _buildInputDecoration(
+                    label: l10n.customSpecies,
                     hintText: l10n.enterCustomSpecies,
-                    border: const OutlineInputBorder(),
-                    prefixIcon: const Icon(Icons.edit),
+                    prefixIcon: Icons.edit,
+                    secondaryText: secondaryText,
+                    surfaceColor: surfaceColor,
+                    disabledColor: disabledColor,
                   ),
+                  style: GoogleFonts.inter(fontSize: 16, color: primaryText),
                   validator: (value) {
                     if (_showCustomSpeciesField &&
                         (value == null || value.trim().isEmpty)) {
@@ -747,18 +852,22 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
                   },
                 ),
               ],
-              const SizedBox(height: 16),
+              SizedBox(height: DesignSpacing.md),
 
               // Dynamic breed field based on selected species
               if (_getBreedsForSpecies(_selectedSpecies) != null) ...[
                 // Show dropdown for species with breed lists
                 DropdownButtonFormField<String>(
                   value: _selectedBreed,
-                  decoration: InputDecoration(
-                    labelText: l10n.breedOptional,
-                    border: const OutlineInputBorder(),
-                    prefixIcon: const Icon(Icons.info_outline),
+                  decoration: _buildInputDecoration(
+                    label: l10n.breedOptional,
+                    prefixIcon: Icons.info_outline,
+                    secondaryText: secondaryText,
+                    surfaceColor: surfaceColor,
+                    disabledColor: disabledColor,
                   ),
+                  style: GoogleFonts.inter(fontSize: 16, color: primaryText),
+                  dropdownColor: surfaceColor,
                   items: _getBreedsForSpecies(_selectedSpecies)!.map((breed) {
                     return DropdownMenuItem(
                       value: breed == 'Other (Custom)' ? null : breed,
@@ -783,15 +892,18 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
 
                 // Show custom breed text field if "Other" is selected
                 if (_showCustomBreedField) ...[
-                  const SizedBox(height: 16),
+                  SizedBox(height: DesignSpacing.md),
                   TextFormField(
                     controller: _breedController,
-                    decoration: InputDecoration(
-                      labelText: l10n.customBreed,
+                    decoration: _buildInputDecoration(
+                      label: l10n.customBreed,
                       hintText: l10n.enterCustomBreed,
-                      border: const OutlineInputBorder(),
-                      prefixIcon: const Icon(Icons.edit),
+                      prefixIcon: Icons.edit,
+                      secondaryText: secondaryText,
+                      surfaceColor: surfaceColor,
+                      disabledColor: disabledColor,
                     ),
+                    style: GoogleFonts.inter(fontSize: 16, color: primaryText),
                     onChanged: (value) {
                       if (value.isNotEmpty) {
                         logger.d("[BREED] Custom breed entered: $value");
@@ -803,27 +915,31 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
                 // Show text field only for species without breed lists
                 TextFormField(
                   controller: _breedController,
-                  decoration: InputDecoration(
-                    labelText: l10n.breedOptional,
+                  decoration: _buildInputDecoration(
+                    label: l10n.breedOptional,
                     hintText: l10n.breedHint,
-                    border: const OutlineInputBorder(),
-                    prefixIcon: const Icon(Icons.info_outline),
+                    prefixIcon: Icons.info_outline,
+                    secondaryText: secondaryText,
+                    surfaceColor: surfaceColor,
+                    disabledColor: disabledColor,
                   ),
+                  style: GoogleFonts.inter(fontSize: 16, color: primaryText),
                 ),
               ],
-              const SizedBox(height: 16),
+              SizedBox(height: DesignSpacing.md),
 
               // Gender dropdown
               DropdownButtonFormField<PetGender>(
                 value: _selectedGender,
-                decoration: InputDecoration(
-                  labelText: l10n.genderOptional,
-                  border: const OutlineInputBorder(),
-                  prefixIcon: Icon(
-                    _getGenderIcon(_selectedGender),
-                    color: _getGenderIconColor(_selectedGender, theme),
-                  ),
+                decoration: _buildInputDecoration(
+                  label: l10n.genderOptional,
+                  prefixIcon: Icons.wc,
+                  secondaryText: secondaryText,
+                  surfaceColor: surfaceColor,
+                  disabledColor: disabledColor,
                 ),
+                style: GoogleFonts.inter(fontSize: 16, color: primaryText),
+                dropdownColor: surfaceColor,
                 items: PetGender.values.map((gender) {
                   return DropdownMenuItem(
                     value: gender,
@@ -846,57 +962,83 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
                   });
                 },
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: DesignSpacing.md),
 
               // Birthday picker
               InkWell(
                 onTap: _selectBirthday,
+                borderRadius: BorderRadius.circular(12),
                 child: InputDecorator(
-                  decoration: InputDecoration(
-                    labelText: l10n.birthdayOptional,
-                    border: const OutlineInputBorder(),
-                    prefixIcon: const Icon(Icons.cake),
-                    suffixIcon: const Icon(Icons.calendar_today),
+                  decoration: _buildInputDecoration(
+                    label: l10n.birthdayOptional,
+                    prefixIcon: Icons.cake,
+                    suffixIcon: Icons.calendar_today,
+                    secondaryText: secondaryText,
+                    surfaceColor: surfaceColor,
+                    disabledColor: disabledColor,
                   ),
                   child: Text(
                     _selectedBirthday != null
                         ? '${_selectedBirthday!.day}/${_selectedBirthday!.month}/${_selectedBirthday!.year}'
                         : l10n.tapToSelectBirthday,
-                    style: _selectedBirthday != null
-                        ? null
-                        : TextStyle(color: theme.hintColor),
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      color: _selectedBirthday != null ? primaryText : secondaryText,
+                    ),
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: DesignSpacing.md),
 
               // Notes field
               TextFormField(
                 controller: _notesController,
-                decoration: InputDecoration(
-                  labelText: l10n.notesOptional,
+                decoration: _buildInputDecoration(
+                  label: l10n.notesOptional,
                   hintText: l10n.petNotesHint,
-                  border: const OutlineInputBorder(),
-                  prefixIcon: const Icon(Icons.note),
+                  prefixIcon: Icons.note,
+                  alignLabelTop: true,
+                  secondaryText: secondaryText,
+                  surfaceColor: surfaceColor,
+                  disabledColor: disabledColor,
                 ),
+                style: GoogleFonts.inter(fontSize: 16, color: primaryText),
                 maxLines: 3,
               ),
-              const SizedBox(height: 32),
+              SizedBox(height: DesignSpacing.xl),
 
               // Save button
-              ElevatedButton(
-                onPressed: _isLoading ? null : _saveProfile,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  textStyle: theme.textTheme.titleMedium,
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _saveProfile,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: DesignColors.highlightTeal,
+                    foregroundColor: Colors.white,
+                    disabledBackgroundColor: DesignColors.highlightTeal.withOpacity(0.5),
+                    padding: EdgeInsets.symmetric(vertical: DesignSpacing.md),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Text(
+                          _isEditMode ? l10n.updateProfile : l10n.saveProfile,
+                          style: GoogleFonts.inter(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                 ),
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Text(_isEditMode ? l10n.updateProfile : l10n.saveProfile),
               ),
             ],
           ),

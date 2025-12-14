@@ -333,200 +333,248 @@ class PetProfileScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
       ),
-      child: Padding(
-        padding: EdgeInsets.all(DesignSpacing.md),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => context.push('/edit-pet/${profile.id}'),
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: EdgeInsets.all(DesignSpacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Avatar with coral accent border
-                Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: DesignColors.highlightCoral,
-                      width: 3,
-                    ),
-                  ),
-                  child: _buildProfileAvatar(context, profile, 74),
-                ),
-                SizedBox(width: DesignSpacing.md),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Pet name with Quicksand font
-                      Text(
-                        profile.name,
-                        style: GoogleFonts.quicksand(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600,
-                          color: primaryText,
-                        ),
-                      ),
-                      SizedBox(height: DesignSpacing.xs),
-                      Builder(
-                        builder: (context) {
-                          final locale = Localizations.localeOf(context);
-                          return Text(
-                            '${SpeciesTranslations.getDisplayName(profile.species, locale.languageCode)}${profile.breed != null ? ' • ${profile.breed}' : ''}',
-                            style: GoogleFonts.inter(
-                              fontSize: 14,
-                              color: secondaryText,
+                Row(
+                  children: [
+                    // Avatar with coral accent border and edit badge overlay
+                    GestureDetector(
+                      onTap: () => context.push('/edit-pet/${profile.id}'),
+                      child: Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: DesignColors.highlightCoral,
+                                width: 3,
+                              ),
+                              boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
                             ),
-                          );
-                        },
-                      ),
-                      if (profile.gender != PetGender.unknown) ...[
-                        SizedBox(height: DesignSpacing.xs),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              _getGenderIcon(profile.gender),
-                              size: 16,
-                              color: _getGenderIconColor(profile.gender),
-                            ),
-                            SizedBox(width: DesignSpacing.xs),
-                            Text(
-                              _getLocalizedGender(profile.gender, l10n),
-                              style: GoogleFonts.inter(
-                                fontSize: 14,
-                                color: secondaryText,
+                            child: _buildProfileAvatar(context, profile, 120),
+                          ),
+                          // Edit badge overlay
+                          Positioned(
+                            right: 0,
+                            bottom: 0,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: const BoxDecoration(
+                                color: DesignColors.highlightCoral,
+                                shape: BoxShape.circle,
+                                boxShadow: DesignShadows.sm,
+                              ),
+                              child: const Icon(
+                                Icons.edit,
+                                size: 16,
+                                color: Colors.white,
                               ),
                             ),
-                          ],
-                        ),
-                      ],
-                      if (profile.age > 0)
-                        Text(
-                          l10n.yearsOld(profile.age, profile.age != 1 ? 's' : ''),
-                          style: GoogleFonts.inter(
-                            fontSize: 14,
-                            color: secondaryText,
                           ),
-                        ),
-                    ],
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: DesignSpacing.md),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Pet name with Poppins font
+                          Text(
+                            profile.name,
+                            style: GoogleFonts.poppins(
+                              fontSize: 28,
+                              fontWeight: FontWeight.w600,
+                              color: primaryText,
+                            ),
+                          ),
+                          SizedBox(height: DesignSpacing.xs),
+                          Builder(
+                            builder: (context) {
+                              final locale = Localizations.localeOf(context);
+                              return Row(
+                                children: [
+                                  Icon(Icons.pets, size: 16, color: secondaryText),
+                                  const SizedBox(width: 4),
+                                  Flexible(
+                                    child: Text(
+                                      '${SpeciesTranslations.getDisplayName(profile.species, locale.languageCode)}${profile.breed != null ? ' • ${profile.breed}' : ''}',
+                                      style: GoogleFonts.inter(
+                                        fontSize: 14,
+                                        color: secondaryText,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                          if (profile.gender != PetGender.unknown) ...[
+                            SizedBox(height: DesignSpacing.xs),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  _getGenderIcon(profile.gender),
+                                  size: 16,
+                                  color: _getGenderIconColor(profile.gender),
+                                ),
+                                SizedBox(width: DesignSpacing.xs),
+                                Text(
+                                  _getLocalizedGender(profile.gender, l10n),
+                                  style: GoogleFonts.inter(
+                                    fontSize: 14,
+                                    color: secondaryText,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                          if (profile.age > 0)
+                            Row(
+                              children: [
+                                Icon(Icons.cake, size: 16, color: secondaryText),
+                                const SizedBox(width: 4),
+                                Text(
+                                  l10n.yearsOld(profile.age, profile.age != 1 ? 's' : ''),
+                                  style: GoogleFonts.inter(
+                                    fontSize: 14,
+                                    color: secondaryText,
+                                  ),
+                                ),
+                              ],
+                            ),
+                        ],
+                      ),
+                    ),
+                    // Active badge with teal styling
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: DesignSpacing.sm,
+                        vertical: DesignSpacing.xs,
+                      ),
+                      decoration: BoxDecoration(
+                        color: DesignColors.highlightTeal.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: DesignColors.highlightTeal),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.check_circle,
+                            size: 14,
+                            color: DesignColors.highlightTeal,
+                          ),
+                          SizedBox(width: DesignSpacing.xs),
+                          Text(
+                            l10n.activeProfile,
+                            style: GoogleFonts.inter(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: DesignColors.highlightTeal,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                if (profile.notes != null) ...[
+                  SizedBox(height: DesignSpacing.sm),
+                  Text(
+                    profile.notes!,
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      color: secondaryText,
+                    ),
+                  ),
+                ],
+                SizedBox(height: DesignSpacing.md),
+                Divider(
+                  height: 1,
+                  color: isDark ? DesignColors.dDisabled : DesignColors.lDisabled,
+                ),
+                SizedBox(height: DesignSpacing.sm),
+                // Quick Actions Section Header
+                Text(
+                  'QUICK ACTIONS',
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: secondaryText,
+                    letterSpacing: 0.5,
                   ),
                 ),
-                // Active badge with teal styling
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: DesignSpacing.sm,
-                    vertical: DesignSpacing.xs,
-                  ),
-                  decoration: BoxDecoration(
-                    color: DesignColors.highlightTeal.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: DesignColors.highlightTeal),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.check_circle,
-                        size: 14,
-                        color: DesignColors.highlightTeal,
-                      ),
-                      SizedBox(width: DesignSpacing.xs),
-                      Text(
-                        l10n.activeProfile,
-                        style: GoogleFonts.inter(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: DesignColors.highlightTeal,
-                        ),
-                      ),
-                    ],
-                  ),
+                SizedBox(height: DesignSpacing.sm),
+                // Colorful Action Buttons
+                Wrap(
+                  spacing: DesignSpacing.sm,
+                  runSpacing: DesignSpacing.sm,
+                  children: [
+                    _buildColorfulActionButton(
+                      context,
+                      color: DesignColors.highlightBlue,
+                      icon: Icons.monitor_weight_outlined,
+                      label: l10n.weightTracking,
+                      onTap: () => _navigateToWeightTracking(context),
+                    ),
+                    _buildColorfulActionButton(
+                      context,
+                      color: DesignColors.highlightPink,
+                      icon: Icons.photo_library,
+                      label: l10n.photoGallery,
+                      onTap: () => context.push('/photo-gallery'),
+                    ),
+                    _buildColorfulActionButton(
+                      context,
+                      color: DesignColors.highlightCoral,
+                      icon: Icons.lunch_dining,
+                      label: l10n.feedings,
+                      onTap: () => context.push('/feedings'),
+                    ),
+                    _buildColorfulActionButton(
+                      context,
+                      color: DesignColors.highlightTeal,
+                      icon: Icons.medical_services,
+                      label: l10n.medications,
+                      onTap: () => context.go('/meds'),
+                    ),
+                    _buildColorfulActionButton(
+                      context,
+                      color: DesignColors.highlightPurple,
+                      icon: Icons.vaccines,
+                      label: l10n.vaccinations,
+                      onTap: () => context.push('/vaccinations'),
+                    ),
+                    _buildColorfulActionButton(
+                      context,
+                      color: DesignColors.highlightYellow,
+                      icon: Icons.event,
+                      label: l10n.appointments,
+                      onTap: () => context.go('/appointments'),
+                    ),
+                    _buildColorfulActionButton(
+                      context,
+                      color: DesignColors.highlightNavy,
+                      icon: Icons.qr_code,
+                      label: l10n.qrCode,
+                      onTap: () => showPetQrCodeSheet(context, pet: profile),
+                    ),
+                  ],
                 ),
               ],
             ),
-            if (profile.notes != null) ...[
-              SizedBox(height: DesignSpacing.sm),
-              Text(
-                profile.notes!,
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  color: secondaryText,
-                ),
-              ),
-            ],
-            SizedBox(height: DesignSpacing.md),
-            Divider(
-              height: 1,
-              color: isDark ? DesignColors.dDisabled : DesignColors.lDisabled,
-            ),
-            SizedBox(height: DesignSpacing.sm),
-            // Quick Actions Section Header
-            Text(
-              'QUICK ACTIONS',
-              style: GoogleFonts.inter(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: secondaryText,
-                letterSpacing: 0.5,
-              ),
-            ),
-            SizedBox(height: DesignSpacing.sm),
-            // Colorful Action Buttons
-            Wrap(
-              spacing: DesignSpacing.sm,
-              runSpacing: DesignSpacing.sm,
-              children: [
-                _buildColorfulActionButton(
-                  context,
-                  color: DesignColors.highlightBlue,
-                  icon: Icons.monitor_weight_outlined,
-                  label: l10n.weightTracking,
-                  onTap: () => _navigateToWeightTracking(context),
-                ),
-                _buildColorfulActionButton(
-                  context,
-                  color: DesignColors.highlightPink,
-                  icon: Icons.photo_library,
-                  label: l10n.photoGallery,
-                  onTap: () => context.push('/photo-gallery'),
-                ),
-                _buildColorfulActionButton(
-                  context,
-                  color: DesignColors.highlightCoral,
-                  icon: Icons.lunch_dining,
-                  label: l10n.feedings,
-                  onTap: () => context.push('/feedings'),
-                ),
-                _buildColorfulActionButton(
-                  context,
-                  color: DesignColors.highlightTeal,
-                  icon: Icons.medical_services,
-                  label: l10n.medications,
-                  onTap: () => context.go('/meds'),
-                ),
-                _buildColorfulActionButton(
-                  context,
-                  color: DesignColors.highlightPurple,
-                  icon: Icons.vaccines,
-                  label: l10n.vaccinations,
-                  onTap: () => context.push('/vaccinations'),
-                ),
-                _buildColorfulActionButton(
-                  context,
-                  color: DesignColors.highlightYellow,
-                  icon: Icons.event,
-                  label: l10n.appointments,
-                  onTap: () => context.go('/appointments'),
-                ),
-                _buildColorfulActionButton(
-                  context,
-                  color: DesignColors.highlightNavy,
-                  icon: Icons.qr_code,
-                  label: l10n.qrCode,
-                  onTap: () => showPetQrCodeSheet(context, pet: profile),
-                ),
-              ],
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -1003,45 +1051,50 @@ class PetProfileScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                if (isActive)
-                  const Icon(
-                    Icons.check_circle,
-                    color: DesignColors.highlightTeal,
-                    size: 24,
-                  )
-                else
-                  PopupMenuButton<String>(
-                    onSelected: (value) =>
-                        _handleMenuAction(context, ref, profile, value),
-                    icon: Icon(Icons.more_vert, color: secondaryText),
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: 'activate',
-                        child: ListTile(
-                          leading: const Icon(Icons.check_circle_outline),
-                          title: Text(l10n.makeActive),
-                          contentPadding: EdgeInsets.zero,
-                        ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (isActive)
+                      const Icon(
+                        Icons.check_circle,
+                        color: DesignColors.highlightTeal,
+                        size: 24,
                       ),
-                      PopupMenuItem(
-                        value: 'edit',
-                        child: ListTile(
-                          leading: const Icon(Icons.edit),
-                          title: Text(l10n.edit),
-                          contentPadding: EdgeInsets.zero,
+                    PopupMenuButton<String>(
+                      onSelected: (value) =>
+                          _handleMenuAction(context, ref, profile, value),
+                      icon: Icon(Icons.more_vert, color: secondaryText),
+                      itemBuilder: (context) => [
+                        if (!isActive)
+                          PopupMenuItem(
+                            value: 'activate',
+                            child: ListTile(
+                              leading: const Icon(Icons.check_circle_outline),
+                              title: Text(l10n.makeActive),
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                          ),
+                        PopupMenuItem(
+                          value: 'edit',
+                          child: ListTile(
+                            leading: const Icon(Icons.edit),
+                            title: Text(l10n.edit),
+                            contentPadding: EdgeInsets.zero,
+                          ),
                         ),
-                      ),
-                      PopupMenuItem(
-                        value: 'delete',
-                        child: ListTile(
-                          leading: const Icon(Icons.delete, color: Colors.red),
-                          title: Text(l10n.delete,
-                              style: const TextStyle(color: Colors.red)),
-                          contentPadding: EdgeInsets.zero,
+                        PopupMenuItem(
+                          value: 'delete',
+                          child: ListTile(
+                            leading: const Icon(Icons.delete, color: Colors.red),
+                            title: Text(l10n.delete,
+                                style: const TextStyle(color: Colors.red)),
+                            contentPadding: EdgeInsets.zero,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+                  ],
+                ),
               ],
             ),
           ),

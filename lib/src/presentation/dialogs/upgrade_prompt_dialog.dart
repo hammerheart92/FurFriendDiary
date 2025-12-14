@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
+import '../../../../theme/tokens/colors.dart';
+import '../../../../theme/tokens/spacing.dart';
+import '../../../../theme/tokens/shadows.dart';
 
 /// Dialog shown when FREE tier user tries to add more pets than allowed.
 ///
@@ -24,102 +28,144 @@ class UpgradePromptDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
 
-    return AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      title: Row(
-        children: [
-          Icon(
-            Icons.workspace_premium,
-            color: theme.colorScheme.primary,
-            size: 28,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              l10n.upgradeToPremium,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: DesignShadows.lg,
+        ),
+        padding: EdgeInsets.all(DesignSpacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Star icon with teal tinted background
+            Container(
+              padding: EdgeInsets.all(DesignSpacing.md),
+              decoration: BoxDecoration(
+                color: DesignColors.highlightTeal.withOpacity(0.15),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.star,
+                size: 48,
+                color: DesignColors.highlightTeal,
               ),
             ),
-          ),
-        ],
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Pet illustration
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.primaryContainer.withValues(alpha: 128),
-              shape: BoxShape.circle,
+
+            SizedBox(height: DesignSpacing.md),
+
+            // Title
+            Text(
+              l10n.upgradeToPremium,
+              style: GoogleFonts.poppins(
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+                color: primaryText,
+              ),
             ),
-            child: Icon(
-              Icons.pets,
-              size: 48,
-              color: theme.colorScheme.primary,
+
+            SizedBox(height: DesignSpacing.sm),
+
+            // Subtitle
+            Text(
+              l10n.freeTierLimitReached,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: secondaryText,
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          // Main message
-          Text(
-            l10n.freeTierLimitReached,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.w500,
+
+            SizedBox(height: DesignSpacing.xs),
+
+            Text(
+              l10n.upgradeForUnlimitedPets,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: secondaryText,
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
-          // Upgrade benefits
-          Text(
-            l10n.upgradeForUnlimitedPets,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
+
+            SizedBox(height: DesignSpacing.lg),
+
+            // Features List
+            _buildFeatureRow(Icons.pets, l10n.unlimitedPets, primaryText),
+            _buildFeatureRow(Icons.cloud_upload, l10n.cloudBackup, primaryText),
+            _buildFeatureRow(Icons.family_restroom, l10n.familySharing, primaryText),
+
+            SizedBox(height: DesignSpacing.lg),
+
+            // Buttons Row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: Text(
+                    l10n.maybeLater,
+                    style: GoogleFonts.inter(
+                      color: secondaryText,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+
+                SizedBox(width: DesignSpacing.sm),
+
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: DesignColors.highlightTeal,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: DesignSpacing.lg,
+                      vertical: DesignSpacing.sm,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    l10n.learnMore,
+                    style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 16),
-          // Feature highlights
-          _buildFeatureRow(context, Icons.pets, l10n.unlimitedPets),
-          _buildFeatureRow(context, Icons.cloud_upload, l10n.cloudBackup),
-          _buildFeatureRow(context, Icons.family_restroom, l10n.familySharing),
-        ],
-      ),
-      actions: [
-        // Maybe Later button
-        TextButton(
-          onPressed: () => Navigator.pop(context, false),
-          child: Text(l10n.maybeLater),
+          ],
         ),
-        // Learn More button
-        FilledButton.icon(
-          onPressed: () => Navigator.pop(context, true),
-          icon: const Icon(Icons.arrow_forward, size: 18),
-          label: Text(l10n.learnMore),
-        ),
-      ],
+      ),
     );
   }
 
-  Widget _buildFeatureRow(BuildContext context, IconData icon, String text) {
-    final theme = Theme.of(context);
+  Widget _buildFeatureRow(IconData icon, String text, Color textColor) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: EdgeInsets.symmetric(vertical: DesignSpacing.xs),
       child: Row(
         children: [
-          Icon(
-            icon,
+          const Icon(
+            Icons.check_circle,
             size: 20,
-            color: theme.colorScheme.primary,
+            color: DesignColors.highlightTeal,
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: DesignSpacing.sm),
+          Icon(icon, size: 20, color: DesignColors.highlightTeal),
+          SizedBox(width: DesignSpacing.sm),
           Text(
             text,
-            style: theme.textTheme.bodyMedium,
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              color: textColor,
+            ),
           ),
         ],
       ),
