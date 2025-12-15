@@ -10,7 +10,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
+import '../../../../theme/tokens/colors.dart';
+import '../../../../theme/tokens/spacing.dart';
+import '../../../../theme/tokens/shadows.dart';
 import '../../../domain/models/vaccination_event.dart';
 import '../../../domain/models/pet_profile.dart';
 import '../../../domain/constants/vaccine_type_translations.dart';
@@ -43,16 +47,34 @@ class VaccinationTimelineScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final currentPet = ref.watch(currentPetProfileProvider);
+
+    // Design tokens
+    final backgroundColor =
+        isDark ? DesignColors.dBackground : DesignColors.lBackground;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
 
     // Edge case: No pet selected
     if (currentPet == null) {
       return Scaffold(
+        backgroundColor: backgroundColor,
         appBar: AppBar(
-          title: Text(l10n.vaccinations),
+          backgroundColor: surfaceColor,
+          title: Text(
+            l10n.vaccinations,
+            style: GoogleFonts.poppins(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: primaryText,
+            ),
+          ),
           centerTitle: true,
         ),
-        body: _buildNoPetMessage(context, l10n, theme),
+        body: _buildNoPetMessage(context, l10n, theme, isDark),
       );
     }
 
@@ -60,16 +82,24 @@ class VaccinationTimelineScreen extends ConsumerWidget {
         ref.watch(vaccinationsByPetIdProvider(currentPet.id));
 
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: Text(l10n.vaccinations),
+        backgroundColor: surfaceColor,
+        title: Text(
+          l10n.vaccinations,
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: primaryText,
+          ),
+        ),
         centerTitle: true,
         actions: [
           // Add button in AppBar
           IconButton(
-            icon: const Icon(Icons.add),
+            icon: Icon(Icons.add, color: DesignColors.highlightPurple),
             onPressed: () => context.push('/vaccinations/add/${currentPet.id}'),
             tooltip: l10n.add,
-            // Accessibility: Minimum 48x48 tap target
           ),
         ],
       ),
@@ -77,7 +107,7 @@ class VaccinationTimelineScreen extends ConsumerWidget {
         data: (vaccinations) {
           // Edge case: No vaccinations
           if (vaccinations.isEmpty) {
-            return _buildEmptyState(context, ref, l10n, theme, currentPet);
+            return _buildEmptyState(context, ref, l10n, theme, isDark, currentPet);
           }
 
           // Organize vaccinations by status
@@ -115,6 +145,7 @@ class VaccinationTimelineScreen extends ConsumerWidget {
             ref: ref,
             l10n: l10n,
             theme: theme,
+            isDark: isDark,
             overdue: overdue,
             upcoming: upcoming,
             completed: completed,
@@ -122,19 +153,31 @@ class VaccinationTimelineScreen extends ConsumerWidget {
             currentPet: currentPet,
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => Center(
+          child: CircularProgressIndicator(
+            color: DesignColors.highlightPurple,
+          ),
+        ),
         error: (error, stackTrace) {
           _logger.e('Error loading vaccinations',
               error: error, stackTrace: stackTrace);
           return _buildErrorMessage(
-              context, ref, l10n, theme, error, currentPet.id);
+              context, ref, l10n, theme, isDark, error, currentPet.id);
         },
       ),
       // FAB for quick add action
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/vaccinations/add/${currentPet.id}'),
         tooltip: l10n.add,
-        child: const Icon(Icons.add),
+        backgroundColor: DesignColors.highlightPurple,
+        icon: const Icon(Icons.add, color: Colors.white),
+        label: Text(
+          l10n.add,
+          style: GoogleFonts.inter(
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }
@@ -148,6 +191,7 @@ class VaccinationTimelineScreen extends ConsumerWidget {
     required WidgetRef ref,
     required AppLocalizations l10n,
     required ThemeData theme,
+    required bool isDark,
     required List<VaccinationEvent> overdue,
     required List<VaccinationEvent> upcoming,
     required List<VaccinationEvent> completed,
@@ -158,17 +202,22 @@ class VaccinationTimelineScreen extends ConsumerWidget {
     final hasProtocolBasedVaccinations =
         [...overdue, ...upcoming, ...completed].any((v) => v.isFromProtocol);
 
+    // Status colors
+    final overdueColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
+    final upcomingColor = DesignColors.highlightBlue;
+    final completedColor = isDark ? DesignColors.dSuccess : DesignColors.lSuccess;
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Pet info header
-          _buildPetInfoHeader(context, l10n, theme, petName),
-          const SizedBox(height: 16),
+          _buildPetInfoHeader(context, l10n, theme, isDark, petName),
+          SizedBox(height: DesignSpacing.md),
 
           // Protocol selection card (show only if no protocol-based vaccinations exist)
           if (!hasProtocolBasedVaccinations)
-            _buildProtocolSelectionCard(context, ref, l10n, theme, currentPet),
+            _buildProtocolSelectionCard(context, ref, l10n, theme, isDark, currentPet),
 
           // Overdue section
           if (overdue.isNotEmpty) ...[
@@ -176,18 +225,21 @@ class VaccinationTimelineScreen extends ConsumerWidget {
               context: context,
               l10n: l10n,
               theme: theme,
+              isDark: isDark,
               title: l10n.overdue,
               count: overdue.length,
-              color: Colors.red,
+              color: overdueColor,
+              icon: Icons.warning,
             ),
             ...overdue.map((vax) => _buildTimelineItem(
                   context: context,
                   l10n: l10n,
                   theme: theme,
+                  isDark: isDark,
                   vaccination: vax,
                   status: VaccinationStatus.overdue,
                 )),
-            const SizedBox(height: 8),
+            SizedBox(height: DesignSpacing.sm),
           ],
 
           // Upcoming section
@@ -196,18 +248,21 @@ class VaccinationTimelineScreen extends ConsumerWidget {
               context: context,
               l10n: l10n,
               theme: theme,
+              isDark: isDark,
               title: l10n.upcoming,
               count: upcoming.length,
-              color: Colors.blue,
+              color: upcomingColor,
+              icon: Icons.schedule,
             ),
             ...upcoming.map((vax) => _buildTimelineItem(
                   context: context,
                   l10n: l10n,
                   theme: theme,
+                  isDark: isDark,
                   vaccination: vax,
                   status: VaccinationStatus.upcoming,
                 )),
-            const SizedBox(height: 8),
+            SizedBox(height: DesignSpacing.sm),
           ],
 
           // Completed section
@@ -216,21 +271,24 @@ class VaccinationTimelineScreen extends ConsumerWidget {
               context: context,
               l10n: l10n,
               theme: theme,
+              isDark: isDark,
               title: l10n.completed,
               count: completed.length,
-              color: Colors.green,
+              color: completedColor,
+              icon: Icons.check_circle,
             ),
             ...completed.map((vax) => _buildTimelineItem(
                   context: context,
                   l10n: l10n,
                   theme: theme,
+                  isDark: isDark,
                   vaccination: vax,
                   status: VaccinationStatus.completed,
                 )),
-            const SizedBox(height: 8),
+            SizedBox(height: DesignSpacing.sm),
           ],
 
-          const SizedBox(height: 80), // Space for FAB
+          SizedBox(height: DesignSpacing.xxxl), // Space for FAB
         ],
       ),
     );
@@ -244,16 +302,21 @@ class VaccinationTimelineScreen extends ConsumerWidget {
     BuildContext context,
     AppLocalizations l10n,
     ThemeData theme,
+    bool isDark,
     String petName,
   ) {
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(DesignSpacing.md),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            theme.colorScheme.primaryContainer,
-            theme.colorScheme.secondaryContainer,
+            DesignColors.highlightPurple.withOpacity(0.15),
+            surfaceColor,
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -261,29 +324,38 @@ class VaccinationTimelineScreen extends ConsumerWidget {
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.vaccines,
-            color: theme.colorScheme.onPrimaryContainer,
-            size: 32,
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: DesignColors.highlightPurple.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(
+              Icons.vaccines,
+              color: DesignColors.highlightPurple,
+              size: 28,
+            ),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: DesignSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   l10n.vaccinations,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.onPrimaryContainer,
+                  style: GoogleFonts.poppins(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: primaryText,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: DesignSpacing.xs),
                 Text(
                   petName,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onPrimaryContainer
-                        .withValues(alpha: 0.8),
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: secondaryText,
                   ),
                 ),
               ],
@@ -299,53 +371,86 @@ class VaccinationTimelineScreen extends ConsumerWidget {
     WidgetRef ref,
     AppLocalizations l10n,
     ThemeData theme,
+    bool isDark,
     PetProfile currentPet,
   ) {
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Card(
-        elevation: 2,
-        color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
+      padding: EdgeInsets.symmetric(horizontal: DesignSpacing.md, vertical: DesignSpacing.sm),
+      child: Container(
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+          border: Border.all(
+            color: DesignColors.highlightPurple.withOpacity(0.3),
+            width: 2,
+          ),
+        ),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(DesignSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  Icon(
-                    Icons.science,
-                    color: theme.colorScheme.primary,
-                    size: 24,
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: DesignColors.highlightPurple.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Icons.science,
+                      color: DesignColors.highlightPurple,
+                      size: 24,
+                    ),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: DesignSpacing.sm),
                   Expanded(
                     child: Text(
                       l10n.noProtocolSelected,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.onPrimaryContainer,
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: primaryText,
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: DesignSpacing.sm),
               Text(
                 l10n.chooseProtocolMatchingNeeds,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onPrimaryContainer
-                      .withValues(alpha: 0.8),
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: secondaryText,
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: DesignSpacing.md),
               SizedBox(
                 width: double.infinity,
-                child: FilledButton.tonalIcon(
+                child: ElevatedButton.icon(
                   onPressed: () =>
                       _navigateToProtocolSelection(context, currentPet),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: DesignColors.highlightPurple,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(vertical: DesignSpacing.sm),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                  ),
                   icon: const Icon(Icons.add),
-                  label: Text(l10n.selectProtocol),
+                  label: Text(
+                    l10n.selectProtocol,
+                    style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                  ),
                 ),
               ),
             ],
@@ -370,18 +475,20 @@ class VaccinationTimelineScreen extends ConsumerWidget {
     required BuildContext context,
     required AppLocalizations l10n,
     required ThemeData theme,
+    required bool isDark,
     required String title,
     required int count,
     required Color color,
+    required IconData icon,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: DesignSpacing.md, vertical: DesignSpacing.sm),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: EdgeInsets.symmetric(horizontal: DesignSpacing.sm, vertical: DesignSpacing.xs),
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
+              color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: color, width: 2),
             ),
@@ -389,33 +496,30 @@ class VaccinationTimelineScreen extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  _getStatusIcon(title == l10n.overdue
-                      ? VaccinationStatus.overdue
-                      : title == l10n.upcoming
-                          ? VaccinationStatus.upcoming
-                          : VaccinationStatus.completed),
+                  icon,
                   color: color,
                   size: 20,
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: DesignSpacing.sm),
                 Text(
                   title,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
                     color: color,
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: DesignSpacing.sm),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: EdgeInsets.symmetric(horizontal: DesignSpacing.sm, vertical: 2),
                   decoration: BoxDecoration(
                     color: color,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     count.toString(),
-                    style: theme.textTheme.labelSmall?.copyWith(
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
@@ -437,11 +541,15 @@ class VaccinationTimelineScreen extends ConsumerWidget {
     required BuildContext context,
     required AppLocalizations l10n,
     required ThemeData theme,
+    required bool isDark,
     required VaccinationEvent vaccination,
     required VaccinationStatus status,
   }) {
-    final statusConfig = _getStatusConfig(theme, status);
+    final statusConfig = _getStatusConfig(isDark, status);
     final locale = Localizations.localeOf(context).languageCode;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
 
     return Semantics(
       label:
@@ -449,53 +557,46 @@ class VaccinationTimelineScreen extends ConsumerWidget {
           '${_formatDateForStatus(l10n, vaccination, status, locale)}',
       button: true,
       onTapHint: l10n.viewDetails,
-      child: InkWell(
-        onTap: () => context.push('/vaccinations/detail/${vaccination.id}'),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Card(
-            elevation: status == VaccinationStatus.upcoming ? 2 : 1,
-            child: Container(
-              decoration: status == VaccinationStatus.overdue
-                  ? BoxDecoration(
-                      border: Border.all(
-                        color: Colors.red.shade400,
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    )
-                  : status == VaccinationStatus.upcoming
-                      ? BoxDecoration(
-                          border: Border.all(
-                            color: Colors.blue.shade400,
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                        )
-                      : null,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: DesignSpacing.md, vertical: DesignSpacing.sm),
+        child: Container(
+          decoration: BoxDecoration(
+            color: surfaceColor,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: statusConfig.borderColor.withOpacity(0.3),
+              width: 2,
+            ),
+            boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => context.push('/vaccinations/detail/${vaccination.id}'),
+              borderRadius: BorderRadius.circular(16),
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(DesignSpacing.md),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Left: Status indicator
                     Container(
-                      width: 48,
-                      height: 48,
+                      width: 56,
+                      height: 56,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: statusConfig.fillColor,
+                        color: statusConfig.fillColor.withOpacity(0.15),
                       ),
                       child: Center(
                         child: Icon(
                           _getStatusIcon(status),
-                          color: statusConfig.iconColor,
-                          size: 24,
+                          color: statusConfig.fillColor,
+                          size: 28,
                         ),
                       ),
                     ),
 
-                    const SizedBox(width: 16),
+                    SizedBox(width: DesignSpacing.md),
 
                     // Right: Vaccination details
                     Expanded(
@@ -503,22 +604,18 @@ class VaccinationTimelineScreen extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Vaccine type (primary info)
-                          // ISSUE 3 FIX: Display translated vaccine type name
                           Text(
                             VaccineTypeTranslations.getDisplayName(
                               vaccination.vaccineType,
                               locale,
                             ),
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: status == VaccinationStatus.overdue
-                                  ? Colors.red.shade700
-                                  : status == VaccinationStatus.upcoming
-                                      ? Colors.blue.shade700
-                                      : null,
+                            style: GoogleFonts.poppins(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: primaryText,
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: DesignSpacing.sm),
 
                           // Date with icon
                           Row(
@@ -526,15 +623,16 @@ class VaccinationTimelineScreen extends ConsumerWidget {
                               Icon(
                                 Icons.event,
                                 size: 16,
-                                color: statusConfig.iconColor,
+                                color: statusConfig.fillColor,
                               ),
-                              const SizedBox(width: 6),
+                              SizedBox(width: DesignSpacing.xs),
                               Expanded(
                                 child: Text(
                                   _formatDateForStatus(
                                       l10n, vaccination, status, locale),
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: statusConfig.iconColor,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 14,
+                                    color: statusConfig.fillColor,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -545,22 +643,21 @@ class VaccinationTimelineScreen extends ConsumerWidget {
                           // Veterinarian/Clinic info (if available)
                           if (vaccination.veterinarianName != null ||
                               vaccination.clinicName != null) ...[
-                            const SizedBox(height: 6),
+                            SizedBox(height: DesignSpacing.xs),
                             Row(
                               children: [
                                 Icon(
                                   Icons.medical_services,
                                   size: 16,
-                                  color: theme.colorScheme.primary
-                                      .withValues(alpha: 0.7),
+                                  color: secondaryText,
                                 ),
-                                const SizedBox(width: 6),
+                                SizedBox(width: DesignSpacing.xs),
                                 Expanded(
                                   child: Text(
                                     _buildVetClinicInfo(vaccination, l10n),
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: theme.colorScheme.onSurface
-                                          .withValues(alpha: 0.7),
+                                    style: GoogleFonts.inter(
+                                      fontSize: 12,
+                                      color: secondaryText,
                                     ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -572,21 +669,20 @@ class VaccinationTimelineScreen extends ConsumerWidget {
 
                           // Batch number (if available)
                           if (vaccination.batchNumber != null) ...[
-                            const SizedBox(height: 6),
+                            SizedBox(height: DesignSpacing.xs),
                             Row(
                               children: [
                                 Icon(
-                                  Icons.qr_code,
+                                  Icons.qr_code_2,
                                   size: 16,
-                                  color: theme.colorScheme.secondary
-                                      .withValues(alpha: 0.7),
+                                  color: secondaryText,
                                 ),
-                                const SizedBox(width: 6),
+                                SizedBox(width: DesignSpacing.xs),
                                 Text(
                                   '${l10n.batchNumber}: ${vaccination.batchNumber}',
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: theme.colorScheme.onSurface
-                                        .withValues(alpha: 0.6),
+                                  style: GoogleFonts.inter(
+                                    fontSize: 12,
+                                    color: secondaryText,
                                   ),
                                 ),
                               ],
@@ -595,12 +691,12 @@ class VaccinationTimelineScreen extends ConsumerWidget {
 
                           // Protocol badge (if from protocol)
                           if (vaccination.isFromProtocol) ...[
-                            const SizedBox(height: 8),
+                            SizedBox(height: DesignSpacing.sm),
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: DesignSpacing.sm, vertical: DesignSpacing.xs),
                               decoration: BoxDecoration(
-                                color: theme.colorScheme.tertiaryContainer,
+                                color: DesignColors.highlightBlue.withOpacity(0.15),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Row(
@@ -609,16 +705,15 @@ class VaccinationTimelineScreen extends ConsumerWidget {
                                   Icon(
                                     Icons.auto_awesome,
                                     size: 12,
-                                    color:
-                                        theme.colorScheme.onTertiaryContainer,
+                                    color: DesignColors.highlightBlue,
                                   ),
-                                  const SizedBox(width: 4),
+                                  SizedBox(width: DesignSpacing.xs),
                                   Text(
                                     l10n.protocolBasedVaccination,
-                                    style: theme.textTheme.labelSmall?.copyWith(
-                                      color:
-                                          theme.colorScheme.onTertiaryContainer,
+                                    style: GoogleFonts.inter(
                                       fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                      color: DesignColors.highlightBlue,
                                     ),
                                   ),
                                 ],
@@ -632,7 +727,7 @@ class VaccinationTimelineScreen extends ConsumerWidget {
                     // Right arrow indicator
                     Icon(
                       Icons.chevron_right,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                      color: secondaryText,
                       size: 24,
                     ),
                   ],
@@ -653,29 +748,38 @@ class VaccinationTimelineScreen extends ConsumerWidget {
     BuildContext context,
     AppLocalizations l10n,
     ThemeData theme,
+    bool isDark,
   ) {
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(DesignSpacing.lg),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.pets,
               size: 80,
-              color: theme.colorScheme.primary.withValues(alpha: 0.5),
+              color: DesignColors.highlightPurple.withOpacity(0.5),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: DesignSpacing.md),
             Text(
               l10n.noPetSelected,
-              style: theme.textTheme.titleLarge,
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: primaryText,
+              ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: DesignSpacing.sm),
             Text(
               l10n.pleaseSetupPetFirst,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: secondaryText,
               ),
               textAlign: TextAlign.center,
             ),
@@ -690,46 +794,70 @@ class VaccinationTimelineScreen extends ConsumerWidget {
     WidgetRef ref,
     AppLocalizations l10n,
     ThemeData theme,
+    bool isDark,
     PetProfile currentPet,
   ) {
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return SingleChildScrollView(
       child: Column(
         children: [
-          const SizedBox(height: 24),
+          SizedBox(height: DesignSpacing.lg),
           // Protocol selection card - prominently shown on empty state
-          _buildProtocolSelectionCard(context, ref, l10n, theme, currentPet),
-          const SizedBox(height: 24),
+          _buildProtocolSelectionCard(context, ref, l10n, theme, isDark, currentPet),
+          SizedBox(height: DesignSpacing.lg),
           // Empty state message
           Padding(
-            padding: const EdgeInsets.all(24),
+            padding: EdgeInsets.all(DesignSpacing.lg),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   Icons.vaccines_outlined,
                   size: 80,
-                  color: theme.colorScheme.primary.withValues(alpha: 0.5),
+                  color: DesignColors.highlightPurple.withOpacity(0.5),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: DesignSpacing.md),
                 Text(
                   l10n.noVaccinations,
-                  style: theme.textTheme.titleLarge,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  l10n.trackVaccinationRecords,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                  style: GoogleFonts.poppins(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: primaryText,
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 24),
-                FilledButton.icon(
+                SizedBox(height: DesignSpacing.sm),
+                Text(
+                  l10n.trackVaccinationRecords,
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: secondaryText,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: DesignSpacing.lg),
+                ElevatedButton.icon(
                   onPressed: () =>
                       context.push('/vaccinations/add/${currentPet.id}'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: DesignColors.highlightPurple,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: DesignSpacing.lg,
+                      vertical: DesignSpacing.sm,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                  ),
                   icon: const Icon(Icons.add),
-                  label: Text(l10n.add),
+                  label: Text(
+                    l10n.add,
+                    style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                  ),
                 ),
               ],
             ),
@@ -744,44 +872,66 @@ class VaccinationTimelineScreen extends ConsumerWidget {
     WidgetRef ref,
     AppLocalizations l10n,
     ThemeData theme,
+    bool isDark,
     Object error,
     String petId,
   ) {
+    final dangerColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(DesignSpacing.lg),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.error_outline,
               size: 80,
-              color: theme.colorScheme.error,
+              color: dangerColor,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: DesignSpacing.md),
             Text(
               l10n.errorLoadingVaccinations,
-              style: theme.textTheme.titleLarge?.copyWith(
-                color: theme.colorScheme.error,
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: dangerColor,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: DesignSpacing.sm),
             Text(
               error.toString(),
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                color: secondaryText,
               ),
               textAlign: TextAlign.center,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 24),
-            FilledButton.icon(
+            SizedBox(height: DesignSpacing.lg),
+            ElevatedButton.icon(
               onPressed: () =>
                   ref.invalidate(vaccinationsByPetIdProvider(petId)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: DesignColors.highlightPurple,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: DesignSpacing.lg,
+                  vertical: DesignSpacing.sm,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
+              ),
               icon: const Icon(Icons.refresh),
-              label: Text(l10n.retry),
+              label: Text(
+                l10n.retry,
+                style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+              ),
             ),
           ],
         ),
@@ -812,22 +962,27 @@ class VaccinationTimelineScreen extends ConsumerWidget {
     return VaccinationStatus.completed;
   }
 
-  _StatusConfig _getStatusConfig(ThemeData theme, VaccinationStatus status) {
+  _StatusConfig _getStatusConfig(bool isDark, VaccinationStatus status) {
     switch (status) {
       case VaccinationStatus.overdue:
+        final overdueColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
         return _StatusConfig(
-          fillColor: Colors.red.shade600,
+          fillColor: overdueColor,
           iconColor: Colors.white,
+          borderColor: overdueColor,
         );
       case VaccinationStatus.upcoming:
         return _StatusConfig(
-          fillColor: Colors.blue.shade600,
+          fillColor: DesignColors.highlightBlue,
           iconColor: Colors.white,
+          borderColor: DesignColors.highlightBlue,
         );
       case VaccinationStatus.completed:
+        final completedColor = isDark ? DesignColors.dSuccess : DesignColors.lSuccess;
         return _StatusConfig(
-          fillColor: Colors.green.shade600,
+          fillColor: completedColor,
           iconColor: Colors.white,
+          borderColor: completedColor,
         );
     }
   }
@@ -907,9 +1062,11 @@ enum VaccinationStatus {
 class _StatusConfig {
   final Color fillColor;
   final Color iconColor;
+  final Color borderColor;
 
   _StatusConfig({
     required this.fillColor,
     required this.iconColor,
+    required this.borderColor,
   });
 }

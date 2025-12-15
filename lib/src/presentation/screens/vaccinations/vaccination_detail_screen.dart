@@ -7,7 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
+import '../../../../theme/tokens/colors.dart';
+import '../../../../theme/tokens/spacing.dart';
+import '../../../../theme/tokens/shadows.dart';
 import '../../../domain/models/vaccination_event.dart';
 import '../../../domain/constants/vaccine_type_translations.dart';
 import '../../providers/vaccinations_provider.dart';
@@ -26,6 +30,18 @@ class VaccinationDetailScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final vaccinationsAsync = ref.watch(vaccinationProviderProvider);
 
+    // Design tokens
+    final isDark = theme.brightness == Brightness.dark;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final backgroundColor =
+        isDark ? DesignColors.dBackground : DesignColors.lBackground;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final dangerColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
+
     return vaccinationsAsync.when(
       data: (vaccinations) {
         // Find the vaccination event by ID
@@ -35,13 +51,20 @@ class VaccinationDetailScreen extends ConsumerWidget {
         );
 
         return Scaffold(
+          backgroundColor: backgroundColor,
           appBar: AppBar(
-            title: Text(l10n.vaccinationDetails),
-            backgroundColor: theme.colorScheme.primary,
-            foregroundColor: theme.colorScheme.onPrimary,
+            title: Text(
+              l10n.vaccinationDetails,
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: primaryText,
+              ),
+            ),
+            backgroundColor: surfaceColor,
             elevation: 0,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: Icon(Icons.arrow_back, color: primaryText),
               onPressed: () => context.pop(),
               tooltip: MaterialLocalizations.of(context).backButtonTooltip,
             ),
@@ -54,14 +77,15 @@ class VaccinationDetailScreen extends ConsumerWidget {
                     extra: vaccination,
                   );
                 },
-                icon: const Icon(Icons.edit),
+                icon: Icon(Icons.edit, color: DesignColors.highlightPurple),
                 tooltip: l10n.edit,
               ),
               // Delete button with confirmation
               PopupMenuButton<String>(
+                icon: Icon(Icons.more_vert, color: primaryText),
                 onSelected: (value) {
                   if (value == 'delete') {
-                    _deleteVaccination(context, ref, vaccination);
+                    _deleteVaccination(context, ref, vaccination, isDark);
                   }
                 },
                 itemBuilder: (context) => [
@@ -69,9 +93,12 @@ class VaccinationDetailScreen extends ConsumerWidget {
                     value: 'delete',
                     child: Row(
                       children: [
-                        const Icon(Icons.delete, color: Colors.red),
-                        const SizedBox(width: 8),
-                        Text(l10n.delete),
+                        Icon(Icons.delete, color: dangerColor),
+                        SizedBox(width: DesignSpacing.sm),
+                        Text(
+                          l10n.delete,
+                          style: GoogleFonts.inter(color: dangerColor),
+                        ),
                       ],
                     ),
                   ),
@@ -79,42 +106,89 @@ class VaccinationDetailScreen extends ConsumerWidget {
               ),
             ],
           ),
-          body: _buildDetailView(context, theme, l10n, vaccination),
+          body: _buildDetailView(context, l10n, vaccination, isDark),
         );
       },
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+      loading: () => Scaffold(
+        backgroundColor: backgroundColor,
+        body: Center(
+          child: CircularProgressIndicator(
+            color: DesignColors.highlightPurple,
+          ),
+        ),
       ),
       error: (error, stack) => Scaffold(
+        backgroundColor: backgroundColor,
         appBar: AppBar(
-          title: Text(l10n.errorLoadingVaccinations),
+          title: Text(
+            l10n.errorLoadingVaccinations,
+            style: GoogleFonts.poppins(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: primaryText,
+            ),
+          ),
+          backgroundColor: surfaceColor,
+          elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: Icon(Icons.arrow_back, color: primaryText),
             onPressed: () => context.pop(),
             tooltip: MaterialLocalizations.of(context).backButtonTooltip,
           ),
         ),
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error, size: 64, color: Colors.red),
-              const SizedBox(height: 16),
-              Text(l10n.errorLoadingVaccinations),
-              const SizedBox(height: 8),
-              Text(
-                error.toString(),
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.error,
+          child: Padding(
+            padding: EdgeInsets.all(DesignSpacing.lg),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(DesignSpacing.lg),
+                  decoration: BoxDecoration(
+                    color: dangerColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Icon(Icons.error_outline, size: 64, color: dangerColor),
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => ref.refresh(vaccinationProviderProvider),
-                child: Text(l10n.retry),
-              ),
-            ],
+                SizedBox(height: DesignSpacing.lg),
+                Text(
+                  l10n.errorLoadingVaccinations,
+                  style: GoogleFonts.poppins(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: primaryText,
+                  ),
+                ),
+                SizedBox(height: DesignSpacing.sm),
+                Text(
+                  error.toString(),
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: secondaryText,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: DesignSpacing.lg),
+                ElevatedButton(
+                  onPressed: () => ref.refresh(vaccinationProviderProvider),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: DesignColors.highlightPurple,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: DesignSpacing.lg,
+                      vertical: DesignSpacing.md,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    l10n.retry,
+                    style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -123,50 +197,50 @@ class VaccinationDetailScreen extends ConsumerWidget {
 
   Widget _buildDetailView(
     BuildContext context,
-    ThemeData theme,
     AppLocalizations l10n,
     VaccinationEvent vaccination,
+    bool isDark,
   ) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(DesignSpacing.md),
       child: Column(
         children: [
           // Header Card: Vaccine type with status badge
-          _buildHeaderCard(context, theme, l10n, vaccination),
+          _buildHeaderCard(context, l10n, vaccination, isDark),
 
-          const SizedBox(height: 16),
+          SizedBox(height: DesignSpacing.md),
 
           // Dates Card: Administered date and next due date
-          _buildDatesCard(context, theme, l10n, vaccination),
+          _buildDatesCard(context, l10n, vaccination, isDark),
 
-          const SizedBox(height: 16),
+          SizedBox(height: DesignSpacing.md),
 
           // Veterinary Details Card (if any data exists)
           if (_hasVeterinaryDetails(vaccination))
-            _buildVeterinaryDetailsCard(context, theme, l10n, vaccination),
+            _buildVeterinaryDetailsCard(context, l10n, vaccination, isDark),
 
-          if (_hasVeterinaryDetails(vaccination)) const SizedBox(height: 16),
+          if (_hasVeterinaryDetails(vaccination)) SizedBox(height: DesignSpacing.md),
 
           // Certificate Photos Card (if any photos exist)
           if (vaccination.certificatePhotoUrls != null &&
               vaccination.certificatePhotoUrls!.isNotEmpty)
             _buildCertificatePhotosCard(
-                context, theme, l10n, vaccination.certificatePhotoUrls!),
+                context, l10n, vaccination.certificatePhotoUrls!, isDark),
 
           if (vaccination.certificatePhotoUrls != null &&
               vaccination.certificatePhotoUrls!.isNotEmpty)
-            const SizedBox(height: 16),
+            SizedBox(height: DesignSpacing.md),
 
           // Notes Card (if notes exist)
           if (vaccination.notes != null && vaccination.notes!.isNotEmpty)
-            _buildNotesCard(context, theme, l10n, vaccination),
+            _buildNotesCard(context, l10n, vaccination, isDark),
 
           if (vaccination.notes != null && vaccination.notes!.isNotEmpty)
-            const SizedBox(height: 16),
+            SizedBox(height: DesignSpacing.md),
 
           // Protocol Info Card (if vaccination is from protocol)
           if (vaccination.isFromProtocol)
-            _buildProtocolInfoCard(context, theme, l10n, vaccination),
+            _buildProtocolInfoCard(context, l10n, vaccination, isDark),
         ],
       ),
     );
@@ -177,73 +251,83 @@ class VaccinationDetailScreen extends ConsumerWidget {
   // ============================================================================
   Widget _buildHeaderCard(
     BuildContext context,
-    ThemeData theme,
     AppLocalizations l10n,
     VaccinationEvent vaccination,
+    bool isDark,
   ) {
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+
     final status = _getVaccinationStatus(vaccination);
-    final statusColor = _getStatusColor(status);
+    final statusColor = _getStatusColor(status, isDark);
     final statusLabel = _getStatusLabel(l10n, status);
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            // Vaccine icon with colored background
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: statusColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                Icons.vaccines,
-                color: statusColor,
-                size: 32,
-              ),
+    return Container(
+      padding: EdgeInsets.all(DesignSpacing.md),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+      ),
+      child: Row(
+        children: [
+          // Vaccine icon with colored background
+          Container(
+            width: 72,
+            height: 72,
+            decoration: BoxDecoration(
+              color: statusColor.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(20),
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Vaccine type as title
-                  // ISSUE 3 FIX: Display translated vaccine type name
-                  Text(
-                    VaccineTypeTranslations.getDisplayName(
-                      vaccination.vaccineType,
-                      Localizations.localeOf(context).languageCode,
-                    ),
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
+            child: Icon(
+              Icons.vaccines,
+              color: statusColor,
+              size: 36,
+            ),
+          ),
+          SizedBox(width: DesignSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Vaccine type as title
+                Text(
+                  VaccineTypeTranslations.getDisplayName(
+                    vaccination.vaccineType,
+                    Localizations.localeOf(context).languageCode,
+                  ),
+                  style: GoogleFonts.poppins(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                    color: primaryText,
+                  ),
+                ),
+                SizedBox(height: DesignSpacing.sm),
+                // Status badge
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: DesignSpacing.sm + 4,
+                    vertical: DesignSpacing.xs,
+                  ),
+                  decoration: BoxDecoration(
+                    color: statusColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    statusLabel,
+                    style: GoogleFonts.inter(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  // Status badge
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: statusColor,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      statusLabel,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -253,50 +337,74 @@ class VaccinationDetailScreen extends ConsumerWidget {
   // ============================================================================
   Widget _buildDatesCard(
     BuildContext context,
-    ThemeData theme,
     AppLocalizations l10n,
     VaccinationEvent vaccination,
+    bool isDark,
   ) {
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final successColor = isDark ? DesignColors.dSuccess : DesignColors.lSuccess;
+
     final dateFormat =
         DateFormat('MMMM dd, yyyy', Localizations.localeOf(context).toString());
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.dates,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+    return Container(
+      padding: EdgeInsets.all(DesignSpacing.md),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.calendar_month,
+                color: DesignColors.highlightPurple,
+                size: 24,
               ),
-            ),
-            const SizedBox(height: 16),
-            // Administered date
+              SizedBox(width: DesignSpacing.sm),
+              Text(
+                l10n.dates,
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: DesignSpacing.md),
+          // Administered date
+          _buildDetailRow(
+            l10n.administeredDate,
+            dateFormat.format(vaccination.administeredDate),
+            Icons.calendar_today,
+            DesignColors.highlightPurple,
+            isDark,
+          ),
+          // Next due date (if exists)
+          if (vaccination.nextDueDate != null)
             _buildDetailRow(
-              l10n.administeredDate,
-              dateFormat.format(vaccination.administeredDate),
-              Icons.calendar_today,
-              theme,
+              l10n.nextDueDate,
+              dateFormat.format(vaccination.nextDueDate!),
+              Icons.event_available,
+              DesignColors.highlightBlue,
+              isDark,
+            )
+          else
+            _buildDetailRow(
+              l10n.dueStatus,
+              l10n.completed,
+              Icons.check_circle,
+              successColor,
+              isDark,
             ),
-            // Next due date (if exists)
-            if (vaccination.nextDueDate != null)
-              _buildDetailRow(
-                l10n.nextDueDate,
-                dateFormat.format(vaccination.nextDueDate!),
-                Icons.event_available,
-                theme,
-              )
-            else
-              _buildDetailRow(
-                l10n.dueStatus,
-                l10n.completed,
-                Icons.check_circle,
-                theme,
-              ),
-          ],
-        ),
+        ],
       ),
     );
   }
@@ -306,49 +414,72 @@ class VaccinationDetailScreen extends ConsumerWidget {
   // ============================================================================
   Widget _buildVeterinaryDetailsCard(
     BuildContext context,
-    ThemeData theme,
     AppLocalizations l10n,
     VaccinationEvent vaccination,
+    bool isDark,
   ) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.veterinaryDetails,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+
+    return Container(
+      padding: EdgeInsets.all(DesignSpacing.md),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.medical_services_outlined,
+                color: DesignColors.highlightTeal,
+                size: 24,
               ),
+              SizedBox(width: DesignSpacing.sm),
+              Text(
+                l10n.veterinaryDetails,
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: DesignSpacing.md),
+          if (vaccination.veterinarianName != null &&
+              vaccination.veterinarianName!.isNotEmpty)
+            _buildDetailRow(
+              l10n.veterinarianName,
+              vaccination.veterinarianName!,
+              Icons.person_outline,
+              DesignColors.highlightTeal,
+              isDark,
             ),
-            const SizedBox(height: 16),
-            if (vaccination.veterinarianName != null &&
-                vaccination.veterinarianName!.isNotEmpty)
-              _buildDetailRow(
-                l10n.veterinarianName,
-                vaccination.veterinarianName!,
-                Icons.person,
-                theme,
-              ),
-            if (vaccination.clinicName != null &&
-                vaccination.clinicName!.isNotEmpty)
-              _buildDetailRow(
-                l10n.clinicName,
-                vaccination.clinicName!,
-                Icons.local_hospital,
-                theme,
-              ),
-            if (vaccination.batchNumber != null &&
-                vaccination.batchNumber!.isNotEmpty)
-              _buildDetailRow(
-                l10n.batchNumber,
-                vaccination.batchNumber!,
-                Icons.qr_code,
-                theme,
-              ),
-          ],
-        ),
+          if (vaccination.clinicName != null &&
+              vaccination.clinicName!.isNotEmpty)
+            _buildDetailRow(
+              l10n.clinicName,
+              vaccination.clinicName!,
+              Icons.local_hospital_outlined,
+              DesignColors.highlightTeal,
+              isDark,
+            ),
+          if (vaccination.batchNumber != null &&
+              vaccination.batchNumber!.isNotEmpty)
+            _buildDetailRow(
+              l10n.batchNumber,
+              vaccination.batchNumber!,
+              Icons.qr_code_2,
+              DesignColors.highlightTeal,
+              isDark,
+            ),
+        ],
       ),
     );
   }
@@ -358,70 +489,87 @@ class VaccinationDetailScreen extends ConsumerWidget {
   // ============================================================================
   Widget _buildCertificatePhotosCard(
     BuildContext context,
-    ThemeData theme,
     AppLocalizations l10n,
     List<String> photoUrls,
+    bool isDark,
   ) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.image,
-                  color: theme.colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  l10n.certificatePhotos,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            // Display photos in a grid
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+
+    return Container(
+      padding: EdgeInsets.all(DesignSpacing.md),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.photo_library_outlined,
+                color: DesignColors.highlightCoral,
+                size: 24,
               ),
-              itemCount: photoUrls.length,
-              itemBuilder: (context, index) {
-                final photoPath = photoUrls[index];
-                return _buildPhotoThumbnail(context, photoPath);
-              },
+              SizedBox(width: DesignSpacing.sm),
+              Text(
+                l10n.certificatePhotos,
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: DesignSpacing.md),
+          // Display photos in a grid
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: DesignSpacing.sm,
+              mainAxisSpacing: DesignSpacing.sm,
             ),
-          ],
-        ),
+            itemCount: photoUrls.length,
+            itemBuilder: (context, index) {
+              final photoPath = photoUrls[index];
+              return _buildPhotoThumbnail(context, photoPath, isDark);
+            },
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildPhotoThumbnail(BuildContext context, String photoPath) {
+  Widget _buildPhotoThumbnail(BuildContext context, String photoPath, bool isDark) {
+    final disabledColor =
+        isDark ? DesignColors.dDisabled : DesignColors.lDisabled;
+
     return GestureDetector(
       onTap: () {
-        // Open full-screen photo viewer (could be implemented later)
-        _showPhotoDialog(context, photoPath);
+        // Open full-screen photo viewer
+        _showPhotoDialog(context, photoPath, isDark);
       },
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(12),
         child: Image.file(
           File(photoPath),
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
             return Container(
-              color: Colors.grey[300],
-              child: const Icon(
-                Icons.broken_image,
-                color: Colors.grey,
+              decoration: BoxDecoration(
+                color: disabledColor.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                Icons.broken_image_outlined,
+                color: disabledColor,
               ),
             );
           },
@@ -430,32 +578,55 @@ class VaccinationDetailScreen extends ConsumerWidget {
     );
   }
 
-  void _showPhotoDialog(BuildContext context, String photoPath) {
+  void _showPhotoDialog(BuildContext context, String photoPath, bool isDark) {
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final disabledColor =
+        isDark ? DesignColors.dDisabled : DesignColors.lDisabled;
+
     showDialog(
       context: context,
       builder: (context) => Dialog(
+        backgroundColor: surfaceColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.file(
-              File(photoPath),
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  height: 300,
-                  color: Colors.grey[300],
-                  child: const Center(
-                    child: Icon(
-                      Icons.broken_image,
-                      color: Colors.grey,
-                      size: 64,
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              child: Image.file(
+                File(photoPath),
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    height: 300,
+                    decoration: BoxDecoration(
+                      color: disabledColor.withOpacity(0.2),
                     ),
-                  ),
-                );
-              },
+                    child: Center(
+                      child: Icon(
+                        Icons.broken_image_outlined,
+                        color: disabledColor,
+                        size: 64,
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(MaterialLocalizations.of(context).closeButtonLabel),
+            Padding(
+              padding: EdgeInsets.all(DesignSpacing.sm),
+              child: TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: TextButton.styleFrom(
+                  foregroundColor: DesignColors.highlightPurple,
+                ),
+                child: Text(
+                  MaterialLocalizations.of(context).closeButtonLabel,
+                  style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                ),
+              ),
             ),
           ],
         ),
@@ -468,10 +639,17 @@ class VaccinationDetailScreen extends ConsumerWidget {
   // ============================================================================
   Widget _buildNotesCard(
     BuildContext context,
-    ThemeData theme,
     AppLocalizations l10n,
     VaccinationEvent vaccination,
+    bool isDark,
   ) {
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     // Use Romanian notes if locale is Romanian and notesRo is available
     final locale = Localizations.localeOf(context);
     final isRomanian = locale.languageCode == 'ro';
@@ -481,34 +659,44 @@ class VaccinationDetailScreen extends ConsumerWidget {
         ? vaccination.notesRo!
         : vaccination.notes!;
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.note,
-                  color: theme.colorScheme.primary,
+    return Container(
+      padding: EdgeInsets.all(DesignSpacing.md),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.notes_outlined,
+                color: DesignColors.highlightYellow,
+                size: 24,
+              ),
+              SizedBox(width: DesignSpacing.sm),
+              Text(
+                l10n.notes,
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  l10n.notes,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+              ),
+            ],
+          ),
+          SizedBox(height: DesignSpacing.sm + 4),
+          Text(
+            notes,
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              color: secondaryText,
+              height: 1.5,
             ),
-            const SizedBox(height: 12),
-            Text(
-              notes,
-              style: theme.textTheme.bodyMedium,
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -518,63 +706,89 @@ class VaccinationDetailScreen extends ConsumerWidget {
   // ============================================================================
   Widget _buildProtocolInfoCard(
     BuildContext context,
-    ThemeData theme,
     AppLocalizations l10n,
     VaccinationEvent vaccination,
+    bool isDark,
   ) {
-    return Card(
-      color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
+    return Container(
+      padding: EdgeInsets.all(DesignSpacing.md),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: DesignColors.highlightBlue.withOpacity(0.3),
+          width: 2,
+        ),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: DesignColors.highlightBlue.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
                   Icons.auto_awesome,
-                  color: theme.colorScheme.primary,
+                  color: DesignColors.highlightBlue,
+                  size: 22,
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  l10n.protocolInformation,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Icon(
-                  Icons.check_circle,
-                  color: theme.colorScheme.primary,
-                  size: 20,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    l10n.generatedFromProtocol,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            if (vaccination.protocolStepIndex != null) ...[
-              const SizedBox(height: 8),
+              ),
+              SizedBox(width: DesignSpacing.sm),
               Text(
-                l10n.doseNumber(vaccination.protocolStepIndex! + 1),
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: Colors.grey[600],
+                l10n.protocolInformation,
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
                 ),
               ),
             ],
+          ),
+          SizedBox(height: DesignSpacing.sm + 4),
+          Row(
+            children: [
+              Icon(
+                Icons.check_circle,
+                color: DesignColors.highlightBlue,
+                size: 20,
+              ),
+              SizedBox(width: DesignSpacing.sm),
+              Expanded(
+                child: Text(
+                  l10n.generatedFromProtocol,
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: DesignColors.highlightBlue,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (vaccination.protocolStepIndex != null) ...[
+            SizedBox(height: DesignSpacing.sm),
+            Text(
+              l10n.doseNumber(vaccination.protocolStepIndex! + 1),
+              style: GoogleFonts.inter(
+                fontSize: 13,
+                color: secondaryText,
+              ),
+            ),
           ],
-        ),
+        ],
       ),
     );
   }
@@ -586,32 +800,47 @@ class VaccinationDetailScreen extends ConsumerWidget {
     String label,
     String value,
     IconData icon,
-    ThemeData theme,
+    Color iconColor,
+    bool isDark,
   ) {
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.only(bottom: DesignSpacing.sm + 4),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: Colors.grey[600]),
-          const SizedBox(width: 12),
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: iconColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, size: 20, color: iconColor),
+          ),
+          SizedBox(width: DesignSpacing.sm + 4),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   label,
-                  style: TextStyle(
+                  style: GoogleFonts.inter(
                     fontSize: 12,
-                    color: Colors.grey[600],
+                    color: secondaryText,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: DesignSpacing.xs / 2),
                 Text(
                   value,
-                  style: const TextStyle(
+                  style: GoogleFonts.inter(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
+                    color: primaryText,
                   ),
                 ),
               ],
@@ -655,14 +884,14 @@ class VaccinationDetailScreen extends ConsumerWidget {
   // ============================================================================
   // Helper: Get status color based on vaccination status
   // ============================================================================
-  Color _getStatusColor(VaccinationStatus status) {
+  Color _getStatusColor(VaccinationStatus status, bool isDark) {
     switch (status) {
       case VaccinationStatus.overdue:
-        return Colors.red;
+        return isDark ? DesignColors.dDanger : DesignColors.lDanger;
       case VaccinationStatus.upcoming:
-        return Colors.blue;
+        return DesignColors.highlightBlue;
       case VaccinationStatus.completed:
-        return Colors.green;
+        return isDark ? DesignColors.dSuccess : DesignColors.lSuccess;
     }
   }
 
@@ -687,25 +916,84 @@ class VaccinationDetailScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     VaccinationEvent vaccination,
+    bool isDark,
   ) async {
     final l10n = AppLocalizations.of(context);
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final dangerColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
+    final successColor = isDark ? DesignColors.dSuccess : DesignColors.lSuccess;
 
     final shouldDelete = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n.deleteVaccination),
+        backgroundColor: surfaceColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: dangerColor.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                Icons.warning_amber_rounded,
+                color: dangerColor,
+                size: 24,
+              ),
+            ),
+            SizedBox(width: DesignSpacing.sm),
+            Expanded(
+              child: Text(
+                l10n.deleteVaccination,
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
+                ),
+              ),
+            ),
+          ],
+        ),
         content: Text(
           l10n.deleteVaccinationConfirm(vaccination.vaccineType),
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            color: secondaryText,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.cancel),
+            child: Text(
+              l10n.cancel,
+              style: GoogleFonts.inter(
+                fontWeight: FontWeight.w500,
+                color: secondaryText,
+              ),
+            ),
           ),
-          TextButton(
+          ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: Text(l10n.delete),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: dangerColor,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: Text(
+              l10n.delete,
+              style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+            ),
           ),
         ],
       ),
@@ -717,11 +1005,21 @@ class VaccinationDetailScreen extends ConsumerWidget {
             .read(vaccinationProviderProvider.notifier)
             .deleteVaccination(vaccination.id);
 
+        // Invalidate the family provider to refresh the list immediately
+        ref.invalidate(vaccinationsByPetIdProvider(vaccination.petId));
+
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(l10n.vaccinationDeletedSuccessfully),
-              backgroundColor: Colors.green,
+              content: Text(
+                l10n.vaccinationDeletedSuccessfully,
+                style: GoogleFonts.inter(color: Colors.white),
+              ),
+              backgroundColor: successColor,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
           );
           context.pop();
@@ -730,8 +1028,15 @@ class VaccinationDetailScreen extends ConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(l10n.failedToDeleteVaccination),
-              backgroundColor: Colors.red,
+              content: Text(
+                l10n.failedToDeleteVaccination,
+                style: GoogleFonts.inter(color: Colors.white),
+              ),
+              backgroundColor: dangerColor,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
           );
         }

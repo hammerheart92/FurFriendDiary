@@ -17,7 +17,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
+import '../../../../theme/tokens/colors.dart';
+import '../../../../theme/tokens/spacing.dart';
+import '../../../../theme/tokens/shadows.dart';
 import '../../../domain/models/vaccination_event.dart';
 import '../../../domain/models/pet_profile.dart';
 import '../../../domain/constants/vaccine_type_translations.dart';
@@ -112,60 +116,77 @@ class _VaccinationFormScreenState extends ConsumerState<VaccinationFormScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final isEditing = widget.existingEvent != null;
+
+    // Design tokens
+    final backgroundColor = isDark ? DesignColors.dBackground : DesignColors.lBackground;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
 
     // Get current pet to determine species for vaccine types
     final currentPet = ref.watch(currentPetProfileProvider);
 
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
+        backgroundColor: surfaceColor,
         title: Text(
           isEditing ? l10n.editVaccination : l10n.addVaccination,
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: primaryText,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: _isLoading ? null : _saveVaccination,
             child: Text(
               l10n.save,
-              style: TextStyle(
+              style: GoogleFonts.inter(
                 color: _isLoading
-                    ? theme.colorScheme.onPrimary.withOpacity(0.5)
-                    : theme.colorScheme.onPrimary,
-                fontWeight: FontWeight.bold,
+                    ? DesignColors.highlightPurple.withOpacity(0.5)
+                    : DesignColors.highlightPurple,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(
+              child: CircularProgressIndicator(
+                color: DesignColors.highlightPurple,
+              ),
+            )
           : Form(
               key: _formKey,
               child: ListView(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(DesignSpacing.md),
                 children: [
                   // Basic Information Card
-                  _buildBasicInformationCard(theme, l10n, currentPet),
-                  const SizedBox(height: 16),
+                  _buildBasicInformationCard(theme, l10n, isDark, currentPet),
+                  SizedBox(height: DesignSpacing.md),
 
                   // Dates Card
-                  _buildDatesCard(theme, l10n),
-                  const SizedBox(height: 16),
+                  _buildDatesCard(theme, l10n, isDark),
+                  SizedBox(height: DesignSpacing.md),
 
                   // Veterinary Details Card
-                  _buildVeterinaryDetailsCard(theme, l10n),
-                  const SizedBox(height: 16),
+                  _buildVeterinaryDetailsCard(theme, l10n, isDark),
+                  SizedBox(height: DesignSpacing.md),
 
                   // Certificate Photos Card
-                  _buildCertificatePhotosCard(theme, l10n),
-                  const SizedBox(height: 16),
+                  _buildCertificatePhotosCard(theme, l10n, isDark),
+                  SizedBox(height: DesignSpacing.md),
 
                   // Notes Card
-                  _buildNotesCard(theme, l10n),
-                  const SizedBox(height: 32),
+                  _buildNotesCard(theme, l10n, isDark),
+                  SizedBox(height: DesignSpacing.xl),
 
                   // Save Button
-                  _buildSaveButton(theme, l10n, isEditing),
+                  _buildSaveButton(theme, l10n, isDark, isEditing),
                 ],
               ),
             ),
@@ -179,8 +200,14 @@ class _VaccinationFormScreenState extends ConsumerState<VaccinationFormScreen> {
   Widget _buildBasicInformationCard(
     ThemeData theme,
     AppLocalizations l10n,
+    bool isDark,
     PetProfile? currentPet,
   ) {
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final disabledColor = isDark ? DesignColors.dDisabled : DesignColors.lDisabled;
+
     // Determine vaccine types based on pet species
     final List<String> availableVaccineTypes = currentPet != null &&
             _vaccineTypesBySpecies.containsKey(currentPet.species)
@@ -193,54 +220,88 @@ class _VaccinationFormScreenState extends ConsumerState<VaccinationFormScreen> {
             'FeLV'
           ]; // Fallback to all
 
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(DesignSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(
-                  Icons.vaccines,
-                  color: theme.colorScheme.primary,
-                  size: 24,
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: DesignColors.highlightPurple.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    Icons.vaccines,
+                    color: DesignColors.highlightPurple,
+                    size: 24,
+                  ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: DesignSpacing.sm),
                 Text(
                   l10n.vaccinationInformation,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
+                  style: GoogleFonts.poppins(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: primaryText,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: DesignSpacing.md),
 
             // Vaccine Type Dropdown (Required)
-            // ISSUE 3 FIX: Display translated vaccine type names but store English values
             DropdownButtonFormField<String>(
               value: _selectedVaccineType,
               decoration: InputDecoration(
                 labelText: l10n.vaccineType,
+                labelStyle: GoogleFonts.inter(fontSize: 14, color: secondaryText),
                 hintText: l10n.selectVaccineType,
                 prefixIcon: Icon(
                   Icons.medical_services,
-                  color: theme.colorScheme.primary,
+                  color: DesignColors.highlightPurple,
                 ),
-                border: const OutlineInputBorder(),
+                filled: true,
+                fillColor: surfaceColor,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: disabledColor),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: DesignColors.highlightPurple, width: 2),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: isDark ? DesignColors.dDanger : DesignColors.lDanger),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: isDark ? DesignColors.dDanger : DesignColors.lDanger, width: 2),
+                ),
               ),
               isExpanded: true,
               items: availableVaccineTypes.map((type) {
-                // Get locale for display name translation
                 final locale = Localizations.localeOf(context);
                 final displayName = VaccineTypeTranslations.getDisplayName(
                   type,
                   locale.languageCode,
                 );
                 return DropdownMenuItem(
-                  value: type, // Store English value in database
-                  child: Text(displayName), // Display translated name
+                  value: type,
+                  child: Text(
+                    displayName,
+                    style: GoogleFonts.inter(color: primaryText),
+                  ),
                 );
               }).toList(),
               onChanged: (value) {
@@ -258,16 +319,16 @@ class _VaccinationFormScreenState extends ConsumerState<VaccinationFormScreen> {
 
             // Pet species indicator (helpful context)
             if (currentPet != null) ...[
-              const SizedBox(height: 8),
+              SizedBox(height: DesignSpacing.sm),
               Semantics(
                 label: '${l10n.petSpecies}: ${currentPet.species}',
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: DesignSpacing.sm,
+                    vertical: DesignSpacing.xs,
                   ),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primaryContainer.withOpacity(0.3),
+                    color: DesignColors.highlightTeal.withOpacity(0.15),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -276,13 +337,15 @@ class _VaccinationFormScreenState extends ConsumerState<VaccinationFormScreen> {
                       Icon(
                         Icons.pets,
                         size: 16,
-                        color: theme.colorScheme.primary,
+                        color: DesignColors.highlightTeal,
                       ),
-                      const SizedBox(width: 6),
+                      SizedBox(width: DesignSpacing.xs),
                       Text(
                         '${l10n.vaccinesFor} ${currentPet.species}s',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.primary,
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: DesignColors.highlightTeal,
                         ),
                       ),
                     ],
@@ -296,79 +359,114 @@ class _VaccinationFormScreenState extends ConsumerState<VaccinationFormScreen> {
     );
   }
 
-  Widget _buildDatesCard(ThemeData theme, AppLocalizations l10n) {
-    return Card(
+  Widget _buildDatesCard(ThemeData theme, AppLocalizations l10n, bool isDark) {
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final disabledColor = isDark ? DesignColors.dDisabled : DesignColors.lDisabled;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(DesignSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               l10n.dates,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+              style: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: primaryText,
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: DesignSpacing.md),
 
             // Administered Date (Required)
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: Icon(
-                Icons.calendar_today,
-                color: theme.colorScheme.primary,
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: disabledColor),
+                borderRadius: BorderRadius.circular(12),
               ),
-              title: Text(l10n.administeredDate),
-              subtitle: Text(
-                DateFormat.yMMMd(Localizations.localeOf(context).languageCode)
-                    .format(_administeredDate),
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w500,
+              child: ListTile(
+                contentPadding: EdgeInsets.symmetric(horizontal: DesignSpacing.sm),
+                leading: Icon(
+                  Icons.calendar_today,
+                  color: DesignColors.highlightPurple,
                 ),
+                title: Text(
+                  l10n.administeredDate,
+                  style: GoogleFonts.inter(fontSize: 14, color: secondaryText),
+                ),
+                subtitle: Text(
+                  DateFormat.yMMMd(Localizations.localeOf(context).languageCode)
+                      .format(_administeredDate),
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: primaryText,
+                  ),
+                ),
+                trailing: Icon(Icons.edit, size: 20, color: secondaryText),
+                onTap: _selectAdministeredDate,
               ),
-              trailing: Icon(Icons.edit, size: 20),
-              onTap: _selectAdministeredDate,
             ),
 
-            const Divider(),
+            SizedBox(height: DesignSpacing.sm),
 
             // Next Due Date (Optional)
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: Icon(
-                Icons.event_available,
-                color: _nextDueDate != null
-                    ? theme.colorScheme.primary
-                    : theme.colorScheme.onSurface.withOpacity(0.5),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: disabledColor),
+                borderRadius: BorderRadius.circular(12),
               ),
-              title: Text(l10n.nextDueDate),
-              subtitle: _nextDueDate != null
-                  ? Text(
-                      DateFormat.yMMMd(
-                              Localizations.localeOf(context).languageCode)
-                          .format(_nextDueDate!),
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w500,
+              child: ListTile(
+                contentPadding: EdgeInsets.symmetric(horizontal: DesignSpacing.sm),
+                leading: Icon(
+                  Icons.event_available,
+                  color: _nextDueDate != null
+                      ? DesignColors.highlightPurple
+                      : secondaryText,
+                ),
+                title: Text(
+                  l10n.nextDueDate,
+                  style: GoogleFonts.inter(fontSize: 14, color: secondaryText),
+                ),
+                subtitle: _nextDueDate != null
+                    ? Text(
+                        DateFormat.yMMMd(
+                                Localizations.localeOf(context).languageCode)
+                            .format(_nextDueDate!),
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: primaryText,
+                        ),
+                      )
+                    : Text(
+                        l10n.optional,
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          color: secondaryText,
+                          fontStyle: FontStyle.italic,
+                        ),
                       ),
-                    )
-                  : Text(
-                      l10n.optional,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-              trailing: _nextDueDate != null
-                  ? IconButton(
-                      icon: const Icon(Icons.clear, size: 20),
-                      onPressed: () {
-                        setState(() {
-                          _nextDueDate = null;
-                        });
-                      },
-                    )
-                  : const Icon(Icons.add, size: 20),
-              onTap: _selectNextDueDate,
+                trailing: _nextDueDate != null
+                    ? IconButton(
+                        icon: Icon(Icons.clear, size: 20, color: secondaryText),
+                        onPressed: () {
+                          setState(() {
+                            _nextDueDate = null;
+                          });
+                        },
+                      )
+                    : Icon(Icons.add, size: 20, color: secondaryText),
+                onTap: _selectNextDueDate,
+              ),
             ),
           ],
         ),
@@ -376,61 +474,97 @@ class _VaccinationFormScreenState extends ConsumerState<VaccinationFormScreen> {
     );
   }
 
-  Widget _buildVeterinaryDetailsCard(ThemeData theme, AppLocalizations l10n) {
-    return Card(
+  Widget _buildVeterinaryDetailsCard(ThemeData theme, AppLocalizations l10n, bool isDark) {
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final disabledColor = isDark ? DesignColors.dDisabled : DesignColors.lDisabled;
+
+    InputDecoration buildInputDecoration({
+      required String label,
+      required String hint,
+      required IconData prefixIcon,
+    }) {
+      return InputDecoration(
+        labelText: label,
+        labelStyle: GoogleFonts.inter(fontSize: 14, color: secondaryText),
+        hintText: hint,
+        prefixIcon: Icon(prefixIcon, color: DesignColors.highlightPurple),
+        filled: true,
+        fillColor: surfaceColor,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: disabledColor),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: DesignColors.highlightPurple, width: 2),
+        ),
+      );
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(DesignSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               l10n.veterinaryDetails,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+              style: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: primaryText,
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: DesignSpacing.xs),
             Text(
               l10n.optionalFields,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                color: secondaryText,
                 fontStyle: FontStyle.italic,
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: DesignSpacing.md),
 
             // Batch Number
             TextFormField(
               controller: _batchNumberController,
-              decoration: InputDecoration(
-                labelText: l10n.batchNumber,
-                hintText: l10n.batchNumberHint,
-                prefixIcon: Icon(Icons.qr_code_2),
-                border: const OutlineInputBorder(),
+              style: GoogleFonts.inter(color: primaryText),
+              decoration: buildInputDecoration(
+                label: l10n.batchNumber,
+                hint: l10n.batchNumberHint,
+                prefixIcon: Icons.qr_code_2,
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: DesignSpacing.md),
 
             // Veterinarian Name
             TextFormField(
               controller: _veterinarianNameController,
-              decoration: InputDecoration(
-                labelText: l10n.veterinarianName,
-                hintText: l10n.veterinarianNameHint,
-                prefixIcon: Icon(Icons.person),
-                border: const OutlineInputBorder(),
+              style: GoogleFonts.inter(color: primaryText),
+              decoration: buildInputDecoration(
+                label: l10n.veterinarianName,
+                hint: l10n.veterinarianNameHint,
+                prefixIcon: Icons.person_outline,
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: DesignSpacing.md),
 
             // Clinic Name
             TextFormField(
               controller: _clinicNameController,
-              decoration: InputDecoration(
-                labelText: l10n.clinicName,
-                hintText: l10n.clinicNameHint,
-                prefixIcon: Icon(Icons.local_hospital),
-                border: const OutlineInputBorder(),
+              style: GoogleFonts.inter(color: primaryText),
+              decoration: buildInputDecoration(
+                label: l10n.clinicName,
+                hint: l10n.clinicNameHint,
+                prefixIcon: Icons.local_hospital_outlined,
               ),
             ),
           ],
@@ -439,60 +573,90 @@ class _VaccinationFormScreenState extends ConsumerState<VaccinationFormScreen> {
     );
   }
 
-  Widget _buildCertificatePhotosCard(ThemeData theme, AppLocalizations l10n) {
-    return Card(
+  Widget _buildCertificatePhotosCard(ThemeData theme, AppLocalizations l10n, bool isDark) {
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(DesignSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(
-                  Icons.photo_library,
-                  color: theme.colorScheme.primary,
-                  size: 24,
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: DesignColors.highlightPurple.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    Icons.photo_library,
+                    color: DesignColors.highlightPurple,
+                    size: 24,
+                  ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: DesignSpacing.sm),
                 Expanded(
                   child: Text(
                     l10n.certificatePhotos,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: primaryText,
                     ),
                   ),
                 ),
-                FilledButton.tonalIcon(
+                OutlinedButton.icon(
                   onPressed: _pickCertificatePhoto,
-                  icon: const Icon(Icons.add_a_photo, size: 18),
-                  label: Text(l10n.addPhoto),
-                  style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
+                  icon: Icon(Icons.add_a_photo, size: 18, color: DesignColors.highlightPurple),
+                  label: Text(
+                    l10n.addPhoto,
+                    style: GoogleFonts.inter(
+                      fontWeight: FontWeight.w600,
+                      color: DesignColors.highlightPurple,
+                    ),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: DesignColors.highlightPurple),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: DesignSpacing.sm,
+                      vertical: DesignSpacing.xs,
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: DesignSpacing.sm),
             Text(
               l10n.optionalCertificateHint,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                color: secondaryText,
               ),
             ),
 
             // Display selected photos
             if (_certificatePhotoPaths.isNotEmpty) ...[
-              const SizedBox(height: 16),
+              SizedBox(height: DesignSpacing.md),
               Wrap(
-                spacing: 8,
-                runSpacing: 8,
+                spacing: DesignSpacing.sm,
+                runSpacing: DesignSpacing.sm,
                 children: _certificatePhotoPaths.asMap().entries.map((entry) {
                   final index = entry.key;
                   final path = entry.value;
-                  return _buildPhotoThumbnail(path, index, theme);
+                  return _buildPhotoThumbnail(path, index, isDark);
                 }).toList(),
               ),
             ],
@@ -502,20 +666,21 @@ class _VaccinationFormScreenState extends ConsumerState<VaccinationFormScreen> {
     );
   }
 
-  Widget _buildPhotoThumbnail(String path, int index, ThemeData theme) {
+  Widget _buildPhotoThumbnail(String path, int index, bool isDark) {
+    final disabledColor = isDark ? DesignColors.dDisabled : DesignColors.lDisabled;
+    final dangerColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
+
     return Stack(
       children: [
         Container(
           width: 100,
           height: 100,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: theme.colorScheme.outline.withOpacity(0.5),
-            ),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: disabledColor),
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
             child: Image.file(
               File(path),
               fit: BoxFit.cover,
@@ -533,7 +698,7 @@ class _VaccinationFormScreenState extends ConsumerState<VaccinationFormScreen> {
               child: Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: Colors.red.shade600,
+                  color: dangerColor,
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -549,26 +714,53 @@ class _VaccinationFormScreenState extends ConsumerState<VaccinationFormScreen> {
     );
   }
 
-  Widget _buildNotesCard(ThemeData theme, AppLocalizations l10n) {
-    return Card(
+  Widget _buildNotesCard(ThemeData theme, AppLocalizations l10n, bool isDark) {
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final disabledColor = isDark ? DesignColors.dDisabled : DesignColors.lDisabled;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(DesignSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               l10n.additionalNotes,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+              style: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: primaryText,
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: DesignSpacing.md),
             TextFormField(
               controller: _notesController,
               maxLines: 4,
+              style: GoogleFonts.inter(color: primaryText),
               decoration: InputDecoration(
                 hintText: l10n.vaccinationNotesHint,
-                border: const OutlineInputBorder(),
+                hintStyle: GoogleFonts.inter(color: secondaryText),
+                prefixIcon: Padding(
+                  padding: EdgeInsets.only(bottom: 60),
+                  child: Icon(Icons.note_outlined, color: DesignColors.highlightPurple),
+                ),
+                filled: true,
+                fillColor: surfaceColor,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: disabledColor),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: DesignColors.highlightPurple, width: 2),
+                ),
               ),
             ),
           ],
@@ -578,33 +770,34 @@ class _VaccinationFormScreenState extends ConsumerState<VaccinationFormScreen> {
   }
 
   Widget _buildSaveButton(
-      ThemeData theme, AppLocalizations l10n, bool isEditing) {
+      ThemeData theme, AppLocalizations l10n, bool isDark, bool isEditing) {
     return SizedBox(
       width: double.infinity,
       height: 56,
       child: ElevatedButton(
         onPressed: _isLoading ? null : _saveVaccination,
         style: ElevatedButton.styleFrom(
-          backgroundColor: theme.colorScheme.primary,
-          foregroundColor: theme.colorScheme.onPrimary,
+          backgroundColor: DesignColors.highlightPurple,
+          foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
+          elevation: 0,
         ),
         child: _isLoading
-            ? SizedBox(
+            ? const SizedBox(
                 width: 24,
                 height: 24,
                 child: CircularProgressIndicator(
-                  color: theme.colorScheme.onPrimary,
+                  color: Colors.white,
                   strokeWidth: 2,
                 ),
               )
             : Text(
                 isEditing ? l10n.updateVaccination : l10n.saveVaccination,
-                style: const TextStyle(
+                style: GoogleFonts.inter(
                   fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
       ),
@@ -631,10 +824,13 @@ class _VaccinationFormScreenState extends ConsumerState<VaccinationFormScreen> {
   }
 
   Future<void> _selectNextDueDate() async {
+    // Default to current date when no next due date is set
+    final now = DateTime.now();
+    final initialDate = _nextDueDate ?? now;
+
     final picked = await showDatePicker(
       context: context,
-      initialDate:
-          _nextDueDate ?? _administeredDate.add(const Duration(days: 365)),
+      initialDate: initialDate,
       firstDate: _administeredDate,
       lastDate: DateTime.now().add(const Duration(days: 365 * 5)),
     );
@@ -734,11 +930,13 @@ class _VaccinationFormScreenState extends ConsumerState<VaccinationFormScreen> {
         await ref
             .read(vaccinationProviderProvider.notifier)
             .updateVaccination(event);
+        // Invalidate the pet-specific provider to refresh the timeline list
+        ref.invalidate(vaccinationsByPetIdProvider(widget.petId));
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(l10n.vaccinationUpdatedSuccessfully),
-              backgroundColor: Colors.green,
+              backgroundColor: DesignColors.lSuccess,
             ),
           );
         }
@@ -747,11 +945,13 @@ class _VaccinationFormScreenState extends ConsumerState<VaccinationFormScreen> {
         await ref
             .read(vaccinationProviderProvider.notifier)
             .addVaccination(event);
+        // Invalidate the pet-specific provider to refresh the timeline list
+        ref.invalidate(vaccinationsByPetIdProvider(widget.petId));
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(l10n.vaccinationAddedSuccessfully),
-              backgroundColor: Colors.green,
+              backgroundColor: DesignColors.lSuccess,
             ),
           );
         }
@@ -769,7 +969,7 @@ class _VaccinationFormScreenState extends ConsumerState<VaccinationFormScreen> {
                   ? l10n.failedToUpdateVaccination(error.toString())
                   : l10n.failedToAddVaccination(error.toString()),
             ),
-            backgroundColor: Colors.red,
+            backgroundColor: DesignColors.lDanger,
           ),
         );
       }
