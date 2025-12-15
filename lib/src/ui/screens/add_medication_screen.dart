@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../../providers/medications_provider.dart';
 import '../../presentation/providers/pet_profile_provider.dart';
 import '../../domain/models/time_of_day_model.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../theme/tokens/colors.dart';
+import '../../../theme/tokens/spacing.dart';
+import '../../../theme/tokens/shadows.dart';
 
 class AddMedicationScreen extends ConsumerStatefulWidget {
   const AddMedicationScreen({super.key});
@@ -74,60 +78,199 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
     super.dispose();
   }
 
+  // Helper method for input decoration
+  InputDecoration _buildInputDecoration({
+    required String label,
+    required IconData prefixIcon,
+    String? hintText,
+    String? helperText,
+    String? prefixText,
+    required bool isDark,
+    required Color secondaryText,
+    required Color disabledColor,
+    required Color surfaceColor,
+  }) {
+    return InputDecoration(
+      labelText: label,
+      hintText: hintText,
+      helperText: helperText,
+      prefixText: prefixText,
+      labelStyle: GoogleFonts.inter(fontSize: 14, color: secondaryText),
+      hintStyle: GoogleFonts.inter(fontSize: 14, color: secondaryText.withOpacity(0.6)),
+      prefixIcon: Icon(prefixIcon, color: DesignColors.highlightTeal),
+      filled: true,
+      fillColor: surfaceColor,
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: disabledColor, width: 1),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: DesignColors.highlightTeal, width: 2),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: isDark ? DesignColors.dDanger : DesignColors.lDanger, width: 2),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: isDark ? DesignColors.dDanger : DesignColors.lDanger, width: 2),
+      ),
+      contentPadding: EdgeInsets.symmetric(horizontal: DesignSpacing.md, vertical: DesignSpacing.md),
+    );
+  }
+
+  // Helper method for date picker tiles
+  Widget _buildDateTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+    required Color primaryText,
+    required Color secondaryText,
+    required Color backgroundColor,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: EdgeInsets.all(DesignSpacing.md),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: secondaryText.withOpacity(0.2),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: DesignColors.highlightTeal.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                icon,
+                color: DesignColors.highlightTeal,
+                size: 20,
+              ),
+            ),
+            SizedBox(width: DesignSpacing.sm),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      color: secondaryText,
+                    ),
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: primaryText,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: secondaryText,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final isDark = theme.brightness == Brightness.dark;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final backgroundColor = isDark ? DesignColors.dBackground : DesignColors.lBackground;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final disabledColor = isDark ? DesignColors.dDisabled : DesignColors.lDisabled;
 
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: Text(l10n.addMedication),
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.onPrimary,
+        title: Text(
+          l10n.addMedication,
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: primaryText,
+          ),
+        ),
+        backgroundColor: surfaceColor,
         elevation: 0,
+        iconTheme: IconThemeData(color: primaryText),
         actions: [
           TextButton(
             onPressed: _isLoading ? null : _saveMedication,
             child: Text(
               l10n.save,
-              style: TextStyle(
-                color: theme.colorScheme.onPrimary,
-                fontWeight: FontWeight.bold,
+              style: GoogleFonts.inter(
+                fontWeight: FontWeight.w600,
+                color: DesignColors.highlightTeal,
               ),
             ),
           ),
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator(color: DesignColors.highlightTeal))
           : Form(
               key: _formKey,
               child: ListView(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(DesignSpacing.md),
                 children: [
                   // Medication basic info card
-                  Card(
+                  Container(
+                    decoration: BoxDecoration(
+                      color: surfaceColor,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+                    ),
                     child: Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(DesignSpacing.md),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             l10n.medicationInformation,
-                            style: theme.textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
+                            style: GoogleFonts.poppins(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: primaryText,
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: DesignSpacing.md),
 
                           // Medication name
                           TextFormField(
                             controller: _medicationNameController,
-                            decoration: InputDecoration(
-                              labelText: l10n.medicationName,
+                            style: GoogleFonts.inter(color: primaryText),
+                            decoration: _buildInputDecoration(
+                              label: l10n.medicationName,
                               hintText: l10n.medicationNameHint,
-                              prefixIcon: const Icon(Icons.medication),
-                              border: const OutlineInputBorder(),
+                              prefixIcon: Icons.medication,
+                              isDark: isDark,
+                              secondaryText: secondaryText,
+                              disabledColor: disabledColor,
+                              surfaceColor: backgroundColor,
                             ),
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
@@ -137,16 +280,20 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                             },
                           ),
 
-                          const SizedBox(height: 16),
+                          SizedBox(height: DesignSpacing.md),
 
                           // Dosage
                           TextFormField(
                             controller: _dosageController,
-                            decoration: InputDecoration(
-                              labelText: l10n.dosage,
+                            style: GoogleFonts.inter(color: primaryText),
+                            decoration: _buildInputDecoration(
+                              label: l10n.dosage,
                               hintText: l10n.dosageHint,
-                              prefixIcon: const Icon(Icons.straighten),
-                              border: const OutlineInputBorder(),
+                              prefixIcon: Icons.straighten,
+                              isDark: isDark,
+                              secondaryText: secondaryText,
+                              disabledColor: disabledColor,
+                              surfaceColor: backgroundColor,
                             ),
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
@@ -156,21 +303,25 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                             },
                           ),
 
-                          const SizedBox(height: 16),
+                          SizedBox(height: DesignSpacing.md),
 
                           // Frequency dropdown
                           DropdownButtonFormField<String>(
                             value: _selectedFrequency,
-                            decoration: InputDecoration(
-                              labelText: l10n.frequency,
-                              prefixIcon: const Icon(Icons.schedule),
-                              border: const OutlineInputBorder(),
+                            dropdownColor: surfaceColor,
+                            style: GoogleFonts.inter(color: primaryText),
+                            decoration: _buildInputDecoration(
+                              label: l10n.frequency,
+                              prefixIcon: Icons.schedule,
+                              isDark: isDark,
+                              secondaryText: secondaryText,
+                              disabledColor: disabledColor,
+                              surfaceColor: backgroundColor,
                             ),
                             items: _frequencies.map((frequency) {
                               return DropdownMenuItem(
                                 value: frequency,
-                                child: Text(
-                                    _getLocalizedFrequency(l10n, frequency)),
+                                child: Text(_getLocalizedFrequency(l10n, frequency)),
                               );
                             }).toList(),
                             onChanged: (value) {
@@ -181,21 +332,25 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                             },
                           ),
 
-                          const SizedBox(height: 16),
+                          SizedBox(height: DesignSpacing.md),
 
                           // Administration method dropdown
                           DropdownButtonFormField<String>(
                             value: _selectedAdministrationMethod,
-                            decoration: InputDecoration(
-                              labelText: l10n.administrationMethod,
-                              prefixIcon: const Icon(Icons.medical_services),
-                              border: const OutlineInputBorder(),
+                            dropdownColor: surfaceColor,
+                            style: GoogleFonts.inter(color: primaryText),
+                            decoration: _buildInputDecoration(
+                              label: l10n.administrationMethod,
+                              prefixIcon: Icons.medical_services,
+                              isDark: isDark,
+                              secondaryText: secondaryText,
+                              disabledColor: disabledColor,
+                              surfaceColor: backgroundColor,
                             ),
                             items: _administrationMethods.map((method) {
                               return DropdownMenuItem(
                                 value: method,
-                                child: Text(_getLocalizedAdministrationMethod(
-                                    l10n, method)),
+                                child: Text(_getLocalizedAdministrationMethod(l10n, method)),
                               );
                             }).toList(),
                             onChanged: (value) {
@@ -209,78 +364,114 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: 16),
+                  SizedBox(height: DesignSpacing.md),
 
                   // Schedule card
-                  Card(
+                  Container(
+                    decoration: BoxDecoration(
+                      color: surfaceColor,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+                    ),
                     child: Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(DesignSpacing.md),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             l10n.schedule,
-                            style: theme.textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
+                            style: GoogleFonts.poppins(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: primaryText,
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: DesignSpacing.md),
 
                           // Start date
-                          ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            leading: const Icon(Icons.calendar_today),
-                            title: Text(l10n.startDate),
-                            subtitle: Text(
-                                DateFormat('MMMM dd, yyyy').format(_startDate)),
+                          _buildDateTile(
+                            icon: Icons.calendar_today,
+                            title: l10n.startDate,
+                            subtitle: DateFormat('MMMM dd, yyyy').format(_startDate),
                             onTap: () => _selectStartDate(),
+                            primaryText: primaryText,
+                            secondaryText: secondaryText,
+                            backgroundColor: backgroundColor,
                           ),
 
+                          SizedBox(height: DesignSpacing.sm),
+
                           // End date toggle
-                          SwitchListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: Text(l10n.hasEndDate),
-                            subtitle: _hasEndDate && _endDate != null
-                                ? Text(DateFormat('MMMM dd, yyyy')
-                                    .format(_endDate!))
-                                : Text(l10n.ongoingMedication),
-                            value: _hasEndDate,
-                            onChanged: (value) {
-                              setState(() {
-                                _hasEndDate = value;
-                                if (!value) {
-                                  _endDate = null;
-                                } else {
-                                  _endDate =
-                                      _startDate.add(const Duration(days: 30));
-                                }
-                              });
-                            },
+                          Container(
+                            decoration: BoxDecoration(
+                              color: backgroundColor,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: SwitchListTile(
+                              contentPadding: EdgeInsets.symmetric(horizontal: DesignSpacing.md),
+                              title: Text(
+                                l10n.hasEndDate,
+                                style: GoogleFonts.inter(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: primaryText,
+                                ),
+                              ),
+                              subtitle: Text(
+                                _hasEndDate && _endDate != null
+                                    ? DateFormat('MMMM dd, yyyy').format(_endDate!)
+                                    : l10n.ongoingMedication,
+                                style: GoogleFonts.inter(
+                                  fontSize: 14,
+                                  color: secondaryText,
+                                ),
+                              ),
+                              value: _hasEndDate,
+                              activeColor: DesignColors.highlightTeal,
+                              onChanged: (value) {
+                                setState(() {
+                                  _hasEndDate = value;
+                                  if (!value) {
+                                    _endDate = null;
+                                  } else {
+                                    _endDate = _startDate.add(const Duration(days: 30));
+                                  }
+                                });
+                              },
+                            ),
                           ),
 
                           // End date selector
-                          if (_hasEndDate)
-                            ListTile(
-                              contentPadding: EdgeInsets.zero,
-                              leading: const Icon(Icons.event_available),
-                              title: Text(l10n.endDate),
+                          if (_hasEndDate) ...[
+                            SizedBox(height: DesignSpacing.sm),
+                            _buildDateTile(
+                              icon: Icons.event_available,
+                              title: l10n.endDate,
                               subtitle: _endDate != null
-                                  ? Text(DateFormat('MMMM dd, yyyy')
-                                      .format(_endDate!))
-                                  : Text(l10n.selectEndDate),
+                                  ? DateFormat('MMMM dd, yyyy').format(_endDate!)
+                                  : l10n.selectEndDate,
                               onTap: () => _selectEndDate(),
+                              primaryText: primaryText,
+                              secondaryText: secondaryText,
+                              backgroundColor: backgroundColor,
                             ),
+                          ],
                         ],
                       ),
                     ),
                   ),
 
-                  const SizedBox(height: 16),
+                  SizedBox(height: DesignSpacing.md),
 
                   // Administration times card
-                  Card(
+                  Container(
+                    decoration: BoxDecoration(
+                      color: surfaceColor,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+                    ),
                     child: Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(DesignSpacing.md),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -288,70 +479,160 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                             children: [
                               Text(
                                 l10n.administrationTimes,
-                                style: theme.textTheme.titleLarge?.copyWith(
-                                  fontWeight: FontWeight.bold,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: primaryText,
                                 ),
                               ),
                               const Spacer(),
                               if (_selectedFrequency == 'frequencyCustom')
                                 IconButton(
                                   onPressed: _addAdministrationTime,
-                                  icon: const Icon(Icons.add),
+                                  icon: Icon(Icons.add_circle, color: DesignColors.highlightTeal),
                                   tooltip: l10n.addTime,
                                 ),
                             ],
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: DesignSpacing.md),
 
                           // List of administration times
                           ..._administrationTimes.asMap().entries.map((entry) {
                             final index = entry.key;
                             final time = entry.value;
-                            return ListTile(
-                              contentPadding: EdgeInsets.zero,
-                              leading: const Icon(Icons.access_time),
-                              title: Text(l10n.time(index + 1)),
-                              subtitle: Text(time.format(context)),
-                              trailing:
-                                  _selectedFrequency == 'frequencyCustom' &&
-                                          _administrationTimes.length > 1
-                                      ? IconButton(
-                                          onPressed: () =>
-                                              _removeAdministrationTime(index),
-                                          icon: const Icon(Icons.remove_circle,
-                                              color: Colors.red),
-                                        )
-                                      : null,
-                              onTap: () => _selectAdministrationTime(index),
+                            return Container(
+                              margin: EdgeInsets.only(bottom: DesignSpacing.sm),
+                              decoration: BoxDecoration(
+                                color: backgroundColor,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: secondaryText.withOpacity(0.2),
+                                  width: 1,
+                                ),
+                              ),
+                              child: ListTile(
+                                contentPadding: EdgeInsets.symmetric(horizontal: DesignSpacing.md),
+                                leading: Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: DesignColors.highlightTeal.withOpacity(0.15),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Icon(
+                                    Icons.access_time,
+                                    color: DesignColors.highlightTeal,
+                                    size: 20,
+                                  ),
+                                ),
+                                title: Text(
+                                  l10n.time(index + 1),
+                                  style: GoogleFonts.inter(
+                                    fontSize: 12,
+                                    color: secondaryText,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  time.format(context),
+                                  style: GoogleFonts.inter(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: primaryText,
+                                  ),
+                                ),
+                                trailing: _selectedFrequency == 'frequencyCustom' &&
+                                        _administrationTimes.length > 1
+                                    ? IconButton(
+                                        onPressed: () => _removeAdministrationTime(index),
+                                        icon: Icon(
+                                          Icons.remove_circle,
+                                          color: isDark ? DesignColors.dDanger : DesignColors.lDanger,
+                                        ),
+                                      )
+                                    : Icon(Icons.chevron_right, color: secondaryText),
+                                onTap: () => _selectAdministrationTime(index),
+                              ),
                             );
-                          }).toList(),
+                          }),
+
+                          // Add time button (for custom frequency)
+                          if (_selectedFrequency == 'frequencyCustom') ...[
+                            SizedBox(height: DesignSpacing.sm),
+                            OutlinedButton.icon(
+                              onPressed: _addAdministrationTime,
+                              icon: Icon(Icons.add, color: DesignColors.highlightTeal),
+                              label: Text(
+                                l10n.addTime,
+                                style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w600,
+                                  color: DesignColors.highlightTeal,
+                                ),
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(color: DesignColors.highlightTeal),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: DesignSpacing.md,
+                                  vertical: DesignSpacing.sm,
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),
                   ),
 
-                  const SizedBox(height: 16),
+                  SizedBox(height: DesignSpacing.md),
 
                   // Notes card
-                  Card(
+                  Container(
+                    decoration: BoxDecoration(
+                      color: surfaceColor,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+                    ),
                     child: Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(DesignSpacing.md),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             l10n.additionalNotes,
-                            style: theme.textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
+                            style: GoogleFonts.poppins(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: primaryText,
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: DesignSpacing.md),
                           TextFormField(
                             controller: _notesController,
                             maxLines: 4,
+                            style: GoogleFonts.inter(color: primaryText),
                             decoration: InputDecoration(
                               hintText: l10n.additionalNotesHint,
-                              border: const OutlineInputBorder(),
+                              hintStyle: GoogleFonts.inter(
+                                fontSize: 14,
+                                color: secondaryText.withOpacity(0.6),
+                              ),
+                              prefixIcon: Padding(
+                                padding: EdgeInsets.only(bottom: 60),
+                                child: Icon(Icons.notes, color: DesignColors.highlightTeal),
+                              ),
+                              filled: true,
+                              fillColor: backgroundColor,
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(color: disabledColor, width: 1),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(color: DesignColors.highlightTeal, width: 2),
+                              ),
+                              contentPadding: EdgeInsets.all(DesignSpacing.md),
                             ),
                           ),
                         ],
@@ -359,27 +640,49 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: 16),
+                  SizedBox(height: DesignSpacing.md),
 
                   // Inventory Tracking Card
-                  Card(
+                  Container(
+                    decoration: BoxDecoration(
+                      color: surfaceColor,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+                    ),
                     child: Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(DesignSpacing.md),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             children: [
+                              Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: DesignColors.highlightPurple.withOpacity(0.15),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Icon(
+                                  Icons.inventory_2,
+                                  color: DesignColors.highlightPurple,
+                                  size: 20,
+                                ),
+                              ),
+                              SizedBox(width: DesignSpacing.sm),
                               Expanded(
                                 child: Text(
                                   l10n.inventoryTracking,
-                                  style: theme.textTheme.titleLarge?.copyWith(
-                                    fontWeight: FontWeight.bold,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: primaryText,
                                   ),
                                 ),
                               ),
                               Switch(
                                 value: _enableInventoryTracking,
+                                activeColor: DesignColors.highlightTeal,
                                 onChanged: (value) {
                                   setState(() {
                                     _enableInventoryTracking = value;
@@ -389,55 +692,55 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                             ],
                           ),
                           if (_enableInventoryTracking) ...[
-                            const SizedBox(height: 16),
+                            SizedBox(height: DesignSpacing.sm),
                             Text(
                               '${l10n.optional} - Track medication stock levels',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: Colors.grey[600],
+                              style: GoogleFonts.inter(
+                                fontSize: 13,
+                                color: secondaryText,
                               ),
                             ),
-                            const SizedBox(height: 16),
+                            SizedBox(height: DesignSpacing.md),
 
                             // Stock Quantity & Unit
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                // Initial Stock field - full width
+                                // Initial Stock field
                                 TextFormField(
                                   controller: _stockQuantityController,
-                                  decoration: InputDecoration(
-                                    labelText: l10n.initialStock,
+                                  style: GoogleFonts.inter(color: primaryText),
+                                  decoration: _buildInputDecoration(
+                                    label: l10n.initialStock,
                                     hintText: '30',
-                                    border: const OutlineInputBorder(),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 16),
+                                    prefixIcon: Icons.numbers,
+                                    isDark: isDark,
+                                    secondaryText: secondaryText,
+                                    disabledColor: disabledColor,
+                                    surfaceColor: backgroundColor,
                                   ),
                                   keyboardType: TextInputType.number,
                                 ),
-                                const SizedBox(height: 12),
-                                // Stock Unit dropdown - full width
+                                SizedBox(height: DesignSpacing.sm),
+                                // Stock Unit dropdown
                                 DropdownButtonFormField<String>(
                                   value: _selectedStockUnit,
-                                  decoration: InputDecoration(
-                                    labelText: l10n.stockUnit,
-                                    border: const OutlineInputBorder(),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 16),
+                                  dropdownColor: surfaceColor,
+                                  style: GoogleFonts.inter(color: primaryText),
+                                  decoration: _buildInputDecoration(
+                                    label: l10n.stockUnit,
+                                    prefixIcon: Icons.category,
+                                    isDark: isDark,
+                                    secondaryText: secondaryText,
+                                    disabledColor: disabledColor,
+                                    surfaceColor: backgroundColor,
                                   ),
-                                  isExpanded:
-                                      true, // CRITICAL: Makes dropdown expand to fill width
+                                  isExpanded: true,
                                   items: [
-                                    DropdownMenuItem(
-                                        value: 'pills',
-                                        child: Text(l10n.pills)),
-                                    DropdownMenuItem(
-                                        value: 'tablets',
-                                        child: Text(l10n.tablets)),
-                                    DropdownMenuItem(
-                                        value: 'ml', child: Text(l10n.ml)),
-                                    DropdownMenuItem(
-                                        value: 'doses',
-                                        child: Text(l10n.doses)),
+                                    DropdownMenuItem(value: 'pills', child: Text(l10n.pills)),
+                                    DropdownMenuItem(value: 'tablets', child: Text(l10n.tablets)),
+                                    DropdownMenuItem(value: 'ml', child: Text(l10n.ml)),
+                                    DropdownMenuItem(value: 'doses', child: Text(l10n.doses)),
                                   ],
                                   onChanged: (value) {
                                     if (value != null) {
@@ -450,62 +753,93 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                               ],
                             ),
 
-                            const SizedBox(height: 16),
+                            SizedBox(height: DesignSpacing.md),
 
                             // Low Stock Threshold
                             TextFormField(
                               controller: _lowStockThresholdController,
-                              decoration: InputDecoration(
-                                labelText: l10n.lowStockThreshold,
+                              style: GoogleFonts.inter(color: primaryText),
+                              decoration: _buildInputDecoration(
+                                label: l10n.lowStockThreshold,
                                 hintText: '5',
-                                helperText:
-                                    'Alert when stock falls below this level',
-                                border: const OutlineInputBorder(),
+                                helperText: 'Alert when stock falls below this level',
+                                prefixIcon: Icons.warning_amber,
+                                isDark: isDark,
+                                secondaryText: secondaryText,
+                                disabledColor: disabledColor,
+                                surfaceColor: backgroundColor,
                               ),
                               keyboardType: TextInputType.number,
                             ),
 
-                            const SizedBox(height: 16),
+                            SizedBox(height: DesignSpacing.md),
 
                             // Cost Per Unit
                             TextFormField(
                               controller: _costPerUnitController,
-                              decoration: InputDecoration(
-                                labelText:
-                                    '${l10n.costPerUnit} (${l10n.optional})',
+                              style: GoogleFonts.inter(color: primaryText),
+                              decoration: _buildInputDecoration(
+                                label: '${l10n.costPerUnit} (${l10n.optional})',
                                 hintText: '1.50',
                                 prefixText: '\$ ',
-                                border: const OutlineInputBorder(),
+                                prefixIcon: Icons.attach_money,
+                                isDark: isDark,
+                                secondaryText: secondaryText,
+                                disabledColor: disabledColor,
+                                surfaceColor: backgroundColor,
                               ),
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                      decimal: true),
+                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
                             ),
 
-                            const SizedBox(height: 16),
+                            SizedBox(height: DesignSpacing.md),
 
                             // Refill Reminders Toggle
-                            SwitchListTile(
-                              value: _enableRefillReminders,
-                              onChanged: (value) {
-                                setState(() {
-                                  _enableRefillReminders = value;
-                                });
-                              },
-                              title: Text(l10n.enableRefillReminders),
-                              subtitle: Text(l10n.refillReminderDays),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: backgroundColor,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: SwitchListTile(
+                                contentPadding: EdgeInsets.symmetric(horizontal: DesignSpacing.md),
+                                value: _enableRefillReminders,
+                                activeColor: DesignColors.highlightTeal,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _enableRefillReminders = value;
+                                  });
+                                },
+                                title: Text(
+                                  l10n.enableRefillReminders,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: primaryText,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  l10n.refillReminderDays,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 13,
+                                    color: secondaryText,
+                                  ),
+                                ),
+                              ),
                             ),
 
                             if (_enableRefillReminders) ...[
-                              const SizedBox(height: 8),
+                              SizedBox(height: DesignSpacing.sm),
                               TextFormField(
                                 controller: _refillReminderDaysController,
-                                decoration: InputDecoration(
-                                  labelText: l10n.daysBeforeEmpty,
+                                style: GoogleFonts.inter(color: primaryText),
+                                decoration: _buildInputDecoration(
+                                  label: l10n.daysBeforeEmpty,
                                   hintText: '3',
-                                  helperText:
-                                      'Get reminded X days before medication runs out',
-                                  border: const OutlineInputBorder(),
+                                  helperText: 'Get reminded X days before medication runs out',
+                                  prefixIcon: Icons.notification_important,
+                                  isDark: isDark,
+                                  secondaryText: secondaryText,
+                                  disabledColor: disabledColor,
+                                  surfaceColor: backgroundColor,
                                 ),
                                 keyboardType: TextInputType.number,
                               ),
@@ -516,7 +850,7 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: 32),
+                  SizedBox(height: DesignSpacing.lg),
 
                   // Save button
                   SizedBox(
@@ -525,8 +859,9 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                     child: ElevatedButton(
                       onPressed: _isLoading ? null : _saveMedication,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.colorScheme.primary,
-                        foregroundColor: theme.colorScheme.onPrimary,
+                        backgroundColor: DesignColors.highlightTeal,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -535,11 +870,15 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                           ? const CircularProgressIndicator(color: Colors.white)
                           : Text(
                               l10n.saveMedication,
-                              style: const TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
+                              style: GoogleFonts.inter(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                     ),
                   ),
+
+                  SizedBox(height: DesignSpacing.lg),
                 ],
               ),
             ),

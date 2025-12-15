@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../domain/models/medication_entry.dart';
 import '../../domain/models/reminder.dart';
-import '../../domain/models/time_of_day_model.dart';
 import '../../providers/medications_provider.dart';
 import '../../presentation/providers/pet_profile_provider.dart';
 import '../../presentation/providers/reminder_provider.dart';
 import '../widgets/medication_card.dart';
 import '../../presentation/widgets/add_refill_dialog.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../theme/tokens/colors.dart';
+import '../../../theme/tokens/spacing.dart';
+import '../../../theme/tokens/shadows.dart';
 
 class MedicationsScreen extends ConsumerStatefulWidget {
   const MedicationsScreen({super.key});
@@ -54,36 +57,64 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
 
   Widget _buildNoPetView(ThemeData theme) {
     final l10n = AppLocalizations.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Scaffold(
+      backgroundColor: isDark ? DesignColors.dBackground : DesignColors.lBackground,
       appBar: AppBar(
-        title: Text(l10n.medications),
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.onPrimary,
+        title: Text(
+          l10n.medications,
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: primaryText,
+          ),
+        ),
+        backgroundColor: surfaceColor,
+        elevation: 0,
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.pets,
-              size: 64,
-              color: theme.colorScheme.onSurface.withOpacity(0.5),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              l10n.noPetSelected,
-              style: theme.textTheme.headlineSmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+        child: Padding(
+          padding: EdgeInsets.all(DesignSpacing.xl),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: DesignColors.highlightTeal.withOpacity(0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.pets,
+                  size: 40,
+                  color: DesignColors.highlightTeal.withOpacity(0.7),
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              l10n.pleaseSetupPetFirst,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.5),
+              SizedBox(height: DesignSpacing.lg),
+              Text(
+                l10n.noPetSelected,
+                style: GoogleFonts.poppins(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
+                ),
               ),
-            ),
-          ],
+              SizedBox(height: DesignSpacing.sm),
+              Text(
+                l10n.pleaseSetupPetFirst,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: secondaryText,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -92,25 +123,46 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
   Widget _buildMedicationsView(ThemeData theme, String petId) {
     final medicationsAsync = ref.watch(medicationsProvider);
     final l10n = AppLocalizations.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final backgroundColor = isDark ? DesignColors.dBackground : DesignColors.lBackground;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
 
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: Text(l10n.medications),
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.onPrimary,
+        title: Text(
+          l10n.medications,
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: primaryText,
+          ),
+        ),
+        backgroundColor: surfaceColor,
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.inventory_2),
+            icon: Icon(Icons.inventory_2_outlined, color: secondaryText),
             onPressed: () => context.push('/medication-inventory'),
             tooltip: l10n.medicationInventory,
           ),
         ],
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: theme.colorScheme.onPrimary,
-          labelColor: theme.colorScheme.onPrimary,
-          unselectedLabelColor: theme.colorScheme.onPrimary.withOpacity(0.7),
+          indicatorColor: DesignColors.highlightTeal,
+          indicatorWeight: 3,
+          labelColor: DesignColors.highlightTeal,
+          unselectedLabelColor: secondaryText,
+          labelStyle: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+          unselectedLabelStyle: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
           tabs: [
             Tab(text: l10n.active),
             Tab(text: l10n.all),
@@ -122,44 +174,47 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
         children: [
           // Search bar
           Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
+            padding: EdgeInsets.all(DesignSpacing.md),
+            child: Container(
+              decoration: BoxDecoration(
+                color: surfaceColor,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+              ),
+              child: TextField(
+                controller: _searchController,
+                style: GoogleFonts.inter(color: primaryText),
+                onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value.toLowerCase();
+                  });
+                },
+                decoration: InputDecoration(
+                  hintText: l10n.searchMedications,
+                  hintStyle: GoogleFonts.inter(color: secondaryText),
+                  prefixIcon: Icon(Icons.search, color: DesignColors.highlightTeal),
+                  suffixIcon: _searchQuery.isNotEmpty
+                      ? IconButton(
+                          onPressed: () {
+                            _searchController.clear();
+                            setState(() {
+                              _searchQuery = '';
+                            });
+                          },
+                          icon: Icon(Icons.clear, color: secondaryText),
+                        )
+                      : null,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Colors.transparent,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: DesignSpacing.md,
+                    vertical: DesignSpacing.md,
+                  ),
                 ),
-              ],
-            ),
-            child: TextField(
-              controller: _searchController,
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value.toLowerCase();
-                });
-              },
-              decoration: InputDecoration(
-                hintText: l10n.searchMedications,
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: _searchQuery.isNotEmpty
-                    ? IconButton(
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() {
-                            _searchQuery = '';
-                          });
-                        },
-                        icon: const Icon(Icons.clear),
-                      )
-                    : null,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: theme.colorScheme.background,
               ),
             ),
           ),
@@ -192,32 +247,94 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
                   ],
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stack) => Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.error, size: 64, color: Colors.red),
-                    const SizedBox(height: 16),
-                    Text('${l10n.errorLoadingMedications}: $error'),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () => ref.refresh(medicationsProvider),
-                      child: Text(l10n.retry),
-                    ),
-                  ],
+              loading: () => Center(
+                child: CircularProgressIndicator(
+                  color: DesignColors.highlightTeal,
                 ),
               ),
+              error: (error, stack) => _buildErrorState(theme, l10n, error),
             ),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/meds/add'),
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.onPrimary,
+        backgroundColor: DesignColors.highlightTeal,
+        foregroundColor: Colors.white,
+        elevation: 4,
         icon: const Icon(Icons.add),
-        label: Text(l10n.addMedication),
+        label: Text(
+          l10n.addMedication,
+          style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorState(ThemeData theme, AppLocalizations l10n, Object error) {
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(DesignSpacing.xl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: (isDark ? DesignColors.dDanger : DesignColors.lDanger).withOpacity(0.15),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.error_outline,
+                size: 40,
+                color: isDark ? DesignColors.dDanger : DesignColors.lDanger,
+              ),
+            ),
+            SizedBox(height: DesignSpacing.lg),
+            Text(
+              l10n.errorLoadingMedications,
+              style: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: primaryText,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: DesignSpacing.sm),
+            Text(
+              error.toString(),
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: secondaryText,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: DesignSpacing.lg),
+            ElevatedButton(
+              onPressed: () => ref.refresh(medicationsProvider),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: DesignColors.highlightTeal,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: DesignSpacing.xl,
+                  vertical: DesignSpacing.md,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                l10n.retry,
+                style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -228,6 +345,10 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
     ThemeData theme,
   ) {
     final l10n = AppLocalizations.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     // Filter medications based on search query
     final filteredMedications = medications.where((medication) {
       if (_searchQuery.isEmpty) return true;
@@ -242,44 +363,82 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
 
     if (filteredMedications.isEmpty) {
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.medication,
-              size: 64,
-              color: theme.colorScheme.onSurface.withOpacity(0.3),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              _searchQuery.isNotEmpty
-                  ? l10n.noMedicationsMatchSearch
-                  : emptyMessage,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
-              ),
-              textAlign: TextAlign.center,
-            ),
-            if (_searchQuery.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Text(
-                l10n.tryAdjustingSearchTerms,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.5),
+        child: Padding(
+          padding: EdgeInsets.all(DesignSpacing.xl),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: DesignColors.highlightTeal.withOpacity(0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.medication_outlined,
+                  size: 40,
+                  color: DesignColors.highlightTeal.withOpacity(0.7),
                 ),
               ),
+              SizedBox(height: DesignSpacing.lg),
+              Text(
+                _searchQuery.isNotEmpty
+                    ? l10n.noMedicationsMatchSearch
+                    : emptyMessage,
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              if (_searchQuery.isNotEmpty) ...[
+                SizedBox(height: DesignSpacing.sm),
+                Text(
+                  l10n.tryAdjustingSearchTerms,
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: secondaryText,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+              if (_searchQuery.isEmpty) ...[
+                SizedBox(height: DesignSpacing.lg),
+                ElevatedButton.icon(
+                  onPressed: () => context.push('/meds/add'),
+                  icon: const Icon(Icons.add, size: 20),
+                  label: Text(
+                    l10n.addMedication,
+                    style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: DesignColors.highlightTeal,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: DesignSpacing.lg,
+                      vertical: DesignSpacing.md,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       );
     }
 
     return RefreshIndicator(
+      color: DesignColors.highlightTeal,
       onRefresh: () async {
         await ref.read(medicationsProvider.notifier).refresh();
       },
       child: ListView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(DesignSpacing.md),
         itemCount: filteredMedications.length,
         itemBuilder: (context, index) {
           final medication = filteredMedications[index];
@@ -332,24 +491,102 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
 
   Future<void> _deleteMedication(MedicationEntry medication) async {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final dangerColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
+
     final shouldDelete = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.deleteMedication),
-        content: Text(
-          l10n.deleteMedicationConfirm(medication.medicationName),
+      builder: (context) => Dialog(
+        backgroundColor: surfaceColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.cancel),
+        child: Padding(
+          padding: EdgeInsets.all(DesignSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: dangerColor.withOpacity(0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.warning_amber_rounded,
+                  size: 32,
+                  color: dangerColor,
+                ),
+              ),
+              SizedBox(height: DesignSpacing.md),
+              Text(
+                l10n.deleteMedication,
+                style: GoogleFonts.poppins(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
+                ),
+              ),
+              SizedBox(height: DesignSpacing.sm),
+              Text(
+                l10n.deleteMedicationConfirm(medication.medicationName),
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: secondaryText,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: DesignSpacing.lg),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      style: OutlinedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: DesignSpacing.md),
+                        side: BorderSide(color: secondaryText.withOpacity(0.3)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        l10n.cancel,
+                        style: GoogleFonts.inter(
+                          fontWeight: FontWeight.w600,
+                          color: primaryText,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: DesignSpacing.md),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: dangerColor,
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(vertical: DesignSpacing.md),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        l10n.delete,
+                        style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: Text(l10n.delete),
-          ),
-        ],
+        ),
       ),
     );
 
@@ -362,8 +599,11 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(l10n.medicationDeletedSuccessfully),
-              backgroundColor: Colors.green,
+              content: Text(
+                l10n.medicationDeletedSuccessfully,
+                style: GoogleFonts.inter(color: Colors.white),
+              ),
+              backgroundColor: isDark ? DesignColors.dSuccess : DesignColors.lSuccess,
             ),
           );
         }
@@ -371,8 +611,11 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('${l10n.failedToDeleteMedication}: $error'),
-              backgroundColor: Colors.red,
+              content: Text(
+                '${l10n.failedToDeleteMedication}: $error',
+                style: GoogleFonts.inter(color: Colors.white),
+              ),
+              backgroundColor: dangerColor,
             ),
           );
         }
@@ -465,47 +708,85 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
   /// See also: MANUAL_TESTING_CHECKLIST.md - Scenario 5 notes
   void _showReminderDialog(MedicationEntry medication) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (bottomSheetContext) => DraggableScrollableSheet(
-        initialChildSize: 0.6,
-        minChildSize: 0.4,
-        maxChildSize: 0.9,
+        initialChildSize: 0.5,
+        minChildSize: 0.3,
+        maxChildSize: 0.8,
         expand: false,
         builder: (context, scrollController) => Container(
-          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: surfaceColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
           child: Column(
             children: [
+              // Handle bar
               Container(
                 width: 40,
                 height: 4,
-                margin: const EdgeInsets.only(bottom: 20),
+                margin: EdgeInsets.only(top: DesignSpacing.md, bottom: DesignSpacing.lg),
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: secondaryText.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              Text(
-                l10n.setReminder,
-                style: Theme.of(context).textTheme.titleLarge,
+              // Title
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: DesignSpacing.lg),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: DesignColors.highlightTeal.withOpacity(0.15),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.notifications_active,
+                        color: DesignColors.highlightTeal,
+                        size: 22,
+                      ),
+                    ),
+                    SizedBox(width: DesignSpacing.md),
+                    Text(
+                      l10n.setReminder,
+                      style: GoogleFonts.poppins(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: primaryText,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: DesignSpacing.md),
+              Divider(color: secondaryText.withOpacity(0.15)),
+              // Options list
               Expanded(
                 child: ListView(
                   controller: scrollController,
+                  padding: EdgeInsets.symmetric(horizontal: DesignSpacing.md),
                   children: [
-                    ListTile(
-                      leading: const Icon(Icons.schedule),
-                      title: Text(l10n.remindDaily),
+                    _buildReminderOption(
+                      icon: Icons.schedule,
+                      title: l10n.remindDaily,
                       subtitle: medication.administrationTimes.isNotEmpty
-                          ? Text(
-                              '${l10n.firstDose}: ${medication.administrationTimes.first.format24Hour()}')
+                          ? '${l10n.firstDose}: ${medication.administrationTimes.first.format24Hour()}'
                           : null,
+                      primaryText: primaryText,
+                      secondaryText: secondaryText,
                       onTap: () async {
-                        // KNOWN ISSUE: Bottom sheet requires manual dismiss (swipe or tap "View")
-                        // Fix attempted: Navigator reference capture before delay
                         final navigator = Navigator.of(bottomSheetContext);
                         await Future.delayed(const Duration(milliseconds: 100));
                         navigator.pop();
@@ -514,37 +795,34 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
                           ReminderFrequency.daily,
                           medication.administrationTimes.isNotEmpty
                               ? TimeOfDay(
-                                  hour:
-                                      medication.administrationTimes.first.hour,
-                                  minute: medication
-                                      .administrationTimes.first.minute,
+                                  hour: medication.administrationTimes.first.hour,
+                                  minute: medication.administrationTimes.first.minute,
                                 )
                               : null,
                         );
                       },
                     ),
                     if (medication.administrationTimes.length > 1)
-                      ListTile(
-                        leading: const Icon(Icons.repeat),
-                        title: Text(l10n.remindAllDoses),
-                        subtitle: Text(
-                            '${medication.administrationTimes.length} ${l10n.timesDaily}'),
+                      _buildReminderOption(
+                        icon: Icons.repeat,
+                        title: l10n.remindAllDoses,
+                        subtitle: '${medication.administrationTimes.length} ${l10n.timesDaily}',
+                        primaryText: primaryText,
+                        secondaryText: secondaryText,
                         onTap: () async {
-                          // This option works correctly - auto-dismisses as expected
                           final navigator = Navigator.of(bottomSheetContext);
-                          await Future.delayed(
-                              const Duration(milliseconds: 100));
+                          await Future.delayed(const Duration(milliseconds: 100));
                           navigator.pop();
                           await _createMultipleReminders(medication);
                         },
                       ),
-                    ListTile(
-                      leading: const Icon(Icons.today),
-                      title: Text(l10n.remindOnce),
-                      subtitle: Text(l10n.customTime),
+                    _buildReminderOption(
+                      icon: Icons.today,
+                      title: l10n.remindOnce,
+                      subtitle: l10n.customTime,
+                      primaryText: primaryText,
+                      secondaryText: secondaryText,
                       onTap: () async {
-                        // KNOWN ISSUE: Bottom sheet requires manual dismiss (swipe or tap "View")
-                        // Fix attempted: Navigator reference capture before delay
                         final navigator = Navigator.of(bottomSheetContext);
                         await Future.delayed(const Duration(milliseconds: 100));
                         navigator.pop();
@@ -557,6 +835,62 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildReminderOption({
+    required IconData icon,
+    required String title,
+    String? subtitle,
+    required Color primaryText,
+    required Color secondaryText,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      margin: EdgeInsets.only(bottom: DesignSpacing.sm),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ListTile(
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: DesignSpacing.md,
+          vertical: DesignSpacing.xs,
+        ),
+        leading: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: DesignColors.highlightTeal.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: DesignColors.highlightTeal, size: 20),
+        ),
+        title: Text(
+          title,
+          style: GoogleFonts.inter(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: primaryText,
+          ),
+        ),
+        subtitle: subtitle != null
+            ? Text(
+                subtitle,
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  color: secondaryText,
+                ),
+              )
+            : null,
+        trailing: Icon(
+          Icons.chevron_right,
+          color: secondaryText,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        onTap: onTap,
       ),
     );
   }
