@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../theme/tokens/colors.dart';
+import '../../../theme/tokens/spacing.dart';
+import '../../../theme/tokens/shadows.dart';
 import '../../domain/models/pet_profile.dart';
 import '../../data/services/qr_code_service.dart';
 import 'pet_qr_code_widget.dart';
@@ -118,102 +122,150 @@ class _PetQrCodeSheetState extends State<PetQrCodeSheet> {
     final qrData = _service.generateQrDataString(pet: widget.pet, l10n: l10n);
     final localizedSpecies = _getLocalizedSpecies(l10n, widget.pet.species);
 
+    // Design tokens
+    final isDark = theme.brightness == Brightness.dark;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Container(
-      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        color: surfaceColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        boxShadow: DesignShadows.lg,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(DesignSpacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
           // Handle bar
           Container(
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: theme.colorScheme.outline.withValues(alpha: 0.4),
+              color: secondaryText.withOpacity(0.3),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: DesignSpacing.lg),
 
           // Title
           Text(
             l10n.qrCodeTitle,
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
+            style: GoogleFonts.poppins(
+              fontSize: 24,
+              fontWeight: FontWeight.w600,
+              color: primaryText,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: DesignSpacing.xs),
 
           // Description
           Text(
             l10n.qrCodeDescription,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              color: secondaryText,
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: DesignSpacing.lg),
 
-          // QR Code
+          // QR Code Card
           Center(
             child: PetQrCodeWidget(
               qrData: qrData,
               petName: widget.pet.name,
               petSpecies: localizedSpecies,
-              size: 220,
+              size: 260,
               repaintKey: _qrKey,
+              showBorder: true,
+              isDark: isDark,
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: DesignSpacing.lg),
 
-          // Privacy notice
+          // Privacy notice (Info Message)
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: EdgeInsets.all(DesignSpacing.md),
             decoration: BoxDecoration(
-              color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(8),
+              color: DesignColors.highlightBlue.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: DesignColors.highlightBlue.withOpacity(0.3),
+                width: 1,
+              ),
             ),
             child: Row(
               children: [
                 Icon(
-                  Icons.privacy_tip_outlined,
-                  size: 20,
-                  color: theme.colorScheme.primary,
+                  Icons.shield_outlined,
+                  size: 24,
+                  color: DesignColors.highlightBlue,
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: DesignSpacing.sm),
                 Expanded(
                   child: Text(
                     l10n.qrCodePrivacyNote,
-                    style: theme.textTheme.bodySmall,
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      color: primaryText,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: DesignSpacing.lg),
 
           // Action buttons
           Row(
             children: [
+              // Save Button (Outlined)
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: _isSaving ? null : _saveQrCode,
                   icon: _isSaving
-                      ? const SizedBox(
+                      ? SizedBox(
                           width: 20,
                           height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: DesignColors.highlightBlue,
+                          ),
                         )
-                      : const Icon(Icons.save_alt),
-                  label: Text(l10n.saveToDevice),
+                      : Icon(Icons.download_outlined, size: 20),
+                  label: Text(
+                    l10n.saveToDevice,
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: DesignColors.highlightBlue,
+                    side: BorderSide(
+                      color: DesignColors.highlightBlue,
+                      width: 2,
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      vertical: DesignSpacing.md,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: DesignSpacing.md),
+
+              // Share Button (Filled)
               Expanded(
-                child: FilledButton.icon(
+                child: ElevatedButton.icon(
                   onPressed: _isSharing ? null : _shareQrCode,
                   icon: _isSharing
                       ? const SizedBox(
@@ -224,14 +276,33 @@ class _PetQrCodeSheetState extends State<PetQrCodeSheet> {
                             color: Colors.white,
                           ),
                         )
-                      : const Icon(Icons.share),
-                  label: Text(l10n.share),
+                      : Icon(Icons.share_outlined, size: 20),
+                  label: Text(
+                    l10n.share,
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: DesignColors.highlightTeal,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(
+                      vertical: DesignSpacing.md,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: DesignSpacing.md),
         ],
+        ),
       ),
     );
   }

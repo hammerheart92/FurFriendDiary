@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import '../../../theme/tokens/colors.dart';
+import '../../../theme/tokens/spacing.dart';
+import '../../../theme/tokens/shadows.dart';
 
 /// Widget that displays a QR code with pet information.
 class PetQrCodeWidget extends StatelessWidget {
@@ -15,6 +19,12 @@ class PetQrCodeWidget extends StatelessWidget {
   final double size;
   final GlobalKey? repaintKey;
 
+  /// Whether to show the styled border around the QR card.
+  final bool showBorder;
+
+  /// Whether the app is in dark mode (for shadow selection).
+  final bool isDark;
+
   const PetQrCodeWidget({
     super.key,
     required this.qrData,
@@ -22,12 +32,12 @@ class PetQrCodeWidget extends StatelessWidget {
     required this.petSpecies,
     this.size = 200,
     this.repaintKey,
+    this.showBorder = false,
+    this.isDark = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     final qrWidget = QrImageView(
       data: qrData,
       version: QrVersions.auto,
@@ -49,26 +59,47 @@ class PetQrCodeWidget extends StatelessWidget {
       return RepaintBoundary(
         key: repaintKey,
         child: Container(
-          color: Colors.white,
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(DesignSpacing.lg),
+          decoration: BoxDecoration(
+            color: Colors.white, // ALWAYS white for QR code visibility
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: showBorder
+                ? (isDark ? DesignShadows.darkMd : DesignShadows.md)
+                : null,
+            border: showBorder
+                ? Border.all(
+                    color: DesignColors.highlightBlue.withOpacity(0.2),
+                    width: 2,
+                  )
+                : null,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               qrWidget,
-              const SizedBox(height: 12),
+              SizedBox(height: DesignSpacing.md),
+              // Divider
+              Container(
+                height: 1,
+                color: Colors.black12,
+              ),
+              SizedBox(height: DesignSpacing.md),
+              // Pet Name - ALWAYS dark on white card
               Text(
                 petName,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+                style: GoogleFonts.poppins(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
                   color: Colors.black,
                 ),
               ),
-              const SizedBox(height: 4),
+              SizedBox(height: DesignSpacing.xs),
+              // Pet Species - ALWAYS gray on white card
               Text(
                 petSpecies,
-                style: TextStyle(
-                  color: Colors.grey[600],
+                style: GoogleFonts.inter(
                   fontSize: 14,
+                  color: Colors.black54,
                 ),
               ),
             ],
