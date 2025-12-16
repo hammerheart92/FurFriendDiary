@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../domain/models/appointment_entry.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../utils/date_helper.dart';
+import '../../../theme/tokens/colors.dart';
+import '../../../theme/tokens/spacing.dart';
+import '../../../theme/tokens/shadows.dart';
 
 class AppointmentCard extends StatelessWidget {
   final AppointmentEntry appointment;
@@ -23,241 +27,275 @@ class AppointmentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final backgroundColor = isDark ? DesignColors.dBackground : DesignColors.lBackground;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final successColor = isDark ? DesignColors.dSuccess : DesignColors.lSuccess;
+    final dangerColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
 
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.only(bottom: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+    // Get status-based border color
+    final statusColor = appointment.isCompleted
+        ? successColor
+        : _getStatusColor(isDark);
+
+    return Container(
+      margin: EdgeInsets.only(bottom: DesignSpacing.sm),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: statusColor.withOpacity(0.3),
+          width: 2,
+        ),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
       ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header row
-              Row(
-                children: [
-                  // Appointment icon and veterinarian
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: _getAppointmentColor().withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: EdgeInsets.all(DesignSpacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header row
+                Row(
+                  children: [
+                    // Appointment icon and veterinarian
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              color: _getAppointmentColor(isDark).withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              _getAppointmentIcon(),
+                              color: _getAppointmentColor(isDark),
+                              size: 24,
+                            ),
                           ),
-                          child: Icon(
-                            _getAppointmentIcon(),
-                            color: _getAppointmentColor(),
-                            size: 20,
+                          SizedBox(width: DesignSpacing.sm + 4),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  appointment.veterinarian,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: primaryText,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                SizedBox(height: DesignSpacing.xs / 2),
+                                Text(
+                                  '${appointment.clinic} • ${appointment.reason}',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 13,
+                                    color: secondaryText,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Status indicator
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: DesignSpacing.sm + 2,
+                        vertical: DesignSpacing.xs,
+                      ),
+                      decoration: BoxDecoration(
+                        color: statusColor,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        appointment.isCompleted
+                            ? l10n.completed
+                            : _getStatusText(context),
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+
+                    // Reminder button
+                    if (!appointment.isCompleted)
+                      IconButton(
+                        icon: Icon(
+                          Icons.notifications_outlined,
+                          size: 20,
+                          color: DesignColors.highlightYellow,
+                        ),
+                        tooltip: l10n.setReminder,
+                        onPressed: onSetReminder,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
+
+                    // More options menu
+                    PopupMenuButton<String>(
+                      onSelected: (value) {
+                        switch (value) {
+                          case 'toggle':
+                            onToggleStatus?.call();
+                            break;
+                          case 'delete':
+                            onDelete?.call();
+                            break;
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: 'toggle',
+                          child: Row(
+                            children: [
+                              Icon(
+                                appointment.isCompleted
+                                    ? Icons.undo
+                                    : Icons.check,
+                                color: appointment.isCompleted
+                                    ? DesignColors.highlightYellow
+                                    : successColor,
+                              ),
+                              SizedBox(width: DesignSpacing.sm),
+                              Text(
+                                appointment.isCompleted
+                                    ? l10n.markPending
+                                    : l10n.markCompleted,
+                                style: GoogleFonts.inter(fontSize: 14),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                        PopupMenuItem(
+                          value: 'delete',
+                          child: Row(
                             children: [
+                              Icon(Icons.delete, color: dangerColor),
+                              SizedBox(width: DesignSpacing.sm),
                               Text(
-                                appointment.veterinarian,
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                '${appointment.clinic} • ${appointment.reason}',
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: theme.colorScheme.onSurface
-                                      .withOpacity(0.7),
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                                l10n.delete,
+                                style: GoogleFonts.inter(fontSize: 14),
                               ),
                             ],
                           ),
                         ),
                       ],
+                      child: Icon(Icons.more_vert, size: 20, color: secondaryText),
                     ),
-                  ),
+                  ],
+                ),
 
-                  // Status indicator
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
+                SizedBox(height: DesignSpacing.md),
+
+                // Appointment details row
+                Row(
+                  children: [
+                    // Date
+                    Expanded(
+                      child: _buildDetailItem(
+                        context: context,
+                        icon: Icons.calendar_today,
+                        label: l10n.date,
+                        value: localizedShortDate(
+                            context, appointment.appointmentDate),
+                        color: DesignColors.highlightBlue,
+                        isDark: isDark,
+                      ),
                     ),
+
+                    // Time
+                    Expanded(
+                      child: _buildDetailItem(
+                        context: context,
+                        icon: Icons.access_time,
+                        label: l10n.timeLabel,
+                        value:
+                            localizedTime(context, appointment.appointmentTime),
+                        color: DesignColors.highlightTeal,
+                        isDark: isDark,
+                      ),
+                    ),
+
+                    // Days until/since
+                    Expanded(
+                      child: _buildDetailItem(
+                        context: context,
+                        icon: _getDaysIcon(),
+                        label: _getDaysLabel(context),
+                        value: _getDaysValue(context),
+                        color: _getDaysColor(isDark),
+                        isDark: isDark,
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Notes section
+                if (appointment.notes != null &&
+                    appointment.notes!.isNotEmpty) ...[
+                  SizedBox(height: DesignSpacing.md),
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(DesignSpacing.sm + 4),
                     decoration: BoxDecoration(
-                      color: appointment.isCompleted
-                          ? Colors.green
-                          : _getStatusColor(),
+                      color: backgroundColor,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Text(
-                      appointment.isCompleted
-                          ? l10n.completed
-                          : _getStatusText(context),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-
-                  // Reminder button
-                  if (!appointment.isCompleted)
-                    IconButton(
-                      icon: const Icon(Icons.notifications_outlined, size: 20),
-                      tooltip: l10n.setReminder,
-                      onPressed: onSetReminder,
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                    ),
-
-                  // More options menu
-                  PopupMenuButton<String>(
-                    onSelected: (value) {
-                      switch (value) {
-                        case 'toggle':
-                          onToggleStatus?.call();
-                          break;
-                        case 'delete':
-                          onDelete?.call();
-                          break;
-                      }
-                    },
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: 'toggle',
-                        child: Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
                           children: [
                             Icon(
-                              appointment.isCompleted
-                                  ? Icons.undo
-                                  : Icons.check,
-                              color: appointment.isCompleted
-                                  ? Colors.orange
-                                  : Colors.green,
+                              Icons.note,
+                              size: 16,
+                              color: DesignColors.highlightYellow,
                             ),
-                            const SizedBox(width: 8),
-                            Text(appointment.isCompleted
-                                ? l10n.markPending
-                                : l10n.markCompleted),
+                            SizedBox(width: DesignSpacing.xs),
+                            Text(
+                              l10n.notes,
+                              style: GoogleFonts.inter(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: DesignColors.highlightYellow,
+                              ),
+                            ),
                           ],
                         ),
-                      ),
-                      PopupMenuItem(
-                        value: 'delete',
-                        child: Row(
-                          children: [
-                            const Icon(Icons.delete, color: Colors.red),
-                            const SizedBox(width: 8),
-                            Text(l10n.delete),
-                          ],
+                        SizedBox(height: DesignSpacing.xs),
+                        Text(
+                          appointment.notes!,
+                          style: GoogleFonts.inter(
+                            fontSize: 13,
+                            color: secondaryText,
+                          ),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                    ],
-                    child: const Icon(Icons.more_vert, size: 20),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 16),
-
-              // Appointment details row
-              Row(
-                children: [
-                  // Date
-                  Expanded(
-                    child: _buildDetailItem(
-                      context: context,
-                      icon: Icons.calendar_today,
-                      label: l10n.date,
-                      value: localizedShortDate(
-                          context, appointment.appointmentDate),
-                      color: Colors.blue,
-                    ),
-                  ),
-
-                  // Time
-                  Expanded(
-                    child: _buildDetailItem(
-                      context: context,
-                      icon: Icons.access_time,
-                      label: l10n.timeLabel,
-                      value:
-                          localizedTime(context, appointment.appointmentTime),
-                      color: Colors.green,
-                    ),
-                  ),
-
-                  // Days until/since
-                  Expanded(
-                    child: _buildDetailItem(
-                      context: context,
-                      icon: _getDaysIcon(),
-                      label: _getDaysLabel(context),
-                      value: _getDaysValue(context),
-                      color: _getDaysColor(),
+                      ],
                     ),
                   ),
                 ],
-              ),
-
-              // Notes section
-              if (appointment.notes != null &&
-                  appointment.notes!.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surface,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: theme.colorScheme.outline.withOpacity(0.2),
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.note,
-                            size: 16,
-                            color: theme.colorScheme.onSurface.withOpacity(0.7),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            l10n.notes,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color:
-                                  theme.colorScheme.onSurface.withOpacity(0.7),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        appointment.notes!,
-                        style: theme.textTheme.bodySmall,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
               ],
-            ],
+            ),
           ),
         ),
       ),
@@ -270,29 +308,42 @@ class AppointmentCard extends StatelessWidget {
     required String label,
     required String value,
     required Color color,
+    required bool isDark,
   }) {
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Column(
       children: [
-        Icon(
-          icon,
-          color: color,
-          size: 20,
+        Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(
+            icon,
+            color: color,
+            size: 18,
+          ),
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: DesignSpacing.xs),
         Text(
           label,
-          style: TextStyle(
+          style: GoogleFonts.inter(
             fontSize: 11,
-            color: Colors.grey[600],
+            color: secondaryText,
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 2),
+        SizedBox(height: DesignSpacing.xs / 2),
         Text(
           value,
-          style: const TextStyle(
+          style: GoogleFonts.inter(
             fontSize: 13,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
+            color: primaryText,
           ),
           textAlign: TextAlign.center,
         ),
@@ -317,37 +368,37 @@ class AppointmentCard extends StatelessWidget {
     }
   }
 
-  Color _getAppointmentColor() {
+  Color _getAppointmentColor(bool isDark) {
     final reason = appointment.reason.toLowerCase();
     if (reason.contains('vaccine') || reason.contains('vaccination')) {
-      return Colors.green;
+      return DesignColors.highlightTeal;
     } else if (reason.contains('surgery') || reason.contains('operation')) {
-      return Colors.red;
+      return isDark ? DesignColors.dDanger : DesignColors.lDanger;
     } else if (reason.contains('checkup') || reason.contains('exam')) {
-      return Colors.blue;
+      return DesignColors.highlightBlue;
     } else if (reason.contains('dental') || reason.contains('teeth')) {
-      return Colors.purple;
+      return DesignColors.highlightPurple;
     } else if (reason.contains('emergency') || reason.contains('urgent')) {
-      return Colors.orange;
+      return DesignColors.highlightYellow;
     } else {
-      return Colors.teal;
+      return DesignColors.highlightYellow;
     }
   }
 
-  Color _getStatusColor() {
+  Color _getStatusColor(bool isDark) {
     if (appointment.isCompleted) {
-      return Colors.green;
+      return isDark ? DesignColors.dSuccess : DesignColors.lSuccess;
     }
 
     final now = DateTime.now();
     final appointmentDateTime = appointment.appointmentDate;
 
     if (appointmentDateTime.isBefore(now)) {
-      return Colors.red; // Overdue
+      return isDark ? DesignColors.dDanger : DesignColors.lDanger; // Overdue
     } else if (appointmentDateTime.difference(now).inDays <= 1) {
-      return Colors.orange; // Tomorrow or today
+      return DesignColors.highlightYellow; // Tomorrow or today
     } else {
-      return Colors.blue; // Upcoming
+      return DesignColors.highlightBlue; // Upcoming
     }
   }
 
@@ -423,20 +474,20 @@ class AppointmentCard extends StatelessWidget {
     }
   }
 
-  Color _getDaysColor() {
+  Color _getDaysColor(bool isDark) {
     if (appointment.isCompleted) {
-      return Colors.green;
+      return isDark ? DesignColors.dSuccess : DesignColors.lSuccess;
     }
 
     final now = DateTime.now();
     final appointmentDate = appointment.appointmentDate;
 
     if (appointmentDate.isBefore(now)) {
-      return Colors.red; // Overdue
+      return isDark ? DesignColors.dDanger : DesignColors.lDanger; // Overdue
     } else if (appointmentDate.difference(now).inDays <= 1) {
-      return Colors.orange; // Soon
+      return DesignColors.highlightYellow; // Soon
     } else {
-      return Colors.purple; // Future
+      return DesignColors.highlightPurple; // Future
     }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import '../../domain/models/appointment_entry.dart';
@@ -8,6 +9,9 @@ import '../../presentation/providers/care_data_provider.dart';
 import '../../presentation/providers/pet_profile_provider.dart';
 import '../../presentation/providers/vet_provider.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../theme/tokens/colors.dart';
+import '../../../theme/tokens/spacing.dart';
+import '../../../theme/tokens/shadows.dart';
 
 class AppointmentForm extends ConsumerStatefulWidget {
   final AppointmentEntry? appointment;
@@ -148,6 +152,11 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final disabledColor = isDark ? DesignColors.dDisabled : DesignColors.lDisabled;
 
     // In edit mode, detect the reason key if not already set
     if (widget.appointment != null && _selectedReasonKey == null) {
@@ -164,216 +173,220 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
     return Form(
       key: _formKey,
       child: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(DesignSpacing.md),
         children: [
           // Appointment basic info card
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.appointmentInformation,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+          _buildSectionCard(
+            isDark: isDark,
+            surfaceColor: surfaceColor,
+            primaryText: primaryText,
+            icon: Icons.event,
+            title: l10n.appointmentInformation,
+            children: [
+              // Vet selection or manual entry
+              _buildVetSelection(l10n, isDark, surfaceColor, primaryText, secondaryText, disabledColor),
+
+              SizedBox(height: DesignSpacing.md),
+
+              // Reason dropdown
+              DropdownButtonFormField<String>(
+                value: _selectedReasonKey,
+                style: GoogleFonts.inter(fontSize: 16, color: primaryText),
+                decoration: InputDecoration(
+                  labelText: '${l10n.reason} *',
+                  labelStyle: GoogleFonts.inter(fontSize: 14, color: secondaryText),
+                  filled: true,
+                  fillColor: surfaceColor,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: disabledColor),
                   ),
-                  const SizedBox(height: 16),
-
-                  // Vet selection or manual entry
-                  _buildVetSelection(l10n),
-
-                  const SizedBox(height: 16),
-
-                  // Reason dropdown
-                  DropdownButtonFormField<String>(
-                    value: _selectedReasonKey,
-                    decoration: InputDecoration(
-                      labelText: '${l10n.reason} *',
-                      border: const OutlineInputBorder(),
-                      prefixIcon: const Icon(Icons.medical_services),
-                    ),
-                    items: _commonReasons.map((reasonKey) {
-                      return DropdownMenuItem(
-                        value: reasonKey == 'other' ? 'other' : reasonKey,
-                        child: Text(_getLocalizedReason(reasonKey, l10n)),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedReasonKey = value;
-                        _showCustomReasonField = (value == 'other');
-
-                        if (value != 'other') {
-                          // If user selected from dropdown, clear custom field
-                          _reasonController.clear();
-                          logger.d(
-                              '[APPOINTMENT] Reason selected from dropdown: $value');
-                        } else {
-                          logger.d(
-                              '[APPOINTMENT] Selected "Other (Custom)" - showing text field');
-                        }
-                      });
-                    },
-                    validator: (value) {
-                      // If dropdown has value and it's not "other", it's valid
-                      if (value != null && value != 'other') return null;
-
-                      // If "Other" is selected, check the text field
-                      if (_showCustomReasonField &&
-                          _reasonController.text.trim().isEmpty) {
-                        return l10n.pleaseEnterReason;
-                      }
-
-                      // If "other" is selected and text field has value, it's valid
-                      if (value == 'other' &&
-                          _reasonController.text.trim().isNotEmpty) {
-                        return null;
-                      }
-
-                      // No selection made
-                      if (value == null) {
-                        return l10n.pleaseEnterReason;
-                      }
-
-                      return null;
-                    },
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: disabledColor),
                   ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: DesignColors.highlightYellow, width: 2),
+                  ),
+                  prefixIcon: Icon(Icons.medical_services, color: DesignColors.highlightYellow),
+                ),
+                items: _commonReasons.map((reasonKey) {
+                  return DropdownMenuItem(
+                    value: reasonKey == 'other' ? 'other' : reasonKey,
+                    child: Text(_getLocalizedReason(reasonKey, l10n)),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedReasonKey = value;
+                    _showCustomReasonField = (value == 'other');
 
-                  // Show custom text field if "Other" is selected
-                  if (_showCustomReasonField) ...[
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _reasonController,
-                      decoration: InputDecoration(
-                        labelText: l10n.appointmentReasonCustomPlaceholder,
-                        hintText: l10n.reasonHint,
-                        border: const OutlineInputBorder(),
-                        prefixIcon: const Icon(Icons.edit),
-                      ),
-                      validator: (value) {
-                        if (_showCustomReasonField &&
-                            (value == null || value.trim().isEmpty)) {
-                          return l10n.pleaseEnterReason;
-                        }
-                        return null;
-                      },
-                    ),
-                  ],
-                ],
+                    if (value != 'other') {
+                      _reasonController.clear();
+                      logger.d('[APPOINTMENT] Reason selected from dropdown: $value');
+                    } else {
+                      logger.d('[APPOINTMENT] Selected "Other (Custom)" - showing text field');
+                    }
+                  });
+                },
+                validator: (value) {
+                  if (value != null && value != 'other') return null;
+                  if (_showCustomReasonField && _reasonController.text.trim().isEmpty) {
+                    return l10n.pleaseEnterReason;
+                  }
+                  if (value == 'other' && _reasonController.text.trim().isNotEmpty) {
+                    return null;
+                  }
+                  if (value == null) {
+                    return l10n.pleaseEnterReason;
+                  }
+                  return null;
+                },
               ),
-            ),
+
+              // Show custom text field if "Other" is selected
+              if (_showCustomReasonField) ...[
+                SizedBox(height: DesignSpacing.md),
+                TextFormField(
+                  controller: _reasonController,
+                  style: GoogleFonts.inter(fontSize: 16, color: primaryText),
+                  decoration: InputDecoration(
+                    labelText: l10n.appointmentReasonCustomPlaceholder,
+                    labelStyle: GoogleFonts.inter(fontSize: 14, color: secondaryText),
+                    hintText: l10n.reasonHint,
+                    hintStyle: GoogleFonts.inter(fontSize: 14, color: secondaryText),
+                    filled: true,
+                    fillColor: surfaceColor,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: disabledColor),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: disabledColor),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: DesignColors.highlightYellow, width: 2),
+                    ),
+                    prefixIcon: Icon(Icons.edit, color: DesignColors.highlightYellow),
+                  ),
+                  validator: (value) {
+                    if (_showCustomReasonField && (value == null || value.trim().isEmpty)) {
+                      return l10n.pleaseEnterReason;
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ],
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: DesignSpacing.md),
 
           // Schedule card
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.schedule,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Appointment date
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: const Icon(Icons.calendar_today),
-                    title: Text(l10n.appointmentDate),
-                    subtitle: Text(DateFormat('MMMM dd, yyyy',
-                            Localizations.localeOf(context).toString())
-                        .format(_appointmentDate)),
-                    onTap: () => _selectAppointmentDate(),
-                  ),
-
-                  // Appointment time
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: const Icon(Icons.access_time),
-                    title: Text(l10n.appointmentTime),
-                    subtitle: Text(_appointmentTime.format(context)),
-                    onTap: () => _selectAppointmentTime(),
-                  ),
-                ],
+          _buildSectionCard(
+            isDark: isDark,
+            surfaceColor: surfaceColor,
+            primaryText: primaryText,
+            icon: Icons.schedule,
+            title: l10n.schedule,
+            children: [
+              // Appointment date
+              _buildDateTimeTile(
+                icon: Icons.calendar_today,
+                title: l10n.appointmentDate,
+                subtitle: DateFormat('MMMM dd, yyyy', Localizations.localeOf(context).toString())
+                    .format(_appointmentDate),
+                onTap: () => _selectAppointmentDate(),
+                primaryText: primaryText,
+                secondaryText: secondaryText,
               ),
-            ),
+
+              SizedBox(height: DesignSpacing.sm),
+
+              // Appointment time
+              _buildDateTimeTile(
+                icon: Icons.access_time,
+                title: l10n.appointmentTime,
+                subtitle: _appointmentTime.format(context),
+                onTap: () => _selectAppointmentTime(),
+                primaryText: primaryText,
+                secondaryText: secondaryText,
+              ),
+            ],
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: DesignSpacing.md),
 
           // Status card (only show for existing appointments)
           if (widget.appointment != null)
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.status,
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Completed toggle
-                    SwitchListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(l10n.markAsCompleted),
-                      subtitle: Text(_isCompleted
-                          ? l10n.appointmentCompleted
-                          : l10n.appointmentPending),
-                      value: _isCompleted,
-                      onChanged: (value) {
-                        setState(() {
-                          _isCompleted = value;
-                        });
-                      },
-                    ),
-                  ],
+            _buildSectionCard(
+              isDark: isDark,
+              surfaceColor: surfaceColor,
+              primaryText: primaryText,
+              icon: Icons.check_circle_outline,
+              title: l10n.status,
+              children: [
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  activeColor: DesignColors.highlightYellow,
+                  title: Text(
+                    l10n.markAsCompleted,
+                    style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w500, color: primaryText),
+                  ),
+                  subtitle: Text(
+                    _isCompleted ? l10n.appointmentCompleted : l10n.appointmentPending,
+                    style: GoogleFonts.inter(fontSize: 14, color: secondaryText),
+                  ),
+                  value: _isCompleted,
+                  onChanged: (value) {
+                    setState(() {
+                      _isCompleted = value;
+                    });
+                  },
                 ),
-              ),
+              ],
             ),
 
-          if (widget.appointment != null) const SizedBox(height: 16),
+          if (widget.appointment != null) SizedBox(height: DesignSpacing.md),
 
           // Notes card
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.additionalNotes,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+          _buildSectionCard(
+            isDark: isDark,
+            surfaceColor: surfaceColor,
+            primaryText: primaryText,
+            icon: Icons.note,
+            title: l10n.additionalNotes,
+            children: [
+              TextFormField(
+                controller: _notesController,
+                maxLines: 4,
+                style: GoogleFonts.inter(fontSize: 16, color: primaryText),
+                decoration: InputDecoration(
+                  hintText: l10n.additionalNotesHint,
+                  hintStyle: GoogleFonts.inter(fontSize: 14, color: secondaryText),
+                  filled: true,
+                  fillColor: surfaceColor,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: disabledColor),
                   ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _notesController,
-                    maxLines: 4,
-                    decoration: InputDecoration(
-                      hintText: l10n.additionalNotesHint,
-                      border: const OutlineInputBorder(),
-                    ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: disabledColor),
                   ),
-                ],
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: DesignColors.highlightYellow, width: 2),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
 
-          const SizedBox(height: 32),
+          SizedBox(height: DesignSpacing.xl),
 
           // Action buttons
           Row(
@@ -383,27 +396,26 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                 child: SizedBox(
                   height: 56,
                   child: OutlinedButton(
-                    onPressed: _isLoading
-                        ? null
-                        : () {
-                            widget.onCancelled?.call();
-                          },
+                    onPressed: _isLoading ? null : () => widget.onCancelled?.call(),
                     style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: theme.colorScheme.outline),
+                      side: BorderSide(color: disabledColor),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: Text(
                       l10n.cancel,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: secondaryText,
+                      ),
                     ),
                   ),
                 ),
               ),
 
-              const SizedBox(width: 16),
+              SizedBox(width: DesignSpacing.md),
 
               // Save button
               Expanded(
@@ -413,8 +425,8 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _saveAppointment,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.colorScheme.primary,
-                      foregroundColor: theme.colorScheme.onPrimary,
+                      backgroundColor: DesignColors.highlightYellow,
+                      foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -425,8 +437,10 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                             widget.appointment != null
                                 ? l10n.updateAppointment
                                 : l10n.saveAppointment,
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
+                            style: GoogleFonts.inter(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                   ),
                 ),
@@ -438,8 +452,150 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
     );
   }
 
-  Widget _buildVetSelection(AppLocalizations l10n) {
+  Widget _buildSectionCard({
+    required bool isDark,
+    required Color surfaceColor,
+    required Color primaryText,
+    required IconData icon,
+    required String title,
+    required List<Widget> children,
+  }) {
+    return Container(
+      padding: EdgeInsets.all(DesignSpacing.md),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: DesignColors.highlightYellow.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: DesignColors.highlightYellow),
+              ),
+              SizedBox(width: DesignSpacing.sm),
+              Expanded(
+                child: Text(
+                  title,
+                  style: GoogleFonts.poppins(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: primaryText,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: DesignSpacing.md),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateTimeTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+    required Color primaryText,
+    required Color secondaryText,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: DesignSpacing.sm),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: DesignColors.highlightYellow.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, color: DesignColors.highlightYellow, size: 20),
+            ),
+            SizedBox(width: DesignSpacing.sm + 4),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: primaryText,
+                    ),
+                  ),
+                  SizedBox(height: DesignSpacing.xs / 2),
+                  Text(
+                    subtitle,
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: DesignColors.highlightYellow,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, color: secondaryText),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVetSelection(
+    AppLocalizations l10n,
+    bool isDark,
+    Color surfaceColor,
+    Color primaryText,
+    Color secondaryText,
+    Color disabledColor,
+  ) {
     final vetsAsync = ref.watch(vetsProvider);
+
+    InputDecoration buildInputDecoration({
+      required String labelText,
+      String? hintText,
+      required IconData icon,
+    }) {
+      return InputDecoration(
+        labelText: labelText,
+        labelStyle: GoogleFonts.inter(fontSize: 14, color: secondaryText),
+        hintText: hintText,
+        hintStyle: GoogleFonts.inter(fontSize: 14, color: secondaryText),
+        filled: true,
+        fillColor: surfaceColor,
+        prefixIcon: Icon(icon, color: DesignColors.highlightYellow),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: disabledColor),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: disabledColor),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: DesignColors.highlightYellow, width: 2),
+        ),
+      );
+    }
 
     return vetsAsync.when(
       data: (vets) {
@@ -450,11 +606,11 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
             children: [
               TextFormField(
                 controller: _veterinarianController,
-                decoration: InputDecoration(
+                style: GoogleFonts.inter(fontSize: 16, color: primaryText),
+                decoration: buildInputDecoration(
                   labelText: '${l10n.veterinarian} *',
                   hintText: l10n.veterinarianHint,
-                  prefixIcon: const Icon(Icons.person),
-                  border: const OutlineInputBorder(),
+                  icon: Icons.person,
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -463,14 +619,14 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: DesignSpacing.md),
               TextFormField(
                 controller: _clinicController,
-                decoration: InputDecoration(
+                style: GoogleFonts.inter(fontSize: 16, color: primaryText),
+                decoration: buildInputDecoration(
                   labelText: '${l10n.clinic} *',
                   hintText: l10n.clinicHint,
-                  prefixIcon: const Icon(Icons.local_hospital),
-                  border: const OutlineInputBorder(),
+                  icon: Icons.local_hospital,
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -480,15 +636,22 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                 },
               ),
               if (vets.isNotEmpty) ...[
-                const SizedBox(height: 8),
+                SizedBox(height: DesignSpacing.sm),
                 TextButton.icon(
                   onPressed: () {
                     setState(() {
                       _useManualEntry = false;
                     });
                   },
-                  icon: const Icon(Icons.arrow_back),
-                  label: Text(l10n.selectVet),
+                  icon: Icon(Icons.arrow_back, color: DesignColors.highlightYellow),
+                  label: Text(
+                    l10n.selectVet,
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: DesignColors.highlightYellow,
+                    ),
+                  ),
                 ),
               ],
             ],
@@ -504,26 +667,28 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
               isExpanded: true,
               isDense: false,
               itemHeight: 56,
-              decoration: InputDecoration(
+              style: GoogleFonts.inter(fontSize: 16, color: primaryText),
+              decoration: buildInputDecoration(
                 labelText: l10n.selectVet,
-                prefixIcon: const Icon(Icons.local_hospital),
-                border: const OutlineInputBorder(),
+                icon: Icons.local_hospital,
               ),
               menuMaxHeight: 300,
               items: [
                 ...vets.map((vet) => DropdownMenuItem(
                       value: vet.id,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 0),
+                        padding: EdgeInsets.symmetric(
+                          vertical: DesignSpacing.sm,
+                          horizontal: 0,
+                        ),
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.medical_services,
                               size: 20,
-                              color: Colors.teal,
+                              color: DesignColors.highlightYellow,
                             ),
-                            const SizedBox(width: 8),
+                            SizedBox(width: DesignSpacing.sm),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -533,19 +698,20 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                                     vet.name,
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
-                                    style: const TextStyle(
+                                    style: GoogleFonts.inter(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
+                                      color: primaryText,
                                     ),
                                   ),
-                                  const SizedBox(height: 2),
+                                  SizedBox(height: DesignSpacing.xs / 2),
                                   Text(
                                     vet.clinicName,
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
-                                    style: TextStyle(
+                                    style: GoogleFonts.inter(
                                       fontSize: 11,
-                                      color: Colors.grey[600],
+                                      color: secondaryText,
                                     ),
                                   ),
                                 ],
@@ -573,10 +739,10 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                 return null;
               },
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: DesignSpacing.sm),
             Wrap(
-              spacing: 8,
-              runSpacing: 8,
+              spacing: DesignSpacing.sm,
+              runSpacing: DesignSpacing.sm,
               alignment: WrapAlignment.spaceBetween,
               children: [
                 TextButton.icon(
@@ -588,11 +754,20 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                       _clinicController.clear();
                     });
                   },
-                  icon: const Icon(Icons.edit),
-                  label: Text(l10n.enterManually),
+                  icon: Icon(Icons.edit, color: DesignColors.highlightYellow, size: 18),
+                  label: Text(
+                    l10n.enterManually,
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: DesignColors.highlightYellow,
+                    ),
+                  ),
                   style: TextButton.styleFrom(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: DesignSpacing.sm + 4,
+                      vertical: DesignSpacing.sm,
+                    ),
                   ),
                 ),
                 TextButton.icon(
@@ -600,11 +775,20 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
                     // Navigate to veterinarian list where user can add new vet
                     context.push('/vet-list');
                   },
-                  icon: const Icon(Icons.add),
-                  label: Text(l10n.addNewVet),
+                  icon: Icon(Icons.add, color: DesignColors.highlightYellow, size: 18),
+                  label: Text(
+                    l10n.addNewVet,
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: DesignColors.highlightYellow,
+                    ),
+                  ),
                   style: TextButton.styleFrom(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: DesignSpacing.sm + 4,
+                      vertical: DesignSpacing.sm,
+                    ),
                   ),
                 ),
               ],
@@ -612,16 +796,18 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
           ],
         );
       },
-      loading: () => const CircularProgressIndicator(),
+      loading: () => Center(
+        child: CircularProgressIndicator(color: DesignColors.highlightYellow),
+      ),
       error: (_, __) => Column(
         children: [
           TextFormField(
             controller: _veterinarianController,
-            decoration: InputDecoration(
+            style: GoogleFonts.inter(fontSize: 16, color: primaryText),
+            decoration: buildInputDecoration(
               labelText: '${l10n.veterinarian} *',
               hintText: l10n.veterinarianHint,
-              prefixIcon: const Icon(Icons.person),
-              border: const OutlineInputBorder(),
+              icon: Icons.person,
             ),
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
@@ -630,14 +816,14 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
               return null;
             },
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: DesignSpacing.md),
           TextFormField(
             controller: _clinicController,
-            decoration: InputDecoration(
+            style: GoogleFonts.inter(fontSize: 16, color: primaryText),
+            decoration: buildInputDecoration(
               labelText: '${l10n.clinic} *',
               hintText: l10n.clinicHint,
-              prefixIcon: const Icon(Icons.local_hospital),
-              border: const OutlineInputBorder(),
+              icon: Icons.local_hospital,
             ),
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
@@ -688,10 +874,11 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
     final l10n = AppLocalizations.of(context);
 
     if (activePet == null) {
+      final isDark = Theme.of(context).brightness == Brightness.dark;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(l10n.noActivePetFound),
-          backgroundColor: Colors.red,
+          backgroundColor: isDark ? DesignColors.dDanger : DesignColors.lDanger,
         ),
       );
       return;
@@ -745,11 +932,13 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
         await ref
             .read(appointmentProviderProvider.notifier)
             .updateAppointment(appointment);
+        // Invalidate provider to refresh list
+        ref.invalidate(appointmentsByPetIdProvider(activePet.id));
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(l10n.appointmentUpdatedSuccessfully),
-              backgroundColor: Colors.green,
+              backgroundColor: DesignColors.highlightTeal,
             ),
           );
         }
@@ -758,11 +947,13 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
         await ref
             .read(appointmentProviderProvider.notifier)
             .addAppointment(appointment);
+        // Invalidate provider to refresh list
+        ref.invalidate(appointmentsByPetIdProvider(activePet.id));
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(l10n.appointmentAddedSuccessfully),
-              backgroundColor: Colors.green,
+              backgroundColor: DesignColors.highlightTeal,
             ),
           );
         }
@@ -773,10 +964,11 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
       }
     } catch (error) {
       if (mounted) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.failedToSaveAppointment(error.toString())),
-            backgroundColor: Colors.red,
+            backgroundColor: isDark ? DesignColors.dDanger : DesignColors.lDanger,
           ),
         );
       }

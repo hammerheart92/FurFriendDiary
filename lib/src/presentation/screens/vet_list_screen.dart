@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../domain/models/vet_profile.dart';
 import '../providers/vet_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../utils/specialty_helper.dart';
+import '../../../theme/tokens/colors.dart';
+import '../../../theme/tokens/spacing.dart';
+import '../../../theme/tokens/shadows.dart';
 
 class VetListScreen extends ConsumerStatefulWidget {
   const VetListScreen({super.key});
@@ -46,9 +50,11 @@ class _VetListScreenState extends ConsumerState<VetListScreen> {
       await launchUrl(uri);
     } else {
       if (mounted) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(AppLocalizations.of(context)!.invalidPhone),
+            backgroundColor: isDark ? DesignColors.dDanger : DesignColors.lDanger,
           ),
         );
       }
@@ -63,9 +69,11 @@ class _VetListScreenState extends ConsumerState<VetListScreen> {
       await launchUrl(uri);
     } else {
       if (mounted) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(AppLocalizations.of(context)!.invalidEmail),
+            backgroundColor: isDark ? DesignColors.dDanger : DesignColors.lDanger,
           ),
         );
       }
@@ -75,18 +83,26 @@ class _VetListScreenState extends ConsumerState<VetListScreen> {
   Future<void> _setPreferred(VetProfile vet) async {
     try {
       await ref.read(vetRepositoryProvider).setPreferredVet(vet.id);
+      // Invalidate providers to refresh list
+      ref.invalidate(vetsProvider);
+      ref.invalidate(filteredVetsProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
                 '${vet.name} ${AppLocalizations.of(context)!.setAsPreferred}'),
+            backgroundColor: DesignColors.highlightTeal,
           ),
         );
       }
     } catch (e) {
       if (mounted) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: isDark ? DesignColors.dDanger : DesignColors.lDanger,
+          ),
         );
       }
     }
@@ -94,19 +110,68 @@ class _VetListScreenState extends ConsumerState<VetListScreen> {
 
   Future<void> _deleteVet(VetProfile vet) async {
     final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final dangerColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
+
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n.deleteVet),
-        content: Text(l10n.deleteVetConfirm),
+        backgroundColor: surfaceColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: dangerColor.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(Icons.delete_forever, color: dangerColor),
+            ),
+            SizedBox(width: DesignSpacing.sm),
+            Expanded(
+              child: Text(
+                l10n.deleteVet,
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          l10n.deleteVetConfirm,
+          style: GoogleFonts.inter(fontSize: 14, color: secondaryText),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.cancel),
+            child: Text(
+              l10n.cancel,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: secondaryText,
+              ),
+            ),
           ),
-          TextButton(
+          ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.delete, style: const TextStyle(color: Colors.red)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: dangerColor,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            child: Text(
+              l10n.delete,
+              style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600),
+            ),
           ),
         ],
       ),
@@ -115,15 +180,24 @@ class _VetListScreenState extends ConsumerState<VetListScreen> {
     if (confirm == true) {
       try {
         await ref.read(vetRepositoryProvider).deleteVet(vet.id);
+        // Invalidate providers to refresh list
+        ref.invalidate(vetsProvider);
+        ref.invalidate(filteredVetsProvider);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.vetDeleted)),
+            SnackBar(
+              content: Text(l10n.vetDeleted),
+              backgroundColor: DesignColors.highlightTeal,
+            ),
           );
         }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e')),
+            SnackBar(
+              content: Text('Error: $e'),
+              backgroundColor: dangerColor,
+            ),
           );
         }
       }
@@ -132,39 +206,104 @@ class _VetListScreenState extends ConsumerState<VetListScreen> {
 
   void _showContextMenu(VetProfile vet) {
     final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final dangerColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
+
     showModalBottomSheet(
       context: context,
+      backgroundColor: surfaceColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.edit),
-              title: Text(l10n.editVet),
-              onTap: () {
-                Navigator.pop(context);
-                context.push('/edit-vet/${vet.id}');
-              },
-            ),
-            if (!vet.isPreferred)
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: DesignSpacing.md),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                margin: EdgeInsets.only(bottom: DesignSpacing.md),
+                decoration: BoxDecoration(
+                  color: isDark ? DesignColors.dDisabled : DesignColors.lDisabled,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
               ListTile(
-                leading: const Icon(Icons.star),
-                title: Text(l10n.setAsPreferred),
+                leading: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: DesignColors.highlightYellow.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(Icons.edit, color: DesignColors.highlightYellow),
+                ),
+                title: Text(
+                  l10n.editVet,
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: primaryText,
+                  ),
+                ),
                 onTap: () {
                   Navigator.pop(context);
-                  _setPreferred(vet);
+                  context.push('/edit-vet/${vet.id}');
                 },
               ),
-            ListTile(
-              leading: const Icon(Icons.delete, color: Colors.red),
-              title: Text(l10n.deleteVet,
-                  style: const TextStyle(color: Colors.red)),
-              onTap: () {
-                Navigator.pop(context);
-                _deleteVet(vet);
-              },
-            ),
-          ],
+              if (!vet.isPreferred)
+                ListTile(
+                  leading: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: DesignColors.highlightYellow.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(Icons.star, color: DesignColors.highlightYellow),
+                  ),
+                  title: Text(
+                    l10n.setAsPreferred,
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: primaryText,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _setPreferred(vet);
+                  },
+                ),
+              ListTile(
+                leading: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: dangerColor.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(Icons.delete, color: dangerColor),
+                ),
+                title: Text(
+                  l10n.deleteVet,
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: dangerColor,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _deleteVet(vet);
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -173,168 +312,364 @@ class _VetListScreenState extends ConsumerState<VetListScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final backgroundColor = isDark ? DesignColors.dBackground : DesignColors.lBackground;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final disabledColor = isDark ? DesignColors.dDisabled : DesignColors.lDisabled;
+
     final filteredVets = ref.watch(filteredVetsProvider);
     final searchQuery = ref.watch(vetSearchQueryProvider);
 
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
+        backgroundColor: surfaceColor,
+        elevation: 0,
         title: _isSearching
-            ? TextField(
-                controller: _searchController,
-                autofocus: true,
-                decoration: InputDecoration(
-                  hintText: l10n.searchVets,
-                  border: InputBorder.none,
+            ? Container(
+                height: 44,
+                decoration: BoxDecoration(
+                  color: backgroundColor,
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                onChanged: _onSearchChanged,
+                child: TextField(
+                  controller: _searchController,
+                  autofocus: true,
+                  style: GoogleFonts.inter(fontSize: 16, color: primaryText),
+                  decoration: InputDecoration(
+                    hintText: l10n.searchVets,
+                    hintStyle: GoogleFonts.inter(fontSize: 14, color: secondaryText),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: DesignSpacing.md,
+                      vertical: DesignSpacing.sm + 2,
+                    ),
+                    prefixIcon: Icon(Icons.search, color: DesignColors.highlightYellow),
+                  ),
+                  onChanged: _onSearchChanged,
+                ),
               )
-            : Text(l10n.veterinarians),
+            : Text(
+                l10n.veterinarians,
+                style: GoogleFonts.poppins(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
+                ),
+              ),
         actions: [
           IconButton(
-            icon: Icon(_isSearching ? Icons.close : Icons.search),
+            icon: Icon(
+              _isSearching ? Icons.close : Icons.search,
+              color: DesignColors.highlightYellow,
+            ),
             onPressed: _toggleSearch,
           ),
           IconButton(
-            icon: const Icon(Icons.add),
+            icon: Icon(Icons.add, color: DesignColors.highlightYellow),
             onPressed: () => context.push('/add-vet'),
           ),
         ],
       ),
       body: filteredVets.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.local_hospital_outlined,
-                    size: 64,
-                    color: Colors.grey[400],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    searchQuery.isNotEmpty
-                        ? l10n.noVetsMatchSearch
-                        : l10n.noVetsAdded,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  if (searchQuery.isEmpty) ...[
-                    const SizedBox(height: 8),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 32),
-                      child: Text(
-                        l10n.addFirstVet,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey[600],
-                            ),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            )
+          ? _buildEmptyState(
+              context, l10n, searchQuery, primaryText, secondaryText)
           : ListView.builder(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(DesignSpacing.md),
               itemCount: filteredVets.length,
               itemBuilder: (context, index) {
                 final vet = filteredVets[index];
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  child: InkWell(
-                    onTap: () => context.push('/vet-detail/${vet.id}'),
-                    onLongPress: () => _showContextMenu(vet),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Flexible(
-                                          child: Text(
-                                            vet.name,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleMedium
-                                                ?.copyWith(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                          ),
-                                        ),
-                                        if (vet.isPreferred) ...[
-                                          const SizedBox(width: 8),
-                                          const Icon(
-                                            Icons.star,
-                                            color: Colors.amber,
-                                            size: 20,
-                                          ),
-                                        ],
-                                      ],
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      vet.clinicName,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              if (vet.specialty != null)
-                                Chip(
-                                  label: Text(
-                                    SpecialtyHelper.getLocalizedSpecialty(
-                                      vet.specialty,
-                                      l10n,
-                                    ),
-                                    style: const TextStyle(fontSize: 12),
-                                  ),
-                                  materialTapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                  visualDensity: VisualDensity.compact,
-                                ),
-                            ],
-                          ),
-                          if (vet.phoneNumber != null || vet.email != null) ...[
-                            const SizedBox(height: 12),
-                            Row(
-                              children: [
-                                if (vet.phoneNumber != null) ...[
-                                  IconButton(
-                                    icon: const Icon(Icons.phone),
-                                    onPressed: () => _callVet(vet.phoneNumber),
-                                    tooltip: l10n.callVet,
-                                  ),
-                                  const SizedBox(width: 8),
-                                ],
-                                if (vet.email != null) ...[
-                                  IconButton(
-                                    icon: const Icon(Icons.email),
-                                    onPressed: () => _emailVet(vet.email),
-                                    tooltip: l10n.emailVet,
-                                  ),
-                                ],
-                              ],
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ),
+                return _buildVetCard(
+                  context,
+                  vet,
+                  l10n,
+                  isDark,
+                  surfaceColor,
+                  primaryText,
+                  secondaryText,
+                  disabledColor,
                 );
               },
             ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/add-vet'),
+        backgroundColor: DesignColors.highlightYellow,
+        foregroundColor: Colors.white,
         icon: const Icon(Icons.add),
-        label: Text(l10n.addVet),
+        label: Text(
+          l10n.addVet,
+          style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(
+    BuildContext context,
+    AppLocalizations l10n,
+    String searchQuery,
+    Color primaryText,
+    Color secondaryText,
+  ) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: DesignColors.highlightYellow.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Icon(
+              Icons.local_hospital_outlined,
+              size: 40,
+              color: DesignColors.highlightYellow,
+            ),
+          ),
+          SizedBox(height: DesignSpacing.lg),
+          Text(
+            searchQuery.isNotEmpty ? l10n.noVetsMatchSearch : l10n.noVetsAdded,
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: primaryText,
+            ),
+          ),
+          if (searchQuery.isEmpty) ...[
+            SizedBox(height: DesignSpacing.sm),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: DesignSpacing.xl),
+              child: Text(
+                l10n.addFirstVet,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: secondaryText,
+                ),
+              ),
+            ),
+            SizedBox(height: DesignSpacing.lg),
+            ElevatedButton.icon(
+              onPressed: () => context.push('/add-vet'),
+              icon: const Icon(Icons.add),
+              label: Text(
+                l10n.addVet,
+                style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: DesignColors.highlightYellow,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: DesignSpacing.lg,
+                  vertical: DesignSpacing.sm + 4,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVetCard(
+    BuildContext context,
+    VetProfile vet,
+    AppLocalizations l10n,
+    bool isDark,
+    Color surfaceColor,
+    Color primaryText,
+    Color secondaryText,
+    Color disabledColor,
+  ) {
+    return Container(
+      margin: EdgeInsets.only(bottom: DesignSpacing.sm + 4),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: vet.isPreferred
+              ? DesignColors.highlightYellow.withOpacity(0.3)
+              : disabledColor.withOpacity(0.3),
+          width: 2,
+        ),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => context.push('/vet-detail/${vet.id}'),
+          onLongPress: () => _showContextMenu(vet),
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: EdgeInsets.all(DesignSpacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    // Vet icon
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: DesignColors.highlightYellow.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        Icons.medical_services,
+                        color: DesignColors.highlightYellow,
+                        size: 24,
+                      ),
+                    ),
+                    SizedBox(width: DesignSpacing.sm + 4),
+                    // Vet info
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  vet.name,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: primaryText,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              if (vet.isPreferred) ...[
+                                SizedBox(width: DesignSpacing.xs),
+                                Icon(
+                                  Icons.star,
+                                  color: DesignColors.highlightYellow,
+                                  size: 18,
+                                ),
+                              ],
+                            ],
+                          ),
+                          SizedBox(height: DesignSpacing.xs / 2),
+                          Text(
+                            vet.clinicName,
+                            style: GoogleFonts.inter(
+                              fontSize: 13,
+                              color: secondaryText,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Specialty chip
+                    if (vet.specialty != null)
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: DesignSpacing.sm,
+                          vertical: DesignSpacing.xs,
+                        ),
+                        decoration: BoxDecoration(
+                          color: DesignColors.highlightTeal.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          SpecialtyHelper.getLocalizedSpecialty(
+                            vet.specialty,
+                            l10n,
+                          ),
+                          style: GoogleFonts.inter(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: DesignColors.highlightTeal,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                // Contact buttons
+                if (vet.phoneNumber != null || vet.email != null) ...[
+                  SizedBox(height: DesignSpacing.md),
+                  Row(
+                    children: [
+                      if (vet.phoneNumber != null)
+                        Expanded(
+                          child: _buildContactButton(
+                            icon: Icons.phone,
+                            label: l10n.callVet,
+                            onTap: () => _callVet(vet.phoneNumber),
+                            color: DesignColors.highlightBlue,
+                          ),
+                        ),
+                      if (vet.phoneNumber != null && vet.email != null)
+                        SizedBox(width: DesignSpacing.sm),
+                      if (vet.email != null)
+                        Expanded(
+                          child: _buildContactButton(
+                            icon: Icons.email,
+                            label: l10n.emailVet,
+                            onTap: () => _emailVet(vet.email),
+                            color: DesignColors.highlightPurple,
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContactButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    required Color color,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: DesignSpacing.sm + 4,
+          vertical: DesignSpacing.sm,
+        ),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 16, color: color),
+            SizedBox(width: DesignSpacing.xs),
+            Flexible(
+              child: Text(
+                label,
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: color,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

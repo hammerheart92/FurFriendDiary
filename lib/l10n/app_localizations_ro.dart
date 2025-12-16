@@ -380,7 +380,7 @@ class AppLocalizationsRo extends AppLocalizations {
   String get markActive => 'Marchează ca Activ';
 
   @override
-  String get appointmentInformation => 'Informații despre Programare';
+  String get appointmentInformation => 'Informații Programare';
 
   @override
   String get veterinarian => 'Veterinar';
@@ -2199,7 +2199,7 @@ class AppLocalizationsRo extends AppLocalizations {
   String get callVet => 'Sună Veterinarul';
 
   @override
-  String get emailVet => 'Trimite Email Veterinarului';
+  String get emailVet => 'Email Veterinar';
 
   @override
   String get openWebsite => 'Deschide Website';

@@ -124,7 +124,7 @@
   "markInactive": "Marchează ca Inactiv",
   "markActive": "Marchează ca Activ",
 
-  "appointmentInformation": "Informații despre Programare",
+  "appointmentInformation": "Informații Programare",
   "veterinarian": "Veterinar",
   "veterinarianHint": "de ex., Dr. Popescu, Dr. Ionescu",
   "pleaseEnterVeterinarian": "Vă rugăm să introduceți numele veterinarului",
@@ -800,7 +800,7 @@
   "ophthalmology": "Oftalmologie",
   "custom": "Personalizat",
   "callVet": "Sună Veterinarul",
-  "emailVet": "Trimite Email Veterinarului",
+  "emailVet": "Email Veterinar",
   "openWebsite": "Deschide Website",
   "lastVisit": "Ultima Vizită",
   "totalAppointments": "Total Programări",
