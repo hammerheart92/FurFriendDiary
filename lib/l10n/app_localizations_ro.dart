@@ -3036,6 +3036,9 @@ class AppLocalizationsRo extends AppLocalizations {
   String get noUpcomingCareEvents => 'Niciun eveniment viitor';
 
   @override
+  String get allCaughtUp => 'Ești la zi!';
+
+  @override
   String get setupProtocolsToSeeEvents =>
       'Configurați protocoale de vaccinare și programări pentru a le vedea aici';
 

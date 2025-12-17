@@ -12,7 +12,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
+import 'package:fur_friend_diary/theme/tokens/colors.dart';
+import 'package:fur_friend_diary/theme/tokens/spacing.dart';
+import 'package:fur_friend_diary/theme/tokens/shadows.dart';
 import '../../domain/constants/vaccine_type_translations.dart';
 import '../../domain/models/medication_entry.dart';
 import '../models/upcoming_care_event.dart';
@@ -30,14 +34,15 @@ enum _MedicationStatus {
 /// deworming, appointments, medications) in horizontal scrollable lists.
 ///
 /// **Design Specifications:**
-/// - Fixed size: 280px width × 130px height
+/// - Fixed size: 280px width × 140px height
 /// - 4px colored left border based on event type
 /// - Material InkWell wrapper for tap ripple effect
-/// - Color coding follows CalendarViewScreen patterns:
-///   - Red: Vaccination (Colors.red[600])
-///   - Amber/Yellow: Deworming (Colors.orange[700])
-///   - Blue: Appointment (Colors.blue[600])
-///   - Green: Medication (Colors.green[600])
+/// - Uses PetiCare design tokens for consistent theming
+/// - Color coding:
+///   - Purple: Vaccination (DesignColors.highlightPurple)
+///   - Coral: Deworming (DesignColors.highlightCoral)
+///   - Yellow: Appointment (DesignColors.highlightYellow)
+///   - Pink: Medication (DesignColors.highlightPink)
 ///
 /// **Accessibility:**
 /// - Semantic labels for screen readers
@@ -59,59 +64,68 @@ class UpcomingCareCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final locale = Localizations.localeOf(context);
     final eventColor = _getEventColor(event);
     final dateFormat = DateFormat.yMMMMd(locale.languageCode);
     final relativeTime = _getRelativeTime(context, event.scheduledDate);
 
+    // Theme-aware colors
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return SizedBox(
       width: 280,
-      height: 130,
-      child: Card(
-        elevation: 2,
-        margin: EdgeInsets.zero,
-        clipBehavior: Clip.antiAlias,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: InkWell(
-          onTap: onTap,
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border(
-                left: BorderSide(
-                  color: eventColor,
-                  width: 4,
-                ),
-              ),
+      height: 140,
+      child: Container(
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+          border: Border(
+            left: BorderSide(
+              color: eventColor,
+              width: 4,
             ),
+          ),
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(16),
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: EdgeInsets.all(DesignSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Event icon and title
                   Row(
                     children: [
-                      // Icon container
+                      // Icon container with colored background
                       Container(
-                        width: 40,
-                        height: 40,
+                        width: 44,
+                        height: 44,
                         decoration: BoxDecoration(
-                          color: eventColor.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(8),
+                          color: eventColor.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: _buildEventIcon(event, eventColor, theme),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: DesignSpacing.sm),
 
                       // Title
                       Expanded(
                         child: Text(
                           _getLocalizedTitle(context, event),
-                          style: theme.textTheme.titleSmall!.copyWith(
+                          style: GoogleFonts.poppins(
+                            fontSize: 15,
                             fontWeight: FontWeight.w600,
-                            color: theme.colorScheme.onSurface,
+                            color: primaryText,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -128,14 +142,15 @@ class UpcomingCareCardWidget extends StatelessWidget {
                       Icon(
                         Icons.calendar_today,
                         size: 14,
-                        color: theme.colorScheme.onSurfaceVariant,
+                        color: secondaryText,
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: DesignSpacing.xs),
                       Expanded(
                         child: Text(
                           _getContextAwareDate(context, event, dateFormat),
-                          style: theme.textTheme.bodySmall!.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            color: secondaryText,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -143,29 +158,25 @@ class UpcomingCareCardWidget extends StatelessWidget {
                     ],
                   ),
 
-                  const SizedBox(height: 4),
+                  SizedBox(height: DesignSpacing.xs),
 
-                  // Relative time
+                  // Relative time badge
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: DesignSpacing.sm,
+                      vertical: DesignSpacing.xs,
                     ),
                     decoration: BoxDecoration(
-                      color: _getRelativeTimeColor(
-                        event,
-                        theme,
-                      ).withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(4),
+                      color: _getRelativeTimeColor(event, isDark)
+                          .withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       relativeTime,
-                      style: theme.textTheme.labelSmall!.copyWith(
-                        color: _getRelativeTimeColor(
-                          event,
-                          theme,
-                        ),
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
+                        color: _getRelativeTimeColor(event, isDark),
                       ),
                     ),
                   ),
@@ -249,14 +260,15 @@ class UpcomingCareCardWidget extends StatelessWidget {
   }
 
   /// Get color for event type using pattern matching
+  /// Uses design tokens for consistent theming
   Color _getEventColor(UpcomingCareEvent event) {
-    // Use pattern matching on sealed class
+    // Use pattern matching on sealed class with design tokens
     return switch (event) {
-      VaccinationEvent() => Colors.red.shade600,
-      VaccinationRecordEvent() => Colors.red.shade600,
-      DewormingEvent() => Colors.orange.shade700,
-      AppointmentEvent() => Colors.blue.shade600,
-      MedicationEvent() => Colors.green.shade600,
+      VaccinationEvent() => DesignColors.highlightPurple,
+      VaccinationRecordEvent() => DesignColors.highlightPurple,
+      DewormingEvent() => DesignColors.highlightCoral,
+      AppointmentEvent() => DesignColors.highlightYellow,
+      MedicationEvent() => DesignColors.highlightPink,
     };
   }
 
@@ -431,10 +443,10 @@ class UpcomingCareCardWidget extends StatelessWidget {
   /// Get color for relative time badge
   /// For medications, uses status-based colors
   /// For other events, uses date-based colors
-  Color _getRelativeTimeColor(UpcomingCareEvent event, ThemeData theme) {
+  Color _getRelativeTimeColor(UpcomingCareEvent event, bool isDark) {
     // Special handling for medications
     if (event is MedicationEvent) {
-      return _getMedicationStatusColor(event, theme);
+      return _getMedicationStatusColor(event, isDark);
     }
 
     // For non-medication events, use existing date-based logic
@@ -448,41 +460,41 @@ class UpcomingCareCardWidget extends StatelessWidget {
     );
 
     if (scheduleDay.isBefore(today)) {
-      // Overdue - red
-      return Colors.red.shade700;
+      // Overdue - red (danger)
+      return isDark ? DesignColors.dDanger : DesignColors.lDanger;
     } else if (scheduleDay == today) {
-      // Today - amber
-      return Colors.amber.shade700;
+      // Today - amber (warning)
+      return isDark ? DesignColors.dWarning : DesignColors.lWarning;
     } else if (scheduleDay.difference(today).inDays <= 3) {
-      // Due soon (within 3 days) - amber
-      return Colors.amber.shade700;
+      // Due soon (within 3 days) - amber (warning)
+      return isDark ? DesignColors.dWarning : DesignColors.lWarning;
     } else {
-      // Future - green
-      return Colors.green.shade700;
+      // Future - green (success)
+      return isDark ? DesignColors.dSuccess : DesignColors.lSuccess;
     }
   }
 
   /// Get status-based color for medication badges
-  Color _getMedicationStatusColor(MedicationEvent event, ThemeData theme) {
+  Color _getMedicationStatusColor(MedicationEvent event, bool isDark) {
     final status = _determineMedicationStatus(event.entry);
 
     switch (status) {
       case _MedicationStatus.notStarted:
         // Future medication - blue
-        return Colors.blue.shade700;
+        return DesignColors.highlightBlue;
 
       case _MedicationStatus.activeIndefinite:
       case _MedicationStatus.active:
-        // Active - green
-        return Colors.green.shade700;
+        // Active - green (success)
+        return isDark ? DesignColors.dSuccess : DesignColors.lSuccess;
 
       case _MedicationStatus.activeEndingSoon:
-        // Ending soon - orange
-        return Colors.orange.shade700;
+        // Ending soon - orange (secondary/warning)
+        return isDark ? DesignColors.dSecondary : DesignColors.lSecondary;
 
       case _MedicationStatus.ended:
-        // Ended - gray
-        return Colors.grey.shade600;
+        // Ended - gray (disabled)
+        return isDark ? DesignColors.dDisabled : DesignColors.lDisabled;
     }
   }
 }

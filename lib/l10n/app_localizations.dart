@@ -5732,6 +5732,12 @@ abstract class AppLocalizations {
   /// **'No Upcoming Care Events'**
   String get noUpcomingCareEvents;
 
+  /// Subtitle for empty state when no upcoming care events
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re all caught up!'**
+  String get allCaughtUp;
+
   /// Empty state helper text for no events
   ///
   /// In en, this message translates to:

@@ -4,7 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:fur_friend_diary/layout/app_page.dart';
+import 'package:fur_friend_diary/theme/tokens/colors.dart';
+import 'package:fur_friend_diary/theme/tokens/spacing.dart';
+import 'package:fur_friend_diary/theme/tokens/shadows.dart';
 import 'package:logger/logger.dart';
 import '../../presentation/providers/pet_profile_provider.dart';
 import '../../presentation/providers/feeding_form_state_provider.dart';
@@ -81,8 +85,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final scheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final currentPet = ref.watch(currentPetProfileProvider);
+
+    // Theme-aware colors using design tokens
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
 
     // Watch upcoming care events for the current pet
     final upcomingCareAsync = currentPet != null
@@ -98,68 +111,81 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         children: [
           // Pet Profile Display
           if (currentPet != null) ...[
-            InkWell(
-              onTap: () {
-                // Navigate to pet profiles screen
-                context.go('/profiles');
-              },
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                width: double.infinity,
-                margin: const EdgeInsets.only(bottom: 16),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: scheme.primaryContainer.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: scheme.primary.withOpacity(0.2)),
-                ),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 24,
-                      backgroundColor: scheme.primary,
-                      child: Text(
-                        currentPet.name.isNotEmpty
-                            ? currentPet.name[0].toUpperCase()
-                            : '?',
-                        style: TextStyle(
-                          color: scheme.onPrimary,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+            Container(
+              width: double.infinity,
+              margin: EdgeInsets.only(bottom: DesignSpacing.md),
+              decoration: BoxDecoration(
+                color: surfaceColor,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    // Navigate to pet profiles screen
+                    context.go('/profiles');
+                  },
+                  borderRadius: BorderRadius.circular(16),
+                  child: Padding(
+                    padding: EdgeInsets.all(DesignSpacing.md),
+                    child: Row(
+                      children: [
+                        // Pet Avatar with colored background
+                        Container(
+                          width: 64,
+                          height: 64,
+                          decoration: BoxDecoration(
+                            color:
+                                DesignColors.highlightBlue.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(32),
+                          ),
+                          child: Center(
+                            child: Text(
+                              currentPet.name.isNotEmpty
+                                  ? currentPet.name[0].toUpperCase()
+                                  : '?',
+                              style: GoogleFonts.poppins(
+                                fontSize: 28,
+                                fontWeight: FontWeight.w600,
+                                color: DesignColors.highlightBlue,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            currentPet.name,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
+                        SizedBox(width: DesignSpacing.md),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                currentPet.name,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: primaryText,
                                 ),
-                          ),
-                          Text(
-                            '${currentPet.species} • ${currentPet.breed ?? l10n.mixed}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.copyWith(
-                                  color: scheme.onSurface.withOpacity(0.7),
+                              ),
+                              SizedBox(height: DesignSpacing.xs),
+                              Text(
+                                '${currentPet.species} • ${currentPet.breed ?? l10n.mixed}',
+                                style: GoogleFonts.inter(
+                                  fontSize: 14,
+                                  color: secondaryText,
                                 ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                        // Paw icon for navigation
+                        Icon(
+                          Icons.pets,
+                          color: DesignColors.highlightBlue,
+                          size: 28,
+                        ),
+                      ],
                     ),
-                    Icon(
-                      Icons.pets,
-                      color: scheme.primary,
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -171,11 +197,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   // Show first 5 events only
                   final displayEvents = events.take(5).toList();
 
-                  if (displayEvents.isEmpty) {
-                    return const SizedBox
-                        .shrink(); // Don't show section if no events
-                  }
-
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -185,66 +206,117 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         children: [
                           Text(
                             l10n.upcomingCare,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleLarge
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            style: GoogleFonts.poppins(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: primaryText,
+                            ),
                           ),
                           TextButton(
                             onPressed: () => context.go('/calendar'),
-                            child: Text(l10n.viewAll),
+                            child: Text(
+                              l10n.viewAll,
+                              style: GoogleFonts.inter(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: DesignColors.highlightBlue,
+                              ),
+                            ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: DesignSpacing.sm),
 
-                      // Horizontal scrollable list of cards
-                      SizedBox(
-                        height: 130, // Card height
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: displayEvents.length,
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(width: 12),
-                          itemBuilder: (context, index) {
-                            final event = displayEvents[index];
-                            return UpcomingCareCardWidget(
-                              event: event,
-                              onTap: () {
-                                // Handle tap based on event type
-                                switch (event) {
-                                  case MedicationEvent(:final entry):
-                                    // Navigate to medication detail
-                                    context.push('/meds/detail/${entry.id}');
-                                    break;
-                                  case AppointmentEvent():
-                                    // Navigate to Appointments tab
-                                    context.go('/appointments');
-                                    break;
-                                  case VaccinationRecordEvent():
-                                    // Navigate to specific vaccination detail
-                                    context.push(
-                                        '/vaccinations/detail/${event.id}');
-                                    break;
-                                  case VaccinationEvent():
-                                    // Navigate to vaccination timeline (protocol schedule)
-                                    context.push('/vaccinations');
-                                    break;
-                                  case DewormingEvent():
-                                    // Navigate to deworming schedule
-                                    context.push(
-                                        '/deworming/schedule/${currentPet.id}',
-                                        extra: currentPet);
-                                    break;
-                                }
-                              },
-                            );
-                          },
+                      // Show empty state or care cards
+                      if (displayEvents.isEmpty)
+                        // Empty State
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(DesignSpacing.xl),
+                          decoration: BoxDecoration(
+                            color: surfaceColor,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow:
+                                isDark ? DesignShadows.darkMd : DesignShadows.md,
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.check_circle_outline,
+                                size: 64,
+                                color: isDark
+                                    ? DesignColors.dSuccess
+                                    : DesignColors.lSuccess,
+                              ),
+                              SizedBox(height: DesignSpacing.md),
+                              Text(
+                                l10n.noUpcomingCareEvents,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: primaryText,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: DesignSpacing.sm),
+                              Text(
+                                l10n.allCaughtUp,
+                                style: GoogleFonts.inter(
+                                  fontSize: 14,
+                                  color: secondaryText,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        )
+                      else
+                        // Horizontal scrollable list of cards
+                        SizedBox(
+                          height: 140, // Card height
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: displayEvents.length,
+                            separatorBuilder: (_, __) =>
+                                SizedBox(width: DesignSpacing.sm),
+                            itemBuilder: (context, index) {
+                              final event = displayEvents[index];
+                              return UpcomingCareCardWidget(
+                                event: event,
+                                onTap: () {
+                                  // Handle tap based on event type
+                                  switch (event) {
+                                    case MedicationEvent(:final entry):
+                                      // Navigate to medication detail
+                                      context.push('/meds/detail/${entry.id}');
+                                      break;
+                                    case AppointmentEvent():
+                                      // Navigate to Appointments tab
+                                      context.go('/appointments');
+                                      break;
+                                    case VaccinationRecordEvent():
+                                      // Navigate to specific vaccination detail
+                                      context.push(
+                                          '/vaccinations/detail/${event.id}');
+                                      break;
+                                    case VaccinationEvent():
+                                      // Navigate to vaccination timeline (protocol schedule)
+                                      context.push('/vaccinations');
+                                      break;
+                                    case DewormingEvent():
+                                      // Navigate to deworming schedule
+                                      context.push(
+                                          '/deworming/schedule/${currentPet.id}',
+                                          extra: currentPet);
+                                      break;
+                                  }
+                                },
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 24),
+                      SizedBox(height: DesignSpacing.lg),
                     ],
                   );
                 },
@@ -263,7 +335,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddFeedingDialog,
-        child: const Icon(Icons.add),
+        backgroundColor: DesignColors.highlightPurple,
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+          size: 28,
+        ),
       ),
     );
   }

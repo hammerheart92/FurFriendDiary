@@ -3005,6 +3005,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noUpcomingCareEvents => 'No Upcoming Care Events';
 
   @override
+  String get allCaughtUp => 'You\'re all caught up!';
+
+  @override
   String get setupProtocolsToSeeEvents =>
       'Set up vaccination protocols and appointments to see them here';
 

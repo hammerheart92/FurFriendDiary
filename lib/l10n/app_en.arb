@@ -1785,6 +1785,10 @@
   "@noUpcomingCareEvents": {
     "description": "Empty state when no events exist at all"
   },
+  "allCaughtUp": "You're all caught up!",
+  "@allCaughtUp": {
+    "description": "Subtitle for empty state when no upcoming care events"
+  },
   "setupProtocolsToSeeEvents": "Set up vaccination protocols and appointments to see them here",
   "@setupProtocolsToSeeEvents": {
     "description": "Empty state helper text for no events"
