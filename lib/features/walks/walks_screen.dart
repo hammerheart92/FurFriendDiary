@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 import 'walks_state.dart';
 import '../../l10n/app_localizations.dart';
 import '../../src/presentation/providers/care_data_provider.dart';
+import '../../theme/tokens/colors.dart';
+import '../../theme/tokens/spacing.dart';
+import '../../theme/tokens/shadows.dart';
 
 /// Walks screen with reactive Riverpod StreamProvider, quick filters, responsive layout,
 /// empty state, semantics, and walk management.
@@ -77,6 +81,8 @@ class _WalksScreenState extends ConsumerState<WalksScreen>
                       : _ResponsiveWalkList(
                           entries: filtered,
                           key: const PageStorageKey('walks_list'),
+                          onEdit: _showEditWalkSheet,
+                          onDelete: _showDeleteConfirmation,
                         );
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
@@ -93,7 +99,8 @@ class _WalksScreenState extends ConsumerState<WalksScreen>
         label: l10n.addWalk,
         child: FloatingActionButton(
           onPressed: _showAddWalkSheet,
-          child: const Icon(Icons.add),
+          backgroundColor: DesignColors.highlightTeal,
+          child: const Icon(Icons.add, color: Colors.white, size: 28),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -170,6 +177,184 @@ class _WalksScreenState extends ConsumerState<WalksScreen>
       ),
     );
   }
+
+  /// Show edit walk sheet with pre-filled data
+  void _showEditWalkSheet(WalkEntry entry) {
+    final l10n = AppLocalizations.of(context);
+    showModalBottomSheet<void>(
+      context: context,
+      useSafeArea: true,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (context) => _AddWalkSheet(
+        existingEntry: entry,
+        onSubmit: (updatedEntry) async {
+          logger.i('✏️ EDIT SUBMITTED - Walk ID: ${updatedEntry.id}');
+          logger.i('📅 Updated Walk Date: ${updatedEntry.start}');
+          logger.i('💾 UPDATING IN REPOSITORY...');
+
+          // Convert WalkEntry to Walk model and update via repository
+          final walk = updatedEntry.toWalk(petId: widget.petId);
+          final repository = ref.read(walkRepositoryProvider);
+          await repository.updateWalk(walk);
+
+          if (context.mounted) {
+            Navigator.of(context).pop();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(l10n.walkUpdated)),
+            );
+          }
+
+          logger.i('🔙 NAVIGATION: Returned to walks screen, data refreshed');
+        },
+      ),
+    );
+  }
+
+  /// Show delete confirmation dialog
+  void _showDeleteConfirmation(WalkEntry entry) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final dangerColor =
+        isDark ? DesignColors.dDanger : DesignColors.lDanger;
+
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => Dialog(
+        backgroundColor: surfaceColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(DesignSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Warning icon
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: dangerColor.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.delete_outline,
+                  size: 32,
+                  color: dangerColor,
+                ),
+              ),
+              SizedBox(height: DesignSpacing.md),
+
+              // Title
+              Text(
+                l10n.deleteWalk,
+                style: GoogleFonts.poppins(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: DesignSpacing.sm),
+
+              // Message
+              Text(
+                l10n.deleteWalkMessage,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: secondaryText,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: DesignSpacing.lg),
+
+              // Action buttons
+              Row(
+                children: [
+                  // Cancel button
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.of(dialogContext).pop(),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: secondaryText,
+                        side: BorderSide(color: secondaryText.withOpacity(0.3)),
+                        padding: EdgeInsets.symmetric(vertical: DesignSpacing.md),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        l10n.cancel,
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: DesignSpacing.md),
+
+                  // Delete button
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        if (entry.id == null) {
+                          logger.e('❌ Cannot delete walk without ID');
+                          Navigator.of(dialogContext).pop();
+                          return;
+                        }
+
+                        logger.i('🗑️ DELETE CONFIRMED - Walk ID: ${entry.id}');
+
+                        // Delete via repository
+                        final repository = ref.read(walkRepositoryProvider);
+                        await repository.deleteWalk(entry.id!);
+
+                        if (dialogContext.mounted) {
+                          Navigator.of(dialogContext).pop();
+                        }
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(l10n.walkDeleted)),
+                          );
+                        }
+
+                        logger.i('✅ Walk deleted successfully');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: dangerColor,
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(vertical: DesignSpacing.md),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        l10n.delete,
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 /// Filters
@@ -184,6 +369,11 @@ class _FilterBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     final labels = {
       WalkFilter.today: l10n.today,
       WalkFilter.thisWeek: l10n.thisWeek,
@@ -192,24 +382,48 @@ class _FilterBar extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: SegmentedButton<WalkFilter>(
-        segments: [
-          ButtonSegment(
-              value: WalkFilter.today, label: Text(labels[WalkFilter.today]!)),
-          ButtonSegment(
-              value: WalkFilter.thisWeek,
-              label: Text(labels[WalkFilter.thisWeek]!)),
-          ButtonSegment(
-              value: WalkFilter.all, label: Text(labels[WalkFilter.all]!)),
-        ],
-        selected: {value},
-        onSelectionChanged: (set) => onChanged(set.first),
-        showSelectedIcon: false,
-        style: ButtonStyle(
-          padding: WidgetStateProperty.all(
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 10)),
+      margin: EdgeInsets.symmetric(
+        horizontal: DesignSpacing.lg,
+        vertical: DesignSpacing.md,
+      ),
+      padding: EdgeInsets.all(DesignSpacing.xs),
+      decoration: BoxDecoration(
+        color: isDark
+            ? DesignColors.dSurfaces.withOpacity(0.5)
+            : DesignColors.lSurfaces,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: secondaryText.withOpacity(0.2),
+          width: 1,
         ),
+      ),
+      child: Row(
+        children: WalkFilter.values.map((filter) {
+          final isSelected = value == filter;
+          return Expanded(
+            child: GestureDetector(
+              onTap: () => onChanged(filter),
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: DesignSpacing.sm),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? DesignColors.highlightTeal
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  labels[filter]!,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: isSelected ? Colors.white : secondaryText,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -217,8 +431,15 @@ class _FilterBar extends StatelessWidget {
 
 /// Responsive list: 1 column on narrow, 2 columns when width >= 600
 class _ResponsiveWalkList extends StatelessWidget {
-  const _ResponsiveWalkList({super.key, required this.entries});
+  const _ResponsiveWalkList({
+    super.key,
+    required this.entries,
+    required this.onEdit,
+    required this.onDelete,
+  });
   final List<WalkEntry> entries;
+  final ValueChanged<WalkEntry> onEdit;
+  final ValueChanged<WalkEntry> onDelete;
   static final logger = Logger();
 
   @override
@@ -238,7 +459,11 @@ class _ResponsiveWalkList extends StatelessWidget {
               mainAxisSpacing: 12,
             ),
             itemCount: entries.length,
-            itemBuilder: (context, i) => WalkCard(entry: entries[i]),
+            itemBuilder: (context, i) => WalkCard(
+              entry: entries[i],
+              onEdit: onEdit,
+              onDelete: onDelete,
+            ),
           );
         }
         logger.d('📋 BUILDING ListView with ${entries.length} entries');
@@ -249,7 +474,11 @@ class _ResponsiveWalkList extends StatelessWidget {
           separatorBuilder: (_, __) => const SizedBox(height: 12),
           itemBuilder: (context, i) {
             logger.d('📋 ListView building item $i: ${entries[i].note}');
-            return WalkCard(entry: entries[i]);
+            return WalkCard(
+              entry: entries[i],
+              onEdit: onEdit,
+              onDelete: onDelete,
+            );
           },
         );
       },
@@ -258,8 +487,15 @@ class _ResponsiveWalkList extends StatelessWidget {
 }
 
 class WalkCard extends StatelessWidget {
-  const WalkCard({super.key, required this.entry});
+  const WalkCard({
+    super.key,
+    required this.entry,
+    required this.onEdit,
+    required this.onDelete,
+  });
   final WalkEntry entry;
+  final ValueChanged<WalkEntry> onEdit;
+  final ValueChanged<WalkEntry> onDelete;
   static final logger = Logger();
 
   String _getLocalizedSurface(BuildContext context, String? surface) {
@@ -281,66 +517,257 @@ class WalkCard extends StatelessWidget {
   Widget build(BuildContext context) {
     logger.d('🃏 RENDERING WalkCard: ${entry.note} at ${entry.start}');
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
     final time = DateFormat.Hm().format(entry.start);
     final primaryLine =
         '$time • ${entry.durationMin} ${l10n.min} • ${entry.distanceKm.toStringAsFixed(1)} ${l10n.km}';
 
+    // Theme-aware colors
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Semantics(
       container: true,
       label: l10n.walkDetailsFor(primaryLine),
-      child: Card(
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: () {
-            // No navigation. Show details locally.
-            showDialog<void>(
-              context: context,
-              builder: (dialogContext) => AlertDialog(
-                title: Text(l10n.walkDetails),
-                content: _WalkDetails(entry: entry),
-                actions: [
-                  TextButton(
-                      onPressed: () => Navigator.of(dialogContext).pop(),
-                      child: Text(l10n.close)),
+      child: Container(
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+          border: Border(
+            left: BorderSide(
+              color: DesignColors.highlightTeal,
+              width: 4,
+            ),
+          ),
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => _showWalkDetailsDialog(context),
+            borderRadius: BorderRadius.circular(16),
+            child: Padding(
+              padding: EdgeInsets.all(DesignSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Icon + Primary info row + Menu
+                  Row(
+                    children: [
+                      // Walk icon with teal background
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: DesignColors.highlightTeal.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.directions_walk,
+                          color: DesignColors.highlightTeal,
+                          size: 24,
+                        ),
+                      ),
+                      SizedBox(width: DesignSpacing.md),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              primaryLine,
+                              style: GoogleFonts.poppins(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: primaryText,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            if (entry.note != null &&
+                                entry.note!.isNotEmpty) ...[
+                              SizedBox(height: DesignSpacing.xs),
+                              Text(
+                                entry.note!,
+                                style: GoogleFonts.inter(
+                                  fontSize: 14,
+                                  color: primaryText,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                      // 3-dot menu for edit/delete
+                      PopupMenuButton<String>(
+                        icon: Icon(
+                          Icons.more_vert,
+                          color: secondaryText,
+                          size: 20,
+                        ),
+                        padding: EdgeInsets.zero,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        color: surfaceColor,
+                        elevation: 4,
+                        onSelected: (value) {
+                          if (value == 'edit') {
+                            onEdit(entry);
+                          } else if (value == 'delete') {
+                            onDelete(entry);
+                          }
+                        },
+                        itemBuilder: (context) => [
+                          PopupMenuItem<String>(
+                            value: 'edit',
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.edit,
+                                  size: 20,
+                                  color: primaryText,
+                                ),
+                                SizedBox(width: DesignSpacing.sm),
+                                Text(
+                                  l10n.edit,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 14,
+                                    color: primaryText,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem<String>(
+                            value: 'delete',
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.delete,
+                                  size: 20,
+                                  color: isDark
+                                      ? DesignColors.dDanger
+                                      : DesignColors.lDanger,
+                                ),
+                                SizedBox(width: DesignSpacing.sm),
+                                Text(
+                                  l10n.delete,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 14,
+                                    color: isDark
+                                        ? DesignColors.dDanger
+                                        : DesignColors.lDanger,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: DesignSpacing.sm),
+                  // Meta row: surface and pace with icons
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.terrain,
+                        size: 14,
+                        color: secondaryText,
+                      ),
+                      SizedBox(width: DesignSpacing.xs),
+                      Text(
+                        '${l10n.surfaceLabel}: ${_getLocalizedSurface(context, entry.surface)}',
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          color: secondaryText,
+                        ),
+                      ),
+                      SizedBox(width: DesignSpacing.md),
+                      Icon(
+                        Icons.speed,
+                        size: 14,
+                        color: secondaryText,
+                      ),
+                      SizedBox(width: DesignSpacing.xs),
+                      Flexible(
+                        child: Text(
+                          '${l10n.pace}: ${entry.paceMinPerKm?.toStringAsFixed(0) ?? '—'}\'/km',
+                          style: GoogleFonts.inter(
+                            fontSize: 13,
+                            color: secondaryText,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
-            );
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Primary row: stats only (no icon)
-                Text(
-                  primaryLine,
-                  style: theme.textTheme.titleMedium
-                      ?.copyWith(fontWeight: FontWeight.w600),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 6),
-                // Note/title
-                Text(
-                  entry.note ?? l10n.noNotes,
-                  style: theme.textTheme.bodyLarge,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 8),
-                // Meta row: simple text with dots
-                Text(
-                  '${l10n.surfaceLabel}: ${_getLocalizedSurface(context, entry.surface)} • ${l10n.pace}: ${entry.paceMinPerKm?.toStringAsFixed(0) ?? '—'}\'/km',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showWalkDetailsDialog(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => Dialog(
+        backgroundColor: surfaceColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(DesignSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                l10n.walkDetails,
+                style: GoogleFonts.poppins(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: DesignSpacing.lg),
+              _WalkDetails(entry: entry),
+              SizedBox(height: DesignSpacing.lg),
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                style: TextButton.styleFrom(
+                  foregroundColor: DesignColors.highlightTeal,
+                  padding: EdgeInsets.symmetric(vertical: DesignSpacing.md),
+                ),
+                child: Text(
+                  l10n.close,
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -355,30 +782,79 @@ class _EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
+
+    // Theme-aware colors
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(DesignSpacing.xl),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.pets, size: 72, color: theme.colorScheme.primary),
-            const SizedBox(height: 12),
-            Text(l10n.noWalksYet, style: theme.textTheme.headlineSmall),
-            const SizedBox(height: 8),
+            // Paw icon with teal circle background
+            Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                color: DesignColors.highlightTeal.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.pets,
+                size: 56,
+                color: DesignColors.highlightTeal,
+              ),
+            ),
+            SizedBox(height: DesignSpacing.lg),
             Text(
-              l10n.trackFirstWalk,
-              style: theme.textTheme.bodyMedium,
+              l10n.noWalksYet,
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: primaryText,
+              ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: DesignSpacing.sm),
+            Text(
+              l10n.trackFirstWalk,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: secondaryText,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: DesignSpacing.xl),
             Semantics(
               button: true,
               label: l10n.addFirstWalk,
-              child: FilledButton.icon(
+              child: ElevatedButton.icon(
                 onPressed: onAdd,
-                icon: const Icon(Icons.add),
-                label: Text(l10n.addFirstWalk),
+                icon: const Icon(Icons.add, size: 20),
+                label: Text(
+                  l10n.addFirstWalk,
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: DesignColors.highlightTeal,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: DesignSpacing.lg,
+                    vertical: DesignSpacing.md,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
               ),
             ),
           ],
@@ -416,40 +892,106 @@ class _WalkDetails extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _DetailRow(l10n.start, df.format(entry.start)),
-        _DetailRow(l10n.durationMin, '${entry.durationMin} ${l10n.min}'),
         _DetailRow(
-            l10n.distance, '${entry.distanceKm.toStringAsFixed(2)} ${l10n.km}'),
+          label: l10n.start,
+          value: df.format(entry.start),
+          icon: Icons.calendar_today,
+        ),
+        _DetailRow(
+          label: l10n.durationMin,
+          value: '${entry.durationMin} ${l10n.min}',
+          icon: Icons.timer,
+        ),
+        _DetailRow(
+          label: l10n.distance,
+          value: '${entry.distanceKm.toStringAsFixed(2)} ${l10n.km}',
+          icon: Icons.straighten,
+        ),
         if (entry.paceMinPerKm != null)
           _DetailRow(
-              l10n.pace, "${entry.paceMinPerKm!.toStringAsFixed(0)}'/km"),
+            label: l10n.pace,
+            value: "${entry.paceMinPerKm!.toStringAsFixed(0)}'/km",
+            icon: Icons.speed,
+          ),
         if (entry.surface != null)
           _DetailRow(
-              l10n.surfaceLabel, _getLocalizedSurface(context, entry.surface)),
-        if (entry.note?.isNotEmpty == true) _DetailRow(l10n.notes, entry.note!),
+            label: l10n.surfaceLabel,
+            value: _getLocalizedSurface(context, entry.surface),
+            icon: Icons.terrain,
+          ),
+        if (entry.note?.isNotEmpty == true)
+          _DetailRow(
+            label: l10n.notes,
+            value: entry.note!,
+            icon: Icons.notes,
+          ),
       ],
     );
   }
 }
 
 class _DetailRow extends StatelessWidget {
-  const _DetailRow(this.label, this.value);
+  const _DetailRow({
+    required this.label,
+    required this.value,
+    required this.icon,
+  });
   final String label;
   final String value;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: EdgeInsets.only(bottom: DesignSpacing.md),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-              width: 100,
-              child: Text(label,
-                  style: theme.textTheme.bodyMedium!
-                      .copyWith(fontWeight: FontWeight.w600))),
-          Expanded(child: Text(value, style: theme.textTheme.bodyMedium)),
+          // Icon container
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: DesignColors.highlightTeal.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              icon,
+              size: 16,
+              color: DesignColors.highlightTeal,
+            ),
+          ),
+          SizedBox(width: DesignSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: secondaryText,
+                  ),
+                ),
+                SizedBox(height: DesignSpacing.xs),
+                Text(
+                  value,
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: primaryText,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -458,10 +1000,18 @@ class _DetailRow extends StatelessWidget {
 
 // WalkEntry model moved to walks_state.dart
 
-/// Simple add-walk sheet that appends to the in-memory list. No persistence.
+/// Add/Edit walk sheet with form fields for walk data.
+/// When [existingEntry] is provided, the sheet operates in edit mode.
 class _AddWalkSheet extends StatefulWidget {
-  const _AddWalkSheet({required this.onSubmit});
+  const _AddWalkSheet({
+    required this.onSubmit,
+    this.existingEntry,
+  });
   final ValueChanged<WalkEntry> onSubmit;
+  final WalkEntry? existingEntry;
+
+  /// Whether this sheet is in edit mode
+  bool get isEditing => existingEntry != null;
 
   @override
   State<_AddWalkSheet> createState() => _AddWalkSheetState();
@@ -469,11 +1019,29 @@ class _AddWalkSheet extends StatefulWidget {
 
 class _AddWalkSheetState extends State<_AddWalkSheet> {
   final _form = GlobalKey<FormState>();
-  final _durationCtrl = TextEditingController(text: '30');
-  final _distanceCtrl = TextEditingController(text: '2.0');
-  final _noteCtrl = TextEditingController(text: 'Neighborhood loop');
-  String? _surface = 'paved';
-  DateTime _start = DateTime.now();
+  late final TextEditingController _durationCtrl;
+  late final TextEditingController _distanceCtrl;
+  late final TextEditingController _noteCtrl;
+  late String? _surface;
+  late DateTime _start;
+
+  @override
+  void initState() {
+    super.initState();
+    // Pre-fill form fields if editing an existing entry
+    final entry = widget.existingEntry;
+    _durationCtrl = TextEditingController(
+      text: entry?.durationMin.toString() ?? '30',
+    );
+    _distanceCtrl = TextEditingController(
+      text: entry?.distanceKm.toString() ?? '2.0',
+    );
+    _noteCtrl = TextEditingController(
+      text: entry?.note ?? '',
+    );
+    _surface = entry?.surface ?? 'paved';
+    _start = entry?.start ?? DateTime.now();
+  }
 
   @override
   void dispose() {
@@ -486,118 +1054,273 @@ class _AddWalkSheetState extends State<_AddWalkSheet> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
     final df = DateFormat(
         'EEE, MMM d • HH:mm', Localizations.localeOf(context).toString());
 
-    return Padding(
-      padding: EdgeInsets.only(
-        left: 16,
-        right: 16,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-        top: 8,
+    // Theme-aware colors
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
+    // Teal-focused input decoration
+    final inputDecoration = InputDecoration(
+      filled: true,
+      fillColor: isDark
+          ? DesignColors.dSurfaces.withOpacity(0.5)
+          : DesignColors.lSurfaces,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: secondaryText.withOpacity(0.3)),
       ),
-      child: Form(
-        key: _form,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(l10n.addWalk, style: theme.textTheme.titleLarge),
-              const SizedBox(height: 12),
-              _RowField(
-                label: l10n.start,
-                child: OutlinedButton.icon(
-                  onPressed: () async {
-                    final date = await showDatePicker(
-                      context: context,
-                      firstDate:
-                          DateTime.now().subtract(const Duration(days: 30)),
-                      lastDate: DateTime.now(),
-                      initialDate: _start,
-                    );
-                    if (date == null) return;
-                    if (!mounted) return;
-                    final time = await showTimePicker(
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: secondaryText.withOpacity(0.3)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: DesignColors.highlightTeal, width: 2),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(
+          color: isDark ? DesignColors.dDanger : DesignColors.lDanger,
+        ),
+      ),
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: DesignSpacing.md,
+        vertical: DesignSpacing.sm,
+      ),
+    );
+
+    return Container(
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: DesignSpacing.lg,
+          right: DesignSpacing.lg,
+          bottom: MediaQuery.of(context).viewInsets.bottom + DesignSpacing.lg,
+          top: DesignSpacing.sm,
+        ),
+        child: Form(
+          key: _form,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Handle bar
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: secondaryText.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                SizedBox(height: DesignSpacing.md),
+
+                // Title - changes based on add/edit mode
+                Text(
+                  widget.isEditing ? l10n.editWalk : l10n.addWalk,
+                  style: GoogleFonts.poppins(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: primaryText,
+                  ),
+                ),
+                SizedBox(height: DesignSpacing.lg),
+
+                // Start date/time field
+                _RowField(
+                  label: l10n.start,
+                  child: OutlinedButton.icon(
+                    onPressed: () async {
+                      final date = await showDatePicker(
                         context: context,
-                        initialTime: TimeOfDay.fromDateTime(_start));
-                    if (time == null || !mounted) return;
-                    setState(() => _start = DateTime(date.year, date.month,
-                        date.day, time.hour, time.minute));
-                  },
-                  icon: const Icon(Icons.event),
-                  label: Text(df.format(_start)),
-                ),
-              ),
-              _RowField(
-                label: l10n.durationMin,
-                child: TextFormField(
-                  controller: _durationCtrl,
-                  keyboardType: TextInputType.number,
-                  decoration:
-                      InputDecoration(suffixText: l10n.min, hintText: '30'),
-                  validator: _positiveInt,
-                ),
-              ),
-              _RowField(
-                label: l10n.distance,
-                child: TextFormField(
-                  controller: _distanceCtrl,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                  decoration:
-                      InputDecoration(suffixText: l10n.km, hintText: '2.0'),
-                  validator: _positiveDouble,
-                ),
-              ),
-              _RowField(
-                label: l10n.surfaceLabel,
-                child: DropdownButtonFormField<String>(
-                  initialValue: _surface,
-                  items: [
-                    DropdownMenuItem(
-                        value: 'paved', child: Text(l10n.surfacePaved)),
-                    DropdownMenuItem(
-                        value: 'gravel', child: Text(l10n.surfaceGravel)),
-                    DropdownMenuItem(
-                        value: 'mixed', child: Text(l10n.surfaceMixed)),
-                  ],
-                  onChanged: (v) => setState(() => _surface = v),
-                ),
-              ),
-              _RowField(
-                label: l10n.notes,
-                child: TextFormField(
-                  controller: _noteCtrl,
-                  maxLines: 2,
-                  decoration: InputDecoration(hintText: l10n.optional),
-                ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: FilledButton(
-                      onPressed: () {
-                        if (!_form.currentState!.validate()) return;
-                        final entry = WalkEntry(
-                          start: _start,
-                          durationMin: int.parse(_durationCtrl.text),
-                          distanceKm: double.parse(_distanceCtrl.text),
-                          note: _noteCtrl.text.trim().isEmpty
-                              ? null
-                              : _noteCtrl.text.trim(),
-                          surface: _surface,
-                          paceMinPerKm: null,
-                        );
-                        widget.onSubmit(entry);
-                      },
-                      child: Text(l10n.add),
+                        firstDate:
+                            DateTime.now().subtract(const Duration(days: 30)),
+                        lastDate: DateTime.now(),
+                        initialDate: _start,
+                      );
+                      if (date == null) return;
+                      if (!mounted) return;
+                      final time = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.fromDateTime(_start));
+                      if (time == null || !mounted) return;
+                      setState(() => _start = DateTime(date.year, date.month,
+                          date.day, time.hour, time.minute));
+                    },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: DesignColors.highlightTeal,
+                      side: const BorderSide(color: DesignColors.highlightTeal),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: DesignSpacing.md,
+                        vertical: DesignSpacing.sm,
+                      ),
+                    ),
+                    icon: const Icon(Icons.event, size: 18),
+                    label: Text(
+                      df.format(_start),
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
-                ],
-              ),
-            ],
+                ),
+
+                // Duration field
+                _RowField(
+                  label: l10n.durationMin,
+                  child: TextFormField(
+                    controller: _durationCtrl,
+                    keyboardType: TextInputType.number,
+                    style: GoogleFonts.inter(fontSize: 14, color: primaryText),
+                    decoration: inputDecoration.copyWith(
+                      suffixText: l10n.min,
+                      hintText: '30',
+                      hintStyle: GoogleFonts.inter(
+                        fontSize: 14,
+                        color: secondaryText,
+                      ),
+                    ),
+                    validator: _positiveInt,
+                  ),
+                ),
+
+                // Distance field
+                _RowField(
+                  label: l10n.distance,
+                  child: TextFormField(
+                    controller: _distanceCtrl,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    style: GoogleFonts.inter(fontSize: 14, color: primaryText),
+                    decoration: inputDecoration.copyWith(
+                      suffixText: l10n.km,
+                      hintText: '2.0',
+                      hintStyle: GoogleFonts.inter(
+                        fontSize: 14,
+                        color: secondaryText,
+                      ),
+                    ),
+                    validator: _positiveDouble,
+                  ),
+                ),
+
+                // Surface dropdown
+                _RowField(
+                  label: l10n.surfaceLabel,
+                  child: DropdownButtonFormField<String>(
+                    value: _surface,
+                    style: GoogleFonts.inter(fontSize: 14, color: primaryText),
+                    decoration: inputDecoration,
+                    dropdownColor: surfaceColor,
+                    items: [
+                      DropdownMenuItem(
+                        value: 'paved',
+                        child: Text(
+                          l10n.surfacePaved,
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            color: primaryText,
+                          ),
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 'gravel',
+                        child: Text(
+                          l10n.surfaceGravel,
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            color: primaryText,
+                          ),
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 'mixed',
+                        child: Text(
+                          l10n.surfaceMixed,
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            color: primaryText,
+                          ),
+                        ),
+                      ),
+                    ],
+                    onChanged: (v) => setState(() => _surface = v),
+                  ),
+                ),
+
+                // Notes field
+                _RowField(
+                  label: l10n.notes,
+                  child: TextFormField(
+                    controller: _noteCtrl,
+                    maxLines: 2,
+                    style: GoogleFonts.inter(fontSize: 14, color: primaryText),
+                    decoration: inputDecoration.copyWith(
+                      hintText: l10n.optional,
+                      hintStyle: GoogleFonts.inter(
+                        fontSize: 14,
+                        color: secondaryText,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: DesignSpacing.lg),
+
+                // Add/Update button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (!_form.currentState!.validate()) return;
+                      final entry = WalkEntry(
+                        // Preserve ID when editing for proper update
+                        id: widget.existingEntry?.id,
+                        start: _start,
+                        durationMin: int.parse(_durationCtrl.text),
+                        distanceKm: double.parse(_distanceCtrl.text),
+                        note: _noteCtrl.text.trim().isEmpty
+                            ? null
+                            : _noteCtrl.text.trim(),
+                        surface: _surface,
+                        paceMinPerKm: null,
+                      );
+                      widget.onSubmit(entry);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: DesignColors.highlightTeal,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(vertical: DesignSpacing.md),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      widget.isEditing ? l10n.update : l10n.add,
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -629,14 +1352,27 @@ class _RowField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: EdgeInsets.only(bottom: DesignSpacing.md),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-              width: 92, child: Text(label, style: theme.textTheme.bodyMedium)),
-          const SizedBox(width: 8),
+            width: 92,
+            child: Text(
+              label,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: secondaryText,
+              ),
+            ),
+          ),
+          SizedBox(width: DesignSpacing.sm),
           Expanded(child: child),
         ],
       ),

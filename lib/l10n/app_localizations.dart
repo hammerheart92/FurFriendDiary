@@ -1196,6 +1196,42 @@ abstract class AppLocalizations {
   /// **'Walk details for {walkInfo}'**
   String walkDetailsFor(String walkInfo);
 
+  /// No description provided for @editWalk.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Walk'**
+  String get editWalk;
+
+  /// No description provided for @deleteWalk.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete walk?'**
+  String get deleteWalk;
+
+  /// No description provided for @deleteWalkMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This action cannot be undone.'**
+  String get deleteWalkMessage;
+
+  /// No description provided for @update.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get update;
+
+  /// No description provided for @walkDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Walk deleted'**
+  String get walkDeleted;
+
+  /// No description provided for @walkUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Walk updated'**
+  String get walkUpdated;
+
   /// No description provided for @reports.
   ///
   /// In en, this message translates to:

@@ -225,6 +225,12 @@
   "enterPositiveNumber": "Introduceți un număr pozitiv",
   "walkAddedSuccessfully": "Plimbare adăugată cu succes!",
   "walkDetailsFor": "Detalii plimbare pentru {walkInfo}",
+  "editWalk": "Editează Plimbare",
+  "deleteWalk": "Ștergi plimbarea?",
+  "deleteWalkMessage": "Această acțiune nu poate fi anulată.",
+  "update": "Actualizează",
+  "walkDeleted": "Plimbare ștearsă",
+  "walkUpdated": "Plimbare actualizată",
 
   "reports": "Rapoarte",
   "health": "Sănătate",

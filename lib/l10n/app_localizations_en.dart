@@ -586,6 +586,24 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get editWalk => 'Edit Walk';
+
+  @override
+  String get deleteWalk => 'Delete walk?';
+
+  @override
+  String get deleteWalkMessage => 'This action cannot be undone.';
+
+  @override
+  String get update => 'Update';
+
+  @override
+  String get walkDeleted => 'Walk deleted';
+
+  @override
+  String get walkUpdated => 'Walk updated';
+
+  @override
   String get reports => 'Reports';
 
   @override

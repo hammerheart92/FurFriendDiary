@@ -288,6 +288,12 @@
       }
     }
   },
+  "editWalk": "Edit Walk",
+  "deleteWalk": "Delete walk?",
+  "deleteWalkMessage": "This action cannot be undone.",
+  "update": "Update",
+  "walkDeleted": "Walk deleted",
+  "walkUpdated": "Walk updated",
 
   "reports": "Reports",
   "health": "Health",

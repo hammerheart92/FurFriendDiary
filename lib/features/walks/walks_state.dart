@@ -6,6 +6,7 @@ import '../../src/data/local/hive_manager.dart';
 /// Model for walk entries - keep in this file for easy integration
 class WalkEntry {
   WalkEntry({
+    this.id,
     required this.start,
     required this.durationMin,
     required this.distanceKm,
@@ -14,6 +15,8 @@ class WalkEntry {
     this.paceMinPerKm,
   });
 
+  /// Unique identifier for the walk (used for edit/delete operations)
+  final String? id;
   final DateTime start;
   final int durationMin;
   final double distanceKm;
@@ -24,6 +27,7 @@ class WalkEntry {
   /// Convert WalkEntry to the full Walk model for Hive persistence
   Walk toWalk({required String petId}) {
     return Walk(
+      id: id, // Preserve ID for updates
       petId: petId,
       start: start,
       startTime: start,
@@ -39,12 +43,34 @@ class WalkEntry {
   /// Convert full Walk model to WalkEntry for UI display
   static WalkEntry fromWalk(Walk walk) {
     return WalkEntry(
+      id: walk.id, // Preserve ID for edit/delete
       start: walk.startTime,
       durationMin: walk.durationMinutes,
       distanceKm: walk.distance ?? 0.0,
       note: walk.notes,
       surface: _mapWalkTypeToSurface(walk.walkType),
       paceMinPerKm: walk.paceMinPerKm,
+    );
+  }
+
+  /// Create a copy with updated fields
+  WalkEntry copyWith({
+    String? id,
+    DateTime? start,
+    int? durationMin,
+    double? distanceKm,
+    String? note,
+    String? surface,
+    double? paceMinPerKm,
+  }) {
+    return WalkEntry(
+      id: id ?? this.id,
+      start: start ?? this.start,
+      durationMin: durationMin ?? this.durationMin,
+      distanceKm: distanceKm ?? this.distanceKm,
+      note: note ?? this.note,
+      surface: surface ?? this.surface,
+      paceMinPerKm: paceMinPerKm ?? this.paceMinPerKm,
     );
   }
 
@@ -179,6 +205,52 @@ class WalksController extends ChangeNotifier {
   Future<void> refresh() async {
     logger.i('🔄 REFRESHING walks from storage...');
     await _loadWalksFromHive();
+  }
+
+  /// Update an existing walk in both UI state and Hive persistence
+  Future<void> update(WalkEntry entry) async {
+    if (entry.id == null) {
+      logger.e('❌ Cannot update walk without ID');
+      return;
+    }
+
+    logger.i('✏️ UPDATING walk: ${entry.id} - ${entry.note} at ${entry.start}');
+
+    try {
+      // 1. Find and update in UI state
+      final index = _items.indexWhere((item) => item.id == entry.id);
+      if (index != -1) {
+        _items[index] = entry;
+        notifyListeners();
+        logger.i('✅ Walk updated in UI state');
+      }
+
+      // 2. Update in Hive storage
+      final walk = entry.toWalk(petId: _defaultPetId);
+      await _saveToHive(walk);
+      logger.i('💾 Walk updated in Hive storage');
+    } catch (e) {
+      logger.e('❌ Error updating walk: $e');
+    }
+  }
+
+  /// Delete a walk from both UI state and Hive persistence
+  Future<void> delete(String walkId) async {
+    logger.i('🗑️ DELETING walk: $walkId');
+
+    try {
+      // 1. Remove from UI state
+      _items.removeWhere((item) => item.id == walkId);
+      notifyListeners();
+      logger.i('✅ Walk removed from UI state');
+
+      // 2. Remove from Hive storage
+      final walkBox = HiveManager.instance.walkBox;
+      await walkBox.delete(walkId);
+      logger.i('💾 Walk deleted from Hive storage');
+    } catch (e) {
+      logger.e('❌ Error deleting walk: $e');
+    }
   }
 
   /// Clear all walks (for testing)

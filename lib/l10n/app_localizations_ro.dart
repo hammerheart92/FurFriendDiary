@@ -595,6 +595,24 @@ class AppLocalizationsRo extends AppLocalizations {
   }
 
   @override
+  String get editWalk => 'Editează Plimbare';
+
+  @override
+  String get deleteWalk => 'Ștergi plimbarea?';
+
+  @override
+  String get deleteWalkMessage => 'Această acțiune nu poate fi anulată.';
+
+  @override
+  String get update => 'Actualizează';
+
+  @override
+  String get walkDeleted => 'Plimbare ștearsă';
+
+  @override
+  String get walkUpdated => 'Plimbare actualizată';
+
+  @override
   String get reports => 'Rapoarte';
 
   @override
