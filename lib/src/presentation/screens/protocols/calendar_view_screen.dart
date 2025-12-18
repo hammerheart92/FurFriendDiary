@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
+import 'package:fur_friend_diary/theme/tokens/colors.dart';
+import 'package:fur_friend_diary/theme/tokens/spacing.dart';
+import 'package:fur_friend_diary/theme/tokens/shadows.dart';
 import '../../models/upcoming_care_event.dart';
 import '../../providers/protocols/protocol_schedule_provider.dart';
 import '../../providers/pet_profile_provider.dart';
@@ -101,6 +105,12 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
           return _buildEmptyStateNoEvents(context, l10n, theme);
         }
 
+        // Theme-aware color variables
+        final isDark = theme.brightness == Brightness.dark;
+        final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+        final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+        final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
         // Apply filter
         final filteredEvents = _selectedFilter == null
             ? allEvents
@@ -112,62 +122,137 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
         return Column(
           children: [
             // Filter chips
-            _buildFilterChips(l10n, theme, allEvents),
+            _buildFilterChips(l10n, theme, allEvents, isDark, surfaceColor, primaryText, secondaryText),
 
-            // Calendar
-            TableCalendar<UpcomingCareEvent>(
-              locale: Localizations.localeOf(context).languageCode,
-              firstDay: DateTime.now().subtract(const Duration(days: 365)),
-              lastDay: DateTime.now().add(const Duration(days: 365)),
-              focusedDay: _focusedDay,
-              selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-              onDaySelected: (selectedDay, focusedDay) {
-                setState(() {
-                  _selectedDay = selectedDay;
-                  _focusedDay = focusedDay;
-                });
-              },
-              onPageChanged: (focusedDay) {
-                setState(() {
-                  _focusedDay = focusedDay;
-                });
-              },
-              // Styling
-              calendarStyle: CalendarStyle(
-                todayDecoration: BoxDecoration(
-                  color: theme.colorScheme.primaryContainer,
-                  shape: BoxShape.circle,
-                ),
-                selectedDecoration: BoxDecoration(
-                  color: theme.colorScheme.primary,
-                  shape: BoxShape.circle,
-                ),
-                markerDecoration: BoxDecoration(
-                  color: theme.colorScheme.secondary,
-                  shape: BoxShape.circle,
-                ),
-                markersMaxCount: 3, // Show up to 3 dots
+            // Calendar in styled container
+            Container(
+              margin: EdgeInsets.symmetric(
+                horizontal: DesignSpacing.lg,
+                vertical: DesignSpacing.md,
               ),
-              headerStyle: HeaderStyle(
-                titleCentered: true,
-                formatButtonVisible: false,
-                titleTextStyle: theme.textTheme.titleLarge!,
+              padding: EdgeInsets.all(DesignSpacing.md),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? DesignColors.highlightBlue.withOpacity(0.05)
+                    : DesignColors.highlightBlue.withOpacity(0.03),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: secondaryText.withOpacity(0.2),
+                  width: 1,
+                ),
+                boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
               ),
-              // Event markers
-              eventLoader: (day) => _getEventsForDay(day, eventMap),
-              calendarBuilders: CalendarBuilders(
-                markerBuilder: (context, day, events) {
-                  if (events.isEmpty) return const SizedBox.shrink();
-
-                  return _buildEventMarkers(
-                    events.cast<UpcomingCareEvent>(),
-                    theme,
-                  );
+              child: TableCalendar<UpcomingCareEvent>(
+                locale: Localizations.localeOf(context).languageCode,
+                firstDay: DateTime.now().subtract(const Duration(days: 365)),
+                lastDay: DateTime.now().add(const Duration(days: 365)),
+                focusedDay: _focusedDay,
+                selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+                onDaySelected: (selectedDay, focusedDay) {
+                  setState(() {
+                    _selectedDay = selectedDay;
+                    _focusedDay = focusedDay;
+                  });
                 },
+                onPageChanged: (focusedDay) {
+                  setState(() {
+                    _focusedDay = focusedDay;
+                  });
+                },
+                // Styling - PetiCare inspired
+                calendarStyle: CalendarStyle(
+                  // Today: Circle outline only (PetiCare pattern)
+                  todayDecoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: DesignColors.highlightBlue,
+                      width: 2,
+                    ),
+                  ),
+                  todayTextStyle: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: primaryText,
+                  ),
+                  // Selected: Filled blue circle
+                  selectedDecoration: BoxDecoration(
+                    color: DesignColors.highlightBlue,
+                    shape: BoxShape.circle,
+                  ),
+                  selectedTextStyle: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                  // Default days
+                  defaultTextStyle: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: primaryText,
+                  ),
+                  // Weekend days
+                  weekendTextStyle: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: primaryText,
+                  ),
+                  // Outside days (prev/next month)
+                  outsideTextStyle: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: secondaryText.withOpacity(0.5),
+                  ),
+                  // Disabled days
+                  disabledTextStyle: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: secondaryText.withOpacity(0.4),
+                  ),
+                  markersMaxCount: 3,
+                  cellMargin: const EdgeInsets.all(2),
+                ),
+                // Header styling
+                headerStyle: HeaderStyle(
+                  titleCentered: true,
+                  formatButtonVisible: false,
+                  titleTextStyle: GoogleFonts.poppins(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: primaryText,
+                  ),
+                  leftChevronIcon: Icon(
+                    Icons.chevron_left,
+                    color: primaryText,
+                  ),
+                  rightChevronIcon: Icon(
+                    Icons.chevron_right,
+                    color: primaryText,
+                  ),
+                  headerPadding: EdgeInsets.symmetric(vertical: DesignSpacing.sm),
+                ),
+                // Weekday headers
+                daysOfWeekStyle: DaysOfWeekStyle(
+                  weekdayStyle: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: primaryText,
+                  ),
+                  weekendStyle: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: primaryText,
+                  ),
+                ),
+                // Event markers
+                eventLoader: (day) => _getEventsForDay(day, eventMap),
+                calendarBuilders: CalendarBuilders(
+                  markerBuilder: (context, day, events) {
+                    if (events.isEmpty) return const SizedBox.shrink();
+
+                    return _buildEventMarkers(
+                      events.cast<UpcomingCareEvent>(),
+                      theme,
+                    );
+                  },
+                ),
               ),
             ),
-
-            const Divider(height: 1),
 
             // Selected day details
             Expanded(
@@ -212,11 +297,15 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
     return eventMap[dateKey] ?? [];
   }
 
-  /// Build filter chips
+  /// Build filter chips - redesigned with pill-shaped tabs
   Widget _buildFilterChips(
     AppLocalizations l10n,
     ThemeData theme,
     List<UpcomingCareEvent> allEvents,
+    bool isDark,
+    Color surfaceColor,
+    Color primaryText,
+    Color secondaryText,
   ) {
     // Count events by type for badge display
     final eventCounts = <String, int>{};
@@ -224,36 +313,40 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
       eventCounts[event.eventType] = (eventCounts[event.eventType] ?? 0) + 1;
     }
 
+    // Updated filter colors to use design tokens
     final filters = [
       _FilterOption(null, l10n.all, Icons.calendar_today, null),
       _FilterOption(
         'vaccination',
         l10n.vaccinations,
         Icons.vaccines,
-        Colors.red.shade600,
+        DesignColors.highlightPurple,
       ),
       _FilterOption(
         'deworming',
         l10n.deworming,
         Icons.pest_control,
-        Colors.amber.shade700,
+        DesignColors.highlightCoral,
       ),
       _FilterOption(
         'appointment',
         l10n.appointments,
         Icons.event,
-        Colors.blue.shade600,
+        DesignColors.highlightYellow,
       ),
       _FilterOption(
         'medication',
         l10n.medications,
         Icons.medication,
-        Colors.green.shade600,
+        DesignColors.highlightPink,
       ),
     ];
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: EdgeInsets.symmetric(
+        horizontal: DesignSpacing.md,
+        vertical: DesignSpacing.sm,
+      ),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
@@ -264,55 +357,72 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
                 : (eventCounts[filter.value] ?? 0);
 
             return Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: FilterChip(
-                label: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      filter.icon,
-                      size: 16,
-                      color: isSelected
-                          ? theme.colorScheme.onSecondaryContainer
-                          : theme.colorScheme.onSurfaceVariant,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(filter.label),
-                    if (count > 0) ...[
-                      const SizedBox(width: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? theme.colorScheme.onSecondaryContainer
-                                  .withOpacity(0.2)
-                              : theme.colorScheme.surfaceVariant,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          '$count',
-                          style: theme.textTheme.labelSmall,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-                selected: isSelected,
-                onSelected: (selected) {
+              padding: EdgeInsets.only(right: DesignSpacing.sm),
+              child: GestureDetector(
+                onTap: () {
                   setState(() {
-                    _selectedFilter = selected ? filter.value : null;
+                    _selectedFilter = isSelected ? null : filter.value;
                   });
                 },
-                backgroundColor: theme.colorScheme.surface,
-                selectedColor: theme.colorScheme.secondaryContainer,
-                checkmarkColor: theme.colorScheme.onSecondaryContainer,
-                side: BorderSide(
-                  color: isSelected
-                      ? theme.colorScheme.secondary
-                      : theme.colorScheme.outline.withOpacity(0.3),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: DesignSpacing.md,
+                    vertical: DesignSpacing.sm,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? DesignColors.highlightBlue
+                        : (isDark ? surfaceColor : surfaceColor.withOpacity(0.5)),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: isSelected
+                          ? DesignColors.highlightBlue
+                          : secondaryText.withOpacity(0.2),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        filter.icon,
+                        size: 16,
+                        color: isSelected ? Colors.white : secondaryText,
+                      ),
+                      SizedBox(width: DesignSpacing.xs),
+                      Text(
+                        filter.label,
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: isSelected ? Colors.white : primaryText,
+                        ),
+                      ),
+                      if (count > 0) ...[
+                        SizedBox(width: DesignSpacing.xs),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? Colors.white.withOpacity(0.2)
+                                : secondaryText.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            '$count',
+                            style: GoogleFonts.inter(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: isSelected ? Colors.white : secondaryText,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
                 ),
               ),
             );
@@ -355,20 +465,20 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
     );
   }
 
-  /// Get color for event type
+  /// Get color for event type - using design tokens
   Color _getEventTypeColor(String eventType, ThemeData theme) {
     switch (eventType) {
       case 'vaccination':
       case 'vaccination_record':
-        return Colors.red.shade600; // Red
+        return DesignColors.highlightPurple; // Purple for vaccinations
       case 'deworming':
-        return Colors.amber.shade700; // Yellow/Amber
+        return DesignColors.highlightCoral; // Coral for deworming
       case 'appointment':
-        return Colors.blue.shade600; // Blue
+        return DesignColors.highlightYellow; // Yellow for appointments
       case 'medication':
-        return Colors.green.shade600; // Green
+        return DesignColors.highlightPink; // Pink for medications
       default:
-        return theme.colorScheme.secondary;
+        return DesignColors.highlightBlue;
     }
   }
 
@@ -628,30 +738,43 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
     AppLocalizations l10n,
     ThemeData theme,
   ) {
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.symmetric(
+          horizontal: DesignSpacing.lg,
+          vertical: DesignSpacing.sm,
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               Icons.event_busy,
-              size: 64,
-              color: theme.colorScheme.onSurfaceVariant.withOpacity(0.3),
+              size: 48,
+              color: secondaryText.withOpacity(0.4),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: DesignSpacing.xs),
             Text(
               l10n.noEventsOnThisDay,
-              style: theme.textTheme.titleMedium!.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: primaryText,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             Text(
               l10n.selectAnotherDay,
-              style: theme.textTheme.bodySmall!.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                color: secondaryText,
               ),
               textAlign: TextAlign.center,
             ),
@@ -953,15 +1076,16 @@ class _EventListTile extends StatelessWidget {
   Color _getEventTypeColor(String eventType) {
     switch (eventType) {
       case 'vaccination':
-        return Colors.red.shade600;
+      case 'vaccination_record':
+        return DesignColors.highlightPurple;
       case 'deworming':
-        return Colors.amber.shade700;
+        return DesignColors.highlightCoral;
       case 'appointment':
-        return Colors.blue.shade600;
+        return DesignColors.highlightYellow;
       case 'medication':
-        return Colors.green.shade600;
+        return DesignColors.highlightPink;
       default:
-        return theme.colorScheme.secondary;
+        return DesignColors.highlightBlue;
     }
   }
 
