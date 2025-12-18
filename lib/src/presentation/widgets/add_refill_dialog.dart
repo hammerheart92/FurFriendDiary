@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
+import 'package:fur_friend_diary/theme/tokens/colors.dart';
+import 'package:fur_friend_diary/theme/tokens/spacing.dart';
+import 'package:fur_friend_diary/theme/tokens/shadows.dart';
 import '../../domain/models/medication_entry.dart';
 import '../../domain/models/medication_purchase.dart';
 import '../../providers/inventory_providers.dart';
@@ -166,16 +170,31 @@ class _AddRefillDialogState extends ConsumerState<AddRefillDialog> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final successColor = isDark ? DesignColors.dSuccess : DesignColors.lSuccess;
 
     return Dialog(
+      backgroundColor: surfaceColor,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Container(
         constraints: const BoxConstraints(maxWidth: 500),
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: isDark ? DesignShadows.darkLg : DesignShadows.lg,
+        ),
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(DesignSpacing.lg),
             child: Form(
               key: _formKey,
               child: Column(
@@ -185,51 +204,71 @@ class _AddRefillDialogState extends ConsumerState<AddRefillDialog> {
                   // Header
                   Row(
                     children: [
-                      Icon(
-                        Icons.add_shopping_cart,
-                        color: theme.colorScheme.primary,
-                        size: 28,
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: DesignColors.highlightTeal.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.add_shopping_cart,
+                          color: DesignColors.highlightTeal,
+                          size: 24,
+                        ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: DesignSpacing.md),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               l10n.addRefill,
-                              style: theme.textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
+                              style: GoogleFonts.poppins(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                                color: primaryText,
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: DesignSpacing.xs),
                             Text(
                               widget.medication.medicationName,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.onSurface
-                                    .withOpacity(0.6),
+                              style: GoogleFonts.inter(
+                                fontSize: 14,
+                                color: secondaryText,
                               ),
                             ),
                           ],
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.close),
+                        icon: Icon(Icons.close, color: secondaryText),
                         onPressed: () => Navigator.of(context).pop(),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: DesignSpacing.lg),
 
                   // Quantity Field (Required)
                   TextFormField(
                     controller: _quantityController,
+                    style: GoogleFonts.inter(color: primaryText),
                     decoration: InputDecoration(
                       labelText: '${l10n.quantityPurchased} *',
+                      labelStyle: GoogleFonts.inter(color: secondaryText),
                       hintText:
                           l10n.translateStockUnit(widget.medication.stockUnit),
-                      prefixIcon: const Icon(Icons.inventory_2),
+                      hintStyle: GoogleFonts.inter(color: secondaryText.withOpacity(0.5)),
+                      prefixIcon: Icon(Icons.inventory_2, color: secondaryText),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: DesignColors.highlightTeal,
+                          width: 2,
+                        ),
                       ),
                     ),
                     keyboardType: TextInputType.number,
@@ -248,17 +287,27 @@ class _AddRefillDialogState extends ConsumerState<AddRefillDialog> {
                     },
                     autofocus: true,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: DesignSpacing.md),
 
                   // Cost Field (Optional)
                   TextFormField(
                     controller: _costController,
+                    style: GoogleFonts.inter(color: primaryText),
                     decoration: InputDecoration(
                       labelText: '${l10n.cost} (${l10n.optional})',
+                      labelStyle: GoogleFonts.inter(color: secondaryText),
                       hintText: '0.00',
-                      prefixIcon: const Icon(Icons.attach_money),
+                      hintStyle: GoogleFonts.inter(color: secondaryText.withOpacity(0.5)),
+                      prefixIcon: Icon(Icons.attach_money, color: secondaryText),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: DesignColors.highlightTeal,
+                          width: 2,
+                        ),
                       ),
                     ),
                     keyboardType:
@@ -277,7 +326,7 @@ class _AddRefillDialogState extends ConsumerState<AddRefillDialog> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: DesignSpacing.md),
 
                   // Purchase Date Field
                   InkWell(
@@ -286,49 +335,73 @@ class _AddRefillDialogState extends ConsumerState<AddRefillDialog> {
                     child: InputDecorator(
                       decoration: InputDecoration(
                         labelText: l10n.purchaseDate,
-                        prefixIcon: const Icon(Icons.calendar_today),
+                        labelStyle: GoogleFonts.inter(color: secondaryText),
+                        prefixIcon: Icon(Icons.calendar_today, color: secondaryText),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                       child: Text(
                         DateFormat.yMMMd().format(_purchaseDate),
-                        style: theme.textTheme.bodyLarge,
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          color: primaryText,
+                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: DesignSpacing.md),
 
                   // Pharmacy Field (Optional)
                   TextFormField(
                     controller: _pharmacyController,
+                    style: GoogleFonts.inter(color: primaryText),
                     decoration: InputDecoration(
                       labelText: '${l10n.pharmacy} (${l10n.optional})',
+                      labelStyle: GoogleFonts.inter(color: secondaryText),
                       hintText: 'e.g., CVS, Walgreens',
-                      prefixIcon: const Icon(Icons.store),
+                      hintStyle: GoogleFonts.inter(color: secondaryText.withOpacity(0.5)),
+                      prefixIcon: Icon(Icons.store, color: secondaryText),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: DesignColors.highlightTeal,
+                          width: 2,
+                        ),
                       ),
                     ),
                     textCapitalization: TextCapitalization.words,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: DesignSpacing.md),
 
                   // Notes Field (Optional)
                   TextFormField(
                     controller: _notesController,
+                    style: GoogleFonts.inter(color: primaryText),
                     decoration: InputDecoration(
                       labelText: '${l10n.notes} (${l10n.optional})',
+                      labelStyle: GoogleFonts.inter(color: secondaryText),
                       hintText: 'Additional details...',
-                      prefixIcon: const Icon(Icons.note),
+                      hintStyle: GoogleFonts.inter(color: secondaryText.withOpacity(0.5)),
+                      prefixIcon: Icon(Icons.note, color: secondaryText),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: DesignColors.highlightTeal,
+                          width: 2,
+                        ),
                       ),
                     ),
                     maxLines: 3,
                     textCapitalization: TextCapitalization.sentences,
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: DesignSpacing.lg),
 
                   // Action Buttons
                   Row(
@@ -338,11 +411,28 @@ class _AddRefillDialogState extends ConsumerState<AddRefillDialog> {
                         onPressed: _isLoading
                             ? null
                             : () => Navigator.of(context).pop(),
-                        child: Text(l10n.cancel),
+                        child: Text(
+                          l10n.cancel,
+                          style: GoogleFonts.inter(
+                            fontWeight: FontWeight.w500,
+                            color: secondaryText,
+                          ),
+                        ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: DesignSpacing.md),
                       FilledButton.icon(
                         onPressed: _isLoading ? null : _savePurchase,
+                        style: FilledButton.styleFrom(
+                          backgroundColor: successColor,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: DesignSpacing.lg,
+                            vertical: DesignSpacing.sm,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
                         icon: _isLoading
                             ? const SizedBox(
                                 width: 20,
@@ -353,7 +443,12 @@ class _AddRefillDialogState extends ConsumerState<AddRefillDialog> {
                                 ),
                               )
                             : const Icon(Icons.check),
-                        label: Text(l10n.save),
+                        label: Text(
+                          l10n.save,
+                          style: GoogleFonts.inter(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ],
                   ),

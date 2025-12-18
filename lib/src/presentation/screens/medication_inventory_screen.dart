@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../../../l10n/app_localizations.dart';
+import 'package:fur_friend_diary/theme/tokens/colors.dart';
+import 'package:fur_friend_diary/theme/tokens/spacing.dart';
+import 'package:fur_friend_diary/theme/tokens/shadows.dart';
 import '../../domain/models/medication_entry.dart';
 import '../../providers/inventory_providers.dart';
 import '../../providers/medications_provider.dart';
 import '../providers/pet_profile_provider.dart';
 import '../widgets/add_refill_dialog.dart';
 import '../../ui/widgets/medication_card.dart'; // Import for StockUnitTranslation extension
+
+/// Enum for tab selection
+enum _InventoryTab { all, lowStock, statistics }
 
 class MedicationInventoryScreen extends ConsumerStatefulWidget {
   const MedicationInventoryScreen({super.key});
@@ -19,101 +26,164 @@ class MedicationInventoryScreen extends ConsumerStatefulWidget {
 }
 
 class _MedicationInventoryScreenState
-    extends ConsumerState<MedicationInventoryScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+    extends ConsumerState<MedicationInventoryScreen> {
+  _InventoryTab _selectedTab = _InventoryTab.all;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     final currentPet = ref.watch(currentPetProfileProvider);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final backgroundColor =
+        isDark ? DesignColors.dBackground : DesignColors.lBackground;
 
     if (currentPet == null) {
       return Scaffold(
+        backgroundColor: backgroundColor,
         appBar: AppBar(
-          title: Text(l10n.medicationInventory),
+          title: Text(
+            l10n.medicationInventory,
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.w600,
+              color: primaryText,
+            ),
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          iconTheme: IconThemeData(color: primaryText),
         ),
         body: Center(
-          child: Text(l10n.noActivePetFound),
+          child: Text(
+            l10n.noActivePetFound,
+            style: GoogleFonts.inter(color: secondaryText),
+          ),
         ),
       );
     }
 
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: Text(l10n.medicationInventory),
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.onPrimary,
-        elevation: 0,
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: theme.colorScheme.onPrimary,
-          labelColor: theme.colorScheme.onPrimary,
-          unselectedLabelColor:
-              theme.colorScheme.onPrimary.withValues(alpha: 0.7),
-          tabs: [
-            Tab(text: l10n.all),
-            Tab(text: l10n.lowStock),
-            Tab(text: l10n.statistics),
-          ],
+        title: Text(
+          l10n.medicationInventory,
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: primaryText,
+          ),
         ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: IconThemeData(color: primaryText),
       ),
-      body: TabBarView(
-        controller: _tabController,
+      body: Column(
         children: [
-          _AllMedicationsTab(petId: currentPet.id),
-          _LowStockTab(petId: currentPet.id),
-          _StatisticsTab(petId: currentPet.id),
+          // Pill-shaped tab selector
+          _buildTabSelector(l10n, isDark, secondaryText),
+          // Tab content
+          Expanded(
+            child: _buildTabContent(currentPet.id),
+          ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showAddPurchaseDialog(context),
-        icon: const Icon(Icons.add_shopping_cart),
-        label: Text(l10n.recordPurchase),
-        backgroundColor: theme.colorScheme.primary,
       ),
     );
   }
 
-  void _showAddPurchaseDialog(BuildContext context) {
-    final currentPet = ref.read(currentPetProfileProvider);
-    if (currentPet == null) return;
-
-    final medicationsAsync = ref.read(medicationsProvider);
-    final medications = medicationsAsync.when(
-      data: (meds) =>
-          meds.where((m) => m.petId == currentPet.id && m.isActive).toList(),
-      loading: () => <MedicationEntry>[],
-      error: (_, __) => <MedicationEntry>[],
-    );
-
-    if (medications.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context).noMedicationsFound),
-          backgroundColor: Colors.orange,
+  Widget _buildTabSelector(
+    AppLocalizations l10n,
+    bool isDark,
+    Color secondaryText,
+  ) {
+    return Container(
+      margin: const EdgeInsets.symmetric(
+        horizontal: DesignSpacing.lg,
+        vertical: DesignSpacing.md,
+      ),
+      padding: const EdgeInsets.all(DesignSpacing.xs),
+      decoration: BoxDecoration(
+        color: isDark
+            ? DesignColors.dSurfaces.withOpacity(0.5)
+            : DesignColors.lSurfaces,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: secondaryText.withOpacity(0.2),
+          width: 1,
         ),
-      );
-      return;
-    }
-
-    showDialog(
-      context: context,
-      builder: (context) => AddRefillDialog(medication: medications.first),
+      ),
+      child: Row(
+        children: [
+          _buildTabButton(
+            label: l10n.all,
+            isSelected: _selectedTab == _InventoryTab.all,
+            onTap: () => setState(() => _selectedTab = _InventoryTab.all),
+            isDark: isDark,
+            secondaryText: secondaryText,
+          ),
+          _buildTabButton(
+            label: l10n.lowStock,
+            isSelected: _selectedTab == _InventoryTab.lowStock,
+            onTap: () => setState(() => _selectedTab = _InventoryTab.lowStock),
+            isDark: isDark,
+            secondaryText: secondaryText,
+          ),
+          _buildTabButton(
+            label: l10n.statistics,
+            isSelected: _selectedTab == _InventoryTab.statistics,
+            onTap: () => setState(() => _selectedTab = _InventoryTab.statistics),
+            isDark: isDark,
+            secondaryText: secondaryText,
+          ),
+        ],
+      ),
     );
+  }
+
+  Widget _buildTabButton({
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+    required bool isDark,
+    required Color secondaryText,
+  }) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: DesignSpacing.sm),
+          decoration: BoxDecoration(
+            color: isSelected ? DesignColors.highlightPink : Colors.transparent,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: isSelected ? Colors.white : secondaryText,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTabContent(String petId) {
+    switch (_selectedTab) {
+      case _InventoryTab.all:
+        return _AllMedicationsTab(petId: petId);
+      case _InventoryTab.lowStock:
+        return _LowStockTab(petId: petId);
+      case _InventoryTab.statistics:
+        return _StatisticsTab(petId: petId);
+    }
   }
 }
 
@@ -124,8 +194,15 @@ class _AllMedicationsTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     final medicationsAsync = ref.watch(medicationsProvider);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
 
     return medicationsAsync.when(
       data: (allMedications) {
@@ -135,33 +212,43 @@ class _AllMedicationsTab extends ConsumerWidget {
 
         if (medications.isEmpty) {
           return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.medication_outlined,
-                  size: 64,
-                  color: Colors.grey[400],
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  l10n.noMedicationsTracked,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
+            child: Padding(
+              padding: const EdgeInsets.all(DesignSpacing.xl),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.medication_outlined,
+                    size: 64,
+                    color: secondaryText.withOpacity(0.4),
                   ),
-                ),
-              ],
+                  const SizedBox(height: DesignSpacing.md),
+                  Text(
+                    l10n.noMedicationsTracked,
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: primaryText,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
           );
         }
 
         return RefreshIndicator(
+          color: DesignColors.highlightPink,
           onRefresh: () async {
             ref.invalidate(medicationsProvider);
           },
           child: ListView.builder(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(
+              horizontal: DesignSpacing.lg,
+              vertical: DesignSpacing.sm,
+            ),
             itemCount: medications.length,
             itemBuilder: (context, index) {
               final medication = medications[index];
@@ -173,9 +260,14 @@ class _AllMedicationsTab extends ConsumerWidget {
           ),
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(
+        child: CircularProgressIndicator(color: DesignColors.highlightPink),
+      ),
       error: (error, _) => Center(
-        child: Text('Error: $error'),
+        child: Text(
+          'Error: $error',
+          style: GoogleFonts.inter(color: DesignColors.highlightCoral),
+        ),
       ),
     );
   }
@@ -188,46 +280,64 @@ class _LowStockTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     final lowStockMeds = ref.watch(lowStockMedicationsProvider(petId));
+    final isDark = theme.brightness == Brightness.dark;
+
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final successColor = isDark ? DesignColors.dSuccess : DesignColors.lSuccess;
+
+    if (lowStockMeds.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(DesignSpacing.xl),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.check_circle_outline,
+                size: 64,
+                color: successColor.withOpacity(0.6),
+              ),
+              const SizedBox(height: DesignSpacing.md),
+              Text(
+                l10n.noLowStockMedications,
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: primaryText,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     return RefreshIndicator(
+      color: DesignColors.highlightPink,
       onRefresh: () async {
         ref.invalidate(medicationsProvider);
         ref.invalidate(lowStockMedicationsProvider(petId));
       },
-      child: lowStockMeds.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.check_circle_outline,
-                    size: 64,
-                    color: Colors.green[400],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    l10n.noLowStockMedications,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: lowStockMeds.length,
-              itemBuilder: (context, index) {
-                final medication = lowStockMeds[index];
-                return _MedicationInventoryCard(
-                  medication: medication,
-                  showWarning: true,
-                );
-              },
-            ),
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(
+          horizontal: DesignSpacing.lg,
+          vertical: DesignSpacing.sm,
+        ),
+        itemCount: lowStockMeds.length,
+        itemBuilder: (context, index) {
+          final medication = lowStockMeds[index];
+          return _MedicationInventoryCard(
+            medication: medication,
+            showWarning: true,
+          );
+        },
+      ),
     );
   }
 }
@@ -241,6 +351,15 @@ class _StatisticsTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final successColor = isDark ? DesignColors.dSuccess : DesignColors.lSuccess;
 
     final now = DateTime.now();
     final thirtyDaysAgo = now.subtract(const Duration(days: 30));
@@ -283,177 +402,125 @@ class _StatisticsTab extends ConsumerWidget {
         final top5 = topMedications.take(5).toList();
 
         return RefreshIndicator(
+          color: DesignColors.highlightPink,
           onRefresh: () async {
             ref.invalidate(medicationsProvider);
           },
           child: ListView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(
+              horizontal: DesignSpacing.lg,
+              vertical: DesignSpacing.sm,
+            ),
             children: [
               // Total Spent This Month Card
-              Card(
-                elevation: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.calendar_month,
-                            color: theme.colorScheme.primary,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            l10n.totalSpentThisMonth,
-                            style: theme.textTheme.titleMedium,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        '\$${monthCost.toStringAsFixed(2)}',
-                        style: theme.textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.primary,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        l10n.last30Days,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              _buildStatCard(
+                icon: Icons.calendar_month,
+                iconColor: DesignColors.highlightTeal,
+                title: l10n.totalSpentThisMonth,
+                amount: monthCost,
+                subtitle: l10n.last30Days,
+                surfaceColor: surfaceColor,
+                primaryText: primaryText,
+                secondaryText: secondaryText,
+                isDark: isDark,
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: DesignSpacing.md),
 
               // Total Spent All Time Card
-              Card(
-                elevation: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.account_balance_wallet,
-                            color: theme.colorScheme.secondary,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            l10n.totalSpentAllTime,
-                            style: theme.textTheme.titleMedium,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        '\$${totalCost.toStringAsFixed(2)}',
-                        style: theme.textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.secondary,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        l10n.allPurchases,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              _buildStatCard(
+                icon: Icons.account_balance_wallet,
+                iconColor: DesignColors.highlightPink,
+                title: l10n.totalSpentAllTime,
+                amount: totalCost,
+                subtitle: l10n.allPurchases,
+                surfaceColor: surfaceColor,
+                primaryText: primaryText,
+                secondaryText: secondaryText,
+                isDark: isDark,
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: DesignSpacing.md),
 
               // Average Cost Card
-              Card(
-                elevation: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.analytics,
-                            color: Colors.green,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            l10n.averageCostPerMedication,
-                            style: theme.textTheme.titleMedium,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        '\$${averageCost.toStringAsFixed(2)}',
-                        style: theme.textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        l10n.perMedication,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              _buildStatCard(
+                icon: Icons.bar_chart,
+                iconColor: successColor,
+                title: l10n.averageCostPerMedication,
+                amount: averageCost,
+                subtitle: l10n.perMedication,
+                surfaceColor: surfaceColor,
+                primaryText: primaryText,
+                secondaryText: secondaryText,
+                isDark: isDark,
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: DesignSpacing.xl),
 
               // Top 5 Most Expensive Medications
               if (top5.isNotEmpty) ...[
-                Text(
-                  l10n.topExpensiveMedications,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
+                Padding(
+                  padding: const EdgeInsets.only(bottom: DesignSpacing.md),
+                  child: Text(
+                    l10n.topExpensiveMedications,
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: primaryText,
+                    ),
                   ),
                 ),
-                const SizedBox(height: 12),
                 ...top5.asMap().entries.map((entry) {
                   final index = entry.key;
                   final medication = entry.value;
-                  return Card(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: theme.colorScheme.primaryContainer,
-                        child: Text(
-                          '${index + 1}',
-                          style: TextStyle(
-                            color: theme.colorScheme.onPrimaryContainer,
-                            fontWeight: FontWeight.bold,
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: DesignSpacing.sm),
+                    padding: const EdgeInsets.all(DesignSpacing.md),
+                    decoration: BoxDecoration(
+                      color: surfaceColor,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.sm,
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: DesignColors.highlightTeal.withOpacity(0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: Text(
+                              '${index + 1}',
+                              style: GoogleFonts.poppins(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: DesignColors.highlightTeal,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                      title: Text(
-                        medication.key,
-                        style: const TextStyle(fontWeight: FontWeight.w500),
-                      ),
-                      trailing: Text(
-                        '\$${medication.value.toStringAsFixed(2)}',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.primary,
+                        const SizedBox(width: DesignSpacing.md),
+                        Expanded(
+                          child: Text(
+                            medication.key,
+                            style: GoogleFonts.inter(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: primaryText,
+                            ),
+                          ),
                         ),
-                      ),
+                        Text(
+                          '\$${medication.value.toStringAsFixed(2)}',
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: primaryText,
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 }),
@@ -462,9 +529,84 @@ class _StatisticsTab extends ConsumerWidget {
           ),
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(
+        child: CircularProgressIndicator(color: DesignColors.highlightPink),
+      ),
       error: (error, _) => Center(
-        child: Text('Error: $error'),
+        child: Text(
+          'Error: $error',
+          style: GoogleFonts.inter(color: DesignColors.highlightCoral),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatCard({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required double amount,
+    required String subtitle,
+    required Color surfaceColor,
+    required Color primaryText,
+    required Color secondaryText,
+    required bool isDark,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(DesignSpacing.lg),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: iconColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              icon,
+              color: iconColor,
+              size: 28,
+            ),
+          ),
+          const SizedBox(width: DesignSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: secondaryText,
+                  ),
+                ),
+                const SizedBox(height: DesignSpacing.xs),
+                Text(
+                  '\$${amount.toStringAsFixed(2)}',
+                  style: GoogleFonts.poppins(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w700,
+                    color: iconColor,
+                  ),
+                ),
+                const SizedBox(height: DesignSpacing.xs),
+                Text(
+                  subtitle,
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: secondaryText,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -483,6 +625,18 @@ class _MedicationInventoryCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final successColor = isDark ? DesignColors.dSuccess : DesignColors.lSuccess;
+    final warningColor =
+        isDark ? DesignColors.dWarning : DesignColors.lWarning;
+    final dangerColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
 
     final stockStatus = ref.watch(stockStatusProvider(medication.id));
     final daysUntilEmpty = ref.watch(daysUntilEmptyProvider(medication.id));
@@ -499,150 +653,182 @@ class _MedicationInventoryCard extends ConsumerWidget {
 
     switch (stockStatus) {
       case StockStatus.sufficient:
-        statusColor = Colors.green;
+        statusColor = successColor;
         statusText = l10n.sufficient;
         statusIcon = Icons.check_circle;
         break;
       case StockStatus.low:
-        statusColor = Colors.orange;
+        statusColor = warningColor;
         statusText = l10n.lowStock;
         statusIcon = Icons.warning;
         break;
       case StockStatus.critical:
-        statusColor = Colors.red;
+        statusColor = dangerColor;
         statusText = l10n.critical;
         statusIcon = Icons.error;
         break;
       case StockStatus.notTracked:
-        statusColor = Colors.grey;
+        statusColor = secondaryText;
         statusText = l10n.notTrackedEnum;
         statusIcon = Icons.help_outline;
         break;
     }
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: InkWell(
-        onTap: () {
-          context.push('/purchase-history/${medication.id}');
-        },
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  if (showWarning)
-                    const Icon(
-                      Icons.warning_amber_rounded,
-                      color: Colors.red,
-                      size: 24,
-                    ),
-                  if (showWarning) const SizedBox(width: 8),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          medication.medicationName,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          medication.dosage,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: statusColor.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: statusColor),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          statusIcon,
-                          size: 16,
-                          color: statusColor,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          statusText,
-                          style: TextStyle(
-                            color: statusColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (medication.stockQuantity != null) ...[
+    return Container(
+      margin: const EdgeInsets.only(bottom: DesignSpacing.md),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            context.push('/purchase-history/${medication.id}');
+          },
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(DesignSpacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    if (showWarning)
+                      Icon(
+                        Icons.warning_amber_rounded,
+                        color: dangerColor,
+                        size: 24,
+                      ),
+                    if (showWarning) const SizedBox(width: DesignSpacing.sm),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           Text(
-                            l10n.pillsLeft(
-                              medication.stockQuantity.toString(),
-                              l10n.translateStockUnit(medication.stockUnit),
+                            medication.medicationName,
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: primaryText,
                             ),
-                            style: theme.textTheme.bodyMedium,
                           ),
-                          if (daysUntilEmpty != null)
+                          Text(
+                            medication.dosage,
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              color: secondaryText,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: DesignSpacing.sm,
+                        vertical: DesignSpacing.xs,
+                      ),
+                      decoration: BoxDecoration(
+                        color: statusColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: statusColor, width: 1.5),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            statusIcon,
+                            size: 16,
+                            color: statusColor,
+                          ),
+                          const SizedBox(width: DesignSpacing.xs),
+                          Text(
+                            statusText,
+                            style: GoogleFonts.inter(
+                              color: statusColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: DesignSpacing.md),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (medication.stockQuantity != null) ...[
                             Text(
-                              '$daysUntilEmpty ${l10n.daysUntilEmpty}',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: Colors.grey[600],
+                              l10n.pillsLeft(
+                                medication.stockQuantity.toString(),
+                                l10n.translateStockUnit(medication.stockUnit),
+                              ),
+                              style: GoogleFonts.inter(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: primaryText,
                               ),
                             ),
-                        ] else
-                          Text(
-                            l10n.stockNotTracked,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: Colors.grey[600],
+                            if (daysUntilEmpty != null)
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(top: DesignSpacing.xs),
+                                child: Text(
+                                  '$daysUntilEmpty ${l10n.daysUntilEmpty}',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 12,
+                                    color: secondaryText,
+                                  ),
+                                ),
+                              ),
+                          ] else
+                            Text(
+                              l10n.stockNotTracked,
+                              style: GoogleFonts.inter(
+                                fontSize: 14,
+                                color: secondaryText,
+                              ),
                             ),
-                          ),
-                        if (lastPurchase != null)
-                          Text(
-                            '${l10n.lastPurchase}: ${DateFormat('MMM dd, yyyy').format(lastPurchase.purchaseDate)}',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: Colors.grey[600],
+                          if (lastPurchase != null)
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(top: DesignSpacing.xs),
+                              child: Text(
+                                '${l10n.lastPurchase}: ${DateFormat('MMM dd, yyyy').format(lastPurchase.purchaseDate)}',
+                                style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  color: secondaryText,
+                                ),
+                              ),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  IconButton(
-                    onPressed: () => _showRefillDialog(context, ref),
-                    icon: const Icon(Icons.add_shopping_cart),
-                    tooltip: l10n.refill,
-                    style: IconButton.styleFrom(
-                      backgroundColor: theme.colorScheme.primaryContainer,
-                      foregroundColor: theme.colorScheme.onPrimaryContainer,
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: DesignColors.highlightTeal.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        onPressed: () => _showRefillDialog(context, ref),
+                        icon: const Icon(Icons.add_shopping_cart),
+                        tooltip: l10n.refill,
+                        iconSize: 22,
+                        color: DesignColors.highlightTeal,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
