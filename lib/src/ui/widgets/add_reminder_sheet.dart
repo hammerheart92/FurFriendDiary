@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:fur_friend_diary/theme/tokens/colors.dart';
+import 'package:fur_friend_diary/theme/tokens/spacing.dart';
+import 'package:fur_friend_diary/theme/tokens/shadows.dart';
 import '../../domain/models/reminder.dart';
 import '../../presentation/providers/reminder_provider.dart';
 import '../../presentation/providers/pet_profile_provider.dart';
@@ -61,139 +66,419 @@ class _AddReminderSheetState extends ConsumerState<AddReminderSheet> {
     super.dispose();
   }
 
+  Color _getReminderTypeColor(ReminderType type, bool isDark) {
+    switch (type) {
+      case ReminderType.medication:
+        return DesignColors.highlightPink;
+      case ReminderType.appointment:
+        return DesignColors.highlightYellow;
+      case ReminderType.feeding:
+        return isDark ? DesignColors.dSuccess : DesignColors.lSuccess;
+      case ReminderType.walk:
+        return DesignColors.highlightTeal;
+    }
+  }
+
+  IconData _getReminderTypeIcon(ReminderType type) {
+    switch (type) {
+      case ReminderType.medication:
+        return Icons.medication;
+      case ReminderType.appointment:
+        return Icons.event;
+      case ReminderType.feeding:
+        return Icons.restaurant;
+      case ReminderType.walk:
+        return Icons.pets;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final backgroundColor =
+        isDark ? DesignColors.dBackground : DesignColors.lBackground;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        boxShadow: isDark ? DesignShadows.darkLg : DesignShadows.lg,
       ),
-      child: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  l10n.addReminder,
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                const SizedBox(height: 16),
-
-                // Reminder Type
-                DropdownButtonFormField<ReminderType>(
-                  initialValue: _selectedType,
-                  decoration: InputDecoration(
-                    labelText: l10n.reminderType,
-                    border: const OutlineInputBorder(),
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(DesignSpacing.lg),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Drag handle
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: DesignSpacing.md),
+                      decoration: BoxDecoration(
+                        color: secondaryText.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
                   ),
-                  items: ReminderType.values.map((type) {
-                    return DropdownMenuItem(
-                      value: type,
-                      child: Text(_getReminderTypeLabel(type, l10n)),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() => _selectedType = value);
-                    }
-                  },
-                ),
-                const SizedBox(height: 16),
 
-                // Title
-                TextFormField(
-                  controller: _titleController,
-                  decoration: InputDecoration(
-                    labelText: l10n.reminderTitle,
-                    border: const OutlineInputBorder(),
+                  // Header with icon
+                  Row(
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: DesignColors.highlightYellow.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.notifications_active,
+                          color: DesignColors.highlightYellow,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: DesignSpacing.md),
+                      Text(
+                        l10n.addReminder,
+                        style: GoogleFonts.poppins(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: primaryText,
+                        ),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        icon: Icon(Icons.close, color: secondaryText),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ],
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return l10n.pleaseEnterTitle;
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
+                  const SizedBox(height: DesignSpacing.lg),
 
-                // Description (optional)
-                TextFormField(
-                  controller: _descriptionController,
-                  decoration: InputDecoration(
-                    labelText: l10n.reminderDescription,
-                    border: const OutlineInputBorder(),
+                  // Reminder Type Dropdown
+                  DropdownButtonFormField<ReminderType>(
+                    initialValue: _selectedType,
+                    dropdownColor: surfaceColor,
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      color: primaryText,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: l10n.reminderType,
+                      labelStyle: GoogleFonts.inter(color: secondaryText),
+                      prefixIcon: Icon(
+                        _getReminderTypeIcon(_selectedType),
+                        color: _getReminderTypeColor(_selectedType, isDark),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: DesignColors.highlightYellow,
+                          width: 2,
+                        ),
+                      ),
+                      filled: true,
+                      fillColor: backgroundColor,
+                    ),
+                    items: ReminderType.values.map((type) {
+                      return DropdownMenuItem(
+                        value: type,
+                        child: Row(
+                          children: [
+                            Icon(
+                              _getReminderTypeIcon(type),
+                              size: 20,
+                              color: _getReminderTypeColor(type, isDark),
+                            ),
+                            const SizedBox(width: DesignSpacing.sm),
+                            Text(_getReminderTypeLabel(type, l10n)),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() => _selectedType = value);
+                      }
+                    },
                   ),
-                  maxLines: 2,
-                ),
-                const SizedBox(height: 16),
+                  const SizedBox(height: DesignSpacing.md),
 
-                // Date Picker
-                ListTile(
-                  title: Text(l10n.date),
-                  subtitle: Text(
-                    '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
+                  // Title Field
+                  TextFormField(
+                    controller: _titleController,
+                    style: GoogleFonts.inter(color: primaryText),
+                    decoration: InputDecoration(
+                      labelText: '${l10n.reminderTitle} *',
+                      labelStyle: GoogleFonts.inter(color: secondaryText),
+                      hintText: 'Enter reminder title',
+                      hintStyle:
+                          GoogleFonts.inter(color: secondaryText.withOpacity(0.5)),
+                      prefixIcon: Icon(Icons.title, color: secondaryText),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: DesignColors.highlightYellow,
+                          width: 2,
+                        ),
+                      ),
+                      filled: true,
+                      fillColor: backgroundColor,
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return l10n.pleaseEnterTitle;
+                      }
+                      return null;
+                    },
                   ),
-                  trailing: const Icon(Icons.calendar_today),
-                  onTap: _pickDate,
-                ),
+                  const SizedBox(height: DesignSpacing.md),
 
-                // Time Picker
-                ListTile(
-                  title: Text(l10n.timeLabel),
-                  subtitle: Text(_selectedTime.format(context)),
-                  trailing: const Icon(Icons.access_time),
-                  onTap: _pickTime,
-                ),
-                const SizedBox(height: 16),
-
-                // Frequency
-                DropdownButtonFormField<ReminderFrequency>(
-                  initialValue: _selectedFrequency,
-                  decoration: InputDecoration(
-                    labelText: l10n.frequency,
-                    border: const OutlineInputBorder(),
+                  // Description Field (optional)
+                  TextFormField(
+                    controller: _descriptionController,
+                    style: GoogleFonts.inter(color: primaryText),
+                    decoration: InputDecoration(
+                      labelText: l10n.reminderDescription,
+                      labelStyle: GoogleFonts.inter(color: secondaryText),
+                      hintText: 'Optional notes',
+                      hintStyle:
+                          GoogleFonts.inter(color: secondaryText.withOpacity(0.5)),
+                      prefixIcon: Icon(Icons.notes, color: secondaryText),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: DesignColors.highlightYellow,
+                          width: 2,
+                        ),
+                      ),
+                      filled: true,
+                      fillColor: backgroundColor,
+                    ),
+                    maxLines: 2,
                   ),
-                  items: ReminderFrequency.values.map((freq) {
-                    return DropdownMenuItem(
-                      value: freq,
-                      child: Text(_getFrequencyLabel(freq, l10n)),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() => _selectedFrequency = value);
-                    }
-                  },
-                ),
-                const SizedBox(height: 16),
+                  const SizedBox(height: DesignSpacing.md),
 
-                // Active toggle
-                SwitchListTile(
-                  title: Text(l10n.active),
-                  value: _isActive,
-                  onChanged: (value) {
-                    setState(() => _isActive = value);
-                  },
-                ),
-                const SizedBox(height: 24),
+                  // Date and Time Row
+                  Row(
+                    children: [
+                      // Date Picker
+                      Expanded(
+                        child: InkWell(
+                          onTap: _pickDate,
+                          borderRadius: BorderRadius.circular(12),
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              labelText: l10n.date,
+                              labelStyle: GoogleFonts.inter(color: secondaryText),
+                              prefixIcon:
+                                  Icon(Icons.calendar_today, color: secondaryText),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              filled: true,
+                              fillColor: backgroundColor,
+                            ),
+                            child: Text(
+                              DateFormat.yMMMd().format(_selectedDate),
+                              style: GoogleFonts.inter(
+                                fontSize: 14,
+                                color: primaryText,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: DesignSpacing.md),
+                      // Time Picker
+                      Expanded(
+                        child: InkWell(
+                          onTap: _pickTime,
+                          borderRadius: BorderRadius.circular(12),
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              labelText: l10n.timeLabel,
+                              labelStyle: GoogleFonts.inter(color: secondaryText),
+                              prefixIcon:
+                                  Icon(Icons.access_time, color: secondaryText),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              filled: true,
+                              fillColor: backgroundColor,
+                            ),
+                            child: Text(
+                              _selectedTime.format(context),
+                              style: GoogleFonts.inter(
+                                fontSize: 14,
+                                color: primaryText,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: DesignSpacing.md),
 
-                // Save button
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _saveReminder,
-                  child: _isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text(l10n.save),
-                ),
-              ],
+                  // Frequency Dropdown
+                  DropdownButtonFormField<ReminderFrequency>(
+                    initialValue: _selectedFrequency,
+                    dropdownColor: surfaceColor,
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      color: primaryText,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: l10n.frequency,
+                      labelStyle: GoogleFonts.inter(color: secondaryText),
+                      prefixIcon: Icon(Icons.repeat, color: secondaryText),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: DesignColors.highlightYellow,
+                          width: 2,
+                        ),
+                      ),
+                      filled: true,
+                      fillColor: backgroundColor,
+                    ),
+                    items: ReminderFrequency.values.map((freq) {
+                      return DropdownMenuItem(
+                        value: freq,
+                        child: Text(_getFrequencyLabel(freq, l10n)),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() => _selectedFrequency = value);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: DesignSpacing.md),
+
+                  // Active toggle
+                  Container(
+                    decoration: BoxDecoration(
+                      color: backgroundColor,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: secondaryText.withOpacity(0.3),
+                      ),
+                    ),
+                    child: SwitchListTile(
+                      title: Text(
+                        l10n.active,
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          color: primaryText,
+                        ),
+                      ),
+                      subtitle: Text(
+                        _isActive
+                            ? l10n.reminderWillFire
+                            : l10n.reminderIsPaused,
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          color: secondaryText,
+                        ),
+                      ),
+                      value: _isActive,
+                      activeTrackColor: DesignColors.highlightYellow.withOpacity(0.5),
+                      activeColor: DesignColors.highlightYellow,
+                      inactiveThumbColor: secondaryText.withOpacity(0.5),
+                      onChanged: (value) {
+                        setState(() => _isActive = value);
+                      },
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: DesignSpacing.lg),
+
+                  // Action Buttons
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed:
+                            _isLoading ? null : () => Navigator.of(context).pop(),
+                        child: Text(
+                          l10n.cancel,
+                          style: GoogleFonts.inter(
+                            fontWeight: FontWeight.w500,
+                            color: secondaryText,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: DesignSpacing.md),
+                      FilledButton.icon(
+                        onPressed: _isLoading ? null : _saveReminder,
+                        style: FilledButton.styleFrom(
+                          backgroundColor: DesignColors.highlightYellow,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: DesignSpacing.lg,
+                            vertical: DesignSpacing.sm,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        icon: _isLoading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Icon(Icons.check),
+                        label: Text(
+                          l10n.save,
+                          style: GoogleFonts.inter(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  // Extra padding at bottom for safe area
+                  SizedBox(height: MediaQuery.of(context).padding.bottom),
+                ],
+              ),
             ),
           ),
         ),
@@ -202,11 +487,27 @@ class _AddReminderSheetState extends ConsumerState<AddReminderSheet> {
   }
 
   Future<void> _pickDate() async {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     final date = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
+      builder: (context, child) {
+        return Theme(
+          data: theme.copyWith(
+            colorScheme: theme.colorScheme.copyWith(
+              primary: DesignColors.highlightYellow,
+              onPrimary: Colors.white,
+              surface: isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces,
+              onSurface: isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (date != null) {
@@ -215,9 +516,25 @@ class _AddReminderSheetState extends ConsumerState<AddReminderSheet> {
   }
 
   Future<void> _pickTime() async {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     final time = await showTimePicker(
       context: context,
       initialTime: _selectedTime,
+      builder: (context, child) {
+        return Theme(
+          data: theme.copyWith(
+            colorScheme: theme.colorScheme.copyWith(
+              primary: DesignColors.highlightYellow,
+              onPrimary: Colors.white,
+              surface: isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces,
+              onSurface: isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (time != null) {
@@ -228,6 +545,10 @@ class _AddReminderSheetState extends ConsumerState<AddReminderSheet> {
   Future<void> _saveReminder() async {
     if (!_formKey.currentState!.validate()) return;
 
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final dangerColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
+
     setState(() => _isLoading = true);
 
     try {
@@ -236,9 +557,12 @@ class _AddReminderSheetState extends ConsumerState<AddReminderSheet> {
         if (mounted) {
           setState(() => _isLoading = false);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('No pet selected'),
-              backgroundColor: Colors.red,
+            SnackBar(
+              content: Text(
+                'No pet selected',
+                style: GoogleFonts.inter(color: Colors.white),
+              ),
+              backgroundColor: dangerColor,
             ),
           );
         }
@@ -276,8 +600,11 @@ class _AddReminderSheetState extends ConsumerState<AddReminderSheet> {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Colors.red,
+            content: Text(
+              'Error: $e',
+              style: GoogleFonts.inter(color: Colors.white),
+            ),
+            backgroundColor: dangerColor,
           ),
         );
       }

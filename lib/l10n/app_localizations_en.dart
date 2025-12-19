@@ -3499,4 +3499,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get periodAll => 'All';
+
+  @override
+  String get reminderWillFire => 'Reminder will fire at scheduled time';
+
+  @override
+  String get reminderIsPaused => 'Reminder is paused';
 }

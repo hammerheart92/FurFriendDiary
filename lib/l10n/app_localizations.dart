@@ -6595,6 +6595,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All'**
   String get periodAll;
+
+  /// Message shown when reminder active toggle is ON
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder will fire at scheduled time'**
+  String get reminderWillFire;
+
+  /// Message shown when reminder active toggle is OFF
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder is paused'**
+  String get reminderIsPaused;
 }
 
 class _AppLocalizationsDelegate

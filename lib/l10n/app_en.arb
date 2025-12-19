@@ -2320,5 +2320,14 @@
   "periodAll": "All",
   "@periodAll": {
     "description": "Period selector option for all time"
+  },
+
+  "reminderWillFire": "Reminder will fire at scheduled time",
+  "@reminderWillFire": {
+    "description": "Message shown when reminder active toggle is ON"
+  },
+  "reminderIsPaused": "Reminder is paused",
+  "@reminderIsPaused": {
+    "description": "Message shown when reminder active toggle is OFF"
   }
 }

@@ -3556,4 +3556,10 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get periodAll => 'Toate';
+
+  @override
+  String get reminderWillFire => 'Memento-ul va fi activat la ora programată';
+
+  @override
+  String get reminderIsPaused => 'Memento-ul este în pauză';
 }

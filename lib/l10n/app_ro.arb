@@ -1838,5 +1838,14 @@
   "periodAll": "Toate",
   "@periodAll": {
     "description": "Opțiune selector perioadă pentru toate"
+  },
+
+  "reminderWillFire": "Memento-ul va fi activat la ora programată",
+  "@reminderWillFire": {
+    "description": "Mesaj afișat când toggle-ul activ al memento-ului este pornit"
+  },
+  "reminderIsPaused": "Memento-ul este în pauză",
+  "@reminderIsPaused": {
+    "description": "Mesaj afișat când toggle-ul activ al memento-ului este oprit"
   }
 }
