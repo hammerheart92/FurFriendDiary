@@ -203,10 +203,50 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                   .read(pdfConsentServiceProvider.notifier)
                                   .grantConsent();
                               if (context.mounted) {
+                                final isDarkMode =
+                                    Theme.of(context).brightness ==
+                                        Brightness.dark;
+                                final surfaceBg = isDarkMode
+                                    ? DesignColors.dSurfaces
+                                    : DesignColors.lSurfaces;
+                                final textColor = isDarkMode
+                                    ? DesignColors.dPrimaryText
+                                    : DesignColors.lPrimaryText;
+                                final successColor = isDarkMode
+                                    ? DesignColors.dSuccess
+                                    : DesignColors.lSuccess;
+
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                      content:
-                                          Text(l10n.consentGrantedMessage)),
+                                    content: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.check_circle,
+                                          color: successColor,
+                                          size: 20,
+                                        ),
+                                        const SizedBox(width: DesignSpacing.sm),
+                                        Expanded(
+                                          child: Text(
+                                            l10n.consentGrantedMessage,
+                                            style: GoogleFonts.inter(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              color: textColor,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    backgroundColor: surfaceBg,
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    margin:
+                                        const EdgeInsets.all(DesignSpacing.md),
+                                    duration: const Duration(seconds: 2),
+                                  ),
                                 );
                               }
                             } else {
@@ -932,19 +972,66 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   void _showRevokeConsentDialog(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n.revokeConsentTitle),
-        content: Text(l10n.revokeConsentMessage),
+        backgroundColor: surfaceColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: Text(
+          l10n.revokeConsentTitle,
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: primaryText,
+          ),
+        ),
+        content: Text(
+          l10n.revokeConsentMessage,
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            color: secondaryText,
+            height: 1.5,
+          ),
+        ),
         actions: [
           TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: secondaryText,
+              padding: const EdgeInsets.symmetric(
+                horizontal: DesignSpacing.lg,
+                vertical: DesignSpacing.sm,
+              ),
+            ),
             onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel),
+            child: Text(
+              l10n.cancel,
+              style: GoogleFonts.inter(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: DesignColors.highlightCoral,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(
+                horizontal: DesignSpacing.lg,
+                vertical: DesignSpacing.sm,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             onPressed: () async {
               Navigator.pop(context);
@@ -955,12 +1042,55 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   .revokeConsent();
 
               if (context.mounted) {
+                final isDarkMode =
+                    Theme.of(context).brightness == Brightness.dark;
+                final surfaceBg = isDarkMode
+                    ? DesignColors.dSurfaces
+                    : DesignColors.lSurfaces;
+                final textColor = isDarkMode
+                    ? DesignColors.dPrimaryText
+                    : DesignColors.lPrimaryText;
+
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.consentRevokedMessage)),
+                  SnackBar(
+                    content: Row(
+                      children: [
+                        const Icon(
+                          Icons.info,
+                          color: DesignColors.highlightCoral,
+                          size: 20,
+                        ),
+                        const SizedBox(width: DesignSpacing.sm),
+                        Expanded(
+                          child: Text(
+                            l10n.consentRevokedMessage,
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: textColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    backgroundColor: surfaceBg,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    margin: const EdgeInsets.all(DesignSpacing.md),
+                    duration: const Duration(seconds: 2),
+                  ),
                 );
               }
             },
-            child: Text(l10n.revoke),
+            child: Text(
+              l10n.revoke,
+              style: GoogleFonts.inter(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ],
       ),
