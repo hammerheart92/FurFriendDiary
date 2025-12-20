@@ -865,29 +865,122 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   void _showClearCacheDialog(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n.clearCache),
-        content: Text(l10n.clearCacheConfirm),
+        backgroundColor: surfaceColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: Text(
+          l10n.clearCache,
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: primaryText,
+          ),
+        ),
+        content: Text(
+          l10n.clearCacheConfirm,
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            color: secondaryText,
+            height: 1.5,
+          ),
+        ),
         actions: [
           TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: secondaryText,
+              padding: const EdgeInsets.symmetric(
+                horizontal: DesignSpacing.lg,
+                vertical: DesignSpacing.sm,
+              ),
+            ),
             onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel),
+            child: Text(
+              l10n.cancel,
+              style: GoogleFonts.inter(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
-          FilledButton(
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: DesignColors.highlightTeal,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(
+                horizontal: DesignSpacing.lg,
+                vertical: DesignSpacing.sm,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
             onPressed: () async {
               Navigator.pop(context);
               // Simulate cache clearing
               await Future.delayed(const Duration(milliseconds: 500));
               if (context.mounted) {
                 final l10n = AppLocalizations.of(context);
+                final isDarkMode =
+                    Theme.of(context).brightness == Brightness.dark;
+                final surfaceBg = isDarkMode
+                    ? DesignColors.dSurfaces
+                    : DesignColors.lSurfaces;
+                final textColor = isDarkMode
+                    ? DesignColors.dPrimaryText
+                    : DesignColors.lPrimaryText;
+
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.cacheCleared)),
+                  SnackBar(
+                    content: Row(
+                      children: [
+                        const Icon(
+                          Icons.check_circle,
+                          color: DesignColors.highlightTeal,
+                          size: 20,
+                        ),
+                        const SizedBox(width: DesignSpacing.sm),
+                        Expanded(
+                          child: Text(
+                            l10n.cacheCleared,
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: textColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    backgroundColor: surfaceBg,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    margin: const EdgeInsets.all(DesignSpacing.md),
+                    duration: const Duration(seconds: 2),
+                  ),
                 );
               }
             },
-            child: Text(l10n.clear),
+            child: Text(
+              l10n.clear,
+              style: GoogleFonts.inter(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ],
       ),
