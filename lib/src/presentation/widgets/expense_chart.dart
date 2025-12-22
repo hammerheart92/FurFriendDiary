@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
+import 'package:google_fonts/google_fonts.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
+import 'package:fur_friend_diary/theme/tokens/colors.dart';
+import 'package:fur_friend_diary/theme/tokens/spacing.dart';
+import 'package:fur_friend_diary/theme/tokens/shadows.dart';
 
 class ExpenseChart extends StatefulWidget {
   final Map<String, double> expensesByCategory;
@@ -61,90 +65,105 @@ class _ExpenseChartState extends State<ExpenseChart>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
     final totalExpense =
         widget.expensesByCategory.values.fold(0.0, (a, b) => a + b);
 
     if (totalExpense == 0) {
-      return Card(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Center(
-            child: Text(
-              'No expenses recorded',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-              ),
+      return Container(
+        padding: EdgeInsets.all(DesignSpacing.lg),
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.sm,
+        ),
+        child: Center(
+          child: Text(
+            'No expenses recorded',
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              color: secondaryText,
             ),
           ),
         ),
       );
     }
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.expensesByCategory,
-              style: theme.textTheme.titleMedium,
+    return Container(
+      padding: EdgeInsets.all(DesignSpacing.md),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.sm,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            l10n.expensesByCategory,
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: primaryText,
             ),
-            const SizedBox(height: 8),
-            Text(
-              '${l10n.total}: ${widget.currencySymbol}${totalExpense.toStringAsFixed(2)}',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: theme.colorScheme.primary,
-              ),
+          ),
+          SizedBox(height: DesignSpacing.sm),
+          Text(
+            '${l10n.total}: ${widget.currencySymbol}${totalExpense.toStringAsFixed(2)}',
+            style: GoogleFonts.poppins(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: DesignColors.highlightTeal,
             ),
-            const SizedBox(height: 24),
-            SizedBox(
-              height: 200,
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: AnimatedBuilder(
-                      animation: _animation,
-                      builder: (context, child) {
-                        return PieChart(
-                          PieChartData(
-                            pieTouchData: PieTouchData(
-                              touchCallback:
-                                  (FlTouchEvent event, pieTouchResponse) {
-                                setState(() {
-                                  if (!event.isInterestedForInteractions ||
-                                      pieTouchResponse == null ||
-                                      pieTouchResponse.touchedSection == null) {
-                                    _touchedIndex = -1;
-                                    return;
-                                  }
-                                  _touchedIndex = pieTouchResponse
-                                      .touchedSection!.touchedSectionIndex;
-                                });
-                              },
-                            ),
-                            borderData: FlBorderData(show: false),
-                            sectionsSpace: 2,
-                            centerSpaceRadius: 40,
-                            sections: _buildPieChartSections(totalExpense),
+          ),
+          SizedBox(height: DesignSpacing.lg),
+          SizedBox(
+            height: 200,
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: AnimatedBuilder(
+                    animation: _animation,
+                    builder: (context, child) {
+                      return PieChart(
+                        PieChartData(
+                          pieTouchData: PieTouchData(
+                            touchCallback:
+                                (FlTouchEvent event, pieTouchResponse) {
+                              setState(() {
+                                if (!event.isInterestedForInteractions ||
+                                    pieTouchResponse == null ||
+                                    pieTouchResponse.touchedSection == null) {
+                                  _touchedIndex = -1;
+                                  return;
+                                }
+                                _touchedIndex = pieTouchResponse
+                                    .touchedSection!.touchedSectionIndex;
+                              });
+                            },
                           ),
-                        );
-                      },
-                    ),
+                          borderData: FlBorderData(show: false),
+                          sectionsSpace: 2,
+                          centerSpaceRadius: 40,
+                          sections: _buildPieChartSections(totalExpense),
+                        ),
+                      );
+                    },
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: _buildLegend(theme, totalExpense),
-                  ),
-                ],
-              ),
+                ),
+                SizedBox(width: DesignSpacing.md),
+                Expanded(
+                  child: _buildLegend(isDark, totalExpense),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -178,7 +197,7 @@ class _ExpenseChartState extends State<ExpenseChart>
                   borderRadius: BorderRadius.circular(8),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
+                      color: Colors.black.withOpacity(0.1),
                       blurRadius: 4,
                     ),
                   ],
@@ -197,10 +216,12 @@ class _ExpenseChartState extends State<ExpenseChart>
     });
   }
 
-  Widget _buildLegend(ThemeData theme, double totalExpense) {
+  Widget _buildLegend(bool isDark, double totalExpense) {
     final categories = widget.expensesByCategory.entries.toList();
     final colors = _getCategoryColors();
     final l10n = AppLocalizations.of(context)!;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -210,7 +231,7 @@ class _ExpenseChartState extends State<ExpenseChart>
         final percentage = (entry.value / totalExpense) * 100;
 
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4),
+          padding: EdgeInsets.symmetric(vertical: DesignSpacing.xs),
           child: Row(
             children: [
               Container(
@@ -221,24 +242,25 @@ class _ExpenseChartState extends State<ExpenseChart>
                   shape: BoxShape.circle,
                 ),
               ),
-              const SizedBox(width: 6),
+              SizedBox(width: DesignSpacing.xs + 2),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       _translateCategory(entry.key, l10n),
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
+                        color: primaryText,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
                       '${percentage.toStringAsFixed(1)}%',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color:
-                            theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                      style: GoogleFonts.inter(
                         fontSize: 10,
+                        color: secondaryText,
                       ),
                     ),
                   ],
@@ -253,12 +275,12 @@ class _ExpenseChartState extends State<ExpenseChart>
 
   List<Color> _getCategoryColors() {
     return [
-      const Color(0xFF6366F1), // Indigo - Medications
-      const Color(0xFFEC4899), // Pink - Appointments
-      const Color(0xFFF59E0B), // Amber - Food
-      const Color(0xFF10B981), // Green - Other
-      const Color(0xFF8B5CF6), // Purple
-      const Color(0xFF06B6D4), // Cyan
+      DesignColors.highlightPurple, // Medications
+      DesignColors.highlightPink, // Appointments
+      DesignColors.highlightYellow, // Food
+      DesignColors.highlightTeal, // Other
+      DesignColors.highlightBlue,
+      DesignColors.highlightCoral,
     ];
   }
 }
@@ -304,19 +326,26 @@ class _MonthlyExpenseChartState extends State<MonthlyExpenseChart>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
 
     if (widget.monthlyExpenses.isEmpty) {
-      return Card(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Center(
-            child: Text(
-              'No monthly data available',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-              ),
+      return Container(
+        padding: EdgeInsets.all(DesignSpacing.lg),
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.sm,
+        ),
+        child: Center(
+          child: Text(
+            'No monthly data available',
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              color: secondaryText,
             ),
           ),
         ),
@@ -327,137 +356,154 @@ class _MonthlyExpenseChartState extends State<MonthlyExpenseChart>
     final avgExpense = widget.monthlyExpenses.values.reduce((a, b) => a + b) /
         widget.monthlyExpenses.length;
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.monthlyExpenses,
-              style: theme.textTheme.titleMedium,
+    return Container(
+      padding: EdgeInsets.all(DesignSpacing.md),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.sm,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            l10n.monthlyExpenses,
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: primaryText,
             ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                _buildStatChip(
-                  context,
-                  l10n.average,
-                  '${widget.currencySymbol}${avgExpense.toStringAsFixed(2)}',
-                  Colors.blue,
-                ),
-                const SizedBox(width: 8),
-                _buildStatChip(
-                  context,
-                  l10n.highest,
-                  '${widget.currencySymbol}${maxExpense.toStringAsFixed(2)}',
-                  Colors.red,
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              height: 200,
-              child: AnimatedBuilder(
-                animation: _animation,
-                builder: (context, child) {
-                  return BarChart(
-                    BarChartData(
-                      alignment: BarChartAlignment.spaceAround,
-                      maxY: maxExpense * 1.2,
-                      barTouchData: BarTouchData(
-                        enabled: true,
-                        touchTooltipData: BarTouchTooltipData(
-                          getTooltipColor: (group) =>
-                              theme.colorScheme.inverseSurface,
-                          tooltipRoundedRadius: 8,
-                          tooltipPadding: const EdgeInsets.all(8),
-                          getTooltipItem: (group, groupIndex, rod, rodIndex) {
+          ),
+          SizedBox(height: DesignSpacing.sm),
+          Row(
+            children: [
+              _buildStatChip(
+                context,
+                l10n.average,
+                '${widget.currencySymbol}${avgExpense.toStringAsFixed(2)}',
+                DesignColors.highlightBlue,
+              ),
+              SizedBox(width: DesignSpacing.sm),
+              _buildStatChip(
+                context,
+                l10n.highest,
+                '${widget.currencySymbol}${maxExpense.toStringAsFixed(2)}',
+                DesignColors.highlightCoral,
+              ),
+            ],
+          ),
+          SizedBox(height: DesignSpacing.lg),
+          SizedBox(
+            height: 200,
+            child: AnimatedBuilder(
+              animation: _animation,
+              builder: (context, child) {
+                return BarChart(
+                  BarChartData(
+                    alignment: BarChartAlignment.spaceAround,
+                    maxY: maxExpense * 1.2,
+                    barTouchData: BarTouchData(
+                      enabled: true,
+                      touchTooltipData: BarTouchTooltipData(
+                        getTooltipColor: (group) => isDark
+                            ? DesignColors.lSurfaces
+                            : DesignColors.dSurfaces,
+                        tooltipRoundedRadius: 8,
+                        tooltipPadding: const EdgeInsets.all(8),
+                        getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                          final monthKey = widget.monthlyExpenses.keys
+                              .elementAt(groupIndex);
+                          return BarTooltipItem(
+                            '$monthKey\n${widget.currencySymbol}${rod.toY.toStringAsFixed(2)}',
+                            GoogleFonts.inter(
+                              color: isDark
+                                  ? DesignColors.lPrimaryText
+                                  : DesignColors.dPrimaryText,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    titlesData: FlTitlesData(
+                      show: true,
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          reservedSize: 40,
+                          getTitlesWidget: (value, meta) {
+                            if (value.toInt() >=
+                                widget.monthlyExpenses.length) {
+                              return const Text('');
+                            }
                             final monthKey = widget.monthlyExpenses.keys
-                                .elementAt(groupIndex);
-                            return BarTooltipItem(
-                              '$monthKey\n${widget.currencySymbol}${rod.toY.toStringAsFixed(2)}',
-                              TextStyle(
-                                color: theme.colorScheme.onInverseSurface,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
+                                .elementAt(value.toInt());
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text(
+                                monthKey,
+                                style: GoogleFonts.inter(
+                                  fontSize: 10,
+                                  color: secondaryText,
+                                ),
                               ),
                             );
                           },
                         ),
                       ),
-                      titlesData: FlTitlesData(
-                        show: true,
-                        bottomTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            reservedSize: 40,
-                            getTitlesWidget: (value, meta) {
-                              if (value.toInt() >=
-                                  widget.monthlyExpenses.length) {
-                                return const Text('');
-                              }
-                              final monthKey = widget.monthlyExpenses.keys
-                                  .elementAt(value.toInt());
-                              return Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: Text(
-                                  monthKey,
-                                  style: const TextStyle(fontSize: 10),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        leftTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            reservedSize: 50,
-                            getTitlesWidget: (value, meta) {
-                              return Text(
-                                widget.currencySymbol +
-                                    value.toStringAsFixed(0),
-                                style: const TextStyle(fontSize: 10),
-                              );
-                            },
-                          ),
-                        ),
-                        topTitles: const AxisTitles(
-                          sideTitles: SideTitles(showTitles: false),
-                        ),
-                        rightTitles: const AxisTitles(
-                          sideTitles: SideTitles(showTitles: false),
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          reservedSize: 50,
+                          getTitlesWidget: (value, meta) {
+                            return Text(
+                              widget.currencySymbol +
+                                  value.toStringAsFixed(0),
+                              style: GoogleFonts.inter(
+                                fontSize: 10,
+                                color: secondaryText,
+                              ),
+                            );
+                          },
                         ),
                       ),
-                      gridData: FlGridData(
-                        show: true,
-                        drawVerticalLine: false,
-                        // CRITICAL FIX: Prevent zero horizontalInterval
-                        // When maxExpense is 0 or very small, interval becomes 0 causing crash
-                        horizontalInterval: math.max(1.0, maxExpense / 5),
-                        getDrawingHorizontalLine: (value) {
-                          return FlLine(
-                            color: theme.colorScheme.outline
-                                .withValues(alpha: 0.2),
-                            strokeWidth: 1,
-                          );
-                        },
+                      topTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
                       ),
-                      borderData: FlBorderData(show: false),
-                      barGroups: _buildBarGroups(maxExpense),
+                      rightTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
                     ),
-                  );
-                },
-              ),
+                    gridData: FlGridData(
+                      show: true,
+                      drawVerticalLine: false,
+                      // CRITICAL FIX: Prevent zero horizontalInterval
+                      // When maxExpense is 0 or very small, interval becomes 0 causing crash
+                      horizontalInterval: math.max(1.0, maxExpense / 5),
+                      getDrawingHorizontalLine: (value) {
+                        return FlLine(
+                          color: secondaryText.withOpacity(0.2),
+                          strokeWidth: 1,
+                        );
+                      },
+                    ),
+                    borderData: FlBorderData(show: false),
+                    barGroups: _buildBarGroups(maxExpense, isDark),
+                  ),
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  List<BarChartGroupData> _buildBarGroups(double maxExpense) {
+  List<BarChartGroupData> _buildBarGroups(double maxExpense, bool isDark) {
     final entries = widget.monthlyExpenses.entries.toList();
+    final successColor = isDark ? DesignColors.dSuccess : DesignColors.lSuccess;
+    final dangerColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
 
     return List.generate(entries.length, (index) {
       final expense = entries[index].value;
@@ -466,8 +512,8 @@ class _MonthlyExpenseChartState extends State<MonthlyExpenseChart>
       // Color gradient based on expense level
       final intensity = expense / maxExpense;
       final color = Color.lerp(
-        const Color(0xFF10B981), // Green for low
-        const Color(0xFFEF4444), // Red for high
+        successColor, // Green for low
+        dangerColor, // Red for high
         intensity,
       )!;
 
@@ -484,7 +530,7 @@ class _MonthlyExpenseChartState extends State<MonthlyExpenseChart>
             backDrawRodData: BackgroundBarChartRodData(
               show: true,
               toY: maxExpense * 1.2,
-              color: color.withValues(alpha: 0.1),
+              color: color.withOpacity(0.1),
             ),
           ),
         ],
@@ -499,12 +545,15 @@ class _MonthlyExpenseChartState extends State<MonthlyExpenseChart>
     Color color,
   ) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: EdgeInsets.symmetric(
+        horizontal: DesignSpacing.sm + 4,
+        vertical: DesignSpacing.xs + 2,
+      ),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: color.withValues(alpha: 0.3),
+          color: color.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -513,18 +562,20 @@ class _MonthlyExpenseChartState extends State<MonthlyExpenseChart>
         children: [
           Text(
             label,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: color,
-                  fontWeight: FontWeight.w600,
-                ),
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              color: color,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-          const SizedBox(width: 4),
+          SizedBox(width: DesignSpacing.xs),
           Text(
             value,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: color,
-                  fontWeight: FontWeight.bold,
-                ),
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              color: color,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),

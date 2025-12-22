@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:google_fonts/google_fonts.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
+import 'package:fur_friend_diary/theme/tokens/colors.dart';
+import 'package:fur_friend_diary/theme/tokens/spacing.dart';
+import 'package:fur_friend_diary/theme/tokens/shadows.dart';
 
 class HealthScoreChart extends StatefulWidget {
   final double score;
@@ -49,12 +53,11 @@ class _HealthScoreChartState extends State<HealthScoreChart>
     super.dispose();
   }
 
-  Color _getScoreColor() {
-    if (widget.score >= 80) return const Color(0xFF10B981); // Green - Excellent
-    if (widget.score >= 60) return const Color(0xFFF59E0B); // Orange - Good
-    if (widget.score >= 40)
-      return const Color(0xFFFB923C); // Light Orange - Fair
-    return const Color(0xFFEF4444); // Red - Low
+  Color _getScoreColor(bool isDark) {
+    if (widget.score >= 80) return isDark ? DesignColors.dSuccess : DesignColors.lSuccess;
+    if (widget.score >= 60) return DesignColors.highlightYellow;
+    if (widget.score >= 40) return DesignColors.highlightCoral;
+    return isDark ? DesignColors.dDanger : DesignColors.lDanger;
   }
 
   String _getScoreLabel(BuildContext context) {
@@ -67,88 +70,103 @@ class _HealthScoreChartState extends State<HealthScoreChart>
 
   @override
   Widget build(BuildContext context) {
-    final color = _getScoreColor();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final color = _getScoreColor(isDark);
     final label = _getScoreLabel(context);
-    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final successColor = isDark ? DesignColors.dSuccess : DesignColors.lSuccess;
+    final dangerColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            Text(
-              l10n.healthScore,
-              style: theme.textTheme.titleLarge,
+    return Container(
+      padding: EdgeInsets.all(DesignSpacing.lg),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+      ),
+      child: Column(
+        children: [
+          Text(
+            l10n.healthScore,
+            style: GoogleFonts.poppins(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: primaryText,
             ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: 200,
-              height: 200,
-              child: AnimatedBuilder(
-                animation: _animation,
-                builder: (context, child) {
-                  final animatedScore =
-                      (widget.score * _animation.value).toStringAsFixed(0);
-                  return CustomPaint(
-                    painter: _CircularProgressPainter(
-                      progress: (widget.score / 100) * _animation.value,
-                      color: color,
-                    ),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            animatedScore,
-                            style: theme.textTheme.displayLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: color,
-                            ),
+          ),
+          SizedBox(height: DesignSpacing.lg),
+          SizedBox(
+            width: 200,
+            height: 200,
+            child: AnimatedBuilder(
+              animation: _animation,
+              builder: (context, child) {
+                final animatedScore =
+                    (widget.score * _animation.value).toStringAsFixed(0);
+                return CustomPaint(
+                  painter: _CircularProgressPainter(
+                    progress: (widget.score / 100) * _animation.value,
+                    color: color,
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          animatedScore,
+                          style: GoogleFonts.poppins(
+                            fontSize: 48,
+                            fontWeight: FontWeight.bold,
+                            color: color,
                           ),
-                          Text(
-                            label,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: color,
-                              fontWeight: FontWeight.w600,
-                            ),
+                        ),
+                        Text(
+                          label,
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            color: color,
+                            fontWeight: FontWeight.w600,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
-            const SizedBox(height: 24),
-            Wrap(
-              spacing: 16,
-              runSpacing: 8,
-              alignment: WrapAlignment.center,
-              children: [
-                _buildLegendItem(
-                    theme, l10n.excellentRange, const Color(0xFF10B981)),
-                _buildLegendItem(
-                    theme, l10n.goodRange, const Color(0xFFF59E0B)),
-                _buildLegendItem(
-                    theme, l10n.fairRange, const Color(0xFFFB923C)),
-                _buildLegendItem(theme, l10n.lowRange, const Color(0xFFEF4444)),
-              ],
-            ),
-          ],
-        ),
+          ),
+          SizedBox(height: DesignSpacing.lg),
+          Wrap(
+            spacing: DesignSpacing.md,
+            runSpacing: DesignSpacing.sm,
+            alignment: WrapAlignment.center,
+            children: [
+              _buildLegendItem(isDark, l10n.excellentRange, successColor),
+              _buildLegendItem(isDark, l10n.goodRange, DesignColors.highlightYellow),
+              _buildLegendItem(isDark, l10n.fairRange, DesignColors.highlightCoral),
+              _buildLegendItem(isDark, l10n.lowRange, dangerColor),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildLegendItem(ThemeData theme, String label, Color color) {
+  Widget _buildLegendItem(bool isDark, String label, Color color) {
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: EdgeInsets.symmetric(
+        horizontal: DesignSpacing.sm + 2,
+        vertical: DesignSpacing.xs + 2,
+      ),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withValues(alpha: 0.3),
+          color: color.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -163,12 +181,13 @@ class _HealthScoreChartState extends State<HealthScoreChart>
               shape: BoxShape.circle,
             ),
           ),
-          const SizedBox(width: 6),
+          SizedBox(width: DesignSpacing.xs + 2),
           Text(
             label,
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: GoogleFonts.inter(
+              fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: theme.colorScheme.onSurface,
+              color: primaryText,
             ),
           ),
         ],
@@ -194,7 +213,7 @@ class _CircularProgressPainter extends CustomPainter {
 
     // Background circle
     final backgroundPaint = Paint()
-      ..color = color.withValues(alpha: 0.15)
+      ..color = color.withOpacity(0.15)
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
@@ -206,7 +225,7 @@ class _CircularProgressPainter extends CustomPainter {
       final progressPaint = Paint()
         ..shader = LinearGradient(
           colors: [
-            color.withValues(alpha: 0.7),
+            color.withOpacity(0.7),
             color,
           ],
           begin: Alignment.topCenter,

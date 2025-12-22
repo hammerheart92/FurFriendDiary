@@ -989,19 +989,66 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   void _showDeleteAccountDialog(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n.deleteAccount),
-        content: Text(l10n.deleteAccountConfirm),
+        backgroundColor: surfaceColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: Text(
+          l10n.deleteAccount,
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: primaryText,
+          ),
+        ),
+        content: Text(
+          l10n.deleteAccountConfirm,
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            color: secondaryText,
+            height: 1.5,
+          ),
+        ),
         actions: [
           TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: secondaryText,
+              padding: const EdgeInsets.symmetric(
+                horizontal: DesignSpacing.lg,
+                vertical: DesignSpacing.sm,
+              ),
+            ),
             onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel),
+            child: Text(
+              l10n.cancel,
+              style: GoogleFonts.inter(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: DesignColors.highlightCoral,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(
+                horizontal: DesignSpacing.lg,
+                vertical: DesignSpacing.sm,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             onPressed: () async {
               Navigator.pop(context); // Close confirmation dialog
@@ -1026,21 +1073,68 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
               if (success) {
                 // Show success dialog that exits app on dismiss
+                final isDarkMode =
+                    Theme.of(context).brightness == Brightness.dark;
+                final dialogPrimaryText = isDarkMode
+                    ? DesignColors.dPrimaryText
+                    : DesignColors.lPrimaryText;
+                final dialogSecondaryText = isDarkMode
+                    ? DesignColors.dSecondaryText
+                    : DesignColors.lSecondaryText;
+                final dialogSurfaceColor = isDarkMode
+                    ? DesignColors.dSurfaces
+                    : DesignColors.lSurfaces;
+
                 showDialog(
                   context: context,
                   barrierDismissible: false,
                   builder: (context) {
                     final dialogL10n = AppLocalizations.of(context);
                     return AlertDialog(
-                      title: Text(dialogL10n.accountDeletedSuccessfully),
-                      content: Text(dialogL10n.dataDeletedAppCloseMessage),
+                      backgroundColor: dialogSurfaceColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      title: Text(
+                        dialogL10n.accountDeletedSuccessfully,
+                        style: GoogleFonts.poppins(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: dialogPrimaryText,
+                        ),
+                      ),
+                      content: Text(
+                        dialogL10n.dataDeletedAppCloseMessage,
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          color: dialogSecondaryText,
+                          height: 1.5,
+                        ),
+                      ),
                       actions: [
-                        FilledButton(
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: DesignColors.highlightCoral,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: DesignSpacing.lg,
+                              vertical: DesignSpacing.sm,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
                           onPressed: () {
                             // Exit the app
                             SystemNavigator.pop();
                           },
-                          child: Text(dialogL10n.ok),
+                          child: Text(
+                            dialogL10n.ok,
+                            style: GoogleFonts.inter(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                       ],
                     );
@@ -1048,15 +1142,55 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 );
               } else {
                 // Show error message
+                final isDarkMode =
+                    Theme.of(context).brightness == Brightness.dark;
+                final surfaceBg = isDarkMode
+                    ? DesignColors.dSurfaces
+                    : DesignColors.lSurfaces;
+                final textColor = isDarkMode
+                    ? DesignColors.dPrimaryText
+                    : DesignColors.lPrimaryText;
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(l10n.accountDeletionFailed),
-                    backgroundColor: Colors.red,
+                    content: Row(
+                      children: [
+                        const Icon(
+                          Icons.error,
+                          color: DesignColors.highlightCoral,
+                          size: 20,
+                        ),
+                        const SizedBox(width: DesignSpacing.sm),
+                        Expanded(
+                          child: Text(
+                            l10n.accountDeletionFailed,
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: textColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    backgroundColor: surfaceBg,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    margin: const EdgeInsets.all(DesignSpacing.md),
+                    duration: const Duration(seconds: 3),
                   ),
                 );
               }
             },
-            child: Text(l10n.delete),
+            child: Text(
+              l10n.delete,
+              style: GoogleFonts.inter(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ],
       ),

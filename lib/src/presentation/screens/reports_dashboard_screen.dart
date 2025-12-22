@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
+import 'package:fur_friend_diary/theme/tokens/colors.dart';
+import 'package:fur_friend_diary/theme/tokens/spacing.dart';
+import 'package:fur_friend_diary/theme/tokens/shadows.dart';
 import 'package:fur_friend_diary/src/presentation/providers/pet_profile_provider.dart';
 import 'package:fur_friend_diary/src/presentation/providers/analytics_provider.dart';
 import 'package:fur_friend_diary/src/presentation/providers/vaccinations_provider.dart';
@@ -81,34 +85,63 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final currentPet = ref.watch(currentPetProfileProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final backgroundColor = isDark ? DesignColors.dBackground : DesignColors.lBackground;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
 
     if (currentPet == null) {
       return Scaffold(
-        appBar: AppBar(title: Text(l10n.reportsAndAnalytics)),
+        backgroundColor: backgroundColor,
+        appBar: AppBar(
+          backgroundColor: backgroundColor,
+          elevation: 0,
+          title: Text(
+            l10n.reportsAndAnalytics,
+            style: GoogleFonts.poppins(
+              fontSize: 24,
+              fontWeight: FontWeight.w600,
+              color: primaryText,
+            ),
+          ),
+        ),
         body: Center(
           child: Padding(
-            padding: const EdgeInsets.all(32.0),
+            padding: EdgeInsets.all(DesignSpacing.xl),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.pets_outlined,
-                  size: 80,
-                  color: Theme.of(context)
-                      .colorScheme
-                      .secondary
-                      .withValues(alpha: 0.5),
+                Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    color: DesignColors.highlightTeal.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Icon(
+                    Icons.pets_outlined,
+                    size: 48,
+                    color: DesignColors.highlightTeal,
+                  ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: DesignSpacing.lg),
                 Text(
                   l10n.noPetSelected,
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: GoogleFonts.poppins(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: primaryText,
+                  ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: DesignSpacing.sm),
                 Text(
                   l10n.pleaseSetupPetFirst,
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: secondaryText,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -119,64 +152,139 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
     }
 
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: Text(l10n.reportsAndAnalytics),
+        backgroundColor: backgroundColor,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: primaryText),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          l10n.reportsAndAnalytics,
+          style: GoogleFonts.poppins(
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            color: primaryText,
+          ),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.share),
+            icon: Icon(Icons.share, color: DesignColors.highlightTeal),
             tooltip: l10n.shareReport,
             onPressed: () => _handleExport(context, l10n, currentPet),
           ),
           PopupMenuButton<DateRange>(
-            icon: const Icon(Icons.date_range),
+            icon: Icon(Icons.date_range, color: DesignColors.highlightTeal),
+            color: surfaceColor,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             onSelected: (range) {
               setState(() => _selectedRange = range);
             },
             itemBuilder: (context) => [
               PopupMenuItem(
                 value: DateRange.sevenDays,
-                child: Text(l10n.last7Days),
+                child: Text(
+                  l10n.last7Days,
+                  style: GoogleFonts.inter(fontSize: 14, color: primaryText),
+                ),
               ),
               PopupMenuItem(
                 value: DateRange.thirtyDays,
-                child: Text(l10n.last30Days),
+                child: Text(
+                  l10n.last30Days,
+                  style: GoogleFonts.inter(fontSize: 14, color: primaryText),
+                ),
               ),
               PopupMenuItem(
                 value: DateRange.ninetyDays,
-                child: Text(l10n.last90Days),
+                child: Text(
+                  l10n.last90Days,
+                  style: GoogleFonts.inter(fontSize: 14, color: primaryText),
+                ),
               ),
             ],
           ),
         ],
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: [
-            Tab(text: l10n.overview),
-            Tab(text: l10n.health),
-            Tab(text: l10n.activity),
-          ],
-        ),
       ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          ref.invalidate(healthScoreProvider);
-          ref.invalidate(medicationAdherenceProvider);
-          ref.invalidate(activityLevelsProvider);
-          ref.invalidate(weightTrendProvider);
-          ref.invalidate(monthlyExpensesProvider);
+      body: Column(
+        children: [
+          // Custom pill-shaped tab selector
+          Container(
+            margin: EdgeInsets.symmetric(
+              horizontal: DesignSpacing.md,
+              vertical: DesignSpacing.sm,
+            ),
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: surfaceColor,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.sm,
+            ),
+            child: Row(
+              children: [
+                _buildTabButton(l10n.overview, 0, primaryText, secondaryText),
+                _buildTabButton(l10n.health, 1, primaryText, secondaryText),
+                _buildTabButton(l10n.activity, 2, primaryText, secondaryText),
+              ],
+            ),
+          ),
+          // Tab content
+          Expanded(
+            child: RefreshIndicator(
+              color: DesignColors.highlightTeal,
+              onRefresh: () async {
+                ref.invalidate(healthScoreProvider);
+                ref.invalidate(medicationAdherenceProvider);
+                ref.invalidate(activityLevelsProvider);
+                ref.invalidate(weightTrendProvider);
+                ref.invalidate(monthlyExpensesProvider);
 
-          // PHASE 4C PROVIDERS - Re-enabled with fixed date normalization
-          ref.invalidate(expensesByCategoryProvider);
-          ref.invalidate(monthlyExpensesChartProvider);
-          ref.invalidate(recommendationsProvider);
+                // PHASE 4C PROVIDERS - Re-enabled with fixed date normalization
+                ref.invalidate(expensesByCategoryProvider);
+                ref.invalidate(monthlyExpensesChartProvider);
+                ref.invalidate(recommendationsProvider);
+              },
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildOverviewTab(context, l10n, currentPet.id),
+                  _buildHealthTab(context, l10n, currentPet.id),
+                  _buildActivityTab(context, l10n, currentPet.id),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabButton(String label, int index, Color primaryText, Color secondaryText) {
+    final isSelected = _tabController.index == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            _tabController.animateTo(index);
+          });
         },
-        child: TabBarView(
-          controller: _tabController,
-          children: [
-            _buildOverviewTab(context, l10n, currentPet.id),
-            _buildHealthTab(context, l10n, currentPet.id),
-            _buildActivityTab(context, l10n, currentPet.id),
-          ],
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: EdgeInsets.symmetric(vertical: DesignSpacing.sm),
+          decoration: BoxDecoration(
+            color: isSelected ? DesignColors.highlightTeal : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: isSelected ? Colors.white : secondaryText,
+            ),
+          ),
         ),
       ),
     );
@@ -379,62 +487,107 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
   Widget _buildHealthTab(
       BuildContext context, AppLocalizations l10n, String petId) {
     final healthScoreAsync = ref.watch(healthScoreProvider(petId));
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
 
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(DesignSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             l10n.healthMetrics,
-            style: Theme.of(context).textTheme.titleLarge,
+            style: GoogleFonts.poppins(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: primaryText,
+            ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: DesignSpacing.md),
 
           // Health Score Breakdown
           healthScoreAsync.when(
-            data: (score) => Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
+            data: (score) {
+              final scoreColor = _getHealthScoreColor(score);
+              return Container(
+                padding: EdgeInsets.all(DesignSpacing.md),
+                decoration: BoxDecoration(
+                  color: surfaceColor,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.sm,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       l10n.healthScore,
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: primaryText,
+                      ),
                     ),
-                    const SizedBox(height: 8),
-                    LinearProgressIndicator(
-                      value: score / 100,
-                      minHeight: 12,
-                      backgroundColor: Colors.grey[300],
-                      color: _getHealthScoreColor(score),
+                    SizedBox(height: DesignSpacing.sm),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: LinearProgressIndicator(
+                        value: score / 100,
+                        minHeight: 12,
+                        backgroundColor: scoreColor.withOpacity(0.2),
+                        color: scoreColor,
+                      ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: DesignSpacing.sm),
                     Text(
                       '${score.toStringAsFixed(0)}/100',
-                      style: Theme.of(context).textTheme.titleLarge,
+                      style: GoogleFonts.poppins(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: scoreColor,
+                      ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: DesignSpacing.md),
                     Text(
                       l10n.healthScoreDescription,
-                      style: Theme.of(context).textTheme.bodySmall,
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        color: secondaryText,
+                      ),
                     ),
                   ],
                 ),
+              );
+            },
+            loading: () => Container(
+              height: 150,
+              decoration: BoxDecoration(
+                color: surfaceColor,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.sm,
+              ),
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: DesignColors.highlightTeal,
+                  strokeWidth: 3,
+                ),
               ),
             ),
-            loading: () => const Card(
-              child: SizedBox(
-                height: 150,
-                child: Center(child: CircularProgressIndicator()),
+            error: (error, _) => Container(
+              padding: EdgeInsets.all(DesignSpacing.md),
+              decoration: BoxDecoration(
+                color: surfaceColor,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.sm,
               ),
-            ),
-            error: (error, _) => Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text('Error: $error'),
+              child: Text(
+                'Error: $error',
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: isDark ? DesignColors.dDanger : DesignColors.lDanger,
+                ),
               ),
             ),
           ),
@@ -448,18 +601,25 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
     final activityLevelsAsync = ref.watch(
       activityLevelsProvider((petId: petId, days: _daysForRange)),
     );
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
 
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(DesignSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             l10n.activityMetrics,
-            style: Theme.of(context).textTheme.titleLarge,
+            style: GoogleFonts.poppins(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: primaryText,
+            ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: DesignSpacing.md),
 
           // Activity Summary
           activityLevelsAsync.when(
@@ -473,35 +633,52 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
                         l10n.totalFeedings,
                         levels['totalFeedings']?.toInt().toString() ?? '0',
                         Icons.restaurant,
-                        Colors.orange,
+                        DesignColors.highlightYellow,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: DesignSpacing.sm),
                     Expanded(
                       child: _buildActivitySummaryCard(
                         context,
                         l10n.totalWalks,
                         levels['totalWalks']?.toInt().toString() ?? '0',
                         Icons.pets,
-                        Colors.green,
+                        DesignColors.highlightTeal,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: DesignSpacing.md),
                 ActivityChart(activityData: levels),
               ],
             ),
-            loading: () => const Card(
-              child: SizedBox(
-                height: 300,
-                child: Center(child: CircularProgressIndicator()),
+            loading: () => Container(
+              height: 300,
+              decoration: BoxDecoration(
+                color: surfaceColor,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.sm,
+              ),
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: DesignColors.highlightTeal,
+                  strokeWidth: 3,
+                ),
               ),
             ),
-            error: (error, _) => Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text('Error: $error'),
+            error: (error, _) => Container(
+              padding: EdgeInsets.all(DesignSpacing.md),
+              decoration: BoxDecoration(
+                color: surfaceColor,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.sm,
+              ),
+              child: Text(
+                'Error: $error',
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: isDark ? DesignColors.dDanger : DesignColors.lDanger,
+                ),
               ),
             ),
           ),
@@ -517,38 +694,54 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
     IconData icon,
     Color color,
   ) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 24, color: color),
-            const SizedBox(height: 4),
-            Text(
-              value,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: color,
-                    fontSize: 18,
-                  ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
+    return Container(
+      padding: EdgeInsets.all(DesignSpacing.sm),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.sm,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
             ),
-            const SizedBox(height: 2),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontSize: 10,
-                  ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+            child: Icon(icon, size: 20, color: color),
+          ),
+          SizedBox(height: DesignSpacing.xs),
+          Text(
+            value,
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: color,
             ),
-          ],
-        ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          SizedBox(height: DesignSpacing.xs),
+          Text(
+            title,
+            style: GoogleFonts.inter(
+              fontSize: 10,
+              color: secondaryText,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
     );
   }
@@ -560,47 +753,96 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
     IconData icon,
     Color color,
   ) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 32, color: color),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: color,
-                  ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
+    return Container(
+      padding: EdgeInsets.all(DesignSpacing.md),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.sm,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(14),
             ),
-            const SizedBox(height: 4),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.bodySmall,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+            child: Icon(icon, size: 24, color: color),
+          ),
+          SizedBox(height: DesignSpacing.sm),
+          Text(
+            value,
+            style: GoogleFonts.poppins(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: color,
             ),
-          ],
-        ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          SizedBox(height: DesignSpacing.xs),
+          Text(
+            title,
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              color: secondaryText,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildLoadingStatCard(BuildContext context) {
-    return const Card(
-      child: Center(child: CircularProgressIndicator()),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.sm,
+      ),
+      child: Center(
+        child: CircularProgressIndicator(
+          color: DesignColors.highlightTeal,
+          strokeWidth: 3,
+        ),
+      ),
     );
   }
 
   Widget _buildErrorStatCard(BuildContext context) {
-    return Card(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final dangerColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.sm,
+      ),
       child: Center(
-        child: Icon(Icons.error_outline, color: Colors.red[300]),
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: dangerColor.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(Icons.error_outline, color: dangerColor, size: 20),
+        ),
       ),
     );
   }
@@ -650,8 +892,35 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
     dynamic currentPet,
   ) async {
     if (currentPet == null) {
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+      final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+      final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.noPetSelected)),
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(
+                Icons.info_outline,
+                color: DesignColors.highlightCoral,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                l10n.noPetSelected,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: primaryText,
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: surfaceColor,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: const EdgeInsets.all(16),
+        ),
       );
       return;
     }
@@ -693,8 +962,38 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
       }
     } catch (e) {
       if (context.mounted) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+        final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+        final dangerColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.failedToExportReport)),
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  color: dangerColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    l10n.failedToExportReport,
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      color: primaryText,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: surfaceColor,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            margin: const EdgeInsets.all(16),
+          ),
         );
       }
     }
@@ -713,24 +1012,38 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
 
       // Show non-blocking loading feedback using SnackBar
       if (!context.mounted) return;
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+      final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+      final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
             children: [
-              const SizedBox(
+              SizedBox(
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  color: DesignColors.highlightTeal,
                 ),
               ),
-              const SizedBox(width: 16),
-              Text(l10n.generatingReport),
+              const SizedBox(width: 12),
+              Text(
+                l10n.generatingReport,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: primaryText,
+                ),
+              ),
             ],
           ),
           duration: const Duration(seconds: 30), // Long duration for generation
-          backgroundColor: Colors.blue.shade700,
+          backgroundColor: surfaceColor,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: const EdgeInsets.all(16),
         ),
       );
 
@@ -798,16 +1111,31 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
 
       // Show brief success message (non-blocking)
       if (!context.mounted) return;
+      final successIsDark = Theme.of(context).brightness == Brightness.dark;
+      final successSurface = successIsDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+      final successText = successIsDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+      final successColor = successIsDark ? DesignColors.dSuccess : DesignColors.lSuccess;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
             children: [
-              const Icon(Icons.check_circle, color: Colors.white),
+              Icon(Icons.check_circle, color: successColor, size: 20),
               const SizedBox(width: 8),
-              Text(l10n.reportGeneratedSuccessfully),
+              Text(
+                l10n.reportGeneratedSuccessfully,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: successText,
+                ),
+              ),
             ],
           ),
-          backgroundColor: Colors.green,
+          backgroundColor: successSurface,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: const EdgeInsets.all(16),
           duration: const Duration(seconds: 2),
         ),
       );
@@ -822,26 +1150,39 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
 
       // Show error message (non-blocking)
       if (!context.mounted) return;
+      final errorIsDark = Theme.of(context).brightness == Brightness.dark;
+      final errorSurface = errorIsDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+      final errorText = errorIsDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+      final dangerColor = errorIsDark ? DesignColors.dDanger : DesignColors.lDanger;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
             children: [
-              const Icon(Icons.error, color: Colors.white),
+              Icon(Icons.error_outline, color: dangerColor, size: 20),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   l10n.failedToGeneratePDF(e.toString()),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: errorText,
+                  ),
                 ),
               ),
             ],
           ),
-          backgroundColor: Colors.red,
+          backgroundColor: errorSurface,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: const EdgeInsets.all(16),
           duration: const Duration(seconds: 5),
           action: SnackBarAction(
             label: l10n.close,
-            textColor: Colors.white,
+            textColor: DesignColors.highlightTeal,
             onPressed: () {
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
             },
@@ -862,24 +1203,38 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
 
       // Show non-blocking loading feedback
       if (!context.mounted) return;
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+      final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+      final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
             children: [
-              const SizedBox(
+              SizedBox(
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  color: DesignColors.highlightTeal,
                 ),
               ),
-              const SizedBox(width: 16),
-              Text(l10n.generatingReport),
+              const SizedBox(width: 12),
+              Text(
+                l10n.generatingReport,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: primaryText,
+                ),
+              ),
             ],
           ),
           duration: const Duration(seconds: 30),
-          backgroundColor: Colors.blue.shade700,
+          backgroundColor: surfaceColor,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: const EdgeInsets.all(16),
         ),
       );
 
@@ -921,16 +1276,31 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
 
       // Success message
       if (!context.mounted) return;
+      final successIsDark = Theme.of(context).brightness == Brightness.dark;
+      final successSurface = successIsDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+      final successText = successIsDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+      final successColor = successIsDark ? DesignColors.dSuccess : DesignColors.lSuccess;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
             children: [
-              const Icon(Icons.check_circle, color: Colors.white),
+              Icon(Icons.check_circle, color: successColor, size: 20),
               const SizedBox(width: 8),
-              Text(l10n.reportGeneratedSuccessfully),
+              Text(
+                l10n.reportGeneratedSuccessfully,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: successText,
+                ),
+              ),
             ],
           ),
-          backgroundColor: Colors.green,
+          backgroundColor: successSurface,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: const EdgeInsets.all(16),
           duration: const Duration(seconds: 2),
         ),
       );
@@ -943,26 +1313,39 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
       }
 
       if (!context.mounted) return;
+      final errorIsDark = Theme.of(context).brightness == Brightness.dark;
+      final errorSurface = errorIsDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+      final errorText = errorIsDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+      final dangerColor = errorIsDark ? DesignColors.dDanger : DesignColors.lDanger;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
             children: [
-              const Icon(Icons.error, color: Colors.white),
+              Icon(Icons.error_outline, color: dangerColor, size: 20),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   l10n.failedToGeneratePDF(e.toString()),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: errorText,
+                  ),
                 ),
               ),
             ],
           ),
-          backgroundColor: Colors.red,
+          backgroundColor: errorSurface,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: const EdgeInsets.all(16),
           duration: const Duration(seconds: 5),
           action: SnackBarAction(
             label: l10n.close,
-            textColor: Colors.white,
+            textColor: DesignColors.highlightTeal,
             onPressed: () {
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
             },
@@ -985,24 +1368,38 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
 
       // Show non-blocking loading feedback
       if (!context.mounted) return;
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+      final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+      final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
             children: [
-              const SizedBox(
+              SizedBox(
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  color: DesignColors.highlightTeal,
                 ),
               ),
-              const SizedBox(width: 16),
-              Text(l10n.generatingReport),
+              const SizedBox(width: 12),
+              Text(
+                l10n.generatingReport,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: primaryText,
+                ),
+              ),
             ],
           ),
           duration: const Duration(seconds: 30),
-          backgroundColor: Colors.blue.shade700,
+          backgroundColor: surfaceColor,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: const EdgeInsets.all(16),
         ),
       );
 
@@ -1045,16 +1442,31 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
 
       // Success message
       if (!context.mounted) return;
+      final successIsDark = Theme.of(context).brightness == Brightness.dark;
+      final successSurface = successIsDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+      final successText = successIsDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+      final successColor = successIsDark ? DesignColors.dSuccess : DesignColors.lSuccess;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
             children: [
-              const Icon(Icons.check_circle, color: Colors.white),
+              Icon(Icons.check_circle, color: successColor, size: 20),
               const SizedBox(width: 8),
-              Text(l10n.reportGeneratedSuccessfully),
+              Text(
+                l10n.reportGeneratedSuccessfully,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: successText,
+                ),
+              ),
             ],
           ),
-          backgroundColor: Colors.green,
+          backgroundColor: successSurface,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: const EdgeInsets.all(16),
           duration: const Duration(seconds: 2),
         ),
       );
@@ -1067,26 +1479,39 @@ class _ReportsDashboardScreenState extends ConsumerState<ReportsDashboardScreen>
       }
 
       if (!context.mounted) return;
+      final errorIsDark = Theme.of(context).brightness == Brightness.dark;
+      final errorSurface = errorIsDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+      final errorText = errorIsDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+      final dangerColor = errorIsDark ? DesignColors.dDanger : DesignColors.lDanger;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
             children: [
-              const Icon(Icons.error, color: Colors.white),
+              Icon(Icons.error_outline, color: dangerColor, size: 20),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   l10n.failedToShareReport,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: errorText,
+                  ),
                 ),
               ),
             ],
           ),
-          backgroundColor: Colors.red,
+          backgroundColor: errorSurface,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: const EdgeInsets.all(16),
           duration: const Duration(seconds: 5),
           action: SnackBarAction(
             label: l10n.close,
-            textColor: Colors.white,
+            textColor: DesignColors.highlightTeal,
             onPressed: () {
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
             },
@@ -1129,52 +1554,76 @@ class _RecommendationsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+
+    return Container(
+      padding: EdgeInsets.all(DesignSpacing.md),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.sm,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: DesignColors.highlightYellow.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
                   Icons.lightbulb,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: DesignColors.highlightYellow,
+                  size: 20,
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  l10n.recommendations,
-                  style: Theme.of(context).textTheme.titleMedium,
+              ),
+              SizedBox(width: DesignSpacing.sm),
+              Text(
+                l10n.recommendations,
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
                 ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            ...recommendations.map((rec) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(top: 6),
-                        width: 6,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary,
-                          shape: BoxShape.circle,
+              ),
+            ],
+          ),
+          SizedBox(height: DesignSpacing.md),
+          ...recommendations.map((rec) => Padding(
+                padding: EdgeInsets.only(bottom: DesignSpacing.sm),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(top: 6),
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: DesignColors.highlightTeal,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    SizedBox(width: DesignSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        _getTranslatedRecommendation(rec),
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          color: secondaryText,
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          _getTranslatedRecommendation(rec),
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
-          ],
-        ),
+                    ),
+                  ],
+                ),
+              )),
+        ],
       ),
     );
   }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
+import 'package:fur_friend_diary/theme/tokens/colors.dart';
 
 import '../../domain/models/pdf_consent.dart';
 import '../../domain/repositories/pdf_consent_repository.dart';
@@ -49,11 +51,39 @@ class PdfConsentService extends _$PdfConsentService {
     if (consent != null && !consent.consentGiven && consent.dontAskAgain) {
       if (context.mounted) {
         final l10n = AppLocalizations.of(context);
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+        final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n.consentRequired),
+            content: Row(
+              children: [
+                Icon(
+                  Icons.info_outline,
+                  color: DesignColors.highlightCoral,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    l10n.consentRequired,
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      color: primaryText,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: surfaceColor,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            margin: const EdgeInsets.all(16),
             action: SnackBarAction(
               label: l10n.settings,
+              textColor: DesignColors.highlightTeal,
               onPressed: () {
                 // User can navigate to settings manually
                 // Navigation handled by caller if needed
@@ -88,8 +118,37 @@ class PdfConsentService extends _$PdfConsentService {
 
         if (context.mounted && result.dontAskAgain) {
           final l10n = AppLocalizations.of(context);
+          final isDark = Theme.of(context).brightness == Brightness.dark;
+          final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+          final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.consentDeclinedMessage)),
+            SnackBar(
+              content: Row(
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    color: DesignColors.highlightCoral,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      l10n.consentDeclinedMessage,
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        color: primaryText,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              backgroundColor: surfaceColor,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              margin: const EdgeInsets.all(16),
+            ),
           );
         }
 

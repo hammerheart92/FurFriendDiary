@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
+import 'package:fur_friend_diary/theme/tokens/colors.dart';
+import 'package:fur_friend_diary/theme/tokens/spacing.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Result of the consent dialog interaction
@@ -50,20 +53,42 @@ class _PdfConsentDialogState extends State<_PdfConsentDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
     final screenHeight = MediaQuery.of(context).size.height;
 
     return AlertDialog(
+      backgroundColor: surfaceColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
       title: Row(
         children: [
-          Icon(
-            Icons.privacy_tip_outlined,
-            color: colorScheme.primary,
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: DesignColors.highlightTeal.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              Icons.shield_outlined,
+              color: DesignColors.highlightTeal,
+              size: 22,
+            ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: DesignSpacing.sm),
           Expanded(
-            child: Text(l10n.pdfConsentTitle),
+            child: Text(
+              l10n.pdfConsentTitle,
+              style: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: primaryText,
+              ),
+            ),
           ),
         ],
       ),
@@ -88,39 +113,45 @@ class _PdfConsentDialogState extends State<_PdfConsentDialog> {
                     // Main consent message
                     Text(
                       l10n.pdfConsentMessage,
-                      style: theme.textTheme.bodyMedium,
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        color: secondaryText,
+                        height: 1.5,
+                      ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: DesignSpacing.md),
 
                     // Data included section title
                     Text(
                       l10n.pdfConsentDataIncludedTitle,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: primaryText,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: DesignSpacing.sm),
 
                     // Bullet list of data types
-                    _buildDataItem(l10n.pdfConsentDataProfile, theme),
-                    _buildDataItem(l10n.pdfConsentDataVaccinations, theme),
-                    _buildDataItem(l10n.pdfConsentDataMedications, theme),
-                    _buildDataItem(l10n.pdfConsentDataAppointments, theme),
-                    _buildDataItem(l10n.pdfConsentDataHealth, theme),
-                    _buildDataItem(l10n.pdfConsentDataActivity, theme),
-                    _buildDataItem(l10n.pdfConsentDataExpenses, theme),
-                    _buildDataItem(l10n.pdfConsentDataNotes, theme),
+                    _buildDataItem(l10n.pdfConsentDataProfile, isDark),
+                    _buildDataItem(l10n.pdfConsentDataVaccinations, isDark),
+                    _buildDataItem(l10n.pdfConsentDataMedications, isDark),
+                    _buildDataItem(l10n.pdfConsentDataAppointments, isDark),
+                    _buildDataItem(l10n.pdfConsentDataHealth, isDark),
+                    _buildDataItem(l10n.pdfConsentDataActivity, isDark),
+                    _buildDataItem(l10n.pdfConsentDataExpenses, isDark),
+                    _buildDataItem(l10n.pdfConsentDataNotes, isDark),
 
-                    const SizedBox(height: 16),
+                    SizedBox(height: DesignSpacing.md),
 
                     // Privacy policy link
-                    _buildPrivacyPolicyLink(context, l10n, theme),
+                    _buildPrivacyPolicyLink(context, l10n, isDark),
                   ],
                 ),
               ),
             ),
 
-            const SizedBox(height: 12),
+            SizedBox(height: DesignSpacing.sm),
 
             // "Don't ask again" checkbox (always visible, outside scroll area)
             CheckboxListTile(
@@ -130,9 +161,14 @@ class _PdfConsentDialogState extends State<_PdfConsentDialog> {
                   _dontAskAgain = value ?? true;
                 });
               },
+              activeColor: DesignColors.highlightTeal,
+              checkColor: Colors.white,
               title: Text(
                 l10n.pdfConsentDontAskAgain,
-                style: theme.textTheme.bodyMedium,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: primaryText,
+                ),
               ),
               contentPadding: EdgeInsets.zero,
               controlAffinity: ListTileControlAffinity.leading,
@@ -152,11 +188,18 @@ class _PdfConsentDialogState extends State<_PdfConsentDialog> {
               ),
             );
           },
-          child: Text(l10n.consentDecline),
+          child: Text(
+            l10n.consentDecline,
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: secondaryText,
+            ),
+          ),
         ),
 
         // Accept button (primary action)
-        FilledButton(
+        ElevatedButton(
           onPressed: () {
             Navigator.of(context).pop(
               ConsentDialogResponse(
@@ -165,29 +208,55 @@ class _PdfConsentDialogState extends State<_PdfConsentDialog> {
               ),
             );
           },
-          child: Text(l10n.consentAccept),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: DesignColors.highlightTeal,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: EdgeInsets.symmetric(
+              horizontal: DesignSpacing.md,
+              vertical: DesignSpacing.sm,
+            ),
+          ),
+          child: Text(
+            l10n.consentAccept,
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
       ],
     );
   }
 
   /// Builds a bullet point item for the data list
-  Widget _buildDataItem(String text, ThemeData theme) {
+  Widget _buildDataItem(String text, bool isDark) {
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Padding(
-      padding: const EdgeInsets.only(left: 8, bottom: 4),
+      padding: EdgeInsets.only(left: DesignSpacing.sm, bottom: DesignSpacing.xs),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '• ',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.bold,
+          Container(
+            margin: const EdgeInsets.only(top: 6),
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(
+              color: DesignColors.highlightTeal,
+              shape: BoxShape.circle,
             ),
           ),
+          SizedBox(width: DesignSpacing.sm),
           Expanded(
             child: Text(
               text,
-              style: theme.textTheme.bodyMedium,
+              style: GoogleFonts.inter(
+                fontSize: 13,
+                color: secondaryText,
+              ),
             ),
           ),
         ],
@@ -199,8 +268,9 @@ class _PdfConsentDialogState extends State<_PdfConsentDialog> {
   Widget _buildPrivacyPolicyLink(
     BuildContext context,
     AppLocalizations l10n,
-    ThemeData theme,
+    bool isDark,
   ) {
+    final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
     final locale = Localizations.localeOf(context);
     final isRomanian = locale.languageCode == 'ro';
 
@@ -214,15 +284,20 @@ class _PdfConsentDialogState extends State<_PdfConsentDialog> {
       children: [
         Text(
           '${l10n.pdfConsentPrivacyNote} ',
-          style: theme.textTheme.bodySmall,
+          style: GoogleFonts.inter(
+            fontSize: 12,
+            color: secondaryText,
+          ),
         ),
         InkWell(
           onTap: () => _launchPrivacyPolicy(privacyPolicyUrl),
           child: Text(
             l10n.privacyPolicy,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.primary,
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              color: DesignColors.highlightTeal,
               decoration: TextDecoration.underline,
+              decorationColor: DesignColors.highlightTeal,
             ),
           ),
         ),
