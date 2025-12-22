@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../domain/models/report_entry.dart';
 import '../../presentation/providers/care_data_provider.dart';
 import '../../presentation/providers/pet_profile_provider.dart';
@@ -7,6 +8,7 @@ import '../widgets/reports_list.dart';
 import '../widgets/report_generation_form.dart';
 import '../widgets/report_viewer.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../theme/tokens/colors.dart';
 
 /// Internal tab keys for logic and filtering
 class ReportTab {
@@ -117,9 +119,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
     final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.generateReport),
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.onPrimary,
+        backgroundColor: DesignColors.highlightTeal,
         elevation: 0,
         leading: IconButton(
           onPressed: () {
@@ -127,7 +127,15 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
               _showForm = false;
             });
           },
-          icon: const Icon(Icons.close),
+          icon: const Icon(Icons.close, color: Colors.white),
+        ),
+        title: Text(
+          l10n.generateReport,
+          style: GoogleFonts.poppins(
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
         ),
       ),
       body: ReportGenerationForm(

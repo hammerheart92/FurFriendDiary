@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../../domain/models/report_entry.dart';
 import '../../presentation/providers/care_data_provider.dart';
 import '../../presentation/providers/pet_profile_provider.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../theme/tokens/colors.dart';
+import '../../../theme/tokens/spacing.dart';
+import '../../../theme/tokens/shadows.dart';
 
 class ReportGenerationForm extends ConsumerStatefulWidget {
   final VoidCallback? onGenerated;
@@ -38,41 +42,103 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor =
+        isDark ? DesignColors.dBackground : DesignColors.lBackground;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final dangerColor =
+        isDark ? DesignColors.dDanger : DesignColors.lDanger;
 
-    return Form(
-      key: _formKey,
-      child: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          // Report Type card
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
+    return Container(
+      color: backgroundColor,
+      child: Form(
+        key: _formKey,
+        child: ListView(
+          padding: EdgeInsets.only(
+            top: DesignSpacing.md,
+            bottom: DesignSpacing.xl,
+          ),
+          children: [
+            // Report Configuration Card
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: DesignSpacing.md),
+              padding: EdgeInsets.all(DesignSpacing.lg),
+              decoration: BoxDecoration(
+                color: surfaceColor,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     l10n.reportConfiguration,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
+                    style: GoogleFonts.poppins(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: primaryText,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: DesignSpacing.md),
+
+                  // Report Type label
+                  Text(
+                    '${l10n.reportType} *',
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      color: secondaryText,
+                    ),
+                  ),
+                  SizedBox(height: DesignSpacing.sm),
 
                   // Report type dropdown
                   DropdownButtonFormField<String>(
                     value: _reportType,
                     decoration: InputDecoration(
-                      labelText: '${l10n.reportType} *',
-                      prefixIcon: const Icon(Icons.assessment),
-                      border: const OutlineInputBorder(),
+                      filled: true,
+                      fillColor: backgroundColor,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: DesignSpacing.md,
+                        vertical: DesignSpacing.md,
+                      ),
+                      prefixIcon: Icon(
+                        _getReportTypeIcon(_reportType),
+                        color: DesignColors.highlightTeal,
+                      ),
+                    ),
+                    dropdownColor: surfaceColor,
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      color: primaryText,
+                    ),
+                    icon: Icon(
+                      Icons.keyboard_arrow_down,
+                      color: secondaryText,
                     ),
                     items: _reportTypes.map((type) {
                       return DropdownMenuItem(
                         value: type,
-                        child: Text(_getLocalizedReportType(type, l10n)),
+                        child: Row(
+                          children: [
+                            Icon(
+                              _getReportTypeIcon(type),
+                              color: DesignColors.highlightTeal,
+                              size: 20,
+                            ),
+                            SizedBox(width: DesignSpacing.sm),
+                            Text(_getLocalizedReportType(type, l10n)),
+                          ],
+                        ),
                       );
                     }).toList(),
                     onChanged: (value) {
@@ -90,32 +156,30 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
                     },
                   ),
 
-                  const SizedBox(height: 16),
+                  SizedBox(height: DesignSpacing.md),
 
-                  // Report type description
+                  // Info box (dynamic based on report type)
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: EdgeInsets.all(DesignSpacing.md),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: theme.colorScheme.outline.withOpacity(0.2),
-                      ),
+                      color: DesignColors.highlightTeal.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Icon(
                           Icons.info_outline,
                           size: 20,
-                          color: theme.colorScheme.primary,
+                          color: DesignColors.highlightTeal,
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: DesignSpacing.sm),
                         Expanded(
                           child: Text(
                             _getReportTypeDescription(_reportType, l10n),
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color:
-                                  theme.colorScheme.onSurface.withOpacity(0.7),
+                            style: GoogleFonts.inter(
+                              fontSize: 13,
+                              color: secondaryText,
                             ),
                           ),
                         ),
@@ -125,68 +189,145 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
                 ],
               ),
             ),
-          ),
 
-          const SizedBox(height: 16),
+            SizedBox(height: DesignSpacing.md),
 
-          // Date Range card
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
+            // Date Range Card
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: DesignSpacing.md),
+              padding: EdgeInsets.all(DesignSpacing.lg),
+              decoration: BoxDecoration(
+                color: surfaceColor,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     l10n.dateRange,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
+                    style: GoogleFonts.poppins(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: primaryText,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: DesignSpacing.md),
 
-                  // Start date
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: const Icon(Icons.date_range),
-                    title: Text(l10n.startDate),
-                    subtitle:
-                        Text(DateFormat('MMMM dd, yyyy').format(_startDate)),
+                  // Start Date field
+                  InkWell(
                     onTap: () => _selectStartDate(),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: EdgeInsets.all(DesignSpacing.md),
+                      decoration: BoxDecoration(
+                        color: backgroundColor,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.calendar_today,
+                            color: DesignColors.highlightTeal,
+                            size: 20,
+                          ),
+                          SizedBox(width: DesignSpacing.md),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                l10n.startDate,
+                                style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  color: secondaryText,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                DateFormat('MMMM dd, yyyy').format(_startDate),
+                                style: GoogleFonts.inter(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: primaryText,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
 
-                  // End date
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: const Icon(Icons.event),
-                    title: Text(l10n.endDate),
-                    subtitle:
-                        Text(DateFormat('MMMM dd, yyyy').format(_endDate)),
+                  SizedBox(height: DesignSpacing.md),
+
+                  // End Date field
+                  InkWell(
                     onTap: () => _selectEndDate(),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: EdgeInsets.all(DesignSpacing.md),
+                      decoration: BoxDecoration(
+                        color: backgroundColor,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.calendar_today,
+                            color: DesignColors.highlightTeal,
+                            size: 20,
+                          ),
+                          SizedBox(width: DesignSpacing.md),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                l10n.endDate,
+                                style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  color: secondaryText,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                DateFormat('MMMM dd, yyyy').format(_endDate),
+                                style: GoogleFonts.inter(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: primaryText,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
 
-                  // Date range validation
+                  // Date range validation error
                   if (_endDate.isBefore(_startDate))
                     Container(
-                      padding: const EdgeInsets.all(12),
-                      margin: const EdgeInsets.only(top: 8),
+                      padding: EdgeInsets.all(DesignSpacing.md),
+                      margin: EdgeInsets.only(top: DesignSpacing.md),
                       decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.red.withOpacity(0.3)),
+                        color: dangerColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
                         children: [
                           Icon(
                             Icons.warning_amber,
                             size: 20,
-                            color: Colors.red[700],
+                            color: dangerColor,
                           ),
-                          const SizedBox(width: 8),
-                          Text(
-                            l10n.endDateMustBeAfterStartDate,
-                            style: TextStyle(
-                              color: Colors.red[700],
-                              fontSize: 12,
+                          SizedBox(width: DesignSpacing.sm),
+                          Expanded(
+                            child: Text(
+                              l10n.endDateMustBeAfterStartDate,
+                              style: GoogleFonts.inter(
+                                fontSize: 13,
+                                color: dangerColor,
+                              ),
                             ),
                           ),
                         ],
@@ -195,125 +336,175 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
                 ],
               ),
             ),
-          ),
 
-          const SizedBox(height: 16),
+            SizedBox(height: DesignSpacing.md),
 
-          // Quick date range shortcuts
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
+            // Quick Ranges Card
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: DesignSpacing.md),
+              padding: EdgeInsets.all(DesignSpacing.lg),
+              decoration: BoxDecoration(
+                color: surfaceColor,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     l10n.quickRanges,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+                    style: GoogleFonts.poppins(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: primaryText,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: DesignSpacing.md),
                   Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
+                    spacing: DesignSpacing.sm,
+                    runSpacing: DesignSpacing.sm,
                     children: [
-                      _buildQuickRangeChip(l10n.last7Days, 7),
-                      _buildQuickRangeChip(l10n.last30Days, 30),
-                      _buildQuickRangeChip(l10n.last3Months, 90),
-                      _buildQuickRangeChip(l10n.last6Months, 180),
-                      _buildQuickRangeChip(l10n.lastYear, 365),
+                      _buildQuickRangeButton(l10n.last7Days, 7, primaryText, secondaryText),
+                      _buildQuickRangeButton(l10n.last30Days, 30, primaryText, secondaryText),
+                      _buildQuickRangeButton(l10n.last3Months, 90, primaryText, secondaryText),
+                      _buildQuickRangeButton(l10n.last6Months, 180, primaryText, secondaryText),
+                      _buildQuickRangeButton(l10n.lastYear, 365, primaryText, secondaryText),
                     ],
                   ),
                 ],
               ),
             ),
-          ),
 
-          const SizedBox(height: 32),
+            SizedBox(height: DesignSpacing.lg),
 
-          // Action buttons
-          Row(
-            children: [
-              // Cancel button
-              Expanded(
-                child: SizedBox(
-                  height: 56,
-                  child: OutlinedButton(
-                    onPressed: _isLoading
-                        ? null
-                        : () {
-                            widget.onCancelled?.call();
-                          },
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: theme.colorScheme.outline),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+            // Action buttons
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: DesignSpacing.md),
+              child: Row(
+                children: [
+                  // Cancel button
+                  Expanded(
+                    child: TextButton(
+                      onPressed: _isLoading
+                          ? null
+                          : () {
+                              widget.onCancelled?.call();
+                            },
+                      style: TextButton.styleFrom(
+                        foregroundColor: secondaryText,
+                        padding: EdgeInsets.symmetric(
+                          vertical: DesignSpacing.md,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        l10n.cancel,
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                    child: Text(
-                      l10n.cancel,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
                   ),
-                ),
-              ),
 
-              const SizedBox(width: 16),
+                  SizedBox(width: DesignSpacing.md),
 
-              // Generate button
-              Expanded(
-                flex: 2,
-                child: SizedBox(
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: _isLoading || _endDate.isBefore(_startDate)
-                        ? null
-                        : _generateReport,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.colorScheme.primary,
-                      foregroundColor: theme.colorScheme.onPrimary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  // Generate Report button
+                  Expanded(
+                    flex: 2,
+                    child: ElevatedButton(
+                      onPressed: _isLoading || _endDate.isBefore(_startDate)
+                          ? null
+                          : _generateReport,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: DesignColors.highlightTeal,
+                        foregroundColor: Colors.white,
+                        disabledBackgroundColor:
+                            DesignColors.highlightTeal.withOpacity(0.5),
+                        padding: EdgeInsets.symmetric(
+                          vertical: DesignSpacing.md,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
+                      child: _isLoading
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Text(
+                              l10n.generateReport,
+                              style: GoogleFonts.inter(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
                     ),
-                    child: _isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : Text(
-                            l10n.generateReport,
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildQuickRangeChip(String label, int days) {
-    final theme = Theme.of(context);
-    final isSelected = _startDate
-            .isAtSameMomentAs(DateTime.now().subtract(Duration(days: days))) &&
-        _endDate.isAtSameMomentAs(DateTime.now());
-
-    return FilterChip(
-      label: Text(label),
-      selected: isSelected,
-      onSelected: (selected) {
-        if (selected) {
-          setState(() {
-            _startDate = DateTime.now().subtract(Duration(days: days));
-            _endDate = DateTime.now();
-          });
-        }
+  Widget _buildQuickRangeButton(
+    String label,
+    int days,
+    Color primaryText,
+    Color secondaryText,
+  ) {
+    return OutlinedButton(
+      onPressed: () {
+        setState(() {
+          _startDate = DateTime.now().subtract(Duration(days: days));
+          _endDate = DateTime.now();
+        });
       },
-      selectedColor: theme.colorScheme.primary.withOpacity(0.2),
-      checkmarkColor: theme.colorScheme.primary,
+      style: OutlinedButton.styleFrom(
+        foregroundColor: primaryText,
+        side: BorderSide(color: secondaryText.withOpacity(0.3)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: EdgeInsets.symmetric(
+          horizontal: DesignSpacing.md,
+          vertical: DesignSpacing.sm,
+        ),
+      ),
+      child: Text(
+        label,
+        style: GoogleFonts.inter(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
     );
+  }
+
+  IconData _getReportTypeIcon(String type) {
+    switch (type) {
+      case 'Health Summary':
+        return Icons.favorite_outline;
+      case 'Medication History':
+        return Icons.medication_outlined;
+      case 'Activity Report':
+        return Icons.directions_walk_outlined;
+      case 'Veterinary Records':
+        return Icons.local_hospital_outlined;
+      default:
+        return Icons.assessment_outlined;
+    }
   }
 
   String _getLocalizedReportType(String type, AppLocalizations l10n) {
