@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
+import '../../../../theme/tokens/colors.dart';
+import '../../../../theme/tokens/spacing.dart';
+import '../../../../theme/tokens/shadows.dart';
 import '../../../domain/models/pet_profile.dart';
 import '../../../domain/models/protocols/deworming_protocol.dart';
 import '../../providers/protocols/deworming_protocol_provider.dart';
@@ -26,14 +30,33 @@ class DewormingProtocolSelectionScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     final protocolsAsync = ref.watch(
       dewormingProtocolsBySpeciesProvider(pet.species),
     );
 
+    // Theme detection
+    final isDark = theme.brightness == Brightness.dark;
+    final backgroundColor =
+        isDark ? DesignColors.dBackground : DesignColors.lBackground;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: Text(l10n.selectDewormingProtocol),
+        title: Text(
+          l10n.selectDewormingProtocol,
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: primaryText,
+          ),
+        ),
         centerTitle: true,
+        backgroundColor: backgroundColor,
+        foregroundColor: primaryText,
+        elevation: 0,
       ),
       body: SafeArea(
         child: Semantics(
@@ -56,7 +79,9 @@ class DewormingProtocolSelectionScreen extends ConsumerWidget {
     return Center(
       child: Semantics(
         label: l10n.loadingDewormingProtocols,
-        child: const CircularProgressIndicator(),
+        child: CircularProgressIndicator(
+          color: DesignColors.highlightYellow,
+        ),
       ),
     );
   }
@@ -68,44 +93,71 @@ class DewormingProtocolSelectionScreen extends ConsumerWidget {
     Object error,
     WidgetRef ref,
   ) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final dangerColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
+
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: EdgeInsets.all(DesignSpacing.xl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.error_outline,
-              size: 64,
-              color: Theme.of(context).colorScheme.error,
+              size: 80,
+              color: dangerColor,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: DesignSpacing.lg),
             Text(
               l10n.failedToLoadDewormingProtocols,
-              style: Theme.of(context).textTheme.titleLarge,
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: primaryText,
+              ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: DesignSpacing.sm),
             Text(
               error.toString().length > 100
                   ? '${error.toString().substring(0, 100)}...'
                   : error.toString(),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withOpacity(0.6),
-                  ),
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                color: secondaryText,
+              ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
-            OutlinedButton.icon(
+            SizedBox(height: DesignSpacing.xl),
+            ElevatedButton.icon(
               onPressed: () {
                 ref.invalidate(
                     dewormingProtocolsBySpeciesProvider(pet.species));
               },
               icon: const Icon(Icons.refresh),
-              label: Text(l10n.retry),
+              label: Text(
+                l10n.retry,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: DesignColors.highlightTeal,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: DesignSpacing.lg,
+                  vertical: DesignSpacing.md,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
             ),
           ],
         ),
@@ -115,38 +167,54 @@ class DewormingProtocolSelectionScreen extends ConsumerWidget {
 
   /// Empty state widget
   Widget _buildEmptyState(BuildContext context, AppLocalizations l10n) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: EdgeInsets.all(DesignSpacing.xl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.pest_control_outlined,
-              size: 64,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+              size: 80,
+              color: DesignColors.highlightYellow.withOpacity(0.5),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: DesignSpacing.lg),
             Text(
               l10n.noDewormingProtocolsAvailable,
-              style: Theme.of(context).textTheme.titleLarge,
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: primaryText,
+              ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: DesignSpacing.sm),
             Text(
               l10n.noDewormingProtocolsForSpecies(pet.species),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withOpacity(0.6),
-                  ),
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: secondaryText,
+              ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: DesignSpacing.xl),
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: Text(l10n.cancel),
+              child: Text(
+                l10n.cancel,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: secondaryText,
+                ),
+              ),
             ),
           ],
         ),
@@ -161,37 +229,49 @@ class DewormingProtocolSelectionScreen extends ConsumerWidget {
     List<DewormingProtocol> protocols,
     WidgetRef ref,
   ) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.all(DesignSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Pet info header
           _PetInfoHeader(pet: pet),
-          const SizedBox(height: 16),
+          SizedBox(height: DesignSpacing.lg),
 
           // Section title
           Text(
             l10n.selectDewormingProtocol,
-            style: Theme.of(context).textTheme.titleSmall,
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: primaryText,
+            ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: DesignSpacing.sm),
 
           // Helper text
           Text(
             l10n.chooseDewormingProtocol,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                ),
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              color: secondaryText,
+            ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: DesignSpacing.lg),
 
           // Protocol cards list
           Expanded(
             child: ListView.separated(
               itemCount: protocols.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 12),
+              separatorBuilder: (context, index) =>
+                  SizedBox(height: DesignSpacing.sm),
               itemBuilder: (context, index) {
                 final protocol = protocols[index];
                 return _ProtocolCard(
@@ -293,6 +373,14 @@ class _PetInfoHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
 
     // Localize species display
     String getLocalizedSpecies(String species) {
@@ -306,28 +394,30 @@ class _PetInfoHeader extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      padding: EdgeInsets.all(DesignSpacing.lg),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(12),
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
       ),
       child: Row(
         children: [
           // Pet photo/avatar
           CircleAvatar(
-            radius: 24,
-            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            radius: 28,
+            backgroundColor: DesignColors.highlightTeal.withOpacity(0.2),
             backgroundImage: pet.photoPath != null && pet.photoPath!.isNotEmpty
                 ? AssetImage(pet.photoPath!)
                 : null,
             child: pet.photoPath == null || pet.photoPath!.isEmpty
                 ? Icon(
                     Icons.pets,
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    color: DesignColors.highlightTeal,
+                    size: 28,
                   )
                 : null,
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: DesignSpacing.md),
 
           // Pet name and species/age
           Expanded(
@@ -336,33 +426,41 @@ class _PetInfoHeader extends StatelessWidget {
               children: [
                 Text(
                   pet.name,
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: GoogleFonts.poppins(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: primaryText,
+                  ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: DesignSpacing.xs),
                 Row(
                   children: [
-                    Chip(
-                      label: Text(getLocalizedSpecies(pet.species)),
-                      padding: EdgeInsets.zero,
-                      visualDensity: VisualDensity.compact,
-                      backgroundColor:
-                          Theme.of(context).colorScheme.secondaryContainer,
-                      labelStyle:
-                          Theme.of(context).textTheme.labelSmall?.copyWith(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSecondaryContainer,
-                              ),
+                    // Species badge
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: DesignSpacing.sm,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: DesignColors.highlightTeal.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        getLocalizedSpecies(pet.species),
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: DesignColors.highlightTeal,
+                        ),
+                      ),
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: DesignSpacing.sm),
                     Text(
                       _formatAge(pet.birthday, l10n),
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withOpacity(0.7),
-                          ),
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        color: secondaryText,
+                      ),
                     ),
                   ],
                 ),
@@ -408,6 +506,14 @@ class _ProtocolCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
     final locale = Localizations.localeOf(context);
     final isRomanian = locale.languageCode == 'ro';
 
@@ -425,172 +531,151 @@ class _ProtocolCard extends StatelessWidget {
           '${l10n.treatmentsCount(protocol.schedules.length)}, '
           '${protocol.region ?? 'Unknown'}',
       button: true,
-      child: Card(
-        elevation: 1,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+      child: Container(
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
         ),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Protocol name and badges
-                      Row(
-                        children: [
-                          Flexible(
-                            child: Text(
-                              displayName,
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(16),
+            child: Padding(
+              padding: EdgeInsets.all(DesignSpacing.lg),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Protocol name
+                        Text(
+                          displayName,
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: primaryText,
                           ),
-                          const SizedBox(width: 8),
+                        ),
+                        SizedBox(height: DesignSpacing.sm),
 
-                          // Standard/Intensive badge
-                          Chip(
-                            label: Text(
-                              _isStandard
-                                  ? l10n.coreProtocol
-                                  : l10n.extendedProtocol,
-                            ),
-                            padding: EdgeInsets.zero,
-                            visualDensity: VisualDensity.compact,
-                            backgroundColor: _isStandard
-                                ? Theme.of(context).colorScheme.primaryContainer
-                                : Theme.of(context)
-                                    .colorScheme
-                                    .secondaryContainer,
-                            labelStyle: Theme.of(context)
-                                .textTheme
-                                .labelSmall
-                                ?.copyWith(
+                        // Badges row
+                        Wrap(
+                          spacing: DesignSpacing.xs,
+                          runSpacing: DesignSpacing.xs,
+                          children: [
+                            // Standard/Intensive badge
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: DesignSpacing.sm,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: _isStandard
+                                    ? DesignColors.highlightTeal.withOpacity(0.15)
+                                    : DesignColors.highlightPurple.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                _isStandard
+                                    ? l10n.coreProtocol
+                                    : l10n.extendedProtocol,
+                                style: GoogleFonts.inter(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
                                   color: _isStandard
-                                      ? Theme.of(context)
-                                          .colorScheme
-                                          .onPrimaryContainer
-                                      : Theme.of(context)
-                                          .colorScheme
-                                          .onSecondaryContainer,
+                                      ? DesignColors.highlightTeal
+                                      : DesignColors.highlightPurple,
                                 ),
-                          ),
-                          const SizedBox(width: 4),
-
-                          // Predefined/Custom badge
-                          Chip(
-                            label: Text(
-                              protocol.isCustom
-                                  ? l10n.customProtocol
-                                  : l10n.predefinedProtocol,
+                              ),
                             ),
-                            padding: EdgeInsets.zero,
-                            visualDensity: VisualDensity.compact,
-                            backgroundColor: protocol.isCustom
-                                ? Theme.of(context)
-                                    .colorScheme
-                                    .surfaceContainerHighest
-                                : Theme.of(context)
-                                    .colorScheme
-                                    .tertiaryContainer,
-                            side: protocol.isCustom
-                                ? BorderSide(
-                                    color:
-                                        Theme.of(context).colorScheme.outline,
-                                  )
-                                : null,
-                            labelStyle: Theme.of(context)
-                                .textTheme
-                                .labelSmall
-                                ?.copyWith(
+
+                            // Predefined/Custom badge
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: DesignSpacing.sm,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: protocol.isCustom
+                                    ? secondaryText.withOpacity(0.1)
+                                    : DesignColors.highlightBlue.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                protocol.isCustom
+                                    ? l10n.customProtocol
+                                    : l10n.predefinedProtocol,
+                                style: GoogleFonts.inter(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
                                   color: protocol.isCustom
-                                      ? Theme.of(context).colorScheme.onSurface
-                                      : Theme.of(context)
-                                          .colorScheme
-                                          .onTertiaryContainer,
+                                      ? secondaryText
+                                      : DesignColors.highlightBlue,
                                 ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-
-                      // Description
-                      Text(
-                        displayDescription,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withOpacity(0.7),
+                              ),
                             ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 8),
+                          ],
+                        ),
+                        SizedBox(height: DesignSpacing.sm),
 
-                      // Metadata (treatment count and region)
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.pest_control,
-                            size: 16,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withOpacity(0.7),
+                        // Description
+                        Text(
+                          displayDescription,
+                          style: GoogleFonts.inter(
+                            fontSize: 13,
+                            color: secondaryText,
                           ),
-                          const SizedBox(width: 4),
-                          Text(
-                            l10n.treatmentsCount(protocol.schedules.length),
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelMedium
-                                ?.copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurface
-                                      .withOpacity(0.7),
-                                ),
-                          ),
-                          const SizedBox(width: 16),
-                          Icon(
-                            Icons.public,
-                            size: 16,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withOpacity(0.7),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            protocol.region ?? 'Unknown',
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelMedium
-                                ?.copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurface
-                                      .withOpacity(0.7),
-                                ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        SizedBox(height: DesignSpacing.md),
+
+                        // Metadata (treatment count and region)
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.pest_control,
+                              size: 16,
+                              color: DesignColors.highlightYellow,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              l10n.treatmentsCount(protocol.schedules.length),
+                              style: GoogleFonts.inter(
+                                fontSize: 12,
+                                color: secondaryText,
+                              ),
+                            ),
+                            SizedBox(width: DesignSpacing.md),
+                            Icon(
+                              Icons.public,
+                              size: 16,
+                              color: DesignColors.highlightYellow,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              protocol.region ?? 'Unknown',
+                              style: GoogleFonts.inter(
+                                fontSize: 12,
+                                color: secondaryText,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
 
-                // Chevron icon
-                Icon(
-                  Icons.chevron_right,
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-                ),
-              ],
+                  // Chevron icon
+                  Icon(
+                    Icons.chevron_right,
+                    color: secondaryText,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -622,6 +707,14 @@ class _ConfirmationBottomSheetState extends State<_ConfirmationBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
     final locale = Localizations.localeOf(context);
     final isRomanian = locale.languageCode == 'ro';
 
@@ -631,39 +724,59 @@ class _ConfirmationBottomSheetState extends State<_ConfirmationBottomSheet> {
         : widget.protocol.name;
 
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Title
-            Text(
-              l10n.confirmProtocolSelection,
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 16),
+      child: Container(
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(DesignSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Title
+              Text(
+                l10n.confirmProtocolSelection,
+                style: GoogleFonts.poppins(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
+                ),
+              ),
+              SizedBox(height: DesignSpacing.lg),
 
-            // Protocol summary card
-            Card(
-              color: Theme.of(context).colorScheme.surfaceContainerLow,
-              elevation: 0,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
+              // Protocol summary card
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(DesignSpacing.lg),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? const Color(0xFF2A2A2A)
+                      : const Color(0xFFF5F3E8),
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       displayName,
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: DesignColors.highlightYellow,
+                      ),
                     ),
-                    const Divider(height: 16),
+                    Divider(
+                      height: DesignSpacing.lg,
+                      color: secondaryText.withOpacity(0.2),
+                    ),
 
                     // Show first 5 deworming schedules
                     ...widget.protocol.schedules
                         .take(5)
                         .map((schedule) => Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0),
+                              padding: EdgeInsets.only(bottom: DesignSpacing.sm),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -671,18 +784,19 @@ class _ConfirmationBottomSheetState extends State<_ConfirmationBottomSheet> {
                                     schedule.dewormingType == 'internal'
                                         ? Icons.medication
                                         : Icons.pest_control,
-                                    size: 16,
+                                    size: 18,
                                     color: schedule.dewormingType == 'internal'
-                                        ? Colors.blue
-                                        : Colors.amber,
+                                        ? DesignColors.highlightBlue
+                                        : DesignColors.highlightYellow,
                                   ),
-                                  const SizedBox(width: 8),
+                                  SizedBox(width: DesignSpacing.sm),
                                   Expanded(
                                     child: Text(
                                       '${schedule.dewormingType == 'internal' ? l10n.internalDeworming : l10n.externalDeworming} ${l10n.atWeeksAge(schedule.ageInWeeks)}${schedule.productName != null ? ' - ${schedule.productName}' : ''}',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium,
+                                      style: GoogleFonts.inter(
+                                        fontSize: 13,
+                                        color: primaryText,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -692,62 +806,92 @@ class _ConfirmationBottomSheetState extends State<_ConfirmationBottomSheet> {
                     // Show "...and X more" if there are more schedules
                     if (widget.protocol.schedules.length > 5)
                       Padding(
-                        padding: const EdgeInsets.only(top: 4.0),
+                        padding: EdgeInsets.only(top: DesignSpacing.xs),
                         child: Text(
                           l10n.andXMore(widget.protocol.schedules.length - 5),
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withOpacity(0.6),
-                                  ),
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            fontStyle: FontStyle.italic,
+                            color: secondaryText,
+                          ),
                         ),
                       ),
                   ],
                 ),
               ),
-            ),
-            const SizedBox(height: 24),
+              SizedBox(height: DesignSpacing.xl),
 
-            // Action buttons
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed:
-                        _isApplying ? null : () => Navigator.of(context).pop(),
-                    child: Text(l10n.cancel),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Semantics(
-                    label: l10n.applyProtocolToPet(
-                      displayName,
-                      widget.pet.name,
-                    ),
-                    button: true,
-                    child: FilledButton(
-                      onPressed: _isApplying
-                          ? null
-                          : () {
-                              setState(() => _isApplying = true);
-                              widget.onConfirm();
-                            },
-                      child: _isApplying
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : Text(l10n.applyProtocol),
+              // Action buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed:
+                          _isApplying ? null : () => Navigator.of(context).pop(),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: secondaryText),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: DesignSpacing.md),
+                      ),
+                      child: Text(
+                        l10n.cancel,
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: primaryText,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                  SizedBox(width: DesignSpacing.md),
+                  Expanded(
+                    flex: 2,
+                    child: Semantics(
+                      label: l10n.applyProtocolToPet(
+                        displayName,
+                        widget.pet.name,
+                      ),
+                      button: true,
+                      child: ElevatedButton(
+                        onPressed: _isApplying
+                            ? null
+                            : () {
+                                setState(() => _isApplying = true);
+                                widget.onConfirm();
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: DesignColors.highlightTeal,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: EdgeInsets.symmetric(vertical: DesignSpacing.md),
+                        ),
+                        child: _isApplying
+                            ? SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : Text(
+                                l10n.applyProtocol,
+                                style: GoogleFonts.inter(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -6,9 +6,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
+import '../../../../theme/tokens/colors.dart';
+import '../../../../theme/tokens/spacing.dart';
+import '../../../../theme/tokens/shadows.dart';
 import '../../../domain/models/pet_profile.dart';
 import '../../providers/protocols/protocol_schedule_provider.dart';
 import '../../providers/protocols/deworming_protocol_provider.dart';
@@ -48,10 +52,28 @@ class DewormingScheduleScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final scheduleAsync = ref.watch(dewormingScheduleProvider(pet.id));
 
+    // Theme detection
+    final isDark = theme.brightness == Brightness.dark;
+    final backgroundColor =
+        isDark ? DesignColors.dBackground : DesignColors.lBackground;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: Text(l10n.dewormingStatus),
+        title: Text(
+          l10n.dewormingStatus,
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: primaryText,
+          ),
+        ),
         centerTitle: true,
+        backgroundColor: backgroundColor,
+        foregroundColor: primaryText,
+        elevation: 0,
       ),
       body: scheduleAsync.when(
         data: (schedule) {
@@ -160,6 +182,11 @@ class DewormingScheduleScreen extends ConsumerWidget {
     ThemeData theme,
     protocol,
   ) {
+    // Theme detection
+    final isDark = theme.brightness == Brightness.dark;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     // Use Romanian name/description if locale is Romanian and they exist
     final locale = Localizations.localeOf(context);
     final isRomanian = locale.languageCode == 'ro';
@@ -172,52 +199,56 @@ class DewormingScheduleScreen extends ConsumerWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(DesignSpacing.lg),
       decoration: BoxDecoration(
-        color: Colors.orange.shade50,
+        color: DesignColors.highlightYellow.withOpacity(0.15),
         border: Border(
-          bottom: BorderSide(color: Colors.orange.shade200, width: 2),
+          left: BorderSide(color: DesignColors.highlightYellow, width: 4),
         ),
       ),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(
-                Icons.bug_report,
-                color: Colors.orange.shade700,
-                size: 24,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
+          Icon(
+            Icons.pest_control,
+            color: DesignColors.highlightYellow,
+            size: 32,
+          ),
+          SizedBox(width: DesignSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
                   displayName,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.orange.shade900,
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: DesignColors.highlightYellow,
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            displayDescription,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.orange.shade800,
+                SizedBox(height: DesignSpacing.sm),
+                Text(
+                  displayDescription,
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    color: secondaryText,
+                  ),
+                ),
+                if (protocol.region != null) ...[
+                  SizedBox(height: DesignSpacing.xs),
+                  Text(
+                    l10n.regionLabel(protocol.region!),
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      fontStyle: FontStyle.italic,
+                      color: secondaryText,
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
-          if (protocol.region != null) ...[
-            const SizedBox(height: 4),
-            Text(
-              l10n.regionLabel(protocol.region!),
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: Colors.orange.shade700,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ],
         ],
       ),
     );
@@ -228,57 +259,73 @@ class DewormingScheduleScreen extends ConsumerWidget {
     AppLocalizations l10n,
     ThemeData theme,
   ) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 24,
-              backgroundColor: theme.colorScheme.primaryContainer,
-              child: Icon(
-                Icons.pets,
-                color: theme.colorScheme.onPrimaryContainer,
-                size: 24,
-              ),
+    // Theme detection
+    final isDark = theme.brightness == Brightness.dark;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: DesignSpacing.md),
+      padding: EdgeInsets.all(DesignSpacing.lg),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 32,
+            backgroundColor: DesignColors.highlightTeal.withOpacity(0.2),
+            child: Icon(
+              Icons.pets,
+              color: DesignColors.highlightTeal,
+              size: 32,
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    pet.name,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+          ),
+          SizedBox(width: DesignSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  pet.name,
+                  style: GoogleFonts.poppins(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: primaryText,
                   ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${pet.species}${pet.breed != null ? ' • ${pet.breed}' : ''}',
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: secondaryText,
+                  ),
+                ),
+                if (pet.birthday != null) ...[
                   const SizedBox(height: 4),
                   Text(
-                    '${pet.species}${pet.breed != null ? ' • ${pet.breed}' : ''}',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    l10n.birthDateLabel(
+                      DateFormat.yMMMd(
+                              Localizations.localeOf(context).languageCode)
+                          .format(pet.birthday!),
+                    ),
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      color: secondaryText,
                     ),
                   ),
-                  if (pet.birthday != null) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      l10n.birthDateLabel(
-                        DateFormat.yMMMd(
-                                Localizations.localeOf(context).languageCode)
-                            .format(pet.birthday!),
-                      ),
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
-                      ),
-                    ),
-                  ],
                 ],
-              ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -296,14 +343,42 @@ class DewormingScheduleScreen extends ConsumerWidget {
     required TreatmentStatus status,
     required bool isLast,
   }) {
-    final statusConfig = _getStatusConfig(theme, status);
+    // Theme detection
+    final isDark = theme.brightness == Brightness.dark;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final dangerColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
+    final successColor = isDark ? DesignColors.dSuccess : DesignColors.lSuccess;
+
+    // Determine colors based on status
+    final isUpcoming = status == TreatmentStatus.next;
+    final isOverdue = status == TreatmentStatus.overdue;
+    final isCompleted = status == TreatmentStatus.completed;
+
+    Color titleColor = DesignColors.highlightYellow;
+    Color? borderColor;
+    if (isOverdue) {
+      titleColor = dangerColor;
+      borderColor = dangerColor;
+    } else if (isUpcoming) {
+      titleColor = DesignColors.highlightYellow;
+      borderColor = DesignColors.highlightYellow;
+    }
 
     return Semantics(
       label:
           '${l10n.treatmentNumber(treatmentNumber)}: ${_getTreatmentTypeLabel(l10n, entry.dewormingType)}, '
           '${_getStatusLabel(l10n, status, entry, context)}',
       child: Padding(
-        padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+        padding: EdgeInsets.only(
+          left: DesignSpacing.md,
+          right: DesignSpacing.md,
+          bottom: DesignSpacing.md,
+        ),
         child: IntrinsicHeight(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -313,29 +388,35 @@ class DewormingScheduleScreen extends ConsumerWidget {
                 children: [
                   // Circular indicator
                   Container(
-                    width: 40,
-                    height: 40,
+                    width: 48,
+                    height: 48,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: statusConfig.fillColor,
-                      border: statusConfig.borderColor != null
+                      color: isCompleted
+                          ? successColor
+                          : isUpcoming
+                              ? DesignColors.highlightYellow
+                              : isOverdue
+                                  ? dangerColor
+                                  : surfaceColor,
+                      border: !isCompleted && !isUpcoming && !isOverdue
                           ? Border.all(
-                              color: statusConfig.borderColor!,
+                              color: isDark
+                                  ? const Color(0xFF3A3A3A)
+                                  : const Color(0xFFE0E0E0),
                               width: 2,
                             )
                           : null,
                     ),
                     child: Center(
-                      child: statusConfig.showCheckmark
-                          ? const Icon(
-                              Icons.check,
-                              color: Colors.white,
-                              size: 24,
-                            )
+                      child: isCompleted
+                          ? const Icon(Icons.check, color: Colors.white, size: 28)
                           : Icon(
                               _getTreatmentIcon(entry.dewormingType),
-                              color: statusConfig.iconColor,
-                              size: 20,
+                              color: isUpcoming || isOverdue
+                                  ? Colors.white
+                                  : secondaryText,
+                              size: 24,
                             ),
                     ),
                   ),
@@ -346,160 +427,141 @@ class DewormingScheduleScreen extends ConsumerWidget {
                       child: Container(
                         width: 2,
                         margin: const EdgeInsets.symmetric(vertical: 4),
-                        color: theme.colorScheme.outline.withOpacity(0.3),
+                        color: isDark
+                            ? const Color(0xFF3A3A3A)
+                            : const Color(0xFFE0E0E0),
                       ),
                     ),
                 ],
               ),
 
-              const SizedBox(width: 16),
+              SizedBox(width: DesignSpacing.md),
 
               // Right: Treatment information card
               Expanded(
-                child: Card(
-                  margin: EdgeInsets.zero,
-                  elevation: status == TreatmentStatus.next ? 2 : 1,
-                  child: Container(
-                    decoration: status == TreatmentStatus.next
-                        ? BoxDecoration(
-                            border: Border.all(
-                              color: Colors.blue.shade600,
-                              width: 2,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: surfaceColor,
+                    borderRadius: BorderRadius.circular(16),
+                    border: borderColor != null
+                        ? Border.all(color: borderColor, width: 2)
+                        : null,
+                    boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(DesignSpacing.lg),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Treatment number and type badge
+                        Row(
+                          children: [
+                            Text(
+                              l10n.treatmentNumber(treatmentNumber),
+                              style: GoogleFonts.poppins(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: titleColor,
+                              ),
                             ),
-                            borderRadius: BorderRadius.circular(12),
-                          )
-                        : status == TreatmentStatus.overdue
-                            ? BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.red.shade400,
-                                  width: 2,
-                                ),
-                                borderRadius: BorderRadius.circular(12),
-                              )
-                            : null,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Treatment number and type badge
-                          Row(
-                            children: [
-                              Text(
-                                l10n.treatmentNumber(treatmentNumber),
-                                style: theme.textTheme.titleSmall?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: status == TreatmentStatus.next
-                                      ? Colors.blue.shade700
-                                      : status == TreatmentStatus.overdue
-                                          ? Colors.red.shade700
-                                          : null,
+                            SizedBox(width: DesignSpacing.sm),
+                            _buildTypeChip(l10n, theme, entry.dewormingType),
+                          ],
+                        ),
+                        SizedBox(height: DesignSpacing.md),
+
+                        // Date with status
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.calendar_today,
+                              size: 16,
+                              color: secondaryText,
+                            ),
+                            SizedBox(width: DesignSpacing.sm),
+                            Expanded(
+                              child: Text(
+                                _formatDateDisplay(l10n, entry, status, context),
+                                style: GoogleFonts.inter(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: primaryText,
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              _buildTypeChip(l10n, theme, entry.dewormingType),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
+                            ),
+                          ],
+                        ),
 
-                          // Date with status
+                        // Product name
+                        if (entry.productName != null) ...[
+                          SizedBox(height: DesignSpacing.sm),
                           Row(
                             children: [
                               Icon(
-                                Icons.event,
+                                Icons.medication,
                                 size: 16,
-                                color: statusConfig.iconColor,
+                                color: DesignColors.highlightTeal,
                               ),
-                              const SizedBox(width: 6),
+                              SizedBox(width: DesignSpacing.sm),
                               Expanded(
                                 child: Text(
-                                  _formatDateDisplay(
-                                      l10n, entry, status, context),
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: statusConfig.iconColor,
+                                  entry.productName!,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 13,
                                     fontWeight: FontWeight.w500,
+                                    color: DesignColors.highlightTeal,
                                   ),
                                 ),
                               ),
                             ],
                           ),
+                        ],
 
-                          // Product name
-                          if (entry.productName != null) ...[
-                            const SizedBox(height: 8),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.medication,
-                                  size: 16,
-                                  color: theme.colorScheme.primary
-                                      .withOpacity(0.7),
+                        // Notes (use Romanian if available and locale matches)
+                        if (entry.notes != null && entry.notes!.isNotEmpty) ...[
+                          SizedBox(height: DesignSpacing.sm),
+                          Builder(
+                            builder: (context) {
+                              final locale = Localizations.localeOf(context);
+                              final isRomanian = locale.languageCode == 'ro';
+                              final displayNotes = (isRomanian &&
+                                      entry.notesRo != null &&
+                                      entry.notesRo!.isNotEmpty)
+                                  ? entry.notesRo!
+                                  : entry.notes!;
+                              return Container(
+                                padding: EdgeInsets.all(DesignSpacing.md),
+                                decoration: BoxDecoration(
+                                  color: isDark
+                                      ? const Color(0xFF2A2A2A)
+                                      : const Color(0xFFF5F3E8),
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
-                                const SizedBox(width: 6),
-                                Expanded(
-                                  child: Text(
-                                    entry.productName!,
-                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: theme.colorScheme.primary,
-                                      fontWeight: FontWeight.w500,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Icon(
+                                      Icons.info_outline,
+                                      size: 16,
+                                      color: secondaryText,
                                     ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-
-                          // Notes (use Romanian if available and locale matches)
-                          if (entry.notes != null &&
-                              entry.notes!.isNotEmpty) ...[
-                            const SizedBox(height: 8),
-                            Builder(
-                              builder: (context) {
-                                final locale = Localizations.localeOf(context);
-                                final isRomanian = locale.languageCode == 'ro';
-                                final displayNotes = (isRomanian &&
-                                        entry.notesRo != null &&
-                                        entry.notesRo!.isNotEmpty)
-                                    ? entry.notesRo!
-                                    : entry.notes!;
-                                return Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: theme
-                                        .colorScheme.surfaceContainerHighest
-                                        .withOpacity(0.5),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Icon(
-                                        Icons.info_outline,
-                                        size: 14,
-                                        color: theme.colorScheme.onSurface
-                                            .withOpacity(0.6),
-                                      ),
-                                      const SizedBox(width: 6),
-                                      Expanded(
-                                        child: Text(
-                                          displayNotes,
-                                          style: theme.textTheme.bodySmall
-                                              ?.copyWith(
-                                            fontSize: 12,
-                                            color: theme.colorScheme.onSurface
-                                                .withOpacity(0.7),
-                                          ),
+                                    SizedBox(width: DesignSpacing.sm),
+                                    Expanded(
+                                      child: Text(
+                                        displayNotes,
+                                        style: GoogleFonts.inter(
+                                          fontSize: 12,
+                                          color: secondaryText,
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                         ],
-                      ),
+                      ],
                     ),
                   ),
                 ),
@@ -520,36 +582,65 @@ class DewormingScheduleScreen extends ConsumerWidget {
     AppLocalizations l10n,
     ThemeData theme,
   ) {
+    // Theme detection
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(DesignSpacing.xl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.bug_report,
-              size: 64,
-              color: theme.colorScheme.primary.withOpacity(0.5),
+              Icons.pest_control,
+              size: 80,
+              color: DesignColors.highlightYellow.withOpacity(0.5),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: DesignSpacing.lg),
             Text(
               l10n.noDewormingProtocol,
-              style: theme.textTheme.titleLarge,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              l10n.chooseDewormingProtocol,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: primaryText,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
-            FilledButton.icon(
+            SizedBox(height: DesignSpacing.sm),
+            Text(
+              l10n.chooseDewormingProtocol,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: secondaryText,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: DesignSpacing.xl),
+            ElevatedButton.icon(
               onPressed: () => Navigator.of(context).pop(),
               icon: const Icon(Icons.arrow_back),
-              label: Text(l10n.goBack),
+              label: Text(
+                l10n.goBack,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: DesignColors.highlightTeal,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: DesignSpacing.lg,
+                  vertical: DesignSpacing.md,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
             ),
           ],
         ),
@@ -562,36 +653,66 @@ class DewormingScheduleScreen extends ConsumerWidget {
     AppLocalizations l10n,
     ThemeData theme,
   ) {
+    // Theme detection
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final dangerColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
+
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(DesignSpacing.xl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.cake,
-              size: 64,
-              color: theme.colorScheme.error.withOpacity(0.7),
+              size: 80,
+              color: dangerColor.withOpacity(0.7),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: DesignSpacing.lg),
             Text(
               l10n.noBirthdaySet,
-              style: theme.textTheme.titleLarge,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              l10n.addBirthdayToViewSchedule,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: primaryText,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
-            FilledButton.icon(
+            SizedBox(height: DesignSpacing.sm),
+            Text(
+              l10n.addBirthdayToViewSchedule,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: secondaryText,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: DesignSpacing.xl),
+            ElevatedButton.icon(
               onPressed: () => Navigator.of(context).pop(),
               icon: const Icon(Icons.edit),
-              label: Text(l10n.editProfile),
+              label: Text(
+                l10n.editProfile,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: DesignColors.highlightTeal,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: DesignSpacing.lg,
+                  vertical: DesignSpacing.md,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
             ),
           ],
         ),
@@ -604,28 +725,40 @@ class DewormingScheduleScreen extends ConsumerWidget {
     AppLocalizations l10n,
     ThemeData theme,
   ) {
+    // Theme detection
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(DesignSpacing.xl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.event_busy,
-              size: 64,
-              color: theme.colorScheme.primary.withOpacity(0.5),
+              size: 80,
+              color: DesignColors.highlightYellow.withOpacity(0.5),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: DesignSpacing.lg),
             Text(
               l10n.noScheduleAvailable,
-              style: theme.textTheme.titleLarge,
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: primaryText,
+              ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: DesignSpacing.sm),
             Text(
               l10n.protocolMayNotApplyYet,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: secondaryText,
               ),
               textAlign: TextAlign.center,
             ),
@@ -641,51 +774,66 @@ class DewormingScheduleScreen extends ConsumerWidget {
     ThemeData theme,
     List<DewormingScheduleEntry> schedule,
   ) {
+    // Theme detection
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final successColor = isDark ? DesignColors.dSuccess : DesignColors.lSuccess;
+
     return SingleChildScrollView(
       child: Column(
         children: [
-          const SizedBox(height: 48),
+          SizedBox(height: DesignSpacing.xxl),
           Icon(
             Icons.celebration,
             size: 80,
-            color: Colors.green.shade600,
+            color: successColor,
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: DesignSpacing.lg),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: EdgeInsets.symmetric(horizontal: DesignSpacing.lg),
             child: Text(
               l10n.allTreatmentsCompleted,
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.green.shade700,
+              style: GoogleFonts.poppins(
+                fontSize: 22,
+                fontWeight: FontWeight.w600,
+                color: successColor,
               ),
               textAlign: TextAlign.center,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: DesignSpacing.sm),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: EdgeInsets.symmetric(horizontal: DesignSpacing.lg),
             child: Text(
               l10n.completedAllScheduledTreatments,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: secondaryText,
               ),
               textAlign: TextAlign.center,
             ),
           ),
-          const SizedBox(height: 32),
+          SizedBox(height: DesignSpacing.xl),
 
           // Show completed treatments
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              l10n.treatmentHistory,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
+            padding: EdgeInsets.symmetric(horizontal: DesignSpacing.md),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                l10n.treatmentHistory,
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
+                ),
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: DesignSpacing.md),
 
           ...List.generate(schedule.length, (index) {
             final entry = schedule[index];
@@ -693,7 +841,7 @@ class DewormingScheduleScreen extends ConsumerWidget {
                 context, l10n, theme, entry, index + 1);
           }),
 
-          const SizedBox(height: 24),
+          SizedBox(height: DesignSpacing.lg),
         ],
       ),
     );
@@ -706,33 +854,82 @@ class DewormingScheduleScreen extends ConsumerWidget {
     DewormingScheduleEntry entry,
     int number,
   ) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: Colors.green.shade100,
-          child: Icon(
-            Icons.check,
-            color: Colors.green.shade700,
-            size: 20,
+    // Theme detection
+    final isDark = theme.brightness == Brightness.dark;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final successColor = isDark ? DesignColors.dSuccess : DesignColors.lSuccess;
+
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: DesignSpacing.md,
+        vertical: DesignSpacing.xs,
+      ),
+      padding: EdgeInsets.all(DesignSpacing.md),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.sm,
+      ),
+      child: Row(
+        children: [
+          // Green check circle
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: successColor.withOpacity(0.15),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.check,
+              color: successColor,
+              size: 20,
+            ),
           ),
-        ),
-        title: Row(
-          children: [
-            Text(l10n.treatmentNumber(number)),
-            const SizedBox(width: 8),
-            _buildTypeChip(l10n, theme, entry.dewormingType),
-          ],
-        ),
-        subtitle: Text(
-          DateFormat.yMMMd(Localizations.localeOf(context).languageCode)
-              .format(entry.scheduledDate),
-          style: theme.textTheme.bodySmall,
-        ),
-        trailing: Icon(
-          _getTreatmentIcon(entry.dewormingType),
-          color: theme.colorScheme.primary.withOpacity(0.6),
-        ),
+          SizedBox(width: DesignSpacing.md),
+          // Treatment info
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      l10n.treatmentNumber(number),
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: primaryText,
+                      ),
+                    ),
+                    SizedBox(width: DesignSpacing.sm),
+                    _buildTypeChip(l10n, theme, entry.dewormingType),
+                  ],
+                ),
+                SizedBox(height: 4),
+                Text(
+                  DateFormat.yMMMd(Localizations.localeOf(context).languageCode)
+                      .format(entry.scheduledDate),
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: secondaryText,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Treatment type icon
+          Icon(
+            _getTreatmentIcon(entry.dewormingType),
+            color: DesignColors.highlightYellow.withOpacity(0.6),
+            size: 24,
+          ),
+        ],
       ),
     );
   }
@@ -743,38 +940,64 @@ class DewormingScheduleScreen extends ConsumerWidget {
     ThemeData theme,
     Object error,
   ) {
+    // Theme detection
+    final isDark = theme.brightness == Brightness.dark;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final dangerColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
+
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(DesignSpacing.xl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.error_outline,
-              size: 64,
-              color: theme.colorScheme.error,
+              size: 80,
+              color: dangerColor,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: DesignSpacing.lg),
             Text(
               l10n.errorLoadingSchedule,
-              style: theme.textTheme.titleLarge?.copyWith(
-                color: theme.colorScheme.error,
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: dangerColor,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: DesignSpacing.sm),
             Text(
               error.toString(),
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                color: secondaryText,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
-            FilledButton.icon(
+            SizedBox(height: DesignSpacing.xl),
+            ElevatedButton.icon(
               onPressed: () => Navigator.of(context).pop(),
               icon: const Icon(Icons.arrow_back),
-              label: Text(l10n.goBack),
+              label: Text(
+                l10n.goBack,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: DesignColors.highlightTeal,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: DesignSpacing.lg,
+                  vertical: DesignSpacing.md,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
             ),
           ],
         ),
@@ -788,32 +1011,35 @@ class DewormingScheduleScreen extends ConsumerWidget {
 
   Widget _buildTypeChip(AppLocalizations l10n, ThemeData theme, String type) {
     final isInternal = type == 'internal';
+    // Use yellow for internal (pills/oral), coral for external (parasites)
+    final chipColor = isInternal
+        ? DesignColors.highlightYellow
+        : DesignColors.highlightCoral;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: EdgeInsets.symmetric(
+        horizontal: DesignSpacing.sm,
+        vertical: 4,
+      ),
       decoration: BoxDecoration(
-        color: isInternal ? Colors.amber.shade100 : Colors.orange.shade100,
+        color: chipColor.withOpacity(0.15),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isInternal ? Colors.amber.shade700 : Colors.orange.shade700,
-          width: 1,
-        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
             _getTreatmentIcon(type),
-            size: 12,
-            color: isInternal ? Colors.amber.shade900 : Colors.orange.shade900,
+            size: 14,
+            color: chipColor,
           ),
           const SizedBox(width: 4),
           Text(
             _getTreatmentTypeLabel(l10n, type),
-            style: theme.textTheme.labelSmall?.copyWith(
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-              color:
-                  isInternal ? Colors.amber.shade900 : Colors.orange.shade900,
+            style: GoogleFonts.inter(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: chipColor,
             ),
           ),
         ],
@@ -850,39 +1076,6 @@ class DewormingScheduleScreen extends ConsumerWidget {
     }
 
     return TreatmentStatus.future;
-  }
-
-  _StatusConfig _getStatusConfig(ThemeData theme, TreatmentStatus status) {
-    switch (status) {
-      case TreatmentStatus.completed:
-        return _StatusConfig(
-          fillColor: Colors.green.shade600,
-          iconColor: Colors.white,
-          showCheckmark: true,
-        );
-
-      case TreatmentStatus.next:
-        return _StatusConfig(
-          fillColor: Colors.blue.shade600,
-          iconColor: Colors.white,
-          showCheckmark: false,
-        );
-
-      case TreatmentStatus.overdue:
-        return _StatusConfig(
-          fillColor: Colors.red.shade600,
-          iconColor: Colors.white,
-          showCheckmark: false,
-        );
-
-      case TreatmentStatus.future:
-        return _StatusConfig(
-          fillColor: Colors.transparent,
-          borderColor: theme.colorScheme.outline,
-          iconColor: theme.colorScheme.onSurface.withOpacity(0.6),
-          showCheckmark: false,
-        );
-    }
   }
 
   String _formatDateDisplay(
@@ -954,19 +1147,4 @@ enum TreatmentStatus {
 
   /// Treatment is scheduled in the future
   future,
-}
-
-/// Internal configuration for status-dependent styling
-class _StatusConfig {
-  final Color fillColor;
-  final Color? borderColor;
-  final Color iconColor;
-  final bool showCheckmark;
-
-  _StatusConfig({
-    required this.fillColor,
-    this.borderColor,
-    required this.iconColor,
-    required this.showCheckmark,
-  });
 }

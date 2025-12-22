@@ -326,13 +326,13 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
         'deworming',
         l10n.deworming,
         Icons.pest_control,
-        DesignColors.highlightCoral,
+        DesignColors.highlightYellow,
       ),
       _FilterOption(
         'appointment',
         l10n.appointments,
         Icons.event,
-        DesignColors.highlightYellow,
+        DesignColors.highlightCoral,
       ),
       _FilterOption(
         'medication',
@@ -472,9 +472,9 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
       case 'vaccination_record':
         return DesignColors.highlightPurple; // Purple for vaccinations
       case 'deworming':
-        return DesignColors.highlightCoral; // Coral for deworming
+        return DesignColors.highlightYellow; // Yellow for deworming
       case 'appointment':
-        return DesignColors.highlightYellow; // Yellow for appointments
+        return DesignColors.highlightCoral; // Coral for appointments
       case 'medication':
         return DesignColors.highlightPink; // Pink for medications
       default:
@@ -1079,9 +1079,9 @@ class _EventListTile extends StatelessWidget {
       case 'vaccination_record':
         return DesignColors.highlightPurple;
       case 'deworming':
-        return DesignColors.highlightCoral;
-      case 'appointment':
         return DesignColors.highlightYellow;
+      case 'appointment':
+        return DesignColors.highlightCoral;
       case 'medication':
         return DesignColors.highlightPink;
       default:
