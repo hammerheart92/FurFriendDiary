@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../../domain/models/report_entry.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../utils/date_helper.dart';
+import '../../../theme/tokens/colors.dart';
+import '../../../theme/tokens/spacing.dart';
+import '../../../theme/tokens/shadows.dart';
 
 class ReportCard extends StatelessWidget {
   final ReportEntry report;
@@ -18,61 +22,78 @@ class ReportCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
 
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.only(bottom: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+    // Theme detection
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final reportColor = _getReportColor();
+
+    return Container(
+      margin: EdgeInsets.only(bottom: DesignSpacing.sm),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
       ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header row
-              Row(
-                children: [
-                  // Report icon and type
-                  Expanded(
-                    child: Row(
+              // Main content padding
+              Padding(
+                padding: EdgeInsets.all(DesignSpacing.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header row
+                    Row(
                       children: [
+                        // Report icon container
                         Container(
-                          padding: const EdgeInsets.all(8),
+                          padding: EdgeInsets.all(DesignSpacing.md),
                           decoration: BoxDecoration(
-                            color: _getReportColor().withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
+                            color: reportColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
                             _getReportIcon(),
-                            color: _getReportColor(),
-                            size: 20,
+                            color: reportColor,
+                            size: 24,
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: DesignSpacing.md),
+
+                        // Title and date
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 _getLocalizedReportType(context),
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
+                                style: GoogleFonts.inter(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: primaryText,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              const SizedBox(height: 2),
+                              SizedBox(height: 4),
                               Text(
                                 _getDateRange(),
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: theme.colorScheme.onSurface
-                                      .withOpacity(0.7),
+                                style: GoogleFonts.inter(
+                                  fontSize: 13,
+                                  color: secondaryText,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -80,141 +101,142 @@ class ReportCard extends StatelessWidget {
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
 
-                  // Generated date badge
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: _getReportColor().withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      _getTimeAgo(),
-                      style: TextStyle(
-                        color: _getReportColor(),
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-
-                  // More options menu
-                  PopupMenuButton<String>(
-                    onSelected: (value) {
-                      switch (value) {
-                        case 'delete':
-                          onDelete?.call();
-                          break;
-                      }
-                    },
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: 'delete',
-                        child: Row(
-                          children: [
-                            const Icon(Icons.delete, color: Colors.red),
-                            const SizedBox(width: 8),
-                            Text(l10n.delete),
-                          ],
-                        ),
-                      ),
-                    ],
-                    child: const Icon(Icons.more_vert, size: 20),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 16),
-
-              // Report details row
-              Row(
-                children: [
-                  // Generated date
-                  Expanded(
-                    child: _buildDetailItem(
-                      context: context,
-                      icon: Icons.calendar_today,
-                      label: l10n.generated,
-                      value: localizedShortDate(context, report.generatedDate),
-                      color: Colors.blue,
-                    ),
-                  ),
-
-                  // Date range duration
-                  Expanded(
-                    child: _buildDetailItem(
-                      context: context,
-                      icon: Icons.date_range,
-                      label: l10n.period,
-                      value: _getPeriodDuration(),
-                      color: Colors.green,
-                    ),
-                  ),
-
-                  // Data summary
-                  Expanded(
-                    child: _buildDetailItem(
-                      context: context,
-                      icon: Icons.data_usage,
-                      label: l10n.data,
-                      value: _getDataSummary(context),
-                      color: Colors.purple,
-                    ),
-                  ),
-                ],
-              ),
-
-              // Report summary section
-              if (_hasSummaryData()) ...[
-                const SizedBox(height: 16),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surface,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: theme.colorScheme.outline.withOpacity(0.2),
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.summarize,
-                            size: 16,
-                            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        // Time badge
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: DesignSpacing.sm,
+                            vertical: 4,
                           ),
-                          const SizedBox(width: 4),
-                          Text(
-                            l10n.summary,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color:
-                                  theme.colorScheme.onSurface.withOpacity(0.7),
+                          decoration: BoxDecoration(
+                            color: reportColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            _getTimeAgo(),
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: reportColor,
                             ),
                           ),
-                        ],
+                        ),
+                        SizedBox(width: DesignSpacing.sm),
+
+                        // More options menu
+                        PopupMenuButton<String>(
+                          onSelected: (value) {
+                            if (value == 'delete') {
+                              onDelete?.call();
+                            }
+                          },
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              value: 'delete',
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.delete_outline,
+                                    color: isDark
+                                        ? DesignColors.dDanger
+                                        : DesignColors.lDanger,
+                                  ),
+                                  SizedBox(width: DesignSpacing.sm),
+                                  Text(
+                                    l10n.delete,
+                                    style: GoogleFonts.inter(
+                                      fontSize: 14,
+                                      color: isDark
+                                          ? DesignColors.dDanger
+                                          : DesignColors.lDanger,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                          icon: Icon(
+                            Icons.more_vert,
+                            color: secondaryText,
+                            size: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(height: DesignSpacing.md),
+
+                    // Stats row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _buildStatItem(
+                          icon: Icons.calendar_today,
+                          label: l10n.generated,
+                          value: localizedShortDate(context, report.generatedDate),
+                          color: DesignColors.highlightBlue,
+                          primaryText: primaryText,
+                          secondaryText: secondaryText,
+                        ),
+                        _buildStatItem(
+                          icon: Icons.date_range,
+                          label: l10n.period,
+                          value: _getPeriodDuration(),
+                          color: DesignColors.highlightTeal,
+                          primaryText: primaryText,
+                          secondaryText: secondaryText,
+                        ),
+                        _buildStatItem(
+                          icon: Icons.analytics_outlined,
+                          label: l10n.data,
+                          value: _getDataSummary(context),
+                          color: DesignColors.highlightPurple,
+                          primaryText: primaryText,
+                          secondaryText: secondaryText,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // Summary section with beige/dark background
+              if (_hasSummaryData())
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(DesignSpacing.md),
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? const Color(0xFF2A2A2A)
+                        : const Color(0xFFF5F3E8),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(20),
+                      bottomRight: Radius.circular(20),
+                    ),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Icons.subject,
+                        size: 16,
+                        color: secondaryText,
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        _getSummaryText(context),
-                        style: theme.textTheme.bodySmall,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
+                      SizedBox(width: DesignSpacing.sm),
+                      Expanded(
+                        child: Text(
+                          _getSummaryText(context),
+                          style: GoogleFonts.inter(
+                            fontSize: 13,
+                            color: secondaryText,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ],
             ],
           ),
         ),
@@ -222,12 +244,13 @@ class ReportCard extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailItem({
-    required BuildContext context,
+  Widget _buildStatItem({
     required IconData icon,
     required String label,
     required String value,
     required Color color,
+    required Color primaryText,
+    required Color secondaryText,
   }) {
     return Column(
       children: [
@@ -236,21 +259,22 @@ class ReportCard extends StatelessWidget {
           color: color,
           size: 20,
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: 4),
         Text(
           label,
-          style: TextStyle(
+          style: GoogleFonts.inter(
             fontSize: 11,
-            color: Colors.grey[600],
+            color: secondaryText,
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 2),
+        SizedBox(height: 2),
         Text(
           value,
-          style: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.bold,
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: primaryText,
           ),
           textAlign: TextAlign.center,
         ),
@@ -289,18 +313,19 @@ class ReportCard extends StatelessWidget {
     }
   }
 
+  /// Get report type color using design tokens
   Color _getReportColor() {
     switch (report.reportType) {
       case 'Health Summary':
-        return Colors.blue;
+        return DesignColors.highlightBlue;
       case 'Medication History':
-        return Colors.green;
+        return DesignColors.highlightPink;
       case 'Activity Report':
-        return Colors.orange;
+        return DesignColors.highlightYellow;
       case 'Veterinary Records':
-        return Colors.red;
+        return DesignColors.highlightCoral;
       default:
-        return Colors.purple;
+        return DesignColors.highlightTeal;
     }
   }
 

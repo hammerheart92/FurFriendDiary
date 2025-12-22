@@ -9,6 +9,8 @@ import '../widgets/report_generation_form.dart';
 import '../widgets/report_viewer.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../theme/tokens/colors.dart';
+import '../../../theme/tokens/spacing.dart';
+import '../../../theme/tokens/shadows.dart';
 
 /// Internal tab keys for logic and filtering
 class ReportTab {
@@ -80,36 +82,56 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
 
   Widget _buildNoPetView(ThemeData theme) {
     final l10n = AppLocalizations.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final backgroundColor =
+        isDark ? DesignColors.dBackground : DesignColors.lBackground;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: Text(l10n.reports),
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.onPrimary,
+        title: Text(
+          l10n.reports,
+          style: GoogleFonts.poppins(
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: DesignColors.highlightTeal,
+        foregroundColor: Colors.white,
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.pets,
-              size: 64,
-              color: theme.colorScheme.onSurface.withOpacity(0.5),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              l10n.noPetSelected,
-              style: theme.textTheme.headlineSmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+        child: Padding(
+          padding: EdgeInsets.all(DesignSpacing.lg),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.pets,
+                size: 64,
+                color: secondaryText.withOpacity(0.5),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              l10n.pleaseSetupPetFirst,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.5),
+              SizedBox(height: DesignSpacing.md),
+              Text(
+                l10n.noPetSelected,
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: secondaryText,
+                ),
               ),
-            ),
-          ],
+              SizedBox(height: DesignSpacing.sm),
+              Text(
+                l10n.pleaseSetupPetFirst,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: secondaryText.withOpacity(0.7),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -168,17 +190,41 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
     final l10n = AppLocalizations.of(context);
     final reportsAsync = ref.watch(reportsByPetIdProvider(petId));
 
+    // Theme detection
+    final isDark = theme.brightness == Brightness.dark;
+    final backgroundColor =
+        isDark ? DesignColors.dBackground : DesignColors.lBackground;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: Text(l10n.reports),
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.onPrimary,
+        title: Text(
+          l10n.reports,
+          style: GoogleFonts.poppins(
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: DesignColors.highlightTeal,
+        foregroundColor: Colors.white,
         elevation: 0,
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: theme.colorScheme.onPrimary,
-          labelColor: theme.colorScheme.onPrimary,
-          unselectedLabelColor: theme.colorScheme.onPrimary.withOpacity(0.7),
+          indicatorColor: Colors.white,
+          indicatorWeight: 3,
+          labelStyle: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white.withOpacity(0.7),
           isScrollable: true,
           tabs: [
             Tab(text: l10n.all),
@@ -192,16 +238,11 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
         children: [
           // Search bar
           Container(
-            padding: const EdgeInsets.all(16),
+            margin: EdgeInsets.all(DesignSpacing.md),
             decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+              color: surfaceColor,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.sm,
             ),
             child: TextField(
               controller: _searchController,
@@ -210,9 +251,17 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
                   _searchQuery = value.toLowerCase();
                 });
               },
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: primaryText,
+              ),
               decoration: InputDecoration(
                 hintText: l10n.searchReports,
-                prefixIcon: const Icon(Icons.search),
+                hintStyle: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: secondaryText,
+                ),
+                prefixIcon: Icon(Icons.search, color: secondaryText),
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
                         onPressed: () {
@@ -221,15 +270,11 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
                             _searchQuery = '';
                           });
                         },
-                        icon: const Icon(Icons.clear),
+                        icon: Icon(Icons.clear, color: secondaryText),
                       )
                     : null,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: theme.colorScheme.background,
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.all(DesignSpacing.md),
               ),
             ),
           ),
@@ -282,19 +327,47 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
                   ],
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => Center(
+                child: CircularProgressIndicator(
+                  color: DesignColors.highlightTeal,
+                ),
+              ),
               error: (error, stack) => Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.error, size: 64, color: Colors.red),
-                    const SizedBox(height: 16),
-                    Text('${l10n.errorLoadingReports}: $error'),
-                    const SizedBox(height: 16),
+                    Icon(
+                      Icons.error_outline,
+                      size: 64,
+                      color: isDark ? DesignColors.dDanger : DesignColors.lDanger,
+                    ),
+                    SizedBox(height: DesignSpacing.md),
+                    Text(
+                      '${l10n.errorLoadingReports}: $error',
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        color: primaryText,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: DesignSpacing.md),
                     ElevatedButton(
                       onPressed: () =>
                           ref.invalidate(reportsByPetIdProvider(petId)),
-                      child: Text(l10n.retry),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: DesignColors.highlightTeal,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        l10n.retry,
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -309,10 +382,20 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
             _showForm = true;
           });
         },
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.onPrimary,
+        backgroundColor: DesignColors.highlightTeal,
+        foregroundColor: Colors.white,
         icon: const Icon(Icons.add),
-        label: Text(l10n.generateReport),
+        label: Text(
+          l10n.generateReport,
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
       ),
     );
   }
@@ -325,6 +408,11 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
   ) {
     final l10n = AppLocalizations.of(context);
 
+    // Theme detection for empty state
+    final isDark = theme.brightness == Brightness.dark;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     // Filter reports based on search query
     final filteredReports = reports.where((report) {
       if (_searchQuery.isEmpty) return true;
@@ -336,34 +424,40 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
 
     if (filteredReports.isEmpty) {
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.assessment,
-              size: 64,
-              color: theme.colorScheme.onSurface.withOpacity(0.3),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              _searchQuery.isNotEmpty
-                  ? l10n.noReportsMatchSearch
-                  : emptyMessage,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+        child: Padding(
+          padding: EdgeInsets.all(DesignSpacing.lg),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.assessment_outlined,
+                size: 64,
+                color: secondaryText.withOpacity(0.5),
               ),
-              textAlign: TextAlign.center,
-            ),
-            if (_searchQuery.isNotEmpty) ...[
-              const SizedBox(height: 8),
+              SizedBox(height: DesignSpacing.md),
               Text(
-                l10n.tryAdjustingSearchTerms,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.5),
+                _searchQuery.isNotEmpty
+                    ? l10n.noReportsMatchSearch
+                    : emptyMessage,
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: secondaryText,
                 ),
+                textAlign: TextAlign.center,
               ),
+              if (_searchQuery.isNotEmpty) ...[
+                SizedBox(height: DesignSpacing.sm),
+                Text(
+                  l10n.tryAdjustingSearchTerms,
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: secondaryText.withOpacity(0.7),
+                  ),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       );
     }

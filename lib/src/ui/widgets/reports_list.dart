@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../../domain/models/report_entry.dart';
 import '../../presentation/providers/care_data_provider.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../theme/tokens/colors.dart';
+import '../../../theme/tokens/spacing.dart';
 import 'report_card.dart';
 
 class ReportsList extends ConsumerWidget {
@@ -41,11 +44,19 @@ class ReportsList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Theme detection
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final dangerColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
+
     // If reports are provided, use them directly (for filtered views)
     // Otherwise, fetch all reports from provider
     if (reports != null) {
       if (reports!.isEmpty) {
-        return _buildEmptyState(context);
+        return _buildEmptyState(context, isDark, secondaryText);
       }
 
       // Sort reports by generation date (newest first)
@@ -53,7 +64,7 @@ class ReportsList extends ConsumerWidget {
       sortedReports.sort((a, b) => b.generatedDate.compareTo(a.generatedDate));
 
       return ListView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(DesignSpacing.md),
         itemCount: sortedReports.length,
         itemBuilder: (context, index) {
           final report = sortedReports[index];
@@ -72,7 +83,7 @@ class ReportsList extends ConsumerWidget {
     return reportsAsync.when(
       data: (fetchedReports) {
         if (fetchedReports.isEmpty) {
-          return _buildEmptyState(context);
+          return _buildEmptyState(context, isDark, secondaryText);
         }
 
         // Sort reports by generation date (newest first)
@@ -81,7 +92,7 @@ class ReportsList extends ConsumerWidget {
             .sort((a, b) => b.generatedDate.compareTo(a.generatedDate));
 
         return ListView.builder(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(DesignSpacing.md),
           itemCount: sortedReports.length,
           itemBuilder: (context, index) {
             final report = sortedReports[index];
@@ -93,86 +104,108 @@ class ReportsList extends ConsumerWidget {
           },
         );
       },
-      loading: () => const Center(
-        child: CircularProgressIndicator(),
+      loading: () => Center(
+        child: CircularProgressIndicator(
+          color: DesignColors.highlightTeal,
+        ),
       ),
       error: (error, stack) => Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 48,
-              color: Colors.grey[400],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Failed to load reports',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
+        child: Padding(
+          padding: EdgeInsets.all(DesignSpacing.lg),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.error_outline,
+                size: 48,
+                color: dangerColor,
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              error.toString(),
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[500],
+              SizedBox(height: DesignSpacing.md),
+              Text(
+                'Failed to load reports',
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
+                ),
               ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => ref.invalidate(reportsByPetIdProvider(petId)),
-              child: const Text('Retry'),
-            ),
-          ],
+              SizedBox(height: DesignSpacing.sm),
+              Text(
+                error.toString(),
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  color: secondaryText,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: DesignSpacing.md),
+              ElevatedButton(
+                onPressed: () => ref.invalidate(reportsByPetIdProvider(petId)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: DesignColors.highlightTeal,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Text(
+                  'Retry',
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildEmptyState(BuildContext context) {
-    final theme = Theme.of(context);
+  Widget _buildEmptyState(
+      BuildContext context, bool isDark, Color secondaryText) {
+    final l10n = AppLocalizations.of(context);
 
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: EdgeInsets.all(DesignSpacing.xl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.assessment,
+              Icons.assessment_outlined,
               size: 80,
-              color: theme.colorScheme.outline.withOpacity(0.5),
+              color: secondaryText.withOpacity(0.5),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: DesignSpacing.lg),
             Text(
-              'No Reports Yet',
-              style: theme.textTheme.headlineSmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
-                fontWeight: FontWeight.bold,
+              l10n.noReportsFound,
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: secondaryText,
               ),
             ),
-            const SizedBox(height: 12),
-            Text(
-              'Generate comprehensive reports about your pet\'s health, activities, and care history.\nTap the + button to create your first report.',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
+            SizedBox(height: DesignSpacing.xl),
             SizedBox(
               width: 200,
               child: ElevatedButton.icon(
                 onPressed: onAddReport,
                 icon: const Icon(Icons.add),
-                label: const Text('Generate Report'),
+                label: Text(
+                  l10n.generateReport,
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primary,
-                  foregroundColor: theme.colorScheme.onPrimary,
+                  backgroundColor: DesignColors.highlightTeal,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(
+                    vertical: DesignSpacing.md,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -192,27 +225,73 @@ class ReportsList extends ConsumerWidget {
     final formatter = DateFormat.yMMMd(locale.languageCode);
     final formattedDate = formatter.format(report.generatedDate);
 
+    // Theme detection
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final dangerColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
+
     // Get localized report name
     final localizedReportName = getLocalizedReportName(report.reportType, l10n);
 
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n.deleteReport),
+        backgroundColor: surfaceColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: Text(
+          l10n.deleteReport,
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: primaryText,
+          ),
+        ),
         content: Text(
           l10n.deleteReportConfirmation(localizedReportName, formattedDate),
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            color: secondaryText,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.cancel),
+            style: TextButton.styleFrom(
+              foregroundColor: secondaryText,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: Text(
+              l10n.cancel,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.error,
+              foregroundColor: dangerColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
-            child: Text(l10n.delete),
+            child: Text(
+              l10n.delete,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ],
       ),
@@ -224,8 +303,19 @@ class ReportsList extends ConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(l10n.reportDeletedSuccessfully),
-              backgroundColor: Theme.of(context).colorScheme.primary,
+              content: Text(
+                l10n.reportDeletedSuccessfully,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: Colors.white,
+                ),
+              ),
+              backgroundColor: DesignColors.highlightTeal,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              margin: EdgeInsets.all(DesignSpacing.md),
             ),
           );
         }
@@ -233,8 +323,20 @@ class ReportsList extends ConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to delete report: $error'),
-              backgroundColor: Colors.red,
+              content: Text(
+                'Failed to delete report: $error',
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: Colors.white,
+                ),
+              ),
+              backgroundColor:
+                  isDark ? DesignColors.dDanger : DesignColors.lDanger,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              margin: EdgeInsets.all(DesignSpacing.md),
             ),
           );
         }
