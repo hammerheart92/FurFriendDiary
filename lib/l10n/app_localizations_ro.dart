@@ -1220,6 +1220,9 @@ class AppLocalizationsRo extends AppLocalizations {
   String get language => 'Limbă';
 
   @override
+  String get chooseLanguage => 'Alegeți limba preferată.';
+
+  @override
   String get english => 'English';
 
   @override
@@ -1230,6 +1233,9 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get theme => 'Temă';
+
+  @override
+  String get chooseTheme => 'Alegeți tema implicită.';
 
   @override
   String get light => 'Luminos';

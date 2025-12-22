@@ -2396,6 +2396,12 @@ abstract class AppLocalizations {
   /// **'Language'**
   String get language;
 
+  /// No description provided for @chooseLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your preferred language.'**
+  String get chooseLanguage;
+
   /// No description provided for @english.
   ///
   /// In en, this message translates to:
@@ -2419,6 +2425,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Theme'**
   String get theme;
+
+  /// No description provided for @chooseTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your default theme.'**
+  String get chooseTheme;
 
   /// No description provided for @light.
   ///

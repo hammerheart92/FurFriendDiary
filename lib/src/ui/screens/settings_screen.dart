@@ -11,6 +11,8 @@ import '../../presentation/widgets/tier_badge.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../services/data_deletion_service.dart';
 import 'reminders_screen.dart';
+import 'language_selection_screen.dart';
+import 'theme_selection_screen.dart';
 import '../../presentation/providers/pdf_consent_provider.dart';
 import '../../../theme/tokens/colors.dart';
 import '../../../theme/tokens/spacing.dart';
@@ -101,7 +103,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 iconColor: DesignColors.highlightTeal,
                 title: l10n.language,
                 subtitle: _getLanguageName(context, locale.languageCode),
-                onTap: () => _showLanguageDialog(context, ref, locale),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const LanguageSelectionScreen(),
+                    ),
+                  );
+                },
               ),
 
               // App Preferences Group
@@ -125,7 +133,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 iconColor: DesignColors.highlightPurple,
                 title: l10n.theme,
                 subtitle: _getThemeName(context, themeMode),
-                onTap: () => _showThemeDialog(context, ref, themeMode),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const ThemeSelectionScreen(),
+                    ),
+                  );
+                },
               ),
               _buildSettingsItem(
                 context: context,
@@ -764,104 +778,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
   }
 
-  void _showLanguageDialog(
-      BuildContext context, WidgetRef ref, Locale currentLocale) {
-    final l10n = AppLocalizations.of(context);
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.selectLanguage),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RadioListTile<String>(
-              title: Text(l10n.english),
-              value: 'en',
-              groupValue: currentLocale.languageCode,
-              onChanged: (value) {
-                if (value != null) {
-                  ref.read(localeProvider.notifier).setLocale(Locale(value));
-                  Navigator.pop(context);
-                }
-              },
-            ),
-            RadioListTile<String>(
-              title: Text(l10n.romanian),
-              value: 'ro',
-              groupValue: currentLocale.languageCode,
-              onChanged: (value) {
-                if (value != null) {
-                  ref.read(localeProvider.notifier).setLocale(Locale(value));
-                  Navigator.pop(context);
-                }
-              },
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showThemeDialog(
-      BuildContext context, WidgetRef ref, ThemeMode currentMode) {
-    final l10n = AppLocalizations.of(context);
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.selectTheme),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RadioListTile<ThemeMode>(
-              title: Text(l10n.light),
-              value: ThemeMode.light,
-              groupValue: currentMode,
-              onChanged: (value) {
-                if (value != null) {
-                  ref.read(themeModeProvider.notifier).setThemeMode(value);
-                  Navigator.pop(context);
-                }
-              },
-            ),
-            RadioListTile<ThemeMode>(
-              title: Text(l10n.dark),
-              value: ThemeMode.dark,
-              groupValue: currentMode,
-              onChanged: (value) {
-                if (value != null) {
-                  ref.read(themeModeProvider.notifier).setThemeMode(value);
-                  Navigator.pop(context);
-                }
-              },
-            ),
-            RadioListTile<ThemeMode>(
-              title: Text(l10n.system),
-              value: ThemeMode.system,
-              groupValue: currentMode,
-              onChanged: (value) {
-                if (value != null) {
-                  ref.read(themeModeProvider.notifier).setThemeMode(value);
-                  Navigator.pop(context);
-                }
-              },
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel),
-          ),
-        ],
-      ),
-    );
-  }
 
   void _showClearCacheDialog(BuildContext context) {
     final l10n = AppLocalizations.of(context);

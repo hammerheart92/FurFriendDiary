@@ -1209,6 +1209,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get language => 'Language';
 
   @override
+  String get chooseLanguage => 'Choose your preferred language.';
+
+  @override
   String get english => 'English';
 
   @override
@@ -1219,6 +1222,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get theme => 'Theme';
+
+  @override
+  String get chooseTheme => 'Select your default theme.';
 
   @override
   String get light => 'Light';
