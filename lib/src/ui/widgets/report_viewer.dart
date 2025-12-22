@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../../domain/models/report_entry.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../theme/tokens/colors.dart';
+import '../../../theme/tokens/spacing.dart';
+import '../../../theme/tokens/shadows.dart';
 
 class ReportViewer extends StatelessWidget {
   final ReportEntry report;
@@ -18,136 +22,182 @@ class ReportViewer extends StatelessWidget {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
 
+    // Theme detection
+    final isDark = theme.brightness == Brightness.dark;
+    final backgroundColor =
+        isDark ? DesignColors.dBackground : DesignColors.lBackground;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final reportColor = _getReportColor();
+
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: Text(_getLocalizedReportType(l10n)),
+        backgroundColor: backgroundColor,
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.close),
+          icon: Icon(Icons.close, color: primaryText),
           onPressed: onClose ?? () => Navigator.of(context).pop(),
+        ),
+        title: Text(
+          _getLocalizedReportType(l10n),
+          style: GoogleFonts.poppins(
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            color: primaryText,
+          ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.share),
+            icon: Icon(Icons.share, color: DesignColors.highlightTeal),
             onPressed: () => _shareReport(context),
           ),
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(DesignSpacing.md),
         children: [
-          // Report header
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: _getReportColor().withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Icon(
-                          _getReportIcon(),
-                          color: _getReportColor(),
-                          size: 24,
-                        ),
+          // Period Info Card
+          Container(
+            padding: EdgeInsets.all(DesignSpacing.lg),
+            decoration: BoxDecoration(
+              color: surfaceColor,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    // Report icon container
+                    Container(
+                      padding: EdgeInsets.all(DesignSpacing.md),
+                      decoration: BoxDecoration(
+                        color: reportColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _getLocalizedReportType(l10n),
-                              style: theme.textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                      child: Icon(
+                        _getReportIcon(),
+                        color: reportColor,
+                        size: 28,
+                      ),
+                    ),
+                    SizedBox(width: DesignSpacing.md),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _getLocalizedReportType(l10n),
+                            style: GoogleFonts.poppins(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: primaryText,
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '${l10n.generatedOn} ${DateFormat('MMMM dd, yyyy').format(report.generatedDate)} ${l10n.at} ${DateFormat('HH:mm').format(report.generatedDate)}',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.onSurface
-                                    .withOpacity(0.7),
-                              ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            '${l10n.generatedOn} ${DateFormat('MMMM dd, yyyy').format(report.generatedDate)} ${l10n.at} ${DateFormat('HH:mm').format(report.generatedDate)}',
+                            style: GoogleFonts.inter(
+                              fontSize: 13,
+                              color: secondaryText,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildHeaderDetail(
-                          l10n.startDate,
-                          DateFormat('MMM dd, yyyy').format(report.startDate),
-                          Icons.date_range,
-                          Colors.blue,
-                        ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: DesignSpacing.lg),
+                // Stats row
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildHeaderDetail(
+                        l10n.startDate,
+                        DateFormat('MMM dd, yyyy').format(report.startDate),
+                        Icons.date_range,
+                        DesignColors.highlightBlue,
+                        primaryText,
+                        secondaryText,
                       ),
-                      Expanded(
-                        child: _buildHeaderDetail(
-                          l10n.endDate,
-                          DateFormat('MMM dd, yyyy').format(report.endDate),
-                          Icons.event,
-                          Colors.green,
-                        ),
+                    ),
+                    Expanded(
+                      child: _buildHeaderDetail(
+                        l10n.endDate,
+                        DateFormat('MMM dd, yyyy').format(report.endDate),
+                        Icons.event,
+                        DesignColors.highlightTeal,
+                        primaryText,
+                        secondaryText,
                       ),
-                      Expanded(
-                        child: _buildHeaderDetail(
-                          l10n.period,
-                          '${report.endDate.difference(report.startDate).inDays + 1} ${l10n.days}',
-                          Icons.schedule,
-                          Colors.purple,
-                        ),
+                    ),
+                    Expanded(
+                      child: _buildHeaderDetail(
+                        l10n.period,
+                        '${report.endDate.difference(report.startDate).inDays + 1} ${l10n.days}',
+                        Icons.schedule,
+                        DesignColors.highlightPurple,
+                        primaryText,
+                        secondaryText,
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: DesignSpacing.md),
 
           // Summary section
           if (_hasSummaryData()) ...[
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.summary,
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+            Container(
+              padding: EdgeInsets.all(DesignSpacing.lg),
+              decoration: BoxDecoration(
+                color: surfaceColor,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.summary,
+                    style: GoogleFonts.poppins(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: primaryText,
                     ),
-                    const SizedBox(height: 16),
-                    _buildSummaryContent(l10n),
-                  ],
-                ),
+                  ),
+                  SizedBox(height: DesignSpacing.md),
+                  _buildSummaryContent(l10n, primaryText, secondaryText),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: DesignSpacing.md),
           ],
 
           // Report content based on type
-          ..._buildReportContent(theme, l10n),
+          ..._buildReportContent(theme, l10n, isDark, surfaceColor, primaryText, secondaryText),
         ],
       ),
     );
   }
 
   Widget _buildHeaderDetail(
-      String label, String value, IconData icon, Color color) {
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+    Color primaryText,
+    Color secondaryText,
+  ) {
     return Column(
       children: [
         Icon(
@@ -155,21 +205,22 @@ class ReportViewer extends StatelessWidget {
           color: color,
           size: 20,
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: 4),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
+          style: GoogleFonts.inter(
+            fontSize: 11,
+            color: secondaryText,
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(
+          style: GoogleFonts.inter(
             fontSize: 14,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
+            color: primaryText,
           ),
           textAlign: TextAlign.center,
         ),
@@ -186,7 +237,8 @@ class ReportViewer extends StatelessWidget {
     return summary.isNotEmpty;
   }
 
-  Widget _buildSummaryContent(AppLocalizations l10n) {
+  Widget _buildSummaryContent(
+      AppLocalizations l10n, Color primaryText, Color secondaryText) {
     final summaryData = report.data['summary'];
     final summary = summaryData is Map<String, dynamic>
         ? summaryData
@@ -194,20 +246,26 @@ class ReportViewer extends StatelessWidget {
 
     switch (report.reportType) {
       case 'Health Summary':
-        return _buildHealthSummary(summary, l10n);
+        return _buildHealthSummary(summary, l10n, primaryText, secondaryText);
       case 'Medication History':
-        return _buildMedicationSummary(summary, l10n);
+        return _buildMedicationSummary(summary, l10n, primaryText, secondaryText);
       case 'Activity Report':
-        return _buildActivitySummary(summary, l10n);
+        return _buildActivitySummary(summary, l10n, primaryText, secondaryText);
       case 'Veterinary Records':
-        return _buildVeterinarySummary(summary, l10n);
+        return _buildVeterinarySummary(summary, l10n, primaryText, secondaryText);
       default:
-        return const Text('No summary available');
+        return Text(
+          'No summary available',
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            color: secondaryText,
+          ),
+        );
     }
   }
 
-  Widget _buildHealthSummary(
-      Map<String, dynamic> summary, AppLocalizations l10n) {
+  Widget _buildHealthSummary(Map<String, dynamic> summary, AppLocalizations l10n,
+      Color primaryText, Color secondaryText) {
     return Column(
       children: [
         Row(
@@ -218,22 +276,26 @@ class ReportViewer extends StatelessWidget {
                 '${summary['activeMedications'] ?? 0}/${summary['totalMedications'] ?? 0}',
                 l10n.activeTotal,
                 Icons.medication,
-                Colors.green,
+                DesignColors.highlightTeal,
+                primaryText,
+                secondaryText,
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: DesignSpacing.sm),
             Expanded(
               child: _buildSummaryCard(
                 l10n.appointments,
                 '${summary['completedAppointments'] ?? 0}/${summary['totalAppointments'] ?? 0}',
                 l10n.completedTotal,
                 Icons.local_hospital,
-                Colors.blue,
+                DesignColors.highlightBlue,
+                primaryText,
+                secondaryText,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: DesignSpacing.sm),
         Row(
           children: [
             Expanded(
@@ -242,10 +304,12 @@ class ReportViewer extends StatelessWidget {
                 '${summary['totalFeedings'] ?? 0}',
                 l10n.total,
                 Icons.restaurant,
-                Colors.orange,
+                DesignColors.highlightYellow,
+                primaryText,
+                secondaryText,
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: DesignSpacing.sm),
             Expanded(
               child: Container(), // Empty space for symmetry
             ),
@@ -255,8 +319,8 @@ class ReportViewer extends StatelessWidget {
     );
   }
 
-  Widget _buildMedicationSummary(
-      Map<String, dynamic> summary, AppLocalizations l10n) {
+  Widget _buildMedicationSummary(Map<String, dynamic> summary,
+      AppLocalizations l10n, Color primaryText, Color secondaryText) {
     return Column(
       children: [
         Row(
@@ -267,22 +331,26 @@ class ReportViewer extends StatelessWidget {
                 '${summary['totalMedications'] ?? 0}',
                 l10n.medications,
                 Icons.medication,
-                Colors.blue,
+                DesignColors.highlightPink,
+                primaryText,
+                secondaryText,
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: DesignSpacing.sm),
             Expanded(
               child: _buildSummaryCard(
                 l10n.active,
                 '${summary['activeMedications'] ?? 0}',
                 l10n.ongoing,
                 Icons.play_circle,
-                Colors.green,
+                DesignColors.highlightTeal,
+                primaryText,
+                secondaryText,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: DesignSpacing.sm),
         Row(
           children: [
             Expanded(
@@ -291,10 +359,12 @@ class ReportViewer extends StatelessWidget {
                 '${summary['inactiveMedications'] ?? 0}',
                 l10n.completed,
                 Icons.stop_circle,
-                Colors.grey,
+                DesignColors.highlightPurple,
+                primaryText,
+                secondaryText,
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: DesignSpacing.sm),
             Expanded(
               child: Container(), // Empty space for symmetry
             ),
@@ -304,8 +374,8 @@ class ReportViewer extends StatelessWidget {
     );
   }
 
-  Widget _buildActivitySummary(
-      Map<String, dynamic> summary, AppLocalizations l10n) {
+  Widget _buildActivitySummary(Map<String, dynamic> summary,
+      AppLocalizations l10n, Color primaryText, Color secondaryText) {
     final avgPerDay = summary['averageFeedingsPerDay'] ?? 0.0;
     return Column(
       children: [
@@ -317,17 +387,21 @@ class ReportViewer extends StatelessWidget {
                 '${summary['totalFeedings'] ?? 0}',
                 l10n.inPeriod,
                 Icons.restaurant,
-                Colors.orange,
+                DesignColors.highlightYellow,
+                primaryText,
+                secondaryText,
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: DesignSpacing.sm),
             Expanded(
               child: _buildSummaryCard(
                 l10n.dailyAverage,
                 avgPerDay.toStringAsFixed(1),
                 l10n.perDay,
                 Icons.timeline,
-                Colors.purple,
+                DesignColors.highlightPurple,
+                primaryText,
+                secondaryText,
               ),
             ),
           ],
@@ -336,8 +410,8 @@ class ReportViewer extends StatelessWidget {
     );
   }
 
-  Widget _buildVeterinarySummary(
-      Map<String, dynamic> summary, AppLocalizations l10n) {
+  Widget _buildVeterinarySummary(Map<String, dynamic> summary,
+      AppLocalizations l10n, Color primaryText, Color secondaryText) {
     return Column(
       children: [
         Row(
@@ -348,22 +422,26 @@ class ReportViewer extends StatelessWidget {
                 '${summary['totalAppointments'] ?? 0}',
                 l10n.appointments,
                 Icons.local_hospital,
-                Colors.blue,
+                DesignColors.highlightCoral,
+                primaryText,
+                secondaryText,
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: DesignSpacing.sm),
             Expanded(
               child: _buildSummaryCard(
                 l10n.completed,
                 '${summary['completedAppointments'] ?? 0}',
                 l10n.finished,
                 Icons.check_circle,
-                Colors.green,
+                DesignColors.highlightTeal,
+                primaryText,
+                secondaryText,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: DesignSpacing.sm),
         Row(
           children: [
             Expanded(
@@ -372,10 +450,12 @@ class ReportViewer extends StatelessWidget {
                 '${summary['pendingAppointments'] ?? 0}',
                 l10n.upcoming,
                 Icons.schedule,
-                Colors.orange,
+                DesignColors.highlightYellow,
+                primaryText,
+                secondaryText,
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: DesignSpacing.sm),
             Expanded(
               child: Container(), // Empty space for symmetry
             ),
@@ -386,75 +466,91 @@ class ReportViewer extends StatelessWidget {
   }
 
   Widget _buildSummaryCard(
-      String title, String value, String subtitle, IconData icon, Color color) {
+    String title,
+    String value,
+    String subtitle,
+    IconData icon,
+    Color color,
+    Color primaryText,
+    Color secondaryText,
+  ) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(DesignSpacing.md),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Column(
         children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: 8),
+          Icon(icon, color: color, size: 28),
+          SizedBox(height: DesignSpacing.sm),
           Text(
             value,
-            style: TextStyle(
-              fontSize: 20,
+            style: GoogleFonts.poppins(
+              fontSize: 24,
               fontWeight: FontWeight.bold,
               color: color,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: primaryText,
             ),
+            textAlign: TextAlign.center,
           ),
           Text(
             subtitle,
-            style: TextStyle(
-              fontSize: 10,
-              color: Colors.grey[600],
+            style: GoogleFonts.inter(
+              fontSize: 11,
+              color: secondaryText,
             ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
     );
   }
 
-  List<Widget> _buildReportContent(ThemeData theme, AppLocalizations l10n) {
+  List<Widget> _buildReportContent(ThemeData theme, AppLocalizations l10n,
+      bool isDark, Color surfaceColor, Color primaryText, Color secondaryText) {
     final List<Widget> content = [];
 
     switch (report.reportType) {
       case 'Health Summary':
-        content.addAll(_buildHealthContent(theme, l10n));
+        content.addAll(_buildHealthContent(
+            theme, l10n, isDark, surfaceColor, primaryText, secondaryText));
         break;
       case 'Medication History':
-        content.addAll(_buildMedicationContent(theme, l10n));
+        content.addAll(_buildMedicationContent(
+            theme, l10n, isDark, surfaceColor, primaryText, secondaryText));
         break;
       case 'Activity Report':
-        content.addAll(_buildActivityContent(theme, l10n));
+        content.addAll(_buildActivityContent(
+            theme, l10n, isDark, surfaceColor, primaryText, secondaryText));
         break;
       case 'Veterinary Records':
-        content.addAll(_buildVeterinaryContent(theme, l10n));
+        content.addAll(_buildVeterinaryContent(
+            theme, l10n, isDark, surfaceColor, primaryText, secondaryText));
         break;
     }
 
     return content;
   }
 
-  List<Widget> _buildHealthContent(ThemeData theme, AppLocalizations l10n) {
+  List<Widget> _buildHealthContent(ThemeData theme, AppLocalizations l10n,
+      bool isDark, Color surfaceColor, Color primaryText, Color secondaryText) {
     final List<Widget> content = [];
 
     // Medications section
     final medications = report.data['medications'] as List<dynamic>? ?? [];
     if (medications.isNotEmpty) {
       content.add(_buildSectionHeader(
-          theme, l10n.medications, Icons.medication, Colors.green));
+          l10n.medications, Icons.medication, DesignColors.highlightTeal, primaryText));
       content.add(_buildDataTable(
         [l10n.name, l10n.dosage, l10n.status],
         medications
@@ -464,15 +560,18 @@ class ReportViewer extends StatelessWidget {
                   (med['isActive'] == true) ? l10n.active : l10n.inactive,
                 ])
             .toList(),
+        isDark: isDark,
+        surfaceColor: surfaceColor,
+        primaryText: primaryText,
       ));
-      content.add(const SizedBox(height: 16));
+      content.add(SizedBox(height: DesignSpacing.md));
     }
 
     // Appointments section
     final appointments = report.data['appointments'] as List<dynamic>? ?? [];
     if (appointments.isNotEmpty) {
       content.add(_buildSectionHeader(
-          theme, l10n.appointments, Icons.local_hospital, Colors.blue));
+          l10n.appointments, Icons.local_hospital, DesignColors.highlightBlue, primaryText));
       content.add(_buildDataTable(
         [l10n.date, l10n.veterinarian, l10n.reason],
         appointments
@@ -483,36 +582,34 @@ class ReportViewer extends StatelessWidget {
                   apt['reason']?.toString() ?? '',
                 ])
             .toList(),
+        isDark: isDark,
+        surfaceColor: surfaceColor,
+        primaryText: primaryText,
       ));
-      content.add(const SizedBox(height: 16));
+      content.add(SizedBox(height: DesignSpacing.md));
     }
 
     return content;
   }
 
-  List<Widget> _buildMedicationContent(ThemeData theme, AppLocalizations l10n) {
+  List<Widget> _buildMedicationContent(ThemeData theme, AppLocalizations l10n,
+      bool isDark, Color surfaceColor, Color primaryText, Color secondaryText) {
     final medications = report.data['medications'] as List<dynamic>? ?? [];
     if (medications.isEmpty) {
       return [
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(32),
-            child: Center(
-              child: Text(
-                l10n.noMedicationsFoundPeriod,
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
-                ),
-              ),
-            ),
-          ),
+        _buildEmptyStateCard(
+          l10n.noMedicationsFoundPeriod,
+          Icons.medication_outlined,
+          isDark,
+          surfaceColor,
+          secondaryText,
         ),
       ];
     }
 
     return [
       _buildSectionHeader(
-          theme, l10n.medicationDetails, Icons.medication, Colors.green),
+          l10n.medicationDetails, Icons.medication, DesignColors.highlightPink, primaryText),
       _buildDataTable(
         [l10n.name, l10n.dosage, l10n.method, l10n.startDate, l10n.status],
         medications
@@ -525,33 +622,31 @@ class ReportViewer extends StatelessWidget {
                   (med['isActive'] == true) ? l10n.active : l10n.inactive,
                 ])
             .toList(),
+        isDark: isDark,
+        surfaceColor: surfaceColor,
+        primaryText: primaryText,
       ),
     ];
   }
 
-  List<Widget> _buildActivityContent(ThemeData theme, AppLocalizations l10n) {
+  List<Widget> _buildActivityContent(ThemeData theme, AppLocalizations l10n,
+      bool isDark, Color surfaceColor, Color primaryText, Color secondaryText) {
     final feedings = report.data['feedings'] as List<dynamic>? ?? [];
     if (feedings.isEmpty) {
       return [
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(32),
-            child: Center(
-              child: Text(
-                l10n.noFeedingDataFoundPeriod,
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
-                ),
-              ),
-            ),
-          ),
+        _buildEmptyStateCard(
+          l10n.noFeedingDataFoundPeriod,
+          Icons.restaurant_outlined,
+          isDark,
+          surfaceColor,
+          secondaryText,
         ),
       ];
     }
 
     return [
       _buildSectionHeader(
-          theme, l10n.feedingHistory, Icons.restaurant, Colors.orange),
+          l10n.feedingHistory, Icons.restaurant, DesignColors.highlightYellow, primaryText),
       _buildDataTable(
         [l10n.date, l10n.type, l10n.amount, l10n.timeLabel],
         feedings
@@ -562,33 +657,31 @@ class ReportViewer extends StatelessWidget {
                   DateFormat('HH:mm').format(DateTime.parse(feed['dateTime'])),
                 ])
             .toList(),
+        isDark: isDark,
+        surfaceColor: surfaceColor,
+        primaryText: primaryText,
       ),
     ];
   }
 
-  List<Widget> _buildVeterinaryContent(ThemeData theme, AppLocalizations l10n) {
+  List<Widget> _buildVeterinaryContent(ThemeData theme, AppLocalizations l10n,
+      bool isDark, Color surfaceColor, Color primaryText, Color secondaryText) {
     final appointments = report.data['appointments'] as List<dynamic>? ?? [];
     if (appointments.isEmpty) {
       return [
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(32),
-            child: Center(
-              child: Text(
-                l10n.noVeterinaryAppointmentsFoundPeriod,
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
-                ),
-              ),
-            ),
-          ),
+        _buildEmptyStateCard(
+          l10n.noVeterinaryAppointmentsFoundPeriod,
+          Icons.local_hospital_outlined,
+          isDark,
+          surfaceColor,
+          secondaryText,
         ),
       ];
     }
 
     return [
       _buildSectionHeader(
-          theme, l10n.appointmentHistory, Icons.local_hospital, Colors.blue),
+          l10n.appointmentHistory, Icons.local_hospital, DesignColors.highlightCoral, primaryText),
       _buildDataTable(
         [l10n.date, l10n.veterinarian, l10n.clinic, l10n.reason, l10n.status],
         appointments
@@ -601,22 +694,63 @@ class ReportViewer extends StatelessWidget {
                   (apt['isCompleted'] == true) ? l10n.completed : l10n.pending,
                 ])
             .toList(),
+        isDark: isDark,
+        surfaceColor: surfaceColor,
+        primaryText: primaryText,
       ),
     ];
   }
 
+  Widget _buildEmptyStateCard(
+    String message,
+    IconData icon,
+    bool isDark,
+    Color surfaceColor,
+    Color secondaryText,
+  ) {
+    return Container(
+      padding: EdgeInsets.all(DesignSpacing.xl),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+      ),
+      child: Center(
+        child: Column(
+          children: [
+            Icon(
+              icon,
+              size: 48,
+              color: secondaryText.withOpacity(0.5),
+            ),
+            SizedBox(height: DesignSpacing.md),
+            Text(
+              message,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: secondaryText,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildSectionHeader(
-      ThemeData theme, String title, IconData icon, Color color) {
+      String title, IconData icon, Color color, Color primaryText) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.only(bottom: DesignSpacing.sm, top: DesignSpacing.sm),
       child: Row(
         children: [
-          Icon(icon, color: color, size: 20),
-          const SizedBox(width: 8),
+          Icon(icon, color: color, size: 24),
+          SizedBox(width: DesignSpacing.sm),
           Text(
             title,
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
               color: color,
             ),
           ),
@@ -625,21 +759,40 @@ class ReportViewer extends StatelessWidget {
     );
   }
 
-  Widget _buildDataTable(List<String> headers, List<List<String>> rows) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8),
+  Widget _buildDataTable(
+    List<String> headers,
+    List<List<String>> rows, {
+    required bool isDark,
+    required Color surfaceColor,
+    required Color primaryText,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: DataTable(
             columnSpacing: 16,
-            headingRowHeight: 40,
-            dataRowHeight: 40,
+            headingRowHeight: 48,
+            dataRowMinHeight: 44,
+            dataRowMaxHeight: 52,
+            headingRowColor: WidgetStateProperty.all(
+              isDark ? const Color(0xFF2A2A2A) : const Color(0xFFF5F3E8),
+            ),
             columns: headers
                 .map((header) => DataColumn(
                       label: Text(
                         header,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: primaryText,
+                        ),
                       ),
                     ))
                 .toList(),
@@ -649,7 +802,10 @@ class ReportViewer extends StatelessWidget {
                           .map((cell) => DataCell(
                                 Text(
                                   cell,
-                                  style: const TextStyle(fontSize: 12),
+                                  style: GoogleFonts.inter(
+                                    fontSize: 13,
+                                    color: primaryText,
+                                  ),
                                 ),
                               ))
                           .toList(),
@@ -679,15 +835,15 @@ class ReportViewer extends StatelessWidget {
   Color _getReportColor() {
     switch (report.reportType) {
       case 'Health Summary':
-        return Colors.blue;
+        return DesignColors.highlightBlue;
       case 'Medication History':
-        return Colors.green;
+        return DesignColors.highlightPink;
       case 'Activity Report':
-        return Colors.orange;
+        return DesignColors.highlightYellow;
       case 'Veterinary Records':
-        return Colors.red;
+        return DesignColors.highlightCoral;
       default:
-        return Colors.purple;
+        return DesignColors.highlightTeal;
     }
   }
 
@@ -696,8 +852,19 @@ class ReportViewer extends StatelessWidget {
     // For now, just show a message that sharing functionality could be implemented
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(l10n.shareFunctionalityPlaceholder),
-        backgroundColor: Colors.blue,
+        content: Text(
+          l10n.shareFunctionalityPlaceholder,
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: DesignColors.highlightTeal,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        margin: EdgeInsets.all(DesignSpacing.md),
       ),
     );
   }
