@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
+import '../../theme/tokens/colors.dart';
 
 class AppShell extends StatelessWidget {
   final Widget child;
@@ -24,6 +25,14 @@ class AppShell extends StatelessWidget {
     final index = _indexFor(location);
     final l10n = AppLocalizations.of(context);
 
+    // Theme detection
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Scaffold(
       body: child,
       bottomNavigationBar: NavigationBar(
@@ -39,19 +48,46 @@ class AppShell extends StatelessWidget {
           ];
           context.go(paths[i]);
         },
+        backgroundColor: surfaceColor,
+        indicatorColor: DesignColors.highlightTeal.withOpacity(0.15),
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         destinations: [
           NavigationDestination(
-              icon: const Icon(Icons.home), label: l10n.navHome),
+            icon: Icon(Icons.home_outlined, color: secondaryText),
+            selectedIcon:
+                Icon(Icons.home, color: DesignColors.highlightTeal),
+            label: l10n.navHome,
+          ),
           NavigationDestination(
-              icon: const Icon(Icons.pets), label: l10n.navWalks),
+            icon: Icon(Icons.pets_outlined, color: secondaryText),
+            selectedIcon:
+                Icon(Icons.pets, color: DesignColors.highlightTeal),
+            label: l10n.navWalks,
+          ),
           NavigationDestination(
-              icon: const Icon(Icons.medical_services), label: l10n.navMeds),
+            icon: Icon(Icons.medical_services_outlined, color: secondaryText),
+            selectedIcon:
+                Icon(Icons.medical_services, color: DesignColors.highlightTeal),
+            label: l10n.navMeds,
+          ),
           NavigationDestination(
-              icon: const Icon(Icons.event), label: l10n.navAppts),
+            icon: Icon(Icons.event_outlined, color: secondaryText),
+            selectedIcon:
+                Icon(Icons.event, color: DesignColors.highlightTeal),
+            label: l10n.navAppts,
+          ),
           NavigationDestination(
-              icon: const Icon(Icons.bar_chart), label: l10n.navReports),
+            icon: Icon(Icons.bar_chart_outlined, color: secondaryText),
+            selectedIcon:
+                Icon(Icons.bar_chart, color: DesignColors.highlightTeal),
+            label: l10n.navReports,
+          ),
           NavigationDestination(
-              icon: const Icon(Icons.settings), label: l10n.navSettings),
+            icon: Icon(Icons.settings_outlined, color: secondaryText),
+            selectedIcon:
+                Icon(Icons.settings, color: DesignColors.highlightTeal),
+            label: l10n.navSettings,
+          ),
         ],
       ),
     );
