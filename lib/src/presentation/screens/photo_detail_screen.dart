@@ -12,6 +12,7 @@ import 'package:fur_friend_diary/theme/tokens/shadows.dart';
 import '../providers/photo_provider.dart';
 import '../providers/pet_profile_provider.dart';
 import '../../domain/models/pet_photo.dart';
+import '../../utils/snackbar_helper.dart';
 
 class PhotoDetailScreen extends ConsumerStatefulWidget {
   final String photoId; // Keep for routing
@@ -65,15 +66,11 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
       setState(() => _isEditingCaption = false);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.captionSaved)),
-        );
+        SnackBarHelper.showSuccess(context, l10n.captionSaved);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
-        );
+        SnackBarHelper.showError(context, 'Error: ${e.toString()}');
       }
     }
   }
@@ -89,9 +86,7 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
       final file = File(photo.filePath);
       if (!file.existsSync()) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.photoNotFound)),
-          );
+          SnackBarHelper.showWarning(context, l10n.photoNotFound);
         }
         return;
       }
@@ -110,9 +105,7 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
       );
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error sharing: ${e.toString()}')),
-        );
+        SnackBarHelper.showError(context, 'Error sharing: ${e.toString()}');
       }
     }
   }
@@ -144,18 +137,11 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
       ref.invalidate(petProfilesProvider);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.profilePhotoUpdated),
-            backgroundColor: DesignColors.highlightTeal,
-          ),
-        );
+        SnackBarHelper.showSuccess(context, l10n.profilePhotoUpdated);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
-        );
+        SnackBarHelper.showError(context, 'Error: ${e.toString()}');
       }
     }
   }
@@ -266,9 +252,7 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
       if (mounted) {
         // If this was the last photo, go back to gallery
         if (widget.photoIds.length == 1) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.photoDeleted)),
-          );
+          SnackBarHelper.showSuccess(context, l10n.photoDeleted);
           context.pop();
         } else {
           // Remove from local list and update page
@@ -280,16 +264,12 @@ class _PhotoDetailScreenState extends ConsumerState<PhotoDetailScreen> {
             _pageController.jumpToPage(_currentIndex);
           });
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.photoDeleted)),
-          );
+          SnackBarHelper.showSuccess(context, l10n.photoDeleted);
         }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
-        );
+        SnackBarHelper.showError(context, 'Error: ${e.toString()}');
       }
     } finally {
       if (mounted) {

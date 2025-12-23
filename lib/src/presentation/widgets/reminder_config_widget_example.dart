@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:fur_friend_diary/src/domain/models/protocols/reminder_config.dart';
 import 'package:fur_friend_diary/src/presentation/widgets/reminder_config_widget.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
+import 'package:fur_friend_diary/src/utils/snackbar_helper.dart';
 
 /// Example screen showing ReminderConfigWidget integration
 ///
@@ -63,11 +64,9 @@ class _ReminderConfigExampleState extends State<ReminderConfigExample> {
     // await ref.read(reminderConfigRepositoryProvider).save(_config);
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context).reminderSettingsSaved),
-          backgroundColor: Theme.of(context).colorScheme.primary,
-        ),
+      SnackBarHelper.showSuccess(
+        context,
+        AppLocalizations.of(context).reminderSettingsSaved,
       );
       setState(() {
         _hasChanges = false;

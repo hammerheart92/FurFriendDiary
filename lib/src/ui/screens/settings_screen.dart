@@ -17,6 +17,7 @@ import '../../presentation/providers/pdf_consent_provider.dart';
 import '../../../theme/tokens/colors.dart';
 import '../../../theme/tokens/spacing.dart';
 import '../../../theme/tokens/shadows.dart';
+import '../../utils/snackbar_helper.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -181,9 +182,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 title: l10n.exportData,
                 subtitle: l10n.downloadYourData,
                 onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.featureComingSoon)),
-                  );
+                  SnackBarHelper.showInfo(context, l10n.featureComingSoon);
                 },
               ),
               // PDF Export Consent Management
@@ -332,16 +331,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           mode: LaunchMode.externalApplication);
                     } else {
                       if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(l10n.couldNotOpenLink)),
-                        );
+                        SnackBarHelper.showError(context, l10n.couldNotOpenLink);
                       }
                     }
                   } catch (e) {
                     if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(l10n.couldNotOpenLink)),
-                      );
+                      SnackBarHelper.showError(context, l10n.couldNotOpenLink);
                     }
                   }
                 },
@@ -364,16 +359,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           mode: LaunchMode.externalApplication);
                     } else {
                       if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(l10n.couldNotOpenLink)),
-                        );
+                        SnackBarHelper.showError(context, l10n.couldNotOpenLink);
                       }
                     }
                   } catch (e) {
                     if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(l10n.couldNotOpenLink)),
-                      );
+                      SnackBarHelper.showError(context, l10n.couldNotOpenLink);
                     }
                   }
                 },

@@ -13,6 +13,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../theme/tokens/colors.dart';
 import '../../../theme/tokens/spacing.dart';
 import '../../../theme/tokens/shadows.dart';
+import '../../utils/snackbar_helper.dart';
 
 class MedicationsScreen extends ConsumerStatefulWidget {
   const MedicationsScreen({super.key});
@@ -468,22 +469,18 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
           .toggleMedicationStatus(medication.id);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(medication.isActive
-                ? l10n.medicationMarkedInactive
-                : l10n.medicationMarkedActive),
-            backgroundColor: Colors.green,
-          ),
+        SnackBarHelper.showSuccess(
+          context,
+          medication.isActive
+              ? l10n.medicationMarkedInactive
+              : l10n.medicationMarkedActive,
         );
       }
     } catch (error) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${l10n.failedToUpdateMedication}: $error'),
-            backgroundColor: Colors.red,
-          ),
+        SnackBarHelper.showError(
+          context,
+          '${l10n.failedToUpdateMedication}: $error',
         );
       }
     }
@@ -597,26 +594,13 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
             .deleteMedication(medication.id);
 
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                l10n.medicationDeletedSuccessfully,
-                style: GoogleFonts.inter(color: Colors.white),
-              ),
-              backgroundColor: isDark ? DesignColors.dSuccess : DesignColors.lSuccess,
-            ),
-          );
+          SnackBarHelper.showSuccess(context, l10n.medicationDeletedSuccessfully);
         }
       } catch (error) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '${l10n.failedToDeleteMedication}: $error',
-                style: GoogleFonts.inter(color: Colors.white),
-              ),
-              backgroundColor: dangerColor,
-            ),
+          SnackBarHelper.showError(
+            context,
+            '${l10n.failedToDeleteMedication}: $error',
           );
         }
       }
@@ -639,21 +623,11 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
       await ref.read(medicationsProvider.notifier).refresh();
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.stockUpdated),
-            backgroundColor: Colors.green,
-          ),
-        );
+        SnackBarHelper.showSuccess(context, l10n.stockUpdated);
       }
     } catch (error) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $error'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarHelper.showError(context, 'Error: $error');
       }
     }
   }
@@ -926,26 +900,19 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
       await ref.read(reminderRepositoryProvider).addReminder(reminder);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(successMsg),
-            backgroundColor: Colors.green,
-            action: SnackBarAction(
-              label: viewLabel,
-              textColor: Colors.white,
-              onPressed: () => context.push('/settings'),
-            ),
+        SnackBarHelper.showSuccess(
+          context,
+          successMsg,
+          action: SnackBarAction(
+            label: viewLabel,
+            textColor: Colors.white,
+            onPressed: () => context.push('/settings'),
           ),
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('$failedMsg: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarHelper.showError(context, '$failedMsg: $e');
       }
     }
   }
@@ -977,21 +944,11 @@ class _MedicationsScreenState extends ConsumerState<MedicationsScreen>
       }
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.remindersCreated(count)),
-            backgroundColor: Colors.green,
-          ),
-        );
+        SnackBarHelper.showSuccess(context, l10n.remindersCreated(count));
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('$failedMsg: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarHelper.showError(context, '$failedMsg: $e');
       }
     }
   }

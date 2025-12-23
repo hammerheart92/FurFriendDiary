@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
+import '../../../utils/snackbar_helper.dart';
 import '../../../domain/models/pet_profile.dart';
 import '../../../domain/models/protocols/reminder_config.dart';
 import '../../providers/protocols/reminder_config_provider.dart';
@@ -343,12 +344,7 @@ class _ReminderSettingsScreenState
         !_threeDaysBefore &&
         !_oneWeekBefore &&
         !_twoWeeksBefore) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.selectAtLeastOneReminder),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
-      );
+      SnackBarHelper.showError(context, l10n.selectAtLeastOneReminder);
       return;
     }
 
@@ -390,12 +386,7 @@ class _ReminderSettingsScreenState
       await ref.read(reminderConfigsProvider.notifier).saveConfig(config);
 
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.reminderSettingsSaved),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-          ),
-        );
+        SnackBarHelper.showSuccess(context, l10n.reminderSettingsSaved);
         Navigator.of(context).pop(true); // Return to previous screen
       }
     } catch (e, stackTrace) {
@@ -406,17 +397,7 @@ class _ReminderSettingsScreenState
       );
 
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.reminderSettingsSaveFailed),
-            backgroundColor: Theme.of(context).colorScheme.error,
-            action: SnackBarAction(
-              label: l10n.retry,
-              onPressed: () =>
-                  _saveReminderSettings(context, l10n, existingConfig),
-            ),
-          ),
-        );
+        SnackBarHelper.showError(context, l10n.reminderSettingsSaveFailed);
       }
     } finally {
       if (mounted) {

@@ -6,6 +6,7 @@ import 'package:fur_friend_diary/l10n/app_localizations.dart';
 import '../../../../theme/tokens/colors.dart';
 import '../../../../theme/tokens/spacing.dart';
 import '../../../../theme/tokens/shadows.dart';
+import '../../../utils/snackbar_helper.dart';
 import '../../../domain/models/pet_profile.dart';
 import '../../../domain/models/protocols/deworming_protocol.dart';
 import '../../providers/protocols/deworming_protocol_provider.dart';
@@ -330,12 +331,7 @@ class DewormingProtocolSelectionScreen extends ConsumerWidget {
         Navigator.of(context).pop();
 
         // Show success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.dewormingProtocolApplied(pet.name)),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-          ),
-        );
+        SnackBarHelper.showSuccess(context, l10n.dewormingProtocolApplied(pet.name));
 
         // Return to previous screen with success result
         Navigator.of(context).pop(true);
@@ -345,16 +341,7 @@ class DewormingProtocolSelectionScreen extends ConsumerWidget {
           error: e, stackTrace: stackTrace);
 
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.dewormingProtocolApplyFailed),
-            backgroundColor: Theme.of(context).colorScheme.error,
-            action: SnackBarAction(
-              label: l10n.retry,
-              onPressed: () => _applyProtocol(context, l10n, protocol, ref),
-            ),
-          ),
-        );
+        SnackBarHelper.showError(context, l10n.dewormingProtocolApplyFailed);
       }
     }
   }

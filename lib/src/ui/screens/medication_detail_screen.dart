@@ -9,6 +9,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../theme/tokens/colors.dart';
 import '../../../theme/tokens/spacing.dart';
 import '../../../theme/tokens/shadows.dart';
+import '../../utils/snackbar_helper.dart';
 
 class MedicationDetailScreen extends ConsumerStatefulWidget {
   final String medicationId;
@@ -920,21 +921,11 @@ class _MedicationDetailScreenState
         setState(() {
           _isEditing = false;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.medicationAddedSuccessfully),
-            backgroundColor: Colors.green,
-          ),
-        );
+        SnackBarHelper.showSuccess(context, l10n.medicationAddedSuccessfully);
       }
     } catch (error) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.failedToUpdateMedication),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarHelper.showError(context, l10n.failedToUpdateMedication);
       }
     } finally {
       if (mounted) {
@@ -953,23 +944,16 @@ class _MedicationDetailScreenState
           .toggleMedicationStatus(medication.id);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(medication.isActive
-                ? l10n.medicationMarkedInactive
-                : l10n.medicationMarkedActive),
-            backgroundColor: Colors.green,
-          ),
+        SnackBarHelper.showSuccess(
+          context,
+          medication.isActive
+              ? l10n.medicationMarkedInactive
+              : l10n.medicationMarkedActive,
         );
       }
     } catch (error) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.failedToUpdateMedication),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarHelper.showError(context, l10n.failedToUpdateMedication);
       }
     }
   }
@@ -1004,22 +988,12 @@ class _MedicationDetailScreenState
             .deleteMedication(medication.id);
 
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.medicationDeletedSuccessfully),
-              backgroundColor: Colors.green,
-            ),
-          );
+          SnackBarHelper.showSuccess(context, l10n.medicationDeletedSuccessfully);
           context.pop();
         }
       } catch (error) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.failedToDeleteMedication),
-              backgroundColor: Colors.red,
-            ),
-          );
+          SnackBarHelper.showError(context, l10n.failedToDeleteMedication);
         }
       }
     }

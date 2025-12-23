@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:fur_friend_diary/src/domain/models/protocols/treatment_plan.dart';
 import 'package:fur_friend_diary/src/presentation/widgets/treatment_task_list_widget.dart';
+import 'package:fur_friend_diary/src/utils/snackbar_helper.dart';
 
 /// Example usage of TreatmentTaskListWidget
 ///
@@ -58,15 +59,11 @@ class _TreatmentPlanViewerExampleState
     // ref.invalidate(treatmentPlanProvider);
 
     // Show feedback to user
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          completed
-              ? 'Task marked as complete: ${task.title}'
-              : 'Task marked as incomplete: ${task.title}',
-        ),
-        duration: const Duration(seconds: 2),
-      ),
+    SnackBarHelper.showSuccess(
+      context,
+      completed
+          ? 'Task marked as complete: ${task.title}'
+          : 'Task marked as incomplete: ${task.title}',
     );
   }
 

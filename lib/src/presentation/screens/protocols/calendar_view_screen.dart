@@ -9,6 +9,7 @@ import 'package:fur_friend_diary/l10n/app_localizations.dart';
 import 'package:fur_friend_diary/theme/tokens/colors.dart';
 import 'package:fur_friend_diary/theme/tokens/spacing.dart';
 import 'package:fur_friend_diary/theme/tokens/shadows.dart';
+import '../../../utils/snackbar_helper.dart';
 import '../../models/upcoming_care_event.dart';
 import '../../providers/protocols/protocol_schedule_provider.dart';
 import '../../providers/pet_profile_provider.dart';
@@ -720,9 +721,7 @@ class _CalendarViewScreenState extends ConsumerState<CalendarViewScreen> {
             FilledButton.icon(
               onPressed: () {
                 // Navigate to protocol selection (will be implemented)
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.setUpProtocols)),
-                );
+                SnackBarHelper.showInfo(context, l10n.setUpProtocols);
               },
               icon: const Icon(Icons.vaccines),
               label: Text(l10n.setUpProtocols),

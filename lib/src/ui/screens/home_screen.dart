@@ -18,6 +18,7 @@ import '../../presentation/providers/care_data_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../presentation/providers/protocols/protocol_schedule_provider.dart';
 import '../../presentation/models/upcoming_care_event.dart';
+import '../../utils/snackbar_helper.dart';
 import '../../presentation/widgets/upcoming_care_card_widget.dart';
 
 final _logger = Logger();
@@ -42,23 +43,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
       if (mounted) {
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.feedingAdded(feeding.foodType)),
-            duration: const Duration(seconds: 2),
-          ),
-        );
+        SnackBarHelper.showSuccess(context, l10n.feedingAdded(feeding.foodType));
       }
     } catch (e) {
       _logger.e('Failed to save feeding: $e');
       if (mounted) {
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${l10n.failedToSaveFeeding}: $e'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        SnackBarHelper.showError(context, '${l10n.failedToSaveFeeding}: $e');
       }
     }
   }

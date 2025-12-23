@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
+import '../../../utils/snackbar_helper.dart';
 import '../../../domain/models/pet_profile.dart';
 import '../../../domain/models/protocols/vaccination_protocol.dart';
 import '../../providers/protocols/vaccination_protocol_provider.dart';
@@ -250,12 +251,7 @@ class ProtocolSelectionScreen extends ConsumerWidget {
         Navigator.of(context).pop();
 
         // Show success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.protocolAppliedSuccess(pet.name)),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-          ),
-        );
+        SnackBarHelper.showSuccess(context, l10n.protocolAppliedSuccess(pet.name));
 
         // Return to previous screen with success result
         Navigator.of(context).pop(true);
@@ -264,16 +260,7 @@ class ProtocolSelectionScreen extends ConsumerWidget {
       _logger.e('Failed to apply protocol', error: e, stackTrace: stackTrace);
 
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.protocolApplyFailed),
-            backgroundColor: Theme.of(context).colorScheme.error,
-            action: SnackBarAction(
-              label: l10n.retry,
-              onPressed: () => _applyProtocol(context, l10n, protocol, ref),
-            ),
-          ),
-        );
+        SnackBarHelper.showError(context, l10n.protocolApplyFailed);
       }
     }
   }

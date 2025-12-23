@@ -6,6 +6,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../theme/tokens/colors.dart';
 import '../../../theme/tokens/spacing.dart';
 import '../../../theme/tokens/shadows.dart';
+import '../../utils/snackbar_helper.dart';
 
 class ReportViewer extends StatelessWidget {
   final ReportEntry report;
@@ -850,23 +851,7 @@ class ReportViewer extends StatelessWidget {
   void _shareReport(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     // For now, just show a message that sharing functionality could be implemented
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          l10n.shareFunctionalityPlaceholder,
-          style: GoogleFonts.inter(
-            fontSize: 14,
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor: DesignColors.highlightTeal,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        margin: EdgeInsets.all(DesignSpacing.md),
-      ),
-    );
+    SnackBarHelper.showInfo(context, l10n.shareFunctionalityPlaceholder);
   }
 
   String _getLocalizedReportType(AppLocalizations l10n) {

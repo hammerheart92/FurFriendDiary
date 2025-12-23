@@ -7,6 +7,7 @@ import '../../presentation/providers/care_data_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../theme/tokens/colors.dart';
 import '../../../theme/tokens/spacing.dart';
+import '../../utils/snackbar_helper.dart';
 import 'report_card.dart';
 
 class ReportsList extends ConsumerWidget {
@@ -301,44 +302,11 @@ class ReportsList extends ConsumerWidget {
       try {
         await ref.read(reportProviderProvider.notifier).deleteReport(report.id);
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                l10n.reportDeletedSuccessfully,
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  color: Colors.white,
-                ),
-              ),
-              backgroundColor: DesignColors.highlightTeal,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              margin: EdgeInsets.all(DesignSpacing.md),
-            ),
-          );
+          SnackBarHelper.showSuccess(context, l10n.reportDeletedSuccessfully);
         }
       } catch (error) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Failed to delete report: $error',
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  color: Colors.white,
-                ),
-              ),
-              backgroundColor:
-                  isDark ? DesignColors.dDanger : DesignColors.lDanger,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              margin: EdgeInsets.all(DesignSpacing.md),
-            ),
-          );
+          SnackBarHelper.showError(context, 'Failed to delete report: $error');
         }
       }
     }

@@ -8,6 +8,7 @@ import 'package:fur_friend_diary/src/presentation/providers/weight_provider.dart
 import 'package:fur_friend_diary/src/presentation/providers/pet_profile_provider.dart';
 import 'package:fur_friend_diary/theme/tokens/colors.dart';
 import 'package:fur_friend_diary/theme/tokens/spacing.dart';
+import 'package:fur_friend_diary/src/utils/snackbar_helper.dart';
 
 class AddWeightDialog extends ConsumerStatefulWidget {
   final WeightEntry? existingEntry;
@@ -339,29 +340,16 @@ class _AddWeightDialogState extends ConsumerState<AddWeightDialog> {
 
       if (mounted) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              widget.existingEntry == null
-                  ? AppLocalizations.of(context).weightAdded
-                  : AppLocalizations.of(context).weightUpdated,
-              style: GoogleFonts.inter(),
-            ),
-            backgroundColor: DesignColors.highlightTeal,
-          ),
+        SnackBarHelper.showSuccess(
+          context,
+          widget.existingEntry == null
+              ? AppLocalizations.of(context).weightAdded
+              : AppLocalizations.of(context).weightUpdated,
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Error: $e',
-              style: GoogleFonts.inter(),
-            ),
-            backgroundColor: DesignColors.lDanger,
-          ),
-        );
+        SnackBarHelper.showError(context, 'Error: $e');
       }
     } finally {
       if (mounted) {

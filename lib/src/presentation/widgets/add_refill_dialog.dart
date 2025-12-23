@@ -7,6 +7,7 @@ import 'package:logger/logger.dart';
 import 'package:fur_friend_diary/theme/tokens/colors.dart';
 import 'package:fur_friend_diary/theme/tokens/spacing.dart';
 import 'package:fur_friend_diary/theme/tokens/shadows.dart';
+import '../../utils/snackbar_helper.dart';
 import '../../domain/models/medication_entry.dart';
 import '../../domain/models/medication_purchase.dart';
 import '../../providers/inventory_providers.dart';
@@ -140,22 +141,12 @@ class _AddRefillDialogState extends ConsumerState<AddRefillDialog> {
 
       if (mounted) {
         Navigator.of(context).pop(true);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.purchaseAdded),
-            backgroundColor: Colors.green,
-          ),
-        );
+        SnackBarHelper.showSuccess(context, l10n.purchaseAdded);
       }
     } catch (e, stackTrace) {
       _logger.e('🚨 Failed to add refill', error: e, stackTrace: stackTrace);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarHelper.showError(context, 'Error: $e');
       }
     } finally {
       if (mounted) {

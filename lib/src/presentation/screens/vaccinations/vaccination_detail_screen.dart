@@ -15,6 +15,7 @@ import '../../../../theme/tokens/shadows.dart';
 import '../../../domain/models/vaccination_event.dart';
 import '../../../domain/constants/vaccine_type_translations.dart';
 import '../../providers/vaccinations_provider.dart';
+import '../../../utils/snackbar_helper.dart';
 
 class VaccinationDetailScreen extends ConsumerWidget {
   final String vaccinationId;
@@ -1009,36 +1010,12 @@ class VaccinationDetailScreen extends ConsumerWidget {
         ref.invalidate(vaccinationsByPetIdProvider(vaccination.petId));
 
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                l10n.vaccinationDeletedSuccessfully,
-                style: GoogleFonts.inter(color: Colors.white),
-              ),
-              backgroundColor: successColor,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-          );
+          SnackBarHelper.showSuccess(context, l10n.vaccinationDeletedSuccessfully);
           context.pop();
         }
       } catch (error) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                l10n.failedToDeleteVaccination,
-                style: GoogleFonts.inter(color: Colors.white),
-              ),
-              backgroundColor: dangerColor,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-          );
+          SnackBarHelper.showError(context, l10n.failedToDeleteVaccination);
         }
       }
     }

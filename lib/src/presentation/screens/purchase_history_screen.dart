@@ -10,6 +10,7 @@ import '../../domain/models/medication_purchase.dart';
 import '../../providers/inventory_providers.dart';
 import '../../providers/medications_provider.dart';
 import '../../ui/widgets/medication_card.dart'; // Import for StockUnitTranslation extension
+import '../../utils/snackbar_helper.dart';
 
 class PurchaseHistoryScreen extends ConsumerWidget {
   final String medicationId;
@@ -562,15 +563,7 @@ class PurchaseHistoryScreen extends ConsumerWidget {
         }
 
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                l10n.purchaseDeletedSuccessfully,
-                style: GoogleFonts.inter(color: Colors.white),
-              ),
-              backgroundColor: successColor,
-            ),
-          );
+          SnackBarHelper.showSuccess(context, l10n.purchaseDeletedSuccessfully);
         }
 
         // Refresh the providers
@@ -579,15 +572,7 @@ class PurchaseHistoryScreen extends ConsumerWidget {
         ref.invalidate(lowStockMedicationsProvider);
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                l10n.failedToDeletePurchase,
-                style: GoogleFonts.inter(color: Colors.white),
-              ),
-              backgroundColor: dangerColor,
-            ),
-          );
+          SnackBarHelper.showError(context, l10n.failedToDeletePurchase);
         }
       }
     }

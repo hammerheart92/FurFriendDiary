@@ -10,6 +10,7 @@ import 'package:fur_friend_diary/src/presentation/widgets/add_weight_dialog.dart
 import 'package:fur_friend_diary/theme/tokens/colors.dart';
 import 'package:fur_friend_diary/theme/tokens/spacing.dart';
 import 'package:fur_friend_diary/theme/tokens/shadows.dart';
+import 'package:fur_friend_diary/src/utils/snackbar_helper.dart';
 
 class WeightHistoryScreen extends ConsumerWidget {
   const WeightHistoryScreen({super.key});
@@ -706,15 +707,7 @@ class WeightHistoryScreen extends ConsumerWidget {
       await repository.deleteWeightEntry(entry.id);
 
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              l10n.weightDeleted,
-              style: GoogleFonts.inter(),
-            ),
-            backgroundColor: DesignColors.highlightTeal,
-          ),
-        );
+        SnackBarHelper.showSuccess(context, l10n.weightDeleted);
       }
     }
   }

@@ -12,6 +12,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../theme/tokens/colors.dart';
 import '../../../theme/tokens/spacing.dart';
 import '../../../theme/tokens/shadows.dart';
+import '../../utils/snackbar_helper.dart';
 
 class AppointmentForm extends ConsumerStatefulWidget {
   final AppointmentEntry? appointment;
@@ -874,13 +875,7 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
     final l10n = AppLocalizations.of(context);
 
     if (activePet == null) {
-      final isDark = Theme.of(context).brightness == Brightness.dark;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.noActivePetFound),
-          backgroundColor: isDark ? DesignColors.dDanger : DesignColors.lDanger,
-        ),
-      );
+      SnackBarHelper.showWarning(context, l10n.noActivePetFound);
       return;
     }
 
@@ -935,12 +930,7 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
         // Invalidate provider to refresh list
         ref.invalidate(appointmentsByPetIdProvider(activePet.id));
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.appointmentUpdatedSuccessfully),
-              backgroundColor: DesignColors.highlightTeal,
-            ),
-          );
+          SnackBarHelper.showSuccess(context, l10n.appointmentUpdatedSuccessfully);
         }
       } else {
         // Add new appointment
@@ -950,12 +940,7 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
         // Invalidate provider to refresh list
         ref.invalidate(appointmentsByPetIdProvider(activePet.id));
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.appointmentAddedSuccessfully),
-              backgroundColor: DesignColors.highlightTeal,
-            ),
-          );
+          SnackBarHelper.showSuccess(context, l10n.appointmentAddedSuccessfully);
         }
       }
 
@@ -964,12 +949,9 @@ class _AppointmentFormState extends ConsumerState<AppointmentForm> {
       }
     } catch (error) {
       if (mounted) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.failedToSaveAppointment(error.toString())),
-            backgroundColor: isDark ? DesignColors.dDanger : DesignColors.lDanger,
-          ),
+        SnackBarHelper.showError(
+          context,
+          l10n.failedToSaveAppointment(error.toString()),
         );
       }
     } finally {

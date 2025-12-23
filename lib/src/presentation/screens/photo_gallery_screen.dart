@@ -13,6 +13,7 @@ import '../providers/photo_provider.dart';
 import '../providers/pet_profile_provider.dart';
 import '../widgets/add_photo_sheet.dart';
 import '../../domain/exceptions/permission_exceptions.dart';
+import '../../utils/snackbar_helper.dart';
 
 class PhotoGalleryScreen extends ConsumerStatefulWidget {
   const PhotoGalleryScreen({super.key});
@@ -72,9 +73,7 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
       ref.invalidate(storageUsedByCurrentPetProvider);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.photoAdded)),
-        );
+        SnackBarHelper.showSuccess(context, l10n.photoAdded);
       }
     } on PermissionPermanentlyDeniedException {
       if (mounted) {
@@ -102,9 +101,7 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
-        );
+        SnackBarHelper.showError(context, 'Error: ${e.toString()}');
       }
     } finally {
       if (mounted) {
@@ -173,11 +170,7 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.photosAdded(savedPhotos.length)),
-          ),
-        );
+        SnackBarHelper.showSuccess(context, l10n.photosAdded(savedPhotos.length));
       }
     } on PermissionPermanentlyDeniedException {
       if (mounted) {
@@ -200,12 +193,7 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: ${e.toString()}'),
-            backgroundColor: DesignColors.highlightCoral,
-          ),
-        );
+        SnackBarHelper.showError(context, 'Error: ${e.toString()}');
       }
     } finally {
       if (mounted) {

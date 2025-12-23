@@ -9,6 +9,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../theme/tokens/colors.dart';
 import '../../../theme/tokens/spacing.dart';
 import '../../../theme/tokens/shadows.dart';
+import '../../utils/snackbar_helper.dart';
 
 class AddVetScreen extends ConsumerStatefulWidget {
   final String? vetId;
@@ -160,12 +161,7 @@ class _AddVetScreenState extends ConsumerState<AddVetScreen> {
         ref.invalidate(vetsProvider);
         ref.invalidate(filteredVetsProvider);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.vetUpdated),
-              backgroundColor: DesignColors.highlightTeal,
-            ),
-          );
+          SnackBarHelper.showSuccess(context, l10n.vetUpdated);
         }
       } else {
         await repository.addVet(vet);
@@ -173,12 +169,7 @@ class _AddVetScreenState extends ConsumerState<AddVetScreen> {
         ref.invalidate(vetsProvider);
         ref.invalidate(filteredVetsProvider);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.vetAdded),
-              backgroundColor: DesignColors.highlightTeal,
-            ),
-          );
+          SnackBarHelper.showSuccess(context, l10n.vetAdded);
         }
       }
 
@@ -191,12 +182,7 @@ class _AddVetScreenState extends ConsumerState<AddVetScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: isDark ? DesignColors.dDanger : DesignColors.lDanger,
-          ),
-        );
+        SnackBarHelper.showError(context, 'Error: $e');
       }
     }
   }

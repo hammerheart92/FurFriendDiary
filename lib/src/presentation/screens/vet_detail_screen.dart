@@ -13,6 +13,7 @@ import '../../utils/specialty_helper.dart';
 import '../../../theme/tokens/colors.dart';
 import '../../../theme/tokens/spacing.dart';
 import '../../../theme/tokens/shadows.dart';
+import '../../utils/snackbar_helper.dart';
 
 class VetDetailScreen extends ConsumerWidget {
   final String vetId;
@@ -27,13 +28,7 @@ class VetDetailScreen extends ConsumerWidget {
       await launchUrl(uri);
     } else {
       if (context.mounted) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.invalidPhone),
-            backgroundColor: isDark ? DesignColors.dDanger : DesignColors.lDanger,
-          ),
-        );
+        SnackBarHelper.showError(context, AppLocalizations.of(context)!.invalidPhone);
       }
     }
   }
@@ -46,13 +41,7 @@ class VetDetailScreen extends ConsumerWidget {
       await launchUrl(uri);
     } else {
       if (context.mounted) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.invalidEmail),
-            backgroundColor: isDark ? DesignColors.dDanger : DesignColors.lDanger,
-          ),
-        );
+        SnackBarHelper.showError(context, AppLocalizations.of(context)!.invalidEmail);
       }
     }
   }
@@ -71,13 +60,7 @@ class VetDetailScreen extends ConsumerWidget {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
       if (context.mounted) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.invalidWebsite),
-            backgroundColor: isDark ? DesignColors.dDanger : DesignColors.lDanger,
-          ),
-        );
+        SnackBarHelper.showError(context, AppLocalizations.of(context)!.invalidWebsite);
       }
     }
   }
@@ -159,22 +142,12 @@ class VetDetailScreen extends ConsumerWidget {
         ref.invalidate(vetsProvider);
         ref.invalidate(filteredVetsProvider);
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.vetDeleted),
-              backgroundColor: DesignColors.highlightTeal,
-            ),
-          );
+          SnackBarHelper.showSuccess(context, l10n.vetDeleted);
           context.pop();
         }
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: $e'),
-              backgroundColor: dangerColor,
-            ),
-          );
+          SnackBarHelper.showError(context, 'Error: $e');
         }
       }
     }
@@ -183,40 +156,23 @@ class VetDetailScreen extends ConsumerWidget {
   Future<void> _togglePreferred(
       BuildContext context, WidgetRef ref, VetProfile vet) async {
     final l10n = AppLocalizations.of(context)!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     try {
       if (vet.isPreferred) {
         // Cannot unset preferred directly, need to set another vet as preferred
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.alreadyPreferred),
-            backgroundColor: DesignColors.highlightYellow,
-          ),
-        );
+        SnackBarHelper.showWarning(context, l10n.alreadyPreferred);
       } else {
         await ref.read(vetRepositoryProvider).setPreferredVet(vet.id);
         // Invalidate providers to refresh list
         ref.invalidate(vetsProvider);
         ref.invalidate(filteredVetsProvider);
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                  '${vet.name} ${AppLocalizations.of(context)!.setAsPreferred}'),
-              backgroundColor: DesignColors.highlightTeal,
-            ),
-          );
+          SnackBarHelper.showSuccess(context, '${vet.name} ${AppLocalizations.of(context)!.setAsPreferred}');
         }
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: isDark ? DesignColors.dDanger : DesignColors.lDanger,
-          ),
-        );
+        SnackBarHelper.showError(context, 'Error: $e');
       }
     }
   }

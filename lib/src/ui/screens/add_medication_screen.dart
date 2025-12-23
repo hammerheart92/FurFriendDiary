@@ -10,6 +10,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../theme/tokens/colors.dart';
 import '../../../theme/tokens/spacing.dart';
 import '../../../theme/tokens/shadows.dart';
+import '../../utils/snackbar_helper.dart';
 
 class AddMedicationScreen extends ConsumerStatefulWidget {
   const AddMedicationScreen({super.key});
@@ -985,12 +986,7 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     if (activePet == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.noActivePetFound),
-          backgroundColor: Colors.red,
-        ),
-      );
+      SnackBarHelper.showWarning(context, l10n.noActivePetFound);
       return;
     }
 
@@ -1051,21 +1047,14 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
           );
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.medicationAddedSuccessfully),
-            backgroundColor: Colors.green,
-          ),
-        );
+        SnackBarHelper.showSuccess(context, l10n.medicationAddedSuccessfully);
         context.pop();
       }
     } catch (error) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.failedToAddMedication(error.toString())),
-            backgroundColor: Colors.red,
-          ),
+        SnackBarHelper.showError(
+          context,
+          l10n.failedToAddMedication(error.toString()),
         );
       }
     } finally {

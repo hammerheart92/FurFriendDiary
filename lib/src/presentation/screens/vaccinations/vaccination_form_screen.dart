@@ -28,6 +28,7 @@ import '../../../domain/constants/vaccine_type_translations.dart';
 import '../../providers/vaccinations_provider.dart';
 import '../../providers/pet_profile_provider.dart';
 import '../../../data/services/exif_stripper_service.dart';
+import '../../../utils/snackbar_helper.dart';
 
 /// Vaccination Form Screen - Add or edit vaccination events
 ///
@@ -933,12 +934,7 @@ class _VaccinationFormScreenState extends ConsumerState<VaccinationFormScreen> {
         // Invalidate the pet-specific provider to refresh the timeline list
         ref.invalidate(vaccinationsByPetIdProvider(widget.petId));
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.vaccinationUpdatedSuccessfully),
-              backgroundColor: DesignColors.lSuccess,
-            ),
-          );
+          SnackBarHelper.showSuccess(context, l10n.vaccinationUpdatedSuccessfully);
         }
       } else {
         // Add new event
@@ -948,12 +944,7 @@ class _VaccinationFormScreenState extends ConsumerState<VaccinationFormScreen> {
         // Invalidate the pet-specific provider to refresh the timeline list
         ref.invalidate(vaccinationsByPetIdProvider(widget.petId));
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.vaccinationAddedSuccessfully),
-              backgroundColor: DesignColors.lSuccess,
-            ),
-          );
+          SnackBarHelper.showSuccess(context, l10n.vaccinationAddedSuccessfully);
         }
       }
 
@@ -962,15 +953,11 @@ class _VaccinationFormScreenState extends ConsumerState<VaccinationFormScreen> {
       }
     } catch (error) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              widget.existingEvent != null
-                  ? l10n.failedToUpdateVaccination(error.toString())
-                  : l10n.failedToAddVaccination(error.toString()),
-            ),
-            backgroundColor: DesignColors.lDanger,
-          ),
+        SnackBarHelper.showError(
+          context,
+          widget.existingEvent != null
+              ? l10n.failedToUpdateVaccination(error.toString())
+              : l10n.failedToAddVaccination(error.toString()),
         );
       }
     } finally {

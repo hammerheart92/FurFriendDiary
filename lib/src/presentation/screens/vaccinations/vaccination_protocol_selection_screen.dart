@@ -17,6 +17,7 @@ import '../../../data/services/vaccination_service.dart';
 import '../../providers/protocols/vaccination_protocol_provider.dart';
 import '../../providers/pet_profile_provider.dart';
 import '../../providers/vaccinations_provider.dart';
+import '../../../utils/snackbar_helper.dart';
 
 /// Vaccination Protocol Selection Screen
 ///
@@ -288,14 +289,7 @@ class VaccinationProtocolSelectionScreen extends ConsumerWidget {
         Navigator.of(context).pop();
 
         // Show success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              l10n.protocolAppliedSuccess(pet.name),
-            ),
-            backgroundColor: Colors.green,
-          ),
-        );
+        SnackBarHelper.showSuccess(context, l10n.protocolAppliedSuccess(pet.name));
 
         // Return to vaccination timeline
         Navigator.of(context).pop(true);
@@ -305,12 +299,7 @@ class VaccinationProtocolSelectionScreen extends ConsumerWidget {
           error: e, stackTrace: stackTrace);
 
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.protocolApplyFailed),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        SnackBarHelper.showError(context, l10n.protocolApplyFailed);
       }
     }
   }

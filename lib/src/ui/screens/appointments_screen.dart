@@ -13,6 +13,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../theme/tokens/colors.dart';
 import '../../../theme/tokens/spacing.dart';
 import '../../../theme/tokens/shadows.dart';
+import '../../utils/snackbar_helper.dart';
 
 class AppointmentsScreen extends ConsumerStatefulWidget {
   const AppointmentsScreen({super.key});
@@ -590,11 +591,6 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
   }
 
   Future<void> _toggleAppointmentStatus(AppointmentEntry appointment) async {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final successColor = isDark ? DesignColors.dSuccess : DesignColors.lSuccess;
-    final dangerColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
-
     try {
       final updatedAppointment = appointment.copyWith(
         isCompleted: !appointment.isCompleted,
@@ -608,37 +604,16 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
       ref.invalidate(appointmentsByPetIdProvider(appointment.petId));
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              updatedAppointment.isCompleted
-                  ? 'Appointment marked as completed'
-                  : 'Appointment marked as upcoming',
-              style: GoogleFonts.inter(color: Colors.white),
-            ),
-            backgroundColor: successColor,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
+        SnackBarHelper.showSuccess(
+          context,
+          updatedAppointment.isCompleted
+              ? 'Appointment marked as completed'
+              : 'Appointment marked as upcoming',
         );
       }
     } catch (error) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Failed to update appointment: $error',
-              style: GoogleFonts.inter(color: Colors.white),
-            ),
-            backgroundColor: dangerColor,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        );
+        SnackBarHelper.showError(context, 'Failed to update appointment: $error');
       }
     }
   }
@@ -651,7 +626,6 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
     final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
     final secondaryText = isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
     final dangerColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
-    final successColor = isDark ? DesignColors.dSuccess : DesignColors.lSuccess;
 
     final result = await showDialog<bool>(
       context: context,
@@ -734,35 +708,11 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
         ref.invalidate(appointmentsByPetIdProvider(appointment.petId));
 
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Appointment deleted successfully',
-                style: GoogleFonts.inter(color: Colors.white),
-              ),
-              backgroundColor: successColor,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-          );
+          SnackBarHelper.showSuccess(context, 'Appointment deleted successfully');
         }
       } catch (error) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Failed to delete appointment: $error',
-                style: GoogleFonts.inter(color: Colors.white),
-              ),
-              backgroundColor: dangerColor,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-          );
+          SnackBarHelper.showError(context, 'Failed to delete appointment: $error');
         }
       }
     }
@@ -968,22 +918,12 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen>
       await ref.read(reminderRepositoryProvider).addReminder(reminder);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Reminder created successfully'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        SnackBarHelper.showSuccess(context, 'Reminder created successfully');
       }
     } catch (e) {
       if (mounted) {
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${l10n.failedToCreateReminder}: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarHelper.showError(context, '${l10n.failedToCreateReminder}: $e');
       }
     }
   }

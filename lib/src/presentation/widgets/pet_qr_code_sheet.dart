@@ -7,6 +7,7 @@ import '../../../theme/tokens/shadows.dart';
 import '../../domain/models/pet_profile.dart';
 import '../../data/services/qr_code_service.dart';
 import 'pet_qr_code_widget.dart';
+import '../../utils/snackbar_helper.dart';
 
 /// Bottom sheet for displaying and sharing pet QR code.
 class PetQrCodeSheet extends StatefulWidget {
@@ -31,15 +32,11 @@ class _PetQrCodeSheetState extends State<PetQrCodeSheet> {
     try {
       await _service.saveQrCodeImage(_qrKey, widget.pet.name);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.qrCodeSaved)),
-        );
+        SnackBarHelper.showSuccess(context, l10n.qrCodeSaved);
       }
     } catch (_) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.qrCodeSaveFailed)),
-        );
+        SnackBarHelper.showError(context, l10n.qrCodeSaveFailed);
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -60,9 +57,7 @@ class _PetQrCodeSheetState extends State<PetQrCodeSheet> {
       );
     } catch (_) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.qrCodeShareFailed)),
-        );
+        SnackBarHelper.showError(context, l10n.qrCodeShareFailed);
       }
     } finally {
       if (mounted) setState(() => _isSharing = false);

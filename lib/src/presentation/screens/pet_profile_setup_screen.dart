@@ -11,6 +11,7 @@ import 'package:fur_friend_diary/l10n/app_localizations.dart';
 import '../../../../theme/tokens/colors.dart';
 import '../../../../theme/tokens/spacing.dart';
 import '../../../../theme/tokens/shadows.dart';
+import '../../utils/snackbar_helper.dart';
 
 class PetProfileSetupScreen extends ConsumerStatefulWidget {
   final String? petId; // null = create new, non-null = edit existing
@@ -229,9 +230,7 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
     } catch (e) {
       logger.e('[PROFILE_PIC] ERROR: Failed to pick image: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to pick image: $e')),
-        );
+        SnackBarHelper.showError(context, 'Failed to pick image: $e');
       }
     }
   }
@@ -575,9 +574,7 @@ class _PetProfileSetupScreenState extends ConsumerState<PetProfileSetupScreen> {
     } catch (e) {
       logger.e("[PROFILE_SETUP] ERROR: Save operation failed: $e");
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save profile: $e')),
-        );
+        SnackBarHelper.showError(context, 'Failed to save profile: $e');
       }
     } finally {
       if (mounted) {

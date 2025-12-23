@@ -11,6 +11,7 @@ import '../../presentation/providers/pet_profile_provider.dart';
 import '../../data/services/notification_service.dart';
 import '../../../l10n/app_localizations.dart';
 import '../widgets/add_reminder_sheet.dart';
+import '../../utils/snackbar_helper.dart';
 
 class RemindersScreen extends ConsumerStatefulWidget {
   const RemindersScreen({super.key});
@@ -62,16 +63,7 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
             onPressed: () async {
               await NotificationService().showTestNotification();
               if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Test notification sent! Check your notification bar.',
-                      style: GoogleFonts.inter(color: Colors.white),
-                    ),
-                    backgroundColor: isDark ? DesignColors.dSuccess : DesignColors.lSuccess,
-                    duration: const Duration(seconds: 2),
-                  ),
-                );
+                SnackBarHelper.showSuccess(context, 'Test notification sent! Check your notification bar.');
               }
             },
           ),
@@ -565,28 +557,12 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
       ref.invalidate(remindersByPetIdProvider(reminder.petId));
       if (mounted) {
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              l10n.reminderUpdated,
-              style: GoogleFonts.inter(color: Colors.white),
-            ),
-            backgroundColor: successColor,
-          ),
-        );
+        SnackBarHelper.showSuccess(context, l10n.reminderUpdated);
       }
     } catch (e) {
       if (mounted) {
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              l10n.failedToUpdateReminder,
-              style: GoogleFonts.inter(color: Colors.white),
-            ),
-            backgroundColor: dangerColor,
-          ),
-        );
+        SnackBarHelper.showError(context, l10n.failedToUpdateReminder);
       }
     }
   }
@@ -656,27 +632,11 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
         // Invalidate the provider to refresh the UI
         ref.invalidate(remindersByPetIdProvider(reminder.petId));
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                l10n.reminderDeleted,
-                style: GoogleFonts.inter(color: Colors.white),
-              ),
-              backgroundColor: successColor,
-            ),
-          );
+          SnackBarHelper.showSuccess(context, l10n.reminderDeleted);
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                l10n.failedToDeleteReminder,
-                style: GoogleFonts.inter(color: Colors.white),
-              ),
-              backgroundColor: dangerColor,
-            ),
-          );
+          SnackBarHelper.showError(context, l10n.failedToDeleteReminder);
         }
       }
     }
@@ -698,15 +658,7 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
     if (result == true && mounted) {
       // Invalidate the provider to refresh the UI
       ref.invalidate(remindersByPetIdProvider(petId));
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context).reminderAdded,
-            style: GoogleFonts.inter(color: Colors.white),
-          ),
-          backgroundColor: successColor,
-        ),
-      );
+      SnackBarHelper.showSuccess(context, AppLocalizations.of(context).reminderAdded);
     }
   }
 }

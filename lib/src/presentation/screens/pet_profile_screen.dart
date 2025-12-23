@@ -18,6 +18,7 @@ import '../widgets/pet_qr_code_sheet.dart';
 import '../../../../theme/tokens/colors.dart';
 import '../../../../theme/tokens/spacing.dart';
 import '../../../../theme/tokens/shadows.dart';
+import '../../utils/snackbar_helper.dart';
 
 final _logger = Logger();
 
@@ -212,12 +213,7 @@ class PetProfileScreen extends ConsumerWidget {
         // User wants to learn more about Premium
         // For now, show a snackbar (placeholder for future premium flow)
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.premiumComingSoon),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
+          SnackBarHelper.showInfo(context, l10n.premiumComingSoon);
         }
       }
       // If result is false or null, dialog was dismissed - do nothing
@@ -1200,16 +1196,12 @@ class PetProfileScreen extends ConsumerWidget {
       await ref.read(petProfilesProvider.notifier).setActive(profile.id);
       if (context.mounted) {
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.nowActive(profile.name))),
-        );
+        SnackBarHelper.showSuccess(context, l10n.nowActive(profile.name));
       }
     } catch (e) {
       if (context.mounted) {
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.failedToActivateProfile(e.toString()))),
-        );
+        SnackBarHelper.showError(context, l10n.failedToActivateProfile(e.toString()));
       }
     }
   }
@@ -1241,16 +1233,12 @@ class PetProfileScreen extends ConsumerWidget {
         await ref.read(petProfilesProvider.notifier).remove(profile.id);
         if (context.mounted) {
           final l10n = AppLocalizations.of(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.profileDeleted(profile.name))),
-          );
+          SnackBarHelper.showSuccess(context, l10n.profileDeleted(profile.name));
         }
       } catch (e) {
         if (context.mounted) {
           final l10n = AppLocalizations.of(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${l10n.failedToDeleteProfile}: $e')),
-          );
+          SnackBarHelper.showError(context, '${l10n.failedToDeleteProfile}: $e');
         }
       }
     }

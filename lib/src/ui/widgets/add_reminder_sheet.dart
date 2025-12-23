@@ -9,6 +9,7 @@ import '../../domain/models/reminder.dart';
 import '../../presentation/providers/reminder_provider.dart';
 import '../../presentation/providers/pet_profile_provider.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../utils/snackbar_helper.dart';
 
 class AddReminderSheet extends ConsumerStatefulWidget {
   final ReminderType? prefilledType;
@@ -556,15 +557,7 @@ class _AddReminderSheetState extends ConsumerState<AddReminderSheet> {
       if (currentPet == null) {
         if (mounted) {
           setState(() => _isLoading = false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'No pet selected',
-                style: GoogleFonts.inter(color: Colors.white),
-              ),
-              backgroundColor: dangerColor,
-            ),
-          );
+          SnackBarHelper.showWarning(context, 'No pet selected');
         }
         return;
       }
@@ -598,15 +591,7 @@ class _AddReminderSheetState extends ConsumerState<AddReminderSheet> {
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Error: $e',
-              style: GoogleFonts.inter(color: Colors.white),
-            ),
-            backgroundColor: dangerColor,
-          ),
-        );
+        SnackBarHelper.showError(context, 'Error: $e');
       }
     }
   }

@@ -7,6 +7,7 @@ import '../../../theme/tokens/colors.dart';
 import '../../../theme/tokens/spacing.dart';
 import '../../domain/models/pet_owner_tier.dart';
 import '../../presentation/providers/pet_owner_provider.dart';
+import '../../utils/snackbar_helper.dart';
 
 class ProfileEditScreen extends ConsumerStatefulWidget {
   const ProfileEditScreen({super.key});
@@ -74,20 +75,13 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
 
       if (mounted) {
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.profileSaved)),
-        );
+        SnackBarHelper.showSuccess(context, l10n.profileSaved);
         Navigator.of(context).pop();
       }
     } catch (e) {
       if (mounted) {
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.errorSavingProfile),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        SnackBarHelper.showError(context, l10n.errorSavingProfile);
       }
     } finally {
       if (mounted) {

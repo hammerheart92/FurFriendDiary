@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:intl/intl.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
+import '../../../utils/snackbar_helper.dart';
 import '../../../domain/models/pet_profile.dart';
 import '../../../domain/models/protocols/treatment_plan.dart';
 import '../../providers/protocols/treatment_plan_provider.dart';
@@ -231,12 +232,7 @@ class _TreatmentPlanViewerScreenState
           );
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context).taskUpdated),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-          ),
-        );
+        SnackBarHelper.showSuccess(context, AppLocalizations.of(context).taskUpdated);
       }
     } catch (e, stackTrace) {
       _logger.e(
@@ -246,12 +242,7 @@ class _TreatmentPlanViewerScreenState
       );
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context).taskCompletionFailed),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        SnackBarHelper.showError(context, AppLocalizations.of(context).taskCompletionFailed);
       }
     }
   }
@@ -277,12 +268,7 @@ class _TreatmentPlanViewerScreenState
             .markPlanComplete(planId);
 
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.planMarkedComplete),
-              backgroundColor: Theme.of(context).colorScheme.primary,
-            ),
-          );
+          SnackBarHelper.showSuccess(context, l10n.planMarkedComplete);
         }
       } catch (e, stackTrace) {
         _logger.e(
@@ -292,12 +278,7 @@ class _TreatmentPlanViewerScreenState
         );
 
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.failedToMarkPlanComplete),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
+          SnackBarHelper.showError(context, l10n.failedToMarkPlanComplete);
         }
       }
     }

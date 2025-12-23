@@ -5,6 +5,7 @@ import '../../domain/models/appointment_entry.dart';
 import '../../domain/models/reminder.dart';
 import '../../presentation/providers/care_data_provider.dart';
 import '../../presentation/providers/reminder_provider.dart';
+import '../../utils/snackbar_helper.dart';
 import 'appointment_card.dart';
 
 class AppointmentList extends ConsumerWidget {
@@ -195,21 +196,11 @@ class AppointmentList extends ConsumerWidget {
             .read(appointmentProviderProvider.notifier)
             .deleteAppointment(appointment.id);
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Appointment deleted successfully'),
-              backgroundColor: Colors.green,
-            ),
-          );
+          SnackBarHelper.showSuccess(context, 'Appointment deleted successfully');
         }
       } catch (error) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Failed to delete appointment: $error'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          SnackBarHelper.showError(context, 'Failed to delete appointment: $error');
         }
       }
     }
@@ -340,24 +331,12 @@ class AppointmentList extends ConsumerWidget {
 
       await ref.read(reminderRepositoryProvider).addReminder(reminder);
 
-      // ✅ Check context is still valid before accessing
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Reminder created successfully'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        SnackBarHelper.showSuccess(context, 'Reminder created successfully');
       }
     } catch (e) {
-      // ✅ Check context is still valid before accessing
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to create reminder: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarHelper.showError(context, 'Failed to create reminder: $e');
       }
     }
   }

@@ -9,6 +9,7 @@ import '../../src/presentation/providers/care_data_provider.dart';
 import '../../theme/tokens/colors.dart';
 import '../../theme/tokens/spacing.dart';
 import '../../theme/tokens/shadows.dart';
+import '../../src/utils/snackbar_helper.dart';
 
 /// Walks screen with reactive Riverpod StreamProvider, quick filters, responsive layout,
 /// empty state, semantics, and walk management.
@@ -167,9 +168,7 @@ class _WalksScreenState extends ConsumerState<WalksScreen>
 
           if (context.mounted) {
             Navigator.of(context).pop();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(l10n.walkAddedSuccessfully)),
-            );
+            SnackBarHelper.showSuccess(context, l10n.walkAddedSuccessfully);
           }
 
           logger.i('🔙 NAVIGATION: Returned to walks screen, data refreshed');
@@ -200,9 +199,7 @@ class _WalksScreenState extends ConsumerState<WalksScreen>
 
           if (context.mounted) {
             Navigator.of(context).pop();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(l10n.walkUpdated)),
-            );
+            SnackBarHelper.showSuccess(context, l10n.walkUpdated);
           }
 
           logger.i('🔙 NAVIGATION: Returned to walks screen, data refreshed');
@@ -322,9 +319,7 @@ class _WalksScreenState extends ConsumerState<WalksScreen>
                           Navigator.of(dialogContext).pop();
                         }
                         if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(l10n.walkDeleted)),
-                          );
+                          SnackBarHelper.showSuccess(context, l10n.walkDeleted);
                         }
 
                         logger.i('✅ Walk deleted successfully');

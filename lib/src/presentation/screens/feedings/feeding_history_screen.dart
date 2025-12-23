@@ -15,6 +15,7 @@ import '../../../utils/date_helper.dart';
 import '../../../../theme/tokens/colors.dart';
 import '../../../../theme/tokens/spacing.dart';
 import '../../../../theme/tokens/shadows.dart';
+import '../../../utils/snackbar_helper.dart';
 
 final _logger = Logger(); // ignore: prefer_const_constructors
 final _uuid = Uuid();
@@ -201,23 +202,13 @@ class _FeedingHistoryScreenState extends ConsumerState<FeedingHistoryScreen> {
       }
       if (mounted) {
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.feedingAdded(feeding.foodType)),
-            duration: const Duration(seconds: 2),
-          ),
-        );
+        SnackBarHelper.showSuccess(context, l10n.feedingAdded(feeding.foodType));
       }
     } catch (e) {
       _logger.e('Failed to update feeding: $e');
       if (mounted) {
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${l10n.failedToSaveFeeding}: $e'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        SnackBarHelper.showError(context, '${l10n.failedToSaveFeeding}: $e');
       }
     }
   }
@@ -326,29 +317,12 @@ class _FeedingHistoryScreenState extends ConsumerState<FeedingHistoryScreen> {
           ref.invalidate(feedingsByPetIdProvider(currentPet.id));
         }
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                l10n.feedingDeleted,
-                style: GoogleFonts.inter(),
-              ),
-              backgroundColor: DesignColors.highlightTeal,
-              duration: const Duration(seconds: 2),
-            ),
-          );
+          SnackBarHelper.showSuccess(context, l10n.feedingDeleted);
         }
       } catch (e) {
         _logger.e('Failed to delete feeding: $e');
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '${l10n.failedToSaveFeeding}: $e',
-                style: GoogleFonts.inter(),
-              ),
-              backgroundColor: DesignColors.lDanger,
-            ),
-          );
+          SnackBarHelper.showError(context, '${l10n.failedToSaveFeeding}: $e');
         }
       }
     }
@@ -365,23 +339,13 @@ class _FeedingHistoryScreenState extends ConsumerState<FeedingHistoryScreen> {
 
       if (mounted) {
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.feedingAdded(feeding.foodType)),
-            duration: const Duration(seconds: 2),
-          ),
-        );
+        SnackBarHelper.showSuccess(context, l10n.feedingAdded(feeding.foodType));
       }
     } catch (e) {
       _logger.e('Failed to save feeding: $e');
       if (mounted) {
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${l10n.failedToSaveFeeding}: $e'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        SnackBarHelper.showError(context, '${l10n.failedToSaveFeeding}: $e');
       }
     }
   }

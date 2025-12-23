@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
 import '../../domain/models/walk.dart';
 import '../../providers/walks_provider.dart';
+import '../../utils/snackbar_helper.dart';
 
 class WalkTrackingScreen extends ConsumerStatefulWidget {
   final String petId;
@@ -381,12 +382,7 @@ class _WalkTrackingScreenState extends ConsumerState<WalkTrackingScreen> {
           );
     } catch (error) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to start walk: $error'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarHelper.showError(context, 'Failed to start walk: $error');
       }
     }
   }
@@ -406,21 +402,11 @@ class _WalkTrackingScreenState extends ConsumerState<WalkTrackingScreen> {
 
       if (mounted) {
         Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Walk completed successfully!'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        SnackBarHelper.showSuccess(context, 'Walk completed successfully!');
       }
     } catch (error) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to end walk: $error'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarHelper.showError(context, 'Failed to end walk: $error');
       }
     }
   }

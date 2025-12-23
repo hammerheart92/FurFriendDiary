@@ -9,6 +9,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../theme/tokens/colors.dart';
 import '../../../theme/tokens/spacing.dart';
 import '../../../theme/tokens/shadows.dart';
+import '../../utils/snackbar_helper.dart';
 
 class ReportGenerationForm extends ConsumerStatefulWidget {
   final VoidCallback? onGenerated;
@@ -580,12 +581,7 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
     final l10n = AppLocalizations.of(context);
 
     if (activePet == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.noActivePetFound),
-          backgroundColor: Colors.red,
-        ),
-      );
+      SnackBarHelper.showWarning(context, l10n.noActivePetFound);
       return;
     }
 
@@ -614,22 +610,15 @@ class _ReportGenerationFormState extends ConsumerState<ReportGenerationForm> {
 
       if (mounted) {
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.reportGeneratedSuccessfully),
-            backgroundColor: Colors.green,
-          ),
-        );
+        SnackBarHelper.showSuccess(context, l10n.reportGeneratedSuccessfully);
         widget.onGenerated?.call();
       }
     } catch (error) {
       if (mounted) {
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.failedToGenerateReport(error.toString())),
-            backgroundColor: Colors.red,
-          ),
+        SnackBarHelper.showError(
+          context,
+          l10n.failedToGenerateReport(error.toString()),
         );
       }
     } finally {

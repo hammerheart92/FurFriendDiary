@@ -10,6 +10,7 @@ import '../../utils/specialty_helper.dart';
 import '../../../theme/tokens/colors.dart';
 import '../../../theme/tokens/spacing.dart';
 import '../../../theme/tokens/shadows.dart';
+import '../../utils/snackbar_helper.dart';
 
 class VetListScreen extends ConsumerStatefulWidget {
   const VetListScreen({super.key});
@@ -50,13 +51,7 @@ class _VetListScreenState extends ConsumerState<VetListScreen> {
       await launchUrl(uri);
     } else {
       if (mounted) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.invalidPhone),
-            backgroundColor: isDark ? DesignColors.dDanger : DesignColors.lDanger,
-          ),
-        );
+        SnackBarHelper.showError(context, AppLocalizations.of(context)!.invalidPhone);
       }
     }
   }
@@ -69,13 +64,7 @@ class _VetListScreenState extends ConsumerState<VetListScreen> {
       await launchUrl(uri);
     } else {
       if (mounted) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.invalidEmail),
-            backgroundColor: isDark ? DesignColors.dDanger : DesignColors.lDanger,
-          ),
-        );
+        SnackBarHelper.showError(context, AppLocalizations.of(context)!.invalidEmail);
       }
     }
   }
@@ -87,23 +76,11 @@ class _VetListScreenState extends ConsumerState<VetListScreen> {
       ref.invalidate(vetsProvider);
       ref.invalidate(filteredVetsProvider);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-                '${vet.name} ${AppLocalizations.of(context)!.setAsPreferred}'),
-            backgroundColor: DesignColors.highlightTeal,
-          ),
-        );
+        SnackBarHelper.showSuccess(context, '${vet.name} ${AppLocalizations.of(context)!.setAsPreferred}');
       }
     } catch (e) {
       if (mounted) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: isDark ? DesignColors.dDanger : DesignColors.lDanger,
-          ),
-        );
+        SnackBarHelper.showError(context, 'Error: $e');
       }
     }
   }
@@ -184,21 +161,11 @@ class _VetListScreenState extends ConsumerState<VetListScreen> {
         ref.invalidate(vetsProvider);
         ref.invalidate(filteredVetsProvider);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.vetDeleted),
-              backgroundColor: DesignColors.highlightTeal,
-            ),
-          );
+          SnackBarHelper.showSuccess(context, l10n.vetDeleted);
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: $e'),
-              backgroundColor: dangerColor,
-            ),
-          );
+          SnackBarHelper.showError(context, 'Error: $e');
         }
       }
     }
