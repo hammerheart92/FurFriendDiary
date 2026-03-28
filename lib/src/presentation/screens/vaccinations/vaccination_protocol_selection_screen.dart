@@ -9,8 +9,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 import 'package:fur_friend_diary/l10n/app_localizations.dart';
+import '../../../../theme/tokens/colors.dart';
+import '../../../../theme/tokens/spacing.dart';
+import '../../../../theme/tokens/shadows.dart';
 import '../../../domain/models/pet_profile.dart';
 import '../../../domain/models/protocols/vaccination_protocol.dart';
 import '../../../data/services/vaccination_service.dart';
@@ -44,14 +48,33 @@ class VaccinationProtocolSelectionScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
     final protocolsAsync = ref.watch(
       vaccinationProtocolsBySpeciesProvider(pet.species),
     );
 
+    // Theme detection
+    final isDark = theme.brightness == Brightness.dark;
+    final backgroundColor =
+        isDark ? DesignColors.dBackground : DesignColors.lBackground;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: Text(l10n.selectVaccinationProtocol),
+        title: Text(
+          l10n.selectVaccinationProtocol,
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: primaryText,
+          ),
+        ),
         centerTitle: true,
+        backgroundColor: backgroundColor,
+        foregroundColor: primaryText,
+        elevation: 0,
       ),
       body: SafeArea(
         child: Semantics(
@@ -69,59 +92,90 @@ class VaccinationProtocolSelectionScreen extends ConsumerWidget {
     );
   }
 
+  /// Loading state widget
   Widget _buildLoadingState(AppLocalizations l10n) {
     return Center(
       child: Semantics(
         label: l10n.loadingProtocols,
-        child: const CircularProgressIndicator(),
+        child: CircularProgressIndicator(
+          color: DesignColors.highlightTeal,
+        ),
       ),
     );
   }
 
+  /// Error state widget
   Widget _buildErrorState(
     BuildContext context,
     AppLocalizations l10n,
     Object error,
     WidgetRef ref,
   ) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+    final dangerColor = isDark ? DesignColors.dDanger : DesignColors.lDanger;
+
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: EdgeInsets.all(DesignSpacing.xl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.error_outline,
-              size: 64,
-              color: Theme.of(context).colorScheme.error,
+              size: 80,
+              color: dangerColor,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: DesignSpacing.lg),
             Text(
               l10n.failedToLoadProtocols,
-              style: Theme.of(context).textTheme.titleLarge,
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: primaryText,
+              ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: DesignSpacing.sm),
             Text(
               error.toString().length > 100
                   ? '${error.toString().substring(0, 100)}...'
                   : error.toString(),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.6),
-                  ),
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                color: secondaryText,
+              ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
-            OutlinedButton.icon(
+            SizedBox(height: DesignSpacing.xl),
+            ElevatedButton.icon(
               onPressed: () {
                 ref.invalidate(
                     vaccinationProtocolsBySpeciesProvider(pet.species));
               },
               icon: const Icon(Icons.refresh),
-              label: Text(l10n.retry),
+              label: Text(
+                l10n.retry,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: DesignColors.highlightTeal,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: DesignSpacing.lg,
+                  vertical: DesignSpacing.md,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
             ),
           ],
         ),
@@ -129,42 +183,56 @@ class VaccinationProtocolSelectionScreen extends ConsumerWidget {
     );
   }
 
+  /// Empty state widget
   Widget _buildEmptyState(BuildContext context, AppLocalizations l10n) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: EdgeInsets.all(DesignSpacing.xl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.science_outlined,
-              size: 64,
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.4),
+              Icons.vaccines_outlined,
+              size: 80,
+              color: DesignColors.highlightPurple.withOpacity(0.5),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: DesignSpacing.lg),
             Text(
               l10n.noProtocolsAvailable,
-              style: Theme.of(context).textTheme.titleLarge,
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: primaryText,
+              ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: DesignSpacing.sm),
             Text(
               l10n.noProtocolsForSpecies(pet.species),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.6),
-                  ),
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: secondaryText,
+              ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: DesignSpacing.xl),
             TextButton(
               onPressed: () => context.pop(),
-              child: Text(l10n.cancel),
+              child: Text(
+                l10n.cancel,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: secondaryText,
+                ),
+              ),
             ),
           ],
         ),
@@ -172,45 +240,56 @@ class VaccinationProtocolSelectionScreen extends ConsumerWidget {
     );
   }
 
+  /// Main protocol list widget
   Widget _buildProtocolList(
     BuildContext context,
     AppLocalizations l10n,
     List<VaccinationProtocol> protocols,
     WidgetRef ref,
   ) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.all(DesignSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Pet info header
           _PetInfoHeader(pet: pet),
-          const SizedBox(height: 16),
+          SizedBox(height: DesignSpacing.lg),
 
           // Section title
           Text(
             l10n.selectVaccinationProtocol,
-            style: Theme.of(context).textTheme.titleSmall,
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: primaryText,
+            ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: DesignSpacing.sm),
 
           // Helper text
           Text(
             l10n.chooseProtocolMatchingNeeds,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(alpha: 0.6),
-                ),
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              color: secondaryText,
+            ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: DesignSpacing.lg),
 
           // Protocol cards list
           Expanded(
             child: ListView.separated(
               itemCount: protocols.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 12),
+              separatorBuilder: (context, index) =>
+                  SizedBox(height: DesignSpacing.sm),
               itemBuilder: (context, index) {
                 final protocol = protocols[index];
                 return _ProtocolCard(
@@ -235,6 +314,7 @@ class VaccinationProtocolSelectionScreen extends ConsumerWidget {
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
@@ -309,6 +389,7 @@ class VaccinationProtocolSelectionScreen extends ConsumerWidget {
 // INLINE WIDGETS
 // ============================================================================
 
+/// Pet info header widget - displays pet details
 class _PetInfoHeader extends StatelessWidget {
   final PetProfile pet;
 
@@ -316,56 +397,83 @@ class _PetInfoHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
+
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      padding: EdgeInsets.all(DesignSpacing.lg),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(12),
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
       ),
       child: Row(
         children: [
+          // Pet photo/avatar
           CircleAvatar(
-            radius: 24,
-            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-            child: Icon(
-              Icons.pets,
-              color: Theme.of(context).colorScheme.onPrimaryContainer,
-            ),
+            radius: 28,
+            backgroundColor: DesignColors.highlightTeal.withOpacity(0.2),
+            backgroundImage: pet.photoPath != null && pet.photoPath!.isNotEmpty
+                ? AssetImage(pet.photoPath!)
+                : null,
+            child: pet.photoPath == null || pet.photoPath!.isEmpty
+                ? Icon(
+                    Icons.pets,
+                    color: DesignColors.highlightTeal,
+                    size: 28,
+                  )
+                : null,
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: DesignSpacing.md),
+
+          // Pet name and species/age
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   pet.name,
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: GoogleFonts.poppins(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: primaryText,
+                  ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: DesignSpacing.xs),
                 Row(
                   children: [
-                    Chip(
-                      label: Text(_getLocalizedSpecies(context, pet.species)),
-                      padding: EdgeInsets.zero,
-                      visualDensity: VisualDensity.compact,
-                      backgroundColor:
-                          Theme.of(context).colorScheme.secondaryContainer,
-                      labelStyle:
-                          Theme.of(context).textTheme.labelSmall?.copyWith(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSecondaryContainer,
-                              ),
+                    // Species badge
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: DesignSpacing.sm,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: DesignColors.highlightTeal.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        _getLocalizedSpecies(context, pet.species),
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: DesignColors.highlightTeal,
+                        ),
+                      ),
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: DesignSpacing.sm),
                     Text(
                       _formatAge(context, pet.birthday),
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withValues(alpha: 0.7),
-                          ),
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        color: secondaryText,
+                      ),
                     ),
                   ],
                 ),
@@ -410,6 +518,7 @@ class _PetInfoHeader extends StatelessWidget {
   }
 }
 
+/// Protocol card widget - displays a single protocol
 class _ProtocolCard extends StatelessWidget {
   final VaccinationProtocol protocol;
   final VoidCallback onTap;
@@ -424,6 +533,14 @@ class _ProtocolCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
     final locale = Localizations.localeOf(context);
     final isRomanian = locale.languageCode == 'ro';
 
@@ -437,102 +554,113 @@ class _ProtocolCard extends StatelessWidget {
         ? protocol.descriptionRo!
         : protocol.description;
 
-    return Card(
-      elevation: 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+    return Semantics(
+      label: '$displayName, '
+          '${_isCore ? l10n.coreProtocol : l10n.extendedProtocol}, '
+          '${l10n.vaccinationsCount(protocol.steps.length)}',
+      button: true,
+      child: Container(
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: isDark ? DesignShadows.darkMd : DesignShadows.md,
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(16),
+            child: Padding(
+              padding: EdgeInsets.all(DesignSpacing.lg),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Flexible(
-                          child: Text(
-                            displayName,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
+                        // Protocol name and badge row
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                displayName,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: primaryText,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: DesignSpacing.sm),
+                            // Core/Extended badge
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: DesignSpacing.sm,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: _isCore
+                                    ? DesignColors.highlightTeal.withOpacity(0.15)
+                                    : DesignColors.highlightPurple.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                _isCore ? l10n.coreProtocol : l10n.extendedProtocol,
+                                style: GoogleFonts.inter(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: _isCore
+                                      ? DesignColors.highlightTeal
+                                      : DesignColors.highlightPurple,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 8),
-                        Chip(
-                          label: Text(
-                            _isCore ? l10n.coreProtocol : l10n.extendedProtocol,
-                          ),
-                          padding: EdgeInsets.zero,
-                          visualDensity: VisualDensity.compact,
-                          backgroundColor: _isCore
-                              ? Theme.of(context).colorScheme.primaryContainer
-                              : Theme.of(context)
-                                  .colorScheme
-                                  .secondaryContainer,
-                          labelStyle:
-                              Theme.of(context).textTheme.labelSmall?.copyWith(
-                                    color: _isCore
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .onPrimaryContainer
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .onSecondaryContainer,
-                                  ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      displayDescription,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withValues(alpha: 0.7),
-                          ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.vaccines,
-                          size: 16,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withValues(alpha: 0.7),
-                        ),
-                        const SizedBox(width: 4),
+                        SizedBox(height: DesignSpacing.sm),
+
+                        // Description
                         Text(
-                          l10n.vaccinationsCount(protocol.steps.length),
-                          style:
-                              Theme.of(context).textTheme.labelMedium?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withValues(alpha: 0.7),
-                                  ),
+                          displayDescription,
+                          style: GoogleFonts.inter(
+                            fontSize: 13,
+                            color: secondaryText,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        SizedBox(height: DesignSpacing.md),
+
+                        // Vaccination count
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.vaccines,
+                              size: 16,
+                              color: DesignColors.highlightPurple,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              l10n.vaccinationsCount(protocol.steps.length),
+                              style: GoogleFonts.inter(
+                                fontSize: 12,
+                                color: secondaryText,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
+                  ),
+
+                  // Chevron icon
+                  Icon(
+                    Icons.chevron_right,
+                    color: secondaryText,
+                  ),
+                ],
               ),
-              Icon(
-                Icons.chevron_right,
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.4),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -540,6 +668,7 @@ class _ProtocolCard extends StatelessWidget {
   }
 }
 
+/// Confirmation bottom sheet - shows protocol summary and confirmation buttons
 class _ConfirmationBottomSheet extends StatefulWidget {
   final VaccinationProtocol protocol;
   final PetProfile pet;
@@ -562,6 +691,14 @@ class _ConfirmationBottomSheetState extends State<_ConfirmationBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final surfaceColor =
+        isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+    final primaryText =
+        isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+    final secondaryText =
+        isDark ? DesignColors.dSecondaryText : DesignColors.lSecondaryText;
     final locale = Localizations.localeOf(context);
     final isRomanian = locale.languageCode == 'ro';
 
@@ -572,32 +709,57 @@ class _ConfirmationBottomSheetState extends State<_ConfirmationBottomSheet> {
         : widget.protocol.name;
 
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.confirmProtocolSelection,
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 16),
-            Card(
-              color: Theme.of(context).colorScheme.surfaceContainerLow,
-              elevation: 0,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(DesignSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Title
+              Text(
+                l10n.confirmProtocolSelection,
+                style: GoogleFonts.poppins(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
+                ),
+              ),
+              SizedBox(height: DesignSpacing.lg),
+
+              // Protocol summary card
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(DesignSpacing.lg),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? const Color(0xFF2A2A2A)
+                      : const Color(0xFFF5F3E8),
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       displayName,
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: DesignColors.highlightPurple,
+                      ),
                     ),
-                    const Divider(height: 16),
+                    Divider(
+                      height: DesignSpacing.lg,
+                      color: secondaryText.withOpacity(0.2),
+                    ),
+
+                    // Show first 5 vaccination steps
                     ...widget.protocol.steps.take(5).map((step) => Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
+                          padding: EdgeInsets.only(bottom: DesignSpacing.sm),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -605,73 +767,114 @@ class _ConfirmationBottomSheetState extends State<_ConfirmationBottomSheet> {
                                 step.isRequired
                                     ? Icons.check_circle
                                     : Icons.radio_button_unchecked,
-                                size: 16,
+                                size: 18,
                                 color: step.isRequired
-                                    ? Colors.green
-                                    : Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withValues(alpha: 0.5),
+                                    ? DesignColors.highlightTeal
+                                    : secondaryText.withOpacity(0.5),
                               ),
-                              const SizedBox(width: 8),
+                              SizedBox(width: DesignSpacing.sm),
                               Expanded(
                                 child: Text(
                                   '${step.vaccineName} ${l10n.atWeeksAge(step.ageInWeeks)}',
-                                  style: Theme.of(context).textTheme.bodyMedium,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 13,
+                                    color: primaryText,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                         )),
+
+                    // Show "...and X more" if there are more steps
                     if (widget.protocol.steps.length > 5)
                       Padding(
-                        padding: const EdgeInsets.only(top: 4.0),
+                        padding: EdgeInsets.only(top: DesignSpacing.xs),
                         child: Text(
                           l10n.andXMore(widget.protocol.steps.length - 5),
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withValues(alpha: 0.6),
-                                  ),
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            fontStyle: FontStyle.italic,
+                            color: secondaryText,
+                          ),
                         ),
                       ),
                   ],
                 ),
               ),
-            ),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed:
-                        _isApplying ? null : () => Navigator.of(context).pop(),
-                    child: Text(l10n.cancel),
+              SizedBox(height: DesignSpacing.xl),
+
+              // Action buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed:
+                          _isApplying ? null : () => Navigator.of(context).pop(),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: secondaryText),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: DesignSpacing.md),
+                      ),
+                      child: Text(
+                        l10n.cancel,
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: primaryText,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: FilledButton(
-                    onPressed: _isApplying
-                        ? null
-                        : () {
-                            setState(() => _isApplying = true);
-                            widget.onConfirm();
-                          },
-                    child: _isApplying
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text(l10n.applyProtocol),
+                  SizedBox(width: DesignSpacing.md),
+                  Expanded(
+                    flex: 2,
+                    child: Semantics(
+                      label: l10n.applyProtocolToPet(
+                        displayName,
+                        widget.pet.name,
+                      ),
+                      button: true,
+                      child: ElevatedButton(
+                        onPressed: _isApplying
+                            ? null
+                            : () {
+                                setState(() => _isApplying = true);
+                                widget.onConfirm();
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: DesignColors.highlightTeal,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: EdgeInsets.symmetric(vertical: DesignSpacing.md),
+                        ),
+                        child: _isApplying
+                            ? SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : Text(
+                                l10n.applyProtocol,
+                                style: GoogleFonts.inter(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                      ),
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

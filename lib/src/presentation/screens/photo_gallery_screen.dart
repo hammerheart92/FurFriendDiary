@@ -85,15 +85,30 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
       }
     } on PermissionDeniedException {
       if (mounted) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final warningColor = isDark ? DesignColors.dWarning : DesignColors.lWarning;
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
+            backgroundColor: warningColor,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            margin: EdgeInsets.all(DesignSpacing.md),
             content: Text(
               source == 'camera'
                   ? l10n.cameraPermissionDenied
                   : l10n.galleryPermissionDenied,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.black87,
+              ),
             ),
             action: SnackBarAction(
               label: l10n.openSettings,
+              textColor: Colors.black87,
               onPressed: () => openAppSettings(),
             ),
           ),
@@ -116,22 +131,40 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // Show loading snackbar
+      // Show loading snackbar with v1.4.0 design tokens
       if (mounted) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final surfaceColor = isDark ? DesignColors.dSurfaces : DesignColors.lSurfaces;
+        final primaryText = isDark ? DesignColors.dPrimaryText : DesignColors.lPrimaryText;
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
+            backgroundColor: surfaceColor,
+            elevation: 8,
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.all(DesignSpacing.md),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             content: Row(
               children: [
                 SizedBox(
-                  width: 20,
-                  height: 20,
+                  width: 24,
+                  height: 24,
                   child: CircularProgressIndicator(
-                    strokeWidth: 2,
+                    strokeWidth: 2.5,
                     color: DesignColors.highlightTeal,
                   ),
                 ),
                 SizedBox(width: DesignSpacing.md),
-                Text(l10n.processingPhotos),
+                Text(
+                  l10n.processingPhotos,
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: primaryText,
+                  ),
+                ),
               ],
             ),
             duration: const Duration(seconds: 60),
@@ -180,11 +213,28 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
     } on PermissionDeniedException {
       if (mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final warningColor = isDark ? DesignColors.dWarning : DesignColors.lWarning;
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n.galleryPermissionDenied),
+            backgroundColor: warningColor,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            margin: EdgeInsets.all(DesignSpacing.md),
+            content: Text(
+              l10n.galleryPermissionDenied,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.black87,
+              ),
+            ),
             action: SnackBarAction(
               label: l10n.openSettings,
+              textColor: Colors.black87,
               onPressed: () => openAppSettings(),
             ),
           ),
