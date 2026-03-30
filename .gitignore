@@ -13,6 +13,12 @@ android_backup_*/
 .pub-cache/
 .pub/
 
+# flutter/generated plugins
+linux/flutter/generated_plugin_registrant.cc
+linux/flutter/generated_plugins.cmake
+windows/flutter/generated_plugin_registrant.cc
+windows/flutter/generated_plugins.cmake
+
 # Android
 android_backup_20250911_145612/.gradle/8.7/fileHashes/fileHashes.lock  
 android/.gradle/
