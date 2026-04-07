@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased] — Auth Screens UI
+
+### Added
+- `lib/features/auth/` — new feature-based auth module (establishes architecture pattern for future refactor)
+- `SignInScreen` — gradient background, floating cat illustration, password toggle, navigation to Sign Up
+- `SignUpScreen` — gradient background, animated paw decorations, cat climb illustration, 4 input fields
+- `AnimatedElevatedButton`, `AnimatedIconButton`, `AnimatedTextButton` — reusable auth widget set
+- `AnimatedPaw` — staggered entrance animation with elasticOut curve
+- `FloatingAnimation` — reusable floating loop animation wrapper
+- `/sign-in` and `/sign-up` routes registered in `AppRouter`
+- `font_awesome_flutter` dependency added to `pubspec.yaml`
+
+### Fixed
+- `AnimatedPaw` opacity assertion crash — clamped `_opacity.value` to `[0.0, 1.0]` to handle `Curves.elasticOut` overshoot
+- `SignUpScreen` RenderFlex overflow when keyboard appears — resolved by `SafeArea(bottom: false)` combined with `resizeToAvoidBottomInset: true`
+
+---
+
 ## [1.4.0] - 2025-12-23
 
 ### 🎨 Complete UI Redesign
