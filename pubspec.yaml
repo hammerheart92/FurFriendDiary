@@ -16,6 +16,7 @@ dependencies:
   dynamic_color: ^1.7.0
   google_fonts: ^6.1.0
   flutter_svg: ^2.0.0
+  font_awesome_flutter: ^10.7.0
 
   # Routing and state
   go_router: 14.2.7

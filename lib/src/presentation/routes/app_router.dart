@@ -33,6 +33,8 @@ import '../screens/feedings/feeding_history_screen.dart';
 import '../providers/pet_profile_provider.dart';
 import '../../domain/models/pet_profile.dart';
 import '../../domain/models/vaccination_event.dart';
+import '../../../../features/auth/presentation/screens/sign_in_screen.dart';
+import '../../../../features/auth/presentation/screens/sign_up_screen.dart';
 
 final logger = Logger();
 
@@ -43,10 +45,17 @@ final routerProvider = Provider<GoRouter>((ref) {
 });
 
 GoRouter createRouter() => GoRouter(
-      initialLocation: '/',
+      // TODO: restore original initial route after auth integration session
+      initialLocation: '/sign-in',
       redirect: (context, state) async {
         logger.d(
             "🔍 DEBUG: Router redirect called, location: ${state.matchedLocation}");
+
+        // Allow auth routes to bypass setup check
+        if (state.matchedLocation == '/sign-in' ||
+            state.matchedLocation == '/sign-up') {
+          return null;
+        }
 
         // Check if we need to create a ProviderContainer to access the provider
         try {
@@ -80,6 +89,15 @@ GoRouter createRouter() => GoRouter(
         return null;
       },
       routes: [
+        // Auth routes (outside shell — no bottom nav)
+        GoRoute(
+          path: '/sign-in',
+          builder: (context, state) => const SignInScreen(),
+        ),
+        GoRoute(
+          path: '/sign-up',
+          builder: (context, state) => const SignUpScreen(),
+        ),
         GoRoute(
           path: '/profile-setup',
           builder: (context, state) => const PetProfileSetupScreen(),
