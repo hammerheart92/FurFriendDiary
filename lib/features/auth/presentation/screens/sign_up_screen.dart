@@ -36,9 +36,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
+      backgroundColor:
+          isDark ? DesignColors.dBackground : DesignColors.highlightBlue,
       resizeToAvoidBottomInset: true,
       body: Container(
         decoration: BoxDecoration(
@@ -67,7 +68,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
               final isShort = constraints.maxHeight < 675;
 
               return SingleChildScrollView(
-                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
                 padding: const EdgeInsets.symmetric(
                   horizontal: DesignSpacing.lg,
                 ),
@@ -81,11 +83,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     _buildTitleBlock(isDark, isShort),
 
                     SizedBox(
-                      height: isShort ? DesignSpacing.md : DesignSpacing.lg,
+                      height: isShort ? DesignSpacing.lg : DesignSpacing.xxxl,
                     ),
 
                     // Username field with cat climb overlay
-                    _buildUsernameFieldWithCat(isDark, screenSize),
+                    _buildUsernameFieldWithCat(isDark),
 
                     const SizedBox(height: DesignSpacing.lg),
 
@@ -266,7 +268,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   /// Builds the username text field with a [cat_climb.svg] illustration
   /// overlaid at the bottom-right corner, matching the PetiCare design.
-  Widget _buildUsernameFieldWithCat(bool isDark, Size screenSize) {
+  Widget _buildUsernameFieldWithCat(bool isDark) {
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -276,12 +278,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
           isDark: isDark,
         ),
         Positioned(
-          right: -DesignSpacing.sm,
-          bottom: -DesignSpacing.lg,
+          right: -DesignSpacing.md,
+          top: -(DesignSpacing.xxxl + DesignSpacing.xxl) + DesignSpacing.md,
           child: SvgPicture.asset(
             'assets/illustrations/cat_climb.svg',
-            width: DesignSpacing.xxxl,
-            height: DesignSpacing.xxxl,
+            width: DesignSpacing.xxxl * 1.8,
+            height: DesignSpacing.xxxl * 1.8,
           ),
         ),
       ],
